@@ -17,7 +17,7 @@
 		<module>Statutes</module>
 		<module>GuidedSearchCore</module>
 		<module>StatutesCa</module>
-		<module>StatutesRsCa</module>
+		<module>StatutesRestCa</module>
 	</modules>
 	<dependencyManagement>
 		<dependencies>

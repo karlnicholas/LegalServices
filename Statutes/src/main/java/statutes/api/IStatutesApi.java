@@ -3,11 +3,11 @@ package statutes.api;
 import java.util.List;
 import java.util.Map;
 
-import statutes.StatutesTitles;
-import statutes.service.dto.StatuteHierarchy;
 import statutes.SectionNumber;
 import statutes.StatutesBaseClass;
 import statutes.StatutesRoot;
+import statutes.StatutesTitles;
+import statutes.service.dto.StatuteHierarchy;
 
 public interface IStatutesApi {
 	public List<StatutesRoot> getStatutes();

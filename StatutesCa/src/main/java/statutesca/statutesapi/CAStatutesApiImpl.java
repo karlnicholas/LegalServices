@@ -8,15 +8,15 @@ import java.nio.file.Paths;
 import java.util.*;
 import java.util.logging.Logger;
 
-import statutes.StatutesTitles;
-import statutes.api.IStatutesApi;
-import statutes.service.dto.StatuteHierarchy;
-import statutesca.code.FacetUtils;
 import statutes.SectionNumber;
 import statutes.StatutesBaseClass;
 import statutes.StatutesLeaf;
 import statutes.StatutesNode;
 import statutes.StatutesRoot;
+import statutes.StatutesTitles;
+import statutes.api.IStatutesApi;
+import statutes.service.dto.StatuteHierarchy;
+import statutesca.code.FacetUtils;
 
 /**
  * Must call loadStatutes once and only once after construction.
@@ -301,14 +301,14 @@ public class CAStatutesApiImpl implements IStatutesApi {
 	public ArrayList<StatutesRoot> getStatutes() {
 		return statutes;
 	}
-	
+/*	
 	public static void main(String[] args) throws Exception {
 		CAStatutesApiImpl codes = new CAStatutesApiImpl();
 		codes.loadStatutes();
 		StatutesBaseClass reference = codes.findReference("California Penal Code", new SectionNumber(0, "625") );
 		System.out.println(reference );
 	}
-
+*/
 	@Override
 	public StatutesTitles[] getStatutesTitles() {
 		return mapStatutesToTitles.values().toArray(new StatutesTitles[0]);
