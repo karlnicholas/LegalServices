@@ -39,6 +39,7 @@ import statutes.SectionNumberPosition;
 import statutes.StatutesBaseClass;
 import statutes.StatutesRoot;
 import statutes.api.IStatutesApi;
+import statutes.service.StatutesService;
 import statutes.service.dto.StatuteHierarchy;
 
 /*
@@ -55,14 +56,14 @@ public class GSearch {
 	private Analyzer analyzer;
 	private StandardQueryParser parser;
 	private int maxTopDocs;
-	private IStatutesApi iStatutesApi;
+	private StatutesService statutesService;
 
 	// This is meant to be put into an application scope
 	// after instantiation .. 
-	public GSearch(IStatutesApi iStatutesApi) throws IOException {
+	public GSearch(StatutesService statutesService) throws IOException {
 //		statutesTitles = parserInterface.getStatutesTitles();
 		
-		this.iStatutesApi = iStatutesApi;
+		this.statutesService = statutesService;
         facetsConfig = new FacetsConfig();
 	    facetsConfig.setHierarchical(FacetsConfig.DEFAULT_INDEX_FIELD_NAME, true);
 //	    facetsConfig.setRequireDimCount(FacetsConfig.DEFAULT_INDEX_FIELD_NAME, true);
@@ -103,7 +104,7 @@ public class GSearch {
 		// it can also, presumably, be built if the codeselect 
 		// 
 		if ( viewModel.getState() == STATES.START ) {
-			List<StatutesRoot> statutesRootList = iStatutesApi.getStatutes();
+			List<StatutesRoot> statutesRootList = statutesService.getStatutes();
 			for ( int i=0, l=statutesRootList.size(); i<l; ++i ) {
 				StatutesRoot statutesRoot = (StatutesRoot) statutesRootList.get(i);
 //				String facetHead = FacetUtils.getFacetHeadFromRoot(statutesTitles, statutesRoot);
@@ -125,7 +126,7 @@ public class GSearch {
 
 	private void processPathAndSubcodeList( ViewModel viewModel ) {
 		// at this point, only exhange.path is filled out ..
-		StatuteHierarchy rwr = iStatutesApi.getStatutesHierarchy(viewModel.getPath());
+		StatuteHierarchy rwr = statutesService.getStatutesHierarchy(viewModel.getPath());
 
 		List<StatutesBaseClass> subPaths = rwr.getStatutesPath();
 
