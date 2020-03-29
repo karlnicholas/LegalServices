@@ -11,7 +11,7 @@ import gsearch.viewmodel.SectionText;
 import gsearch.viewmodel.ViewModel;
 
 public class AzAppTest {
-
+/*
 	Logger logger = Logger.getLogger(AzAppTest.class.getName());
 	private static final String emptyString = "";
 
@@ -186,7 +186,6 @@ public class AzAppTest {
 
 //        gsearch.destroy();
  
- */
         
     }
 
@@ -197,5 +196,6 @@ public class AzAppTest {
 //			"sectionTextList = " + viewModel.sectionTextList + "\n" ); 
     	    	
     }
+ */
 }
 

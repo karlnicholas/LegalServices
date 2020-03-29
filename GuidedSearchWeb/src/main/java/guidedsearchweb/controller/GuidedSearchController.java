@@ -22,7 +22,7 @@ import gsearch.viewmodel.ViewModel;
 public class GuidedSearchController {
 	private static final Logger logger = Logger.getLogger(GuidedSearchController.class.getName());		
 	private UrlBuilder urlBuilder = new UrlBuilder();
-	
+/*
 	@GetMapping("/")
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		GSearch gsearch = new GSearch(new ParserInterfaceRsCa());
@@ -47,7 +47,7 @@ public class GuidedSearchController {
 
 		request.getRequestDispatcher("/WEB-INF/views/search.jsp").forward(request, response);
 	}
-    
+  */  
 	@PostMapping("/")
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String path = request.getParameter("path"); 

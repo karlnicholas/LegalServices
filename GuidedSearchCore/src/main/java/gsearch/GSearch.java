@@ -34,11 +34,11 @@ import org.apache.lucene.search.highlight.TokenSources;
 import gsearch.util.FacetUtils;
 import gsearch.viewmodel.*;
 import gsearch.viewmodel.ViewModel.STATES;
+import reactor.core.publisher.Mono;
 import statutes.SectionNumber;
 import statutes.SectionNumberPosition;
 import statutes.StatutesBaseClass;
 import statutes.StatutesRoot;
-import statutes.api.IStatutesApi;
 import statutes.service.StatutesService;
 import statutes.service.dto.StatuteHierarchy;
 
@@ -91,7 +91,7 @@ public class GSearch {
     }
 */		
 	
-	public ViewModel handleRequest( String path, String term, boolean highlights) throws IOException {
+	public Mono<ViewModel> handleRequest( String path, String term, boolean highlights) throws IOException {
 		logger.fine("get:" + path + ":" + term + ":" + highlights );
 		ViewModel viewModel = new ViewModel(path, term, highlights, null);
 		
@@ -99,40 +99,41 @@ public class GSearch {
 		viewModel.setState(STATES.START);
 		if ( !viewModel.getPath().isEmpty() ) viewModel.setState(STATES.BROWSE);	// path overrides select
 
+		Mono<ViewModel> monoViewModel;
 		// This section is building a list of the codes available .. 
 		// it should be called whenever there is no path, at least
 		// it can also, presumably, be built if the codeselect 
 		// 
 		if ( viewModel.getState() == STATES.START ) {
-			List<StatutesRoot> statutesRootList = statutesService.getStatutes();
-			for ( int i=0, l=statutesRootList.size(); i<l; ++i ) {
-				StatutesRoot statutesRoot = (StatutesRoot) statutesRootList.get(i);
+			monoViewModel = statutesService.getStatutesRoots()
+			.reduce(viewModel, (viewModelAcc, statutesRoot)-> {
 //				String facetHead = FacetUtils.getFacetHeadFromRoot(statutesTitles, statutesRoot);
-				StatuteEntry cEntry = new StatuteEntry( statutesRoot);
+				StatuteEntry cEntry = new StatuteEntry(statutesRoot);
 				cEntry.setPathPart(false);
 		    	viewModel.getEntries().add( cEntry );
-			}
+				return viewModelAcc;
+			});
 		} else {
-			processPathAndSubcodeList( viewModel );			
+			monoViewModel = statutesService.getStatuteHierarchy(viewModel.getPath())
+			.map(rwr->processPathAndSubcodeList(viewModel, rwr));
 		}
-		
+
 		if ( viewModel.getState() == STATES.TERMINATE || viewModel.isFragments() || !viewModel.getTerm().isEmpty() ) { 
 			processTerm(viewModel);
 		}
 		// return the processing results
 
-		return viewModel;
+		return monoViewModel;
 	}
 
-	private void processPathAndSubcodeList( ViewModel viewModel ) {
+	private ViewModel processPathAndSubcodeList( ViewModel viewModel, StatuteHierarchy rwr ) {
 		// at this point, only exhange.path is filled out ..
-		StatuteHierarchy rwr = statutesService.getStatutesHierarchy(viewModel.getPath());
-
+//		StatuteHierarchy rwr = statutesService.getStatuteHierarchy(viewModel.getPath());
 		List<StatutesBaseClass> subPaths = rwr.getStatutesPath();
 
 		StatutesRoot statutesRoot = (StatutesRoot)subPaths.remove(0);
-//		String facetHead = statutesRoot.getFacetHead();
-//		viewModel.setFacetHead(facetHead);
+//			String facetHead = statutesRoot.getFacetHead();
+//			viewModel.setFacetHead(facetHead);
 		EntryReference entryReference = new StatuteEntry(statutesRoot);
 		viewModel.getEntries().add( entryReference );
 		List<EntryReference> entries = entryReference.getEntries();
@@ -158,6 +159,7 @@ public class GSearch {
     		subcode.setPathPart(false);
     		entries.add( subcode );
 	    }
+		return viewModel;
 	}
 //	StatutesRoot statutesRoot = FacetUtils.findStatuteFromFacet(statutesWS, statutesTitles, viewModel.getPath());
 /*		

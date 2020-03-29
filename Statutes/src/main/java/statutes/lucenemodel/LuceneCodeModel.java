@@ -1,4 +1,4 @@
-package gsearch.load;
+package statutes.lucenemodel;
 
 
 import java.util.ArrayList;

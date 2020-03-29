@@ -11,7 +11,7 @@ import org.springframework.web.reactive.result.view.ViewResolver;
 @Configuration
 @EnableWebFlux
 public class WebConfig implements WebFluxConfigurer {
-
+/*
 	private static final String[] CLASSPATH_RESOURCE_LOCATIONS = { 
 			"/public/", 
 			"/webjars/"
@@ -19,16 +19,9 @@ public class WebConfig implements WebFluxConfigurer {
 
     @Override
     public void configureViewResolvers(ViewResolverRegistry registry) {
-/*
-    	<bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
-        <property name="viewClass" value="org.springframework.web.servlet.view.JstlView"/>
-        <property name="prefix" value="/WEB-INF/jsp/"/>
-        <property name="suffix" value=".jsp"/>
-    </bean>
-*/
     new InternalResourceViewResolver
     ViewResolver vr;;
-        registry..jsp("/WEB-INF/views/", ".jsp");
+        registry.jsp("/WEB-INF/views/", ".jsp");
     }
     
     @Override
@@ -38,5 +31,13 @@ public class WebConfig implements WebFluxConfigurer {
 		.addResourceLocations(CLASSPATH_RESOURCE_LOCATIONS)
 		;
 	}
-
+*/
 }
+
+/*
+<bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+<property name="viewClass" value="org.springframework.web.servlet.view.JstlView"/>
+<property name="prefix" value="/WEB-INF/jsp/"/>
+<property name="suffix" value=".jsp"/>
+</bean>
+*/

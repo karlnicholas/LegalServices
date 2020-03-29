@@ -21,7 +21,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>com.github.karlnicholas.legalservices</groupId>
-			<artifactId>guidedsearch-core</artifactId>
+			<artifactId>statutes</artifactId>
 		</dependency>
 	</dependencies>
 </project>
