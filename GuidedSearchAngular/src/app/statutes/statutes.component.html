@@ -1,13 +1,11 @@
-<h2>{{statute.name}} Details</h2>
-<div><span>id: </span>{{selectedStatute.id}}</div>
-<div>
-  <label>name:
-    <input [(ngModel)]="statute.name" placeholder="name"/>
-  </label>
-</div>
 <h2>My Statutes</h2>
+
 <ul class="statutes">
-  <li *ngFor="let statute of statutes" (click)="onSelect(statute)">
+  <li *ngFor="let statute of statutes" 
+  [class.selected]="statute === selectedStatute"
+  (click)="onSelect(statute)">
     <span class="badge">{{statute.id}}</span> {{statute.name}}
   </li>
 </ul>
+
+<app-statute-detail [statute]="selectedStatute"></app-statute-detail>
