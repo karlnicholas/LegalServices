@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Statute } from '../statute';
-import { STATUTES } from '../mock-statutes';
+import { StatuteService } from '../statute.service';
 
 @Component({
   selector: 'app-statutes',
@@ -14,10 +14,15 @@ export class StatutesComponent implements OnInit {
     name: 'Windstorm'
   };
 
-  statutes = STATUTES;
-  constructor() { }
+  statutes: Statute[];
+  constructor(private statuteService: StatuteService) { }
 
+  getStatutes(): void {
+	this.statuteService.getStatutes()
+	  .subscribe(statutes => this.statutes = statutes);
+  }
   ngOnInit() {
+	this.getStatutes();
   }
 
   selectedStatute: Statute;
