@@ -1,11 +1,9 @@
 <h2>My Statutes</h2>
-
 <ul class="statutes">
-  <li *ngFor="let statute of statutes" 
-  [class.selected]="statute === selectedStatute"
-  (click)="onSelect(statute)">
-    <span class="badge">{{statute.id}}</span> {{statute.name}}
+  <li *ngFor="let statuteroot of statuteroots" 
+  [class.selected]="statuteroot === selectedStatuteRoot"
+  (click)="statuteroot">
+    <span class="badge">{{statuteroot.fullFacet}}</span> {{statuteroot.title}}
   </li>
 </ul>
-
-<app-statute-detail [statute]="selectedStatute"></app-statute-detail>
+<app-statute-detail [statuteroot]="selectedStatuteRoot"></app-statute-detail>

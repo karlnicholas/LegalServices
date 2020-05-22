@@ -1,33 +1,28 @@
 import { Component, OnInit } from '@angular/core';
-import { Statute } from '../statute';
-import { StatuteService } from '../statute.service';
+import { StatuteRoot } from '../statute-root';
+import { StatuteRootService } from '../statuteroot.service';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 @Component({
-  selector: 'app-statutes',
+  selector: 'app-statuteroots',
   templateUrl: './statutes.component.html',
   styleUrls: ['./statutes.component.css']
 })
 export class StatutesComponent implements OnInit {
 
-  statute: Statute = {
-    id: 1,
-    name: 'Windstorm'
-  };
+  statuteroots: StatuteRoot[];
+  constructor(private statuteRootService: StatuteRootService, private http: HttpClient) { }
 
-  statutes: Statute[];
-  constructor(private statuteService: StatuteService) { }
-
-  getStatutes(): void {
-	this.statuteService.getStatutes()
-	  .subscribe(statutes => this.statutes = statutes);
+  getStatuteRoots(): void {
+	this.statuteRootService.getStatuteRoots().subscribe(statuteroots => this.statuteroots = statuteroots);
   }
+  
   ngOnInit() {
-	this.getStatutes();
+	this.getStatuteRoots();
   }
 
-  selectedStatute: Statute;
-  onSelect(statute: Statute): void {
-	this.selectedStatute = statute;
+  selectedStatuteRoot: StatuteRoot;
+  onSelect(statuteroot: StatuteRoot): void {
+	this.selectedStatuteRoot = statuteroot;
   }
-
 }

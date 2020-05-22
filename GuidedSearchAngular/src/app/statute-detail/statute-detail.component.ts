@@ -1,5 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { Statute } from '../statute';
+import { StatuteRoot } from '../statute-root';
 
 @Component({
   selector: 'app-statute-detail',
@@ -7,10 +7,9 @@ import { Statute } from '../statute';
   styleUrls: ['./statute-detail.component.css']
 })
 export class StatuteDetailComponent implements OnInit {
-  @Input() statute: Statute;
+  @Input() statuteroot: StatuteRoot;
   constructor() { }
 
-  ngOnInit() {
-  }
+  ngOnInit() {  }
 
 }

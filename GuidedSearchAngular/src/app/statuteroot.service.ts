@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Statute } from './Statute';
+import { StatuteRoot } from './statute-root';
 import { Observable, of } from 'rxjs';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { catchError, map, tap } from 'rxjs/operators';
@@ -7,20 +7,30 @@ import { catchError, map, tap } from 'rxjs/operators';
 @Injectable({
   providedIn: 'root'
 })
-export class StatuteService {
+export class StatuteRootService {
 
 constructor(
   private http: HttpClient) { }
-  private statutesUrl = 'api/statutes';  // URL to web api
+  private statuterootsUrl = 'http://localhost:8080/statutes';  // URL to web api
 
-	/** GET heroes from the server */
-	getStatutes (): Observable<Statute[]> {
-	  return this.http.get<Statute[]>(this.statutesUrl)
+	/** GET StatuteRoot from the server */
+/*
+	getStatuteRoots (): Observable<StatuteRoot[]> {
+	  return this.http.get<StatuteRoot[]>(this.statuterootsUrl)
 	    .pipe(
-//	      tap(_ => this.log('fetched statutes')),
-	      catchError(this.handleError<Statute[]>('getStatutes', []))
+//	      tap(_ => this.log('fetched statuteroots')),
+	      catchError(this.handleError<StatuteRoot[]>('getStatuteRoots', []))
 	    );
-	}	/**
+	}
+*/
+	getStatuteRoots (): Observable<StatuteRoot[]> {
+	  return this.http.get<StatuteRoot[]>(this.statuterootsUrl)
+	    .pipe(
+//	      tap(_ => this.log('fetched statuteroots')),
+	      catchError(this.handleError<StatuteRoot[]>('getStatuteRoots', []))
+	    );
+	}
+	/**
 	 * Handle Http operation that failed.
 	 * Let the app continue.
 	 * @param operation - name of the operation that failed

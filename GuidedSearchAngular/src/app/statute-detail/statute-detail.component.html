@@ -1,9 +1,9 @@
-<div *ngIf="statute">
-	<h2>{{statute.name}} Details</h2>
-	<div><span>id: </span>{{statute.id}}</div>
+<div *ngIf="statuteroot">
+	<h2>{{statuteroot.name}} Details</h2>
+	<div><span>id: </span>{{statuteroot.fullFacet}}</div>
 	<div>
-	  <label>name:
-	    <input [(ngModel)]="statute.name" placeholder="name"/>
+	  <label>shortTitle:
+	    <input [(ngModel)]="statuteroot.title" placeholder="title"/>
 	  </label>
 	</div>
 </div>
