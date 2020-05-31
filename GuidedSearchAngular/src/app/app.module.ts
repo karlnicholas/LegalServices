@@ -4,14 +4,13 @@ import { FormsModule } from '@angular/forms'; // <-- NgModel lives here
 import { HttpClientModule }    from '@angular/common/http';
 
 import { AppComponent } from './app.component';
-import { StatutesComponent } from './statutes/statutes.component';
-import { StatuteDetailComponent } from './statute-detail/statute-detail.component';
+import { ViewModelComponent } from './viewmodel/viewmodel.component';
+
 
 @NgModule({
   declarations: [
     AppComponent,
-    StatutesComponent,
-    StatuteDetailComponent
+    ViewModelComponent,
   ],
   imports: [
     BrowserModule,

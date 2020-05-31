@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { StatuteDetailComponent } from './statute-detail.component';
+import { ViewmodelComponent } from './viewmodel.component';
 
-describe('StatuteDetailComponent', () => {
-  let component: StatuteDetailComponent;
-  let fixture: ComponentFixture<StatuteDetailComponent>;
+describe('ViewmodelComponent', () => {
+  let component: ViewmodelComponent;
+  let fixture: ComponentFixture<ViewmodelComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ StatuteDetailComponent ]
+      declarations: [ ViewmodelComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(StatuteDetailComponent);
+    fixture = TestBed.createComponent(ViewmodelComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

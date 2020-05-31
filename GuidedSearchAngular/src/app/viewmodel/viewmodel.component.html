@@ -17,15 +17,16 @@
 <div class="container-fluid">
 <div class="panel-group" id="accordion">
 <div class="panel">
-<div *ngFor="let statuteroot of statuteroots"   [class.selected]="statuteroot === selectedStatuteRoot" (click)="statuteroot" class="row panel-title">
+<div *ngIf="isDataAvailable">
+<div *ngFor="let entry of viewmodel.entries" class="row panel-title">
    <span class="col-xs-1"></span>
-   <a href="{{statuteroot.fullFacet}}">
-     <span class="col-xs-3">{{statuteroot.shortTitle}}&nbsp;</span>
-     <span class="col-xs-5">{{statuteroot.title}}</span>
-     <span class="col-xs-3">§§&nbsp;{{statuteroot.statuteRange.sNumber.sectionNumber}} - {{statuteroot.statuteRange.eNumber.sectionNumber}}</span>
+   <a href="?path={{entry.fullFacet}}">
+     <span class="col-xs-3">{{entry.text}}&nbsp;</span>
+     <span class="col-xs-5">{{entry.statutesBaseClass.title}}</span>
+     <span class="col-xs-3">§§&nbsp;{{entry.statutesBaseClass.statuteRange.sNumber.sectionNumber}} - {{entry.statutesBaseClass.statuteRange.eNumber.sectionNumber}}</span>
    </a>
 </div>
-<app-statute-detail [statuteroot]="selectedStatuteRoot"></app-statute-detail>
+</div>
 </div>
 </div>
 </div>

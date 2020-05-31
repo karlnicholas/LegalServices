@@ -1,55 +1,54 @@
 package guidedsearchweb.controller;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.logging.Logger;
+//import java.util.logging.Logger;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.springframework.stereotype.Controller;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.reactive.result.view.Rendering;
-import org.springframework.web.reactive.result.view.Rendering.Builder;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
+import statutes.service.StatutesService;
+import statutes.service.client.StatutesServiceClientImpl;
 import gsearch.GSearch;
 import gsearch.viewmodel.ViewModel;
+import reactor.core.publisher.Mono;
 
-@Controller
+@RestController
+@RequestMapping("/")
+@SpringBootApplication
 public class GuidedSearchController {
-	private static final Logger logger = Logger.getLogger(GuidedSearchController.class.getName());		
+//	private static final Logger logger = Logger.getLogger(GuidedSearchController.class.getName());		
 	private UrlBuilder urlBuilder = new UrlBuilder();
-/*
-	@GetMapping("/")
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		GSearch gsearch = new GSearch(new ParserInterfaceRsCa());
-		
-		String path = request.getParameter("path"); 
-		String term = request.getParameter("term"); 
-		boolean frag = Boolean.parseBoolean( request.getParameter("frag") ); 
 
-    	ViewModel viewModel;
-		try {
-			viewModel = gsearch.handleRequest(path, term, frag);
-			request.setAttribute("viewModel", viewModel );
-		} catch (IOException e) {			
-			throw new RuntimeException(e);
-		}		
+	public static void main(String[] args) {
+		SpringApplication.run(GuidedSearchController.class, args);
+	}
+
+	@GetMapping("/")
+	protected Mono<ViewModel> doGet(@RequestParam(required = false) String path, @RequestParam(required = false) String term, @RequestParam(required = false) boolean frag) throws IOException {
+
+		StatutesService statutesService = new StatutesServiceClientImpl("http://localhost:8090/");
+		GSearch gsearch = new GSearch(statutesService);
+		
+		Mono<ViewModel> viewModel = gsearch.handleRequest(path, term, frag);
+//		request.setAttribute("viewModel", viewModel );
+
 ////		viewModel.setTerm(StringEscapeUtils.escapeHtml4( viewModel.getTerm() ));
-		setAdvancedSearchFields(request, term);
+//		setAdvancedSearchFields(request, term);
 	
 		// process the requests with in the MODEL
-		logger.fine("1: State = " + viewModel.getState() );
-		logger.fine("1: Path = " + viewModel.getPath() + ": Term = " + viewModel.getTerm() );
+//		logger.fine("1: State = " + viewModel.getState());
+//		logger.fine("1: Path = " + viewModel.getPath() + ": Term = " + viewModel.getTerm());
 
-		request.getRequestDispatcher("/WEB-INF/views/search.jsp").forward(request, response);
+//		request.getRequestDispatcher("/WEB-INF/views/search.jsp").forward(request, response);
+		return viewModel;
 	}
-  */  
+/*
 	@PostMapping("/")
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	protected void doPost() throws ServletException, IOException {
 		String path = request.getParameter("path"); 
 		String term = request.getParameter("term"); 
 		boolean frag = Boolean.parseBoolean( request.getParameter("frag") ); 
@@ -104,7 +103,7 @@ public class GuidedSearchController {
 				
 		response.sendRedirect("/"+urlBuilder.UrlArgs(path, term, frag));    	
     }
-    
+*/    
     private String appendOp(String val, char op) {
     	val = val.trim();
     	if ( val.isEmpty()) return "";
@@ -115,7 +114,8 @@ public class GuidedSearchController {
     	}
     	return sb.toString();
     }
-    
+  
+/*
     private void setAdvancedSearchFields(HttpServletRequest request, String term) {
     	if ( term == null || term.isEmpty() ) return;
     	try {
@@ -153,6 +153,6 @@ public class GuidedSearchController {
     		logger.warning("Exception:" + t.getMessage());
     	}
     }
-
+*/
 }
 

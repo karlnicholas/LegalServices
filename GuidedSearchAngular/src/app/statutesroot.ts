@@ -1,8 +1,8 @@
-export class StatuteRoot {
+export class StatutesRoot {
 	depth: number;
 	part: string;
 	partNumber: string;
-	statuteRange: 'statute-range';
+	statuteRange: 'statuterange';
 	lawCode: string;
 	title: string;
 	shortTitle: string;

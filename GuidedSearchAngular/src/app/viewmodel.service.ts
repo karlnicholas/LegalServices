@@ -1,35 +1,25 @@
 import { Injectable } from '@angular/core';
-import { StatuteRoot } from './statute-root';
+import { ViewModel } from './viewmodel';
 import { Observable, of } from 'rxjs';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { catchError, map, tap } from 'rxjs/operators';
 
-@Injectable({
-  providedIn: 'root'
-})
-export class StatuteRootService {
+@Injectable({providedIn: 'root'})
 
-constructor(
-  private http: HttpClient) { }
-  private statuterootsUrl = 'http://localhost:8080/statutes';  // URL to web api
+export class ViewModelService {
+	private viewmodelUrl = 'http://localhost:8080';  // URL to web api
 
-	/** GET StatuteRoot from the server */
-/*
-	getStatuteRoots (): Observable<StatuteRoot[]> {
-	  return this.http.get<StatuteRoot[]>(this.statuterootsUrl)
-	    .pipe(
-//	      tap(_ => this.log('fetched statuteroots')),
-	      catchError(this.handleError<StatuteRoot[]>('getStatuteRoots', []))
-	    );
-	}
-*/
-	getStatuteRoots (): Observable<StatuteRoot[]> {
-	  return this.http.get<StatuteRoot[]>(this.statuterootsUrl)
-	    .pipe(
-//	      tap(_ => this.log('fetched statuteroots')),
-	      catchError(this.handleError<StatuteRoot[]>('getStatuteRoots', []))
-	    );
-	}
+	constructor(private http: HttpClient) { }
+
+	/** GET ViewModel from the server */
+	getViewModel (): Observable<ViewModel> {
+		return this.http.get<ViewModel>(this.viewmodelUrl)
+		.pipe(
+	        tap(_ => console.log('fetched viewModel')),
+			catchError(this.handleError<ViewModel>('getViewModel'))
+		);	
+    }
+	
 	/**
 	 * Handle Http operation that failed.
 	 * Let the app continue.

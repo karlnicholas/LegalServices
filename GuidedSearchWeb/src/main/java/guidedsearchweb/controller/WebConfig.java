@@ -1,43 +1,46 @@
 package guidedsearchweb.controller;
 
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.reactive.config.EnableWebFlux;
-import org.springframework.web.reactive.config.ResourceHandlerRegistry;
-import org.springframework.web.reactive.config.ViewResolverRegistry;
-import org.springframework.web.reactive.config.WebFluxConfigurer;
-import org.springframework.web.reactive.result.view.HttpMessageWriterView;
-import org.springframework.web.reactive.result.view.ViewResolver;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.server.reactive.ServerHttpRequest;
+import org.springframework.http.server.reactive.ServerHttpResponse;
+import org.springframework.web.cors.reactive.CorsUtils;
+import org.springframework.web.server.ServerWebExchange;
+import org.springframework.web.server.WebFilter;
+import org.springframework.web.server.WebFilterChain;
+
+import reactor.core.publisher.Mono;
+
 
 @Configuration
-@EnableWebFlux
-public class WebConfig implements WebFluxConfigurer {
-/*
-	private static final String[] CLASSPATH_RESOURCE_LOCATIONS = { 
-			"/public/", 
-			"/webjars/"
-			};
+public class WebConfig {
 
-    @Override
-    public void configureViewResolvers(ViewResolverRegistry registry) {
-    new InternalResourceViewResolver
-    ViewResolver vr;;
-        registry.jsp("/WEB-INF/views/", ".jsp");
-    }
-    
-    @Override
-	public void addResourceHandlers(ResourceHandlerRegistry registry) {
-		registry
-		.addResourceHandler("/**", "/webjars/**")
-		.addResourceLocations(CLASSPATH_RESOURCE_LOCATIONS)
-		;
-	}
-*/
+  private static final String ALLOWED_HEADERS = "x-requested-with, authorization, Content-Type, Authorization, credential, X-XSRF-TOKEN";
+  private static final String ALLOWED_METHODS = "GET, PUT, POST, DELETE, OPTIONS";
+  private static final String ALLOWED_ORIGIN = "*";
+  private static final String MAX_AGE = "3600";
+
+  @Bean
+  public WebFilter corsFilter() {
+    return (ServerWebExchange ctx, WebFilterChain chain) -> {
+      ServerHttpRequest request = ctx.getRequest();
+      if (CorsUtils.isCorsRequest(request)) {
+        ServerHttpResponse response = ctx.getResponse();
+        HttpHeaders headers = response.getHeaders();
+        headers.add("Access-Control-Allow-Origin", ALLOWED_ORIGIN);
+        headers.add("Access-Control-Allow-Methods", ALLOWED_METHODS);
+        headers.add("Access-Control-Max-Age", MAX_AGE);
+        headers.add("Access-Control-Allow-Headers",ALLOWED_HEADERS);
+        if (request.getMethod() == HttpMethod.OPTIONS) {
+          response.setStatusCode(HttpStatus.OK);
+          return Mono.empty();
+        }
+      }
+      return chain.filter(ctx);
+    };
+  }
+
 }
-
-/*
-<bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
-<property name="viewClass" value="org.springframework.web.servlet.view.JstlView"/>
-<property name="prefix" value="/WEB-INF/jsp/"/>
-<property name="suffix" value=".jsp"/>
-</bean>
-*/

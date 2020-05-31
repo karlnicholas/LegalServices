@@ -15,7 +15,7 @@ public class ParserInterfaceRsCa {
 		if ( s != null )
 			serviceURL = s;
 		else 
-			serviceURL = "http://localhost:8080/statutesrsaz/rs/";
+			serviceURL = "http://localhost:8090/";
 	}
 
 	private StatutesService statutesService;
