@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ViewModel } from '../viewmodel';
 import { ViewModelService } from '../viewmodel.service';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 @Component({
   selector: 'app-viewmodel',
@@ -12,10 +11,24 @@ export class ViewModelComponent implements OnInit {
 
   viewmodel: ViewModel;
   isDataAvailable:boolean = false;
-  constructor(private viewModelService: ViewModelService, private http: HttpClient) { }
+  constructor(private viewModelService: ViewModelService) { }
 
   getViewModel(): void {
-	this.viewModelService.getViewModel().subscribe(viewmodel => {
+	this.viewModelService.getViewModel('').subscribe(viewmodel => {
+		this.viewmodel = viewmodel;
+		this.isDataAvailable = true;
+	});
+  }
+
+  selectHome() {
+	this.viewModelService.getViewModel('').subscribe(viewmodel => {
+		this.viewmodel = viewmodel;
+		this.isDataAvailable = true;
+	});
+  }
+
+  onSelect(entry) {
+	this.viewModelService.getViewModel(entry.fullFacet).subscribe(viewmodel => {
 		this.viewmodel = viewmodel;
 		this.isDataAvailable = true;
 	});

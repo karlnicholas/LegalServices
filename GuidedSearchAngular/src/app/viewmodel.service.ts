@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ViewModel } from './viewmodel';
 import { Observable, of } from 'rxjs';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { catchError, map, tap } from 'rxjs/operators';
 
 @Injectable({providedIn: 'root'})
@@ -12,8 +12,10 @@ export class ViewModelService {
 	constructor(private http: HttpClient) { }
 
 	/** GET ViewModel from the server */
-	getViewModel (): Observable<ViewModel> {
-		return this.http.get<ViewModel>(this.viewmodelUrl)
+	getViewModel(facet: string): Observable<ViewModel> {
+	    console.log('facet = ' + facet);
+		let params = new HttpParams().set('path', facet);
+		return this.http.get<ViewModel>(this.viewmodelUrl, { params: params })
 		.pipe(
 	        tap(_ => console.log('fetched viewModel')),
 			catchError(this.handleError<ViewModel>('getViewModel'))

@@ -3,7 +3,7 @@ export class Entry {
 	count: number;
 	pathPart: boolean;
 	displayTitle: string;
-	entries: string [];
+	entries: Entry [];
 	text: string;
 	sectionText: string;
 	fullFacet: string;
