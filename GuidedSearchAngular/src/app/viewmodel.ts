@@ -1,3 +1,4 @@
+import { Entry } from './entry';
 export class ViewModel {
     statutesBaseClass: string;
     count: number;
@@ -8,5 +9,5 @@ export class ViewModel {
     path: string;
     fragments: boolean;
     totalCount: number;
-    entries: 'entry' []; 
+    entries: Entry []; 
 }

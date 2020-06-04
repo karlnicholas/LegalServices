@@ -13,7 +13,6 @@ export class ViewModelService {
 
 	/** GET ViewModel from the server */
 	getViewModel(facet: string): Observable<ViewModel> {
-	    console.log('facet = ' + facet);
 		let params = new HttpParams().set('path', facet);
 		return this.http.get<ViewModel>(this.viewmodelUrl, { params: params })
 		.pipe(
