@@ -1,0 +1,8 @@
+<div *ngFor="let entry of entries" (click)="onSelect(entry)" class="row panel-title">
+<app-display-reference [entry]="entry"></app-display-reference>
+<!-- 
+  <myTags:displayReference entry="${entry}" index="${status.index}"/>
+  <myTags:displayText entry="${entry}" />
+  <c:if test="${entry.pathPart}"><myTags:recurse entries="${entry.entries}" /></c:if>
+ -->
+</div>

@@ -7,6 +7,9 @@ import { RouterModule, Routes } from '@angular/router';
 import { AppComponent } from './app.component';
 import { ViewModelComponent } from './viewmodel/viewmodel.component';
 import { VentryComponent } from './ventry/ventry.component';
+import { DisplayReferenceComponent } from './display-reference/display-reference.component';
+import { SearchComponent } from './search/search.component';
+import { RecurseComponent } from './recurse/recurse.component';
 
 
 @NgModule({
@@ -14,6 +17,9 @@ import { VentryComponent } from './ventry/ventry.component';
     AppComponent,
     ViewModelComponent,
     VentryComponent,
+    DisplayReferenceComponent,
+    SearchComponent,
+    RecurseComponent,
   ],
   imports: [
     BrowserModule,
