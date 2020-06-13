@@ -11,6 +11,8 @@ import { DisplayReferenceComponent } from './display-reference/display-reference
 import { SearchComponent } from './search/search.component';
 import { RecurseComponent } from './recurse/recurse.component';
 
+import { ViewModelService } from './viewmodel.service';
+
 
 @NgModule({
   declarations: [
@@ -27,7 +29,7 @@ import { RecurseComponent } from './recurse/recurse.component';
     HttpClientModule, 
     RouterModule.forRoot([]),
   ],
-  providers: [],
+  providers: [ViewModelService],
   bootstrap: [AppComponent], 
 })
 export class AppModule { 

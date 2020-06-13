@@ -17,7 +17,7 @@
 <div class="container-fluid">
 <div class="panel-group" id="accordion">
 <div class="panel">
-<div *ngIf="isDataAvailable">
+<div *ngIf="dataAvailable">
 <app-recurse [entries]="viewmodel.entries"></app-recurse>
 </div>
 </div>

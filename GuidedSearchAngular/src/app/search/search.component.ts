@@ -2,27 +2,38 @@ import { Component, OnInit } from '@angular/core';
 import { ViewModel } from '../viewmodel';
 import { Entry } from '../entry';
 import { ViewModelService } from '../viewmodel.service';
+import { FacetChangeService } from '../facet-change.service';
 
 @Component({
   selector: 'app-search',
   templateUrl: './search.component.html',
-  styleUrls: ['./search.component.css']
+  styleUrls: ['./search.component.css'], 
+  providers: [FacetChangeService]
 })
 export class SearchComponent implements OnInit {
   viewmodel: ViewModel;
-  isDataAvailable:boolean = false;
+  dataAvailable: boolean;
 
-  constructor(private viewModelService: ViewModelService) { }
+  constructor(
+    private viewModelService: ViewModelService, 
+    private facetChangeService: FacetChangeService
+  ) {
+      facetChangeService.facetChanged$.subscribe(
+      fullFacet => {
+        console.log('fullFacet = ' + fullFacet);
+        this.getViewModel(fullFacet);
+      });  
+   }
 
-  getViewModel(): void {
-	this.viewModelService.getViewModel('').subscribe(viewmodel => {
+  getViewModel(fullFacet: string): void {
+	this.viewModelService.getViewModel(fullFacet).subscribe(viewmodel => {
       this.viewmodel = viewmodel;
-      this.isDataAvailable = true;
+      this.dataAvailable = true;
 	});
   }
 
   ngOnInit() {
-	this.getViewModel();
+	this.getViewModel('');
   }
 
 }

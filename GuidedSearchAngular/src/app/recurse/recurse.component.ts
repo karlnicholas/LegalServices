@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { Entry } from '../entry';
 
 @Component({
@@ -6,12 +6,9 @@ import { Entry } from '../entry';
   templateUrl: './recurse.component.html',
   styleUrls: ['./recurse.component.css']
 })
-export class RecurseComponent implements OnInit {
+export class RecurseComponent {
   constructor() { }
 
   @Input() entries: Entry[];
-
-  ngOnInit() {
-  }
 
 }
