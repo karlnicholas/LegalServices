@@ -115,12 +115,19 @@ public class GSearch {
 			});
 		} else {
 			monoViewModel = statutesService.getStatuteHierarchy(viewModel.getPath())
-			.map(rwr->processPathAndSubcodeList(viewModel, rwr));
+			.map(rwr->processPathAndSubcodeList(viewModel, rwr))
+			.map(viewModelWork->{
+				if ( viewModelWork.getState() == STATES.TERMINATE || viewModelWork.isFragments() || !viewModelWork.getTerm().isEmpty() ) { 
+					try {
+						processTerm(viewModelWork);
+					} catch (IOException e) {
+						throw new IllegalStateException(e);
+					}
+				}
+				return viewModelWork;
+			});
 		}
 
-		if ( viewModel.getState() == STATES.TERMINATE || viewModel.isFragments() || !viewModel.getTerm().isEmpty() ) { 
-			processTerm(viewModel);
-		}
 		// return the processing results
 
 		return monoViewModel;

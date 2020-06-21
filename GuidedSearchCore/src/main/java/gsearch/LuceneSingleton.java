@@ -23,12 +23,12 @@ public class LuceneSingleton {
 			logger.info("LuceneSingleton intializing");				
 			String gsindexloc = System.getenv("gsindexloc");
 			if ( gsindexloc == null ) {
-				gsindexloc = "c:/users/karln/opcastorage/azlucene/index";
+				gsindexloc = "c:/users/karln/opcastorage/index";
 			}
 
 			String gsindextaxoloc = System.getenv("gsindextaxoloc");
 			if ( gsindextaxoloc == null ) {
-				gsindextaxoloc = "c:/users/karln/opcastorage/azlucene/indextaxo";
+				gsindextaxoloc = "c:/users/karln/opcastorage/indextaxo";
 			}
 			indexReader = DirectoryReader.open( FSDirectory.open(Paths.get(gsindexloc)));
 	        taxoReader = new DirectoryTaxonomyReader(FSDirectory.open(Paths.get(gsindextaxoloc)));

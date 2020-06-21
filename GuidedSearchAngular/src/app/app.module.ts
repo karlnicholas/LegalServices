@@ -12,6 +12,7 @@ import { SearchComponent } from './search/search.component';
 import { RecurseComponent } from './recurse/recurse.component';
 
 import { ViewModelService } from './viewmodel.service';
+import { DisplayTextComponent } from './display-text/display-text.component';
 
 
 @NgModule({
@@ -22,6 +23,7 @@ import { ViewModelService } from './viewmodel.service';
     DisplayReferenceComponent,
     SearchComponent,
     RecurseComponent,
+    DisplayTextComponent,
   ],
   imports: [
     BrowserModule,
