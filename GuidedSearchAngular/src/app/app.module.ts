@@ -8,11 +8,11 @@ import { AppComponent } from './app.component';
 import { ViewModelComponent } from './viewmodel/viewmodel.component';
 import { VentryComponent } from './ventry/ventry.component';
 import { DisplayReferenceComponent } from './display-reference/display-reference.component';
-import { SearchComponent } from './search/search.component';
 import { RecurseComponent } from './recurse/recurse.component';
 
 import { ViewModelService } from './viewmodel.service';
 import { DisplayTextComponent } from './display-text/display-text.component';
+import { NavigationComponent } from './navigation/navigation.component';
 
 
 @NgModule({
@@ -21,9 +21,9 @@ import { DisplayTextComponent } from './display-text/display-text.component';
     ViewModelComponent,
     VentryComponent,
     DisplayReferenceComponent,
-    SearchComponent,
     RecurseComponent,
     DisplayTextComponent,
+    NavigationComponent,
   ],
   imports: [
     BrowserModule,
