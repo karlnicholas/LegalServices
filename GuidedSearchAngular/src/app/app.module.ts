@@ -13,6 +13,7 @@ import { RecurseComponent } from './recurse/recurse.component';
 import { ViewModelService } from './viewmodel.service';
 import { DisplayTextComponent } from './display-text/display-text.component';
 import { NavigationComponent } from './navigation/navigation.component';
+import { BreadcrumbComponent } from './breadcrumb/breadcrumb.component';
 
 
 @NgModule({
@@ -24,6 +25,7 @@ import { NavigationComponent } from './navigation/navigation.component';
     RecurseComponent,
     DisplayTextComponent,
     NavigationComponent,
+    BreadcrumbComponent,
   ],
   imports: [
     BrowserModule,

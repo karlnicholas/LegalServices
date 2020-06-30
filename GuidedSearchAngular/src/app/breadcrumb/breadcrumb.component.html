@@ -1,0 +1,9 @@
+<div *ngIf="entries.length == 1">
+<div *ngFor="let entry of entries">
+<li>{{entry.statutesBaseClass.title}}
+<div *ngIf="entry.entries.length == 1">{{entry.text}}</div>
+<div *ngIf="entry.entries.length > 1">{{entry.text}} - {{entry.statutesBaseClass.title}}</div>
+</li>
+<app-breadcrumb [entries]="entry.entries"></app-breadcrumb>
+</div>
+</div>
