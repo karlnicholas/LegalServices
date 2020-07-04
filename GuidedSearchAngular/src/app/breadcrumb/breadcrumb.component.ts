@@ -10,6 +10,13 @@ export class BreadcrumbComponent {
 
   constructor() { }
   
-  @Input() entries: Entry[];
-
+  private _entriesData;
+  @Input()
+  set entries(entries: Entry[]) {
+    //You can add some custom logic here
+    this._entriesData = entries;
+    console.log(entries);
+    console.log(entries[0].entries.length);
+  }
+  get entries(): Entry[] { return this._entriesData; }
 }

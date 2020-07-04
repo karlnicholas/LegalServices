@@ -19,8 +19,8 @@
 <div class="container">
 <app-navigation viewmodel="viewmodel"></app-navigation>
 <ol class="breadcrumb">
-<li>Home</li><app-breadcrumb [entries]="viewmodel.entries"></app-breadcrumb>
-<div *ngIf="!viewmodel.term">
+<li><a href="/" data-toggle="tooltip" data-placement="bottom" title="Home">Home</a></li><app-breadcrumb [entries]="viewmodel.entries"></app-breadcrumb>
+<div *ngIf="viewmodel.term">
 <li><span class="badge pull-right">{{viewmodel.totalCount}}</span></li>
 </div>
 </ol>
@@ -32,7 +32,7 @@
 </div>
 </div>
 </div>
-<script src="https://code.jquery.com/jquery-1.2.4.min.js" integrity="sha256-mfPAEMp15RaTF6QxFReOn5ax5KwxRw5VCEN9TntGdHo=" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-1.12.4.min.js" type="text/javascript" integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin="anonymous"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" type="text/javascript"></script>
 </div>
 </body>
