@@ -1,0 +1,7 @@
+<li *ngIf="entries.length == 1 && entries[0].entries.length == 1">
+<a href="#" data-toggle="tooltip" data-placement="bottom" title="{{entries[0].statutesBaseClass.title}}">{{entries[0].text}}</a>
+</li>
+<li *ngIf="entries.length == 1 && entries[0].entries.length > 1">
+<a href="#" data-toggle="tooltip" data-placement="bottom" title="{{entries[0].statutesBaseClass.title}}">{{entries[0].text}} - {{entries[0].statutesBaseClass.title}}</a>
+</li>
+<app-breadcrumb *ngIf="entries.length == 1" [entries]="entries[0].entries"></app-breadcrumb>

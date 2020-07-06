@@ -1,0 +1,9 @@
+<div (click)="selectHome()">HOME</div>
+<div *ngIf="isDataAvailable">
+<div *ngFor="let entry of entries" (click)="onSelect(entry)" class="row panel-title">
+<span class="col-xs-1"></span>
+<span class="col-xs-3">{{entry.text}}&nbsp;</span>
+<span class="col-xs-5">{{entry.statutesBaseClass.title}}</span>
+<span class="col-xs-3">§§&nbsp;{{entry.statutesBaseClass.statuteRange.sNumber.sectionNumber}} - {{entry.statutesBaseClass.statuteRange.eNumber.sectionNumber}}</span>
+</div>
+</div>
