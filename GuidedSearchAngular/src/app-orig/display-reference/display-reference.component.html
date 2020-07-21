@@ -1,9 +1,0 @@
-<div *ngIf="!entry.pathPart && !entry.sectionText" (click)="onSelect(entry)" class="row panel-title">
-<span class="col-xs-1"></span>
-  <span class="col-xs-3">{{entry.displayTitle}}
-    <span *ngIf="entry.count > 0" class="badge pull-right">{{entry.count}}</span>
-    <span *ngIf="entry.count == 0">&nbsp;</span>
-  </span>
-  <span class="col-xs-5">{{entry.statutesBaseClass.title}}</span>
-  <span class="col-xs-3">§§&nbsp;{{entry.statutesBaseClass.statuteRange.sNumber.sectionNumber}} - {{entry.statutesBaseClass.statuteRange.eNumber.sectionNumber}}</span>
-</div>
