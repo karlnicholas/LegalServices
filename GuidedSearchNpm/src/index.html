@@ -13,19 +13,50 @@
  <div class="container">
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
   <a class="navbar-brand" href="#">
-    <img src="public/image/javaee.png" width="117" height="50" class="d-inline-block align-center" alt="" loading="lazy">
+    <img src="public/image/spring-logo.png" width="95" height="50" class="d-inline-block align-center" alt="" loading="lazy">
   </a>
   
   <div class="collapse navbar-collapse" id="navbarSupportedContent">
-    <ul class="navbar-nav mr-auto">
-    <form class="form-inline my-2 my-lg-0">
+  <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
+
+</div>
+    <form action="/" class="navbar-nav mr-auto form-inline my-2 my-lg-0" role="form" method="post">
+      <input type="hidden" name="path" value="">
+      <input type="hidden" name="term" value="">
+      <input type="hidden" name="frag" value="false">
       <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-      <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Submit</button>
-      <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Clear</button>
-      <button class="btn btn-outline-success my-2 my-sm-0" aria-disabled="true" type="submit">Fragments</button>
+      <div class="btn-group" >
+      <button class="btn btn-outline-secondary my-2 my-sm-0" type="submit">Submit</button>
+      <div class="btn-group" role="group">
+        <button class="btn btn-outline-secondary dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>
+      <div class="dropdown-menu">
+       <div class="px-4 py-3">
+          <div class="form-group">
+           <label for="inAll">All&nbsp;Of:&nbsp;&nbsp;</label>
+            <input type="text" class="form-control" name="inAll" value="" id="inAll" />
+          </div>
+          <div class="form-group">
+           <label for="inNot">None&nbsp;Of:&nbsp;&nbsp;</label>
+            <input type="text" class="form-control" name="inNot" value="" id="inNot" />
+          </div>
+          <div class="form-group">
+            <label for="inAny">Any&nbsp;Of:&nbsp;&nbsp;</label>
+            <input type="text" class="form-control" name="inAny" value="" id="inAny" />
+          </div>
+          <div class="form-group">
+            <label for="inExact">Exact&nbsp;Phrase:&nbsp;&nbsp;</label>
+            <input type="text" class="form-control" name="inExact" value="" id="inExact" />
+          </div>
+          <button type="submit" class="btn btn-primary">Submit</button>
+       </div>
+      </div>
+      </div>
+      </div>
+      <button class="btn btn-light my-2 my-sm-0" type="submit" name="cl" >Clear</button>
+      <button class="btn btn-light my-2 my-sm-0" disabled aria-disabled="true" type="submit" name="to" >Fragments</button>
+      <input type="hidden" name="fs" value="false" />
     </form>
-    </ul>
-    <ul class="navbar-nav mr-auto">
+    <ul class="navbar-nav ml-auto">
       <li class="nav-item dropdown">
         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           Applications
@@ -45,6 +76,21 @@
     <li class="breadcrumb-item active" aria-current="page">Data</li>
   </ol>
 </nav>
+<div class="row">
+  <div class="col-sm-4">Bus. & Professions</div>
+  <div class="col-sm-6">Business And Professions Code</div>
+  <div class="col-sm-2">§§ 100 - 26250</div>
+</div>
+<div class="row">
+  <div class="col-sm-4">Civil</div>
+  <div class="col-sm-6">Civil Code</div>
+  <div class="col-sm-2">§§ 3 - 9566</div>
+</div>
+<div class="row">
+  <div class="col-sm-4">Civ. Procedure</div>
+  <div class="col-sm-6">Code Of Civil Procedure</div>
+  <div class="col-sm-2">§§ 2 - 2107</div>
+</div>
 </div>
 
     <!-- Optional JavaScript -->
