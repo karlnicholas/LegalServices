@@ -271,7 +271,7 @@ public class GSearch {
 			facetsCollector = new FacetsCollector(); 
 			// maybe wrap a topScoreDocCollector ..
 			if ( viewModel.isFragments() ) {
-				topScoreDocCollector = TopScoreDocCollector.create(maxTopDocs);
+				topScoreDocCollector = TopScoreDocCollector.create(maxTopDocs, maxTopDocs);
 				collector = MultiCollector.wrap( topScoreDocCollector, facetsCollector );
 			} else {
 				collector = facetsCollector;
@@ -283,7 +283,7 @@ public class GSearch {
 			facetsCollector = new FacetsCollector(); 
 			// maybe wrap a topScoreDocCollector ..
 			if ( viewModel.isFragments() ) {
-				topScoreDocCollector = TopScoreDocCollector.create(maxTopDocs);
+				topScoreDocCollector = TopScoreDocCollector.create(maxTopDocs, maxTopDocs);
 				collector = MultiCollector.wrap( topScoreDocCollector, facetsCollector );
 			} else {
 				collector = facetsCollector;				
@@ -291,7 +291,7 @@ public class GSearch {
 		}
 		// 5
 		else if ( viewModel.getState() == STATES.TERMINATE || viewModel.isFragments() ) {
-			collector = topScoreDocCollector = TopScoreDocCollector.create(maxTopDocs);
+			collector = topScoreDocCollector = TopScoreDocCollector.create(maxTopDocs, maxTopDocs);
 		}
 		
     	LuceneSingleton.getInstance().getSearcher().search(query, collector);
@@ -343,7 +343,8 @@ public class GSearch {
 	    	TopDocs docResults = topScoreDocCollector.topDocs();
 	        ScoreDoc[] hits = docResults.scoreDocs;
 	
-	        int numTotalHits = docResults.totalHits;
+	        // TODO: change to long
+	        int numTotalHits = (int)docResults.totalHits.value;
 
 	        int start = 0;
 	        int end = Math.min(numTotalHits, maxTopDocs);
