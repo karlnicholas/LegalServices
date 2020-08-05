@@ -4,6 +4,31 @@ function getURLParameters() {
 	var sPageURL = window.location.search.substring(1);
 	return sPageURL.split('&');
 }
+function displayReference(entry, items) {
+	if ( !entry.pathPart && !entry.sectionText ) {
+		items.push( "<div class='row'>" );
+		items.push( "<div class='col-sm-4'>" + entry.displayTitle + "</div>" );
+	    items.push( "<div class='col-sm-6'>" + entry.statutesBaseClass.title + "</div>" );
+	    items.push( "<div class='col-sm-2'>§§ " + entry.statutesBaseClass.statuteRange.sNumber.sectionNumber + " - " + entry.statutesBaseClass.statuteRange.eNumber.sectionNumber + "</div>" );
+		items.push( "</div>" );
+	}
+}
+function displayText(entry, items) {
+	if ( entry.sectionText ) {
+		items.push( "<div class='row'>" + entry.text + "</div>");
+	}
+}
+function recurse(entries, index, items) {
+	if ( index < entries.length ){
+		displayReference(entries[index], items);
+		displayText(entries[index], items);
+		if(entries[index].pathPart) {
+	        recurse(entries[index].entries, 0, items);
+	    } else {
+	    	recurse(entries, index+1, items);
+	    }
+	}
+}
 $( document ).ready(function() {
 	var sURLVariables = getURLParameters();
 	var path = "";
@@ -15,14 +40,9 @@ $( document ).ready(function() {
 		console.log(sParameter[0] + ":" + sParameter[1]);
 	}
 	$.getJSON( "http://localhost:8080?path="+path, function( viewModel ) {
+	  var entries = viewModel.entries;
 	  var items = [];
-	  $.each( viewModel.entries, function( key, value ) {
-		items.push( "<div class='row'>" );
-		items.push( "<div class='col-sm-4'>" + value.displayTitle + "</div>" );
-	    items.push( "<div class='col-sm-6'>" + value.statutesBaseClass.title + "</div>" );
-	    items.push( "<div class='col-sm-2'>§§ " + value.statutesBaseClass.statuteRange.sNumber.sectionNumber + " - " + value.statutesBaseClass.statuteRange.eNumber.sectionNumber + "</div>" );
-		items.push( "</div>" );
-	  });
+	  recurse(entries, 0, items);
 	  $('#cand').html(items.join( "" ));
 	});
 });
