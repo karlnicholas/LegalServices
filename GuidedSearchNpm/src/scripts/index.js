@@ -6,7 +6,7 @@ function getURLParameters() {
 }
 function displayReference(entry, items) {
 	if ( !entry.pathPart && !entry.sectionText ) {
-		items.push( "<div class='row' style='cursor:pointer;' id='" + entry.fullFacet + "'>");
+		items.push( "<div class='row' style='cursor:pointer' id='" + entry.fullFacet + "'>");
 		items.push( "<div class='col-sm-4'>" + entry.displayTitle + "</div>" );
 	    items.push( "<div class='col-sm-6'>" + entry.statutesBaseClass.title + "</div>" );
 	    if ( entry.statutesBaseClass.statuteRange.sNumber != null && entry.statutesBaseClass.statuteRange.eNumber != null) {
@@ -39,11 +39,11 @@ function recurse(entries, index, rows) {
 	}
 }
 function breadcrumbs(entries, lis) {
-	if ( entries.length == 1) {
+	if ( entries != null && entries.length == 1) {
 		var entry = entries[0];
-		if ( entry.entries.length == 1) {
+		if ( entry.entries != null && entry.entries.length == 1) {
 			lis.push("<li class='breadcrumb-item' id='" + entry.fullFacet + "' style='cursor:pointer;' >" + entry.text + "</li>");
-		} else if ( entry.entries.length > 1) {
+		} else if ( entry.entries != null && entry.entries.length > 1) {
 			lis.push("<li class='breadcrumb-item' id='" + entry.fullFacet + "' style='cursor:pointer;' >" + entry.text + " - " + entry.statutesBaseClass.title + "</a></li>");
 		}
 		 breadcrumbs(entry.entries, lis);
@@ -62,7 +62,7 @@ function loadPage() {
 	$.getJSON( "http://localhost:8080?path="+path, function( viewModel ) {
 	  var entries = viewModel.entries;
 	  var lis = [];
-	  lis.push("<li class='breadcrumb-item'><a href='/'>Home</a></li>");
+	  lis.push("<li class='breadcrumb-item' id='' style='cursor:pointer;'>Home</li>");
 	  breadcrumbs(entries, lis);
 	  $('#breadcrumbs').html(lis.join( "" ));
 	  var rows = [];
