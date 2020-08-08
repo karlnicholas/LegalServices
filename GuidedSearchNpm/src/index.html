@@ -20,11 +20,11 @@
   <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
 
 </div>
-    <form action="/" class="navbar-nav mr-auto form-inline my-2 my-lg-0" role="form" method="post">
+    <form action="/" class="navbar-nav mr-auto form-inline my-2 my-lg-0" id="search-form" role="form">
       <input type="hidden" name="path" value="">
       <input type="hidden" name="term" value="">
       <input type="hidden" name="frag" value="false">
-      <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+      <input class="form-control mr-sm-2" type="search" placeholder="Search" id="search-input" aria-label="Search">
       <div class="btn-group" >
       <button class="btn btn-outline-secondary my-2 my-sm-0" type="submit">Submit</button>
       <div class="btn-group" role="group">
@@ -52,8 +52,8 @@
       </div>
       </div>
       </div>
-      <button class="btn btn-light my-2 my-sm-0" type="submit" name="cl" >Clear</button>
-      <button class="btn btn-light my-2 my-sm-0" disabled aria-disabled="true" type="submit" name="to" >Fragments</button>
+      <button class="btn btn-light my-2 my-sm-0" name="cl" id="search-clear" onclick="this.blur();">Clear</button>
+      <button class="btn btn-light my-2 my-sm-0" disabled aria-disabled="true" name="to" >Fragments</button>
       <input type="hidden" name="fs" value="false" />
     </form>
     <ul class="navbar-nav ml-auto">

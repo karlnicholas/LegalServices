@@ -52,14 +52,17 @@ function breadcrumbs(entries, lis) {
 function loadPage() {
 	var sURLVariables = getURLParameters();
 	var path = "";
+	var term = "";
 	for (var i = 0; i < sURLVariables.length; i++) {
 		var sParameter = sURLVariables[i].split('=');
 		if (sParameter[0].toLowerCase() === 'path' ) {
 			path = sParameter[1];
 		}
-		console.log(sParameter[0] + ":" + sParameter[1]);
+		if (sParameter[0].toLowerCase() === 'term' ) {
+			term = sParameter[1];
+		}
 	}
-	$.getJSON( "http://localhost:8080?path="+path, function( viewModel ) {
+	$.getJSON( "http://localhost:8080?path="+path+"&term="+term, function( viewModel ) {
 	  var entries = viewModel.entries;
 	  var lis = [];
 	  lis.push("<li class='breadcrumb-item' id='' style='cursor:pointer;'>Home</li>");
@@ -83,12 +86,19 @@ $( document ).ready(function() {
     $(document).on("click", "div.row" , function() {
     	var clickedBtnID = $(this).attr('id');
     	setGetParam('path',clickedBtnID);
+    	var searchInput = document.getElementById('search-input').value;
+    	setGetParam('term',searchInput);
+    	console.log("searchInput" + searchInput);
     	loadPage();
     });
     $(document).on("click", "li.breadcrumb-item" , function() {
     	var clickedBtnID = $(this).attr('id');
     	setGetParam('path',clickedBtnID);
     	loadPage();
+    });
+    $("#search-clear").click(function(event) {
+    	$("#search-input").val('');
+    	event.preventDefault();
     });
 });
 
