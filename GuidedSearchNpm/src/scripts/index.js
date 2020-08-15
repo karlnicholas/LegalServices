@@ -71,10 +71,10 @@ function getSearchTerm() {
 		|| !isEmpty(inExact)
 	) {
 		if ( !isEmpty(inAll) ) {
-			fterm = fterm + inAll + '+';
+			fterm = fterm + appendOp(inAll, '+');
 		}
 		if ( !isEmpty(inNot) ) {
-			fterm = fterm + inNot + '-';
+			fterm = fterm + appendOp(inNot, '-');
 		}
 		if ( !isEmpty(inAny) ) {
 			fterm = fterm + inAny + ' ';
@@ -87,6 +87,51 @@ function getSearchTerm() {
 		term = fterm;
 	}
 	return term;
+}
+function appendOp(val, op) {
+	val = val.trim();
+	if ( isEmpty(val)) return '';
+	var terms = val.trim().split(' ');
+	var sb = '';
+	var i;
+	for (i = 0; i < terms.length; ++i) {
+		sb = sb + op + terms[i] + ' ';
+	}
+	return sb;
+}
+function setAdvancedSearchFields(term) {
+	if ( term == null || isEmpty(term)) return;
+	var terms = term.split(' ');
+	var all = '';
+	var not = '';
+	var any = '';
+	var exact = '';
+	var ex = false;
+	var i;
+	for(i=0; i < terms.length; ++i) {
+		var t = terms[i];
+		if ( !ex && t.startsWith('+')) all=all.concat(t.substring(1) + " ");
+		else if ( !ex && t.startsWith('-')) not=not.concat(t.substring(1) + ' ' );
+		else if ( !ex && (t.startsWith('"') && t.trim().endsWith('"')) ) {
+			exact=exact.concat(t.substring(1, t.length()-1) + " ");
+		}
+		else if ( !ex && t.startsWith('"')) {
+			exact=exact.concat(t.substring(1) + ' ');
+			ex = true;
+		}
+		else if ( ex && !t.endsWith('"') ) {
+			exact=exact.concat(t) + ' ';
+		}
+		else if ( ex && t.endsWith('"')) {
+			exact=exact.concat(t.substring(0, t.length()-1)) + ' ';
+			ex = false;
+		}
+		else any = any.concat(t) + ' ';
+	}
+	document.getElementById('inAll').value = all.trim();
+	document.getElementById('inNot').value = not.trim();
+	document.getElementById('inAny').value = any.trim();
+	document.getElementById('inExact').value = exact.trim();
 }
 function clearSearchTerms() {
 	document.getElementById('search-input').value = '';
@@ -113,6 +158,7 @@ function loadPage() {
 		urlPath = urlPath + firstArg + "term=" + term;
 		firstArg = '&';
 	}
+	setAdvancedSearchFields(term);
 	$("#hidden-term").val(term);
 	$("#search-input").val(term);
 	$.getJSON( "http://localhost:8080" + urlPath, function( viewModel ) {
