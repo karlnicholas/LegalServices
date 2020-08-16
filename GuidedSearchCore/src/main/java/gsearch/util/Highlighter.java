@@ -1,6 +1,6 @@
 package gsearch.util;
 
-import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.tartarus.snowball.ext.PorterStemmer;
 
 public class Highlighter {

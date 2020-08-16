@@ -21,8 +21,6 @@ import reactor.core.publisher.Mono;
 @SpringBootApplication
 public class GuidedSearchController {
 //	private static final Logger logger = Logger.getLogger(GuidedSearchController.class.getName());		
-	private UrlBuilder urlBuilder = new UrlBuilder();
-
 	public static void main(String[] args) {
 		SpringApplication.run(GuidedSearchController.class, args);
 	}
@@ -46,7 +44,7 @@ public class GuidedSearchController {
 //		request.getRequestDispatcher("/WEB-INF/views/search.jsp").forward(request, response);
 		return viewModel;
 	}
-/*
+	/*
 	@PostMapping("/")
 	protected void doPost() throws ServletException, IOException {
 		String path = request.getParameter("path"); 

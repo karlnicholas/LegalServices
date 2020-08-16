@@ -1,12 +1,14 @@
 package gsearch;
 
 import java.io.IOException;
+import java.io.StringReader;
 import java.util.*;
 import java.util.logging.Logger;
 
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.en.EnglishAnalyzer;
+import org.apache.lucene.analysis.tokenattributes.OffsetAttribute;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.facet.DrillDownQuery;
 import org.apache.lucene.facet.FacetResult;
@@ -15,6 +17,7 @@ import org.apache.lucene.facet.FacetsCollector;
 import org.apache.lucene.facet.FacetsConfig;
 import org.apache.lucene.facet.LabelAndValue;
 import org.apache.lucene.facet.taxonomy.FastTaxonomyFacetCounts;
+import org.apache.lucene.index.Fields;
 import org.apache.lucene.index.IndexableField;
 import org.apache.lucene.queryparser.flexible.standard.StandardQueryParser;
 import org.apache.lucene.search.Collector;
@@ -29,6 +32,7 @@ import org.apache.lucene.search.highlight.InvalidTokenOffsetsException;
 import org.apache.lucene.search.highlight.QueryScorer;
 import org.apache.lucene.search.highlight.SimpleHTMLFormatter;
 import org.apache.lucene.search.highlight.TextFragment;
+import org.apache.lucene.search.highlight.TokenGroup;
 import org.apache.lucene.search.highlight.TokenSources;
 
 import gsearch.util.FacetUtils;
@@ -57,12 +61,13 @@ public class GSearch {
 	private StandardQueryParser parser;
 	private int maxTopDocs;
 	private StatutesService statutesService;
+	private gsearch.util.Highlighter myHighlighter;
 
 	// This is meant to be put into an application scope
 	// after instantiation .. 
 	public GSearch(StatutesService statutesService) throws IOException {
 //		statutesTitles = parserInterface.getStatutesTitles();
-		
+		myHighlighter = new gsearch.util.Highlighter();
 		this.statutesService = statutesService;
         facetsConfig = new FacetsConfig();
 	    facetsConfig.setHierarchical(FacetsConfig.DEFAULT_INDEX_FIELD_NAME, true);
@@ -115,19 +120,18 @@ public class GSearch {
 			});
 		} else {
 			monoViewModel = statutesService.getStatuteHierarchy(viewModel.getPath())
-			.map(rwr->processPathAndSubcodeList(viewModel, rwr))
-			.map(viewModelWork->{
-				if ( viewModelWork.getState() == STATES.TERMINATE || viewModelWork.isFragments() || !viewModelWork.getTerm().isEmpty() ) { 
-					try {
-						processTerm(viewModelWork);
-					} catch (IOException e) {
-						throw new IllegalStateException(e);
-					}
-				}
-				return viewModelWork;
-			});
+			.map(rwr->processPathAndSubcodeList(viewModel, rwr));
 		}
-
+		monoViewModel = monoViewModel.map(viewModelWork->{
+			if ( viewModelWork.getState() == STATES.TERMINATE || viewModelWork.isFragments() || !viewModelWork.getTerm().isEmpty() ) { 
+				try {
+					processTerm(viewModelWork);
+				} catch (IOException e) {
+					throw new IllegalStateException(e);
+				}
+			}
+			return viewModelWork;
+		});
 		// return the processing results
 
 		return monoViewModel;
@@ -370,15 +374,12 @@ public class GSearch {
 	            	);
 	            String docFacet = doc.getField("path").stringValue();
 
-	            String text = textField.stringValue();      
+	            String text = textField.stringValue();
 
 	            if ( viewModel.isFragments() ) { 
-	            	// getTokenStream(String field, Fields tvFields, String text, Analyzer analyzer, int maxStartOffset)
-	            	// Get a token stream from either un-inverting a term vector if possible, or by analyzing the text.
-	    	    	TokenStream tokenStream = TokenSources.getTokenStream("sectiontext", LuceneSingleton.getInstance().getIndexReader().getTermVectors(docId), text, analyzer,  highlighter.getMaxDocCharsToAnalyze() - 1);
 	            	TextFragment[] frag = null;
 	    			try {
-	    				frag = highlighter.getBestTextFragments(tokenStream, text, false, 1);
+	    				frag = highlighter.getBestTextFragments(null, text, false, 1);
 	    			} catch (InvalidTokenOffsetsException e) {
 	    				throw new RuntimeException( e );
 	    			}
@@ -396,6 +397,15 @@ public class GSearch {
 //	    	                  System.out.println((frag[j].toString()));
 	    				}
 	    			}
+	            } else if ( !viewModel.getTerm().isEmpty() ) {
+	            	sectionTextList.add( 
+            			new SectionText(
+							sectionNumber.getSectionNumber(), 
+							sectionNumber.getPosition(), 
+							myHighlighter.highlightText(text, viewModel.getTerm())
+	            			, docFacet
+	            		) 
+	            	);
 	            } else {
 	            	sectionTextList.add( 
             			new SectionText(

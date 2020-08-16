@@ -6,8 +6,13 @@ function getURLParameters() {
 }
 function displayReference(entry, items) {
 	if ( !entry.pathPart && !entry.sectionText ) {
-		items.push( "<div class='row' style='cursor:pointer' id='" + entry.fullFacet + "'>");
-		items.push( "<div class='col-sm-4'>" + entry.displayTitle + "</div>" );
+		items.push( "<div class='row reference' style='cursor:pointer' id='" + entry.fullFacet + "'>");
+		items.push( "<div class='col-sm-4'>" + entry.displayTitle);
+	    if ( entry.count > 0 ) {
+	    	items.push('<span class="badge badge-primary pull-right"/>'+entry.count+'</span></div>');	    	
+	    } else {
+	    	items.push("&nbsp;</div>");	    	
+	    }
 	    items.push( "<div class='col-sm-6'>" + entry.statutesBaseClass.title + "</div>" );
 	    if ( entry.statutesBaseClass.statuteRange.sNumber != null && entry.statutesBaseClass.statuteRange.eNumber != null) {
 	    	items.push( "<div class='col-sm-2'>§§ " + entry.statutesBaseClass.statuteRange.sNumber.sectionNumber + " - " + entry.statutesBaseClass.statuteRange.eNumber.sectionNumber + "</div>" );
@@ -38,6 +43,7 @@ function recurse(entries, index, rows) {
 	    }
 	}
 }
+
 function breadcrumbs(entries, lis) {
 	if ( entries != null && entries.length == 1) {
 		var entry = entries[0];
@@ -113,7 +119,7 @@ function setAdvancedSearchFields(term) {
 		if ( !ex && t.startsWith('+')) all=all.concat(t.substring(1) + " ");
 		else if ( !ex && t.startsWith('-')) not=not.concat(t.substring(1) + ' ' );
 		else if ( !ex && (t.startsWith('"') && t.trim().endsWith('"')) ) {
-			exact=exact.concat(t.substring(1, t.length()-1) + " ");
+			exact=exact.concat(t.substring(1, t.length-1) + " ");
 		}
 		else if ( !ex && t.startsWith('"')) {
 			exact=exact.concat(t.substring(1) + ' ');
@@ -123,7 +129,7 @@ function setAdvancedSearchFields(term) {
 			exact=exact.concat(t) + ' ';
 		}
 		else if ( ex && t.endsWith('"')) {
-			exact=exact.concat(t.substring(0, t.length()-1)) + ' ';
+			exact=exact.concat(t.substring(0, t.length-1)) + ' ';
 			ex = false;
 		}
 		else any = any.concat(t) + ' ';
@@ -166,6 +172,9 @@ function loadPage() {
 	  var lis = [];
 	  lis.push("<li class='breadcrumb-item' id='' style='cursor:pointer;'>Home</li>");
 	  breadcrumbs(entries, lis);
+	  if ( !isEmpty(term)) {
+		  lis.push('<li><span class="badge badge-primary pull-right">'+viewModel.totalCount+'</span></li>');
+	  }
 	  $('#breadcrumbs').html(lis.join( "" ));
 	  var rows = [];
 	  recurse(entries, 0, rows);
@@ -181,17 +190,17 @@ function setGetParam(key,value) {
   }
 }
 function deleteGetParam(key) {
-	  if (history.pushState) {
-	    var params = new URLSearchParams(window.location.search);
-	    params.delete(key);
-	    var newUrl = window.location.protocol + "//" + window.location.host + window.location.pathname + '?' + params.toString();
-	    window.history.pushState({path:newUrl},'',newUrl);
-	  }
-	}
+  if (history.pushState) {
+    var params = new URLSearchParams(window.location.search);
+    params.delete(key);
+    var newUrl = window.location.protocol + "//" + window.location.host + window.location.pathname + '?' + params.toString();
+    window.history.pushState({path:newUrl},'',newUrl);
+  }
+}
 
 $( document ).ready(function() {
 	loadPage();
-    $(document).on("click", "div.row" , function() {
+    $(document).on("click", "div.reference" , function() {
     	var clickedBtnID = $(this).attr('id');
     	setGetParam('path',clickedBtnID);
     	loadPage();
