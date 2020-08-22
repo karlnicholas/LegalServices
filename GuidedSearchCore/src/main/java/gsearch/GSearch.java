@@ -377,9 +377,12 @@ public class GSearch {
 	            String text = textField.stringValue();
 
 	            if ( viewModel.isFragments() ) { 
+	            	// getTokenStream(String field, Fields tvFields, String text, Analyzer analyzer, int maxStartOffset)
+	            	// Get a token stream from either un-inverting a term vector if possible, or by analyzing the text.
+	    	    	TokenStream tokenStream = TokenSources.getTokenStream("sectiontext", LuceneSingleton.getInstance().getIndexReader().getTermVectors(docId), text, analyzer,  highlighter.getMaxDocCharsToAnalyze() - 1);
 	            	TextFragment[] frag = null;
 	    			try {
-	    				frag = highlighter.getBestTextFragments(null, text, false, 1);
+	    				frag = highlighter.getBestTextFragments(tokenStream, text, false, 1);
 	    			} catch (InvalidTokenOffsetsException e) {
 	    				throw new RuntimeException( e );
 	    			}

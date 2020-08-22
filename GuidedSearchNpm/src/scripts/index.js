@@ -59,14 +59,14 @@ function isEmpty(value) {
   return typeof value == 'string' && !value.trim() || typeof value == 'undefined' || value === null;
 }
 function getSearchTerm() {
-	var term = document.getElementById('search-input').value;
-	var hiddenTerm = document.getElementById('hidden-term').value;
+	var term = $('#search-input').val();
+	var hiddenTerm = $('#hidden-term').val();
 
 	// otherwise build the term
-	var inAny = document.getElementById('inAny').value;
-	var inAll = document.getElementById('inAll').value;
-	var inNot = document.getElementById('inNot').value;
-	var inExact = document.getElementById('inExact').value;
+	var inAny = $('#inAny').val();
+	var inAll = $('#inAll').val();
+	var inNot = $('#inNot').val();
+	var inExact = $('#inExact').val();
 
 	// navbar clear term and fragments
 	var fterm = '';
@@ -134,32 +134,34 @@ function setAdvancedSearchFields(term) {
 		}
 		else any = any.concat(t) + ' ';
 	}
-	document.getElementById('inAll').value = all.trim();
-	document.getElementById('inNot').value = not.trim();
-	document.getElementById('inAny').value = any.trim();
-	document.getElementById('inExact').value = exact.trim();
+	$('#inAll').val(all.trim());
+	$('#inNot').val(not.trim());
+	$('#inAny').val(any.trim());
+	$('#inExact').val(exact.trim());
 }
 function clearSearchTerms() {
-	document.getElementById('search-input').value = '';
-	document.getElementById('inAny').value = '';
-	document.getElementById('inAll').value = '';
-	document.getElementById('inNot').value = '';
-	document.getElementById('inExact').value = '';
+	$('#search-input').val('');
+	$('#inAny').val('');
+	$('#inAll').val('');
+	$('#inNot').val('');
+	$('#inExact').val('');
 }
 function loadPage() {
 	var sURLVariables = getURLParameters();
 	var urlPath = '';
 	var firstArg = '?';
+	$("#hidden-path").val();
 	for (var i = 0; i < sURLVariables.length; i++) {
 		var sParameter = sURLVariables[i].split('=');
 		if (sParameter[0].toLowerCase() === 'path' ) {
 			urlPath = urlPath + firstArg + "path=" + sParameter[1];
+			$("#hidden-path").val(sParameter[1]);
 			firstArg = '&';
+			break;
 		}
 	}
 	var term = getSearchTerm();
 	if ( !isEmpty(term)) {
-		console.log("term4: " + term);
 		setGetParam("term", term);
 		urlPath = urlPath + firstArg + "term=" + term;
 		firstArg = '&';
@@ -167,6 +169,15 @@ function loadPage() {
 	setAdvancedSearchFields(term);
 	$("#hidden-term").val(term);
 	$("#search-input").val(term);
+	var hiddenFrag = $("#hidden-frag").val();
+	if ( hiddenFrag === 'true') {
+		$("#search-frag").addClass("btn-primary").removeClass("btn-light");
+		setGetParam("frag", 'true');
+		urlPath = urlPath + firstArg + "frag=true";
+		firstArg = '&';
+	} else {
+		$("#search-frag").addClass("btn-light").removeClass("btn-primary");
+	}
 	$.getJSON( "http://localhost:8080" + urlPath, function( viewModel ) {
 	  var entries = viewModel.entries;
 	  var lis = [];
@@ -180,6 +191,17 @@ function loadPage() {
 	  recurse(entries, 0, rows);
 	  $('#cand').html(rows.join( "" ));
 	});
+}
+function toggleFrag() {
+	var hiddenTerm = $("#hidden-term").val();
+	var hiddenPath = $("#hidden-path").val();
+	console.log("hiddenPath="+hiddenPath);
+	var hiddenFrag = $("#hidden-frag").val();
+	if ( isEmpty(hiddenTerm) || isEmpty(hiddenPath) || hiddenFrag === 'true') {
+		$("#hidden-frag").val('false');
+	} else {
+		$("#hidden-frag").val('true');
+	}
 }
 function setGetParam(key,value) {
   if (history.pushState) {
@@ -214,6 +236,11 @@ $( document ).ready(function() {
     	event.preventDefault();
     	clearSearchTerms();
     	deleteGetParam("term");
+    	loadPage();
+    });
+    $("#search-frag").click(function(event) {
+    	event.preventDefault();
+    	toggleFrag();
     	loadPage();
     });
     $("#search-submit").click(function(event) {
