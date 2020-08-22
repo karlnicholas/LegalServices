@@ -6,8 +6,16 @@ function getURLParameters() {
 }
 function displayReference(entry, items) {
 	if ( !entry.pathPart && !entry.sectionText ) {
+		var hiddenFrag = $("#hidden-frag").val();
 		items.push( "<div class='row reference' style='cursor:pointer' id='" + entry.fullFacet + "'>");
-		items.push( "<div class='col-sm-4'>" + entry.displayTitle);
+		console.log("hf: " + hiddenFrag + ": entry.entries.length" + entry.entries.length);
+		items.push( "<div class='col-sm-1'>");
+		if ( entry.entries.length > 0 && hiddenFrag === 'true' ) {
+			items.push( '<svg class="bi bi-chevron-right" width="20" height="20" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M6.646 3.646a.5.5 0 01.708 0l6 6a.5.5 0 010 .708l-6 6a.5.5 0 01-.708-.708L12.293 10 6.646 4.354a.5.5 0 010-.708z"/></svg></div>' );
+		} else {
+	    	items.push("&nbsp;</div>");	    	
+		}
+		items.push( "<div class='col-sm-3'>" + entry.displayTitle);
 	    if ( entry.count > 0 ) {
 	    	items.push('<span class="badge badge-primary pull-right"/>'+entry.count+'</span></div>');	    	
 	    } else {
@@ -23,7 +31,6 @@ function displayReference(entry, items) {
 	    } else if ( entry.statutesBaseClass.statuteRange.sNumber == null && entry.statutesBaseClass.statuteRange.eNumber == null) {
 	    	items.push( "<div class='col-sm-2'></div>" );
 	    }
-
 		items.push( "</div>" );
 	}
 }
@@ -169,6 +176,7 @@ function loadPage() {
 	setAdvancedSearchFields(term);
 	$("#hidden-term").val(term);
 	$("#search-input").val(term);
+	checkFrag();
 	var hiddenFrag = $("#hidden-frag").val();
 	if ( hiddenFrag === 'true') {
 		$("#search-frag").addClass("btn-primary").removeClass("btn-light");
@@ -192,13 +200,19 @@ function loadPage() {
 	  $('#cand').html(rows.join( "" ));
 	});
 }
+function checkFrag() {
+	var hiddenTerm = $("#hidden-term").val();
+	var hiddenPath = $("#hidden-path").val();
+	if ( isEmpty(hiddenTerm) || isEmpty(hiddenPath) ) {
+		$("#hidden-frag").val('');
+	}
+}
 function toggleFrag() {
 	var hiddenTerm = $("#hidden-term").val();
 	var hiddenPath = $("#hidden-path").val();
-	console.log("hiddenPath="+hiddenPath);
 	var hiddenFrag = $("#hidden-frag").val();
 	if ( isEmpty(hiddenTerm) || isEmpty(hiddenPath) || hiddenFrag === 'true') {
-		$("#hidden-frag").val('false');
+		$("#hidden-frag").val('');
 	} else {
 		$("#hidden-frag").val('true');
 	}
