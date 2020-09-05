@@ -1,5 +1,4 @@
 import '../styles/index.scss';
-console.log('webpack starterkit');
 function getURLParameters() {
 	var sPageURL = window.location.search.substring(1);
 	return sPageURL.split('&');
@@ -280,4 +279,3 @@ $( document ).ready(function() {
     	loadPage();
     });
 });
-
