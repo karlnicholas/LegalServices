@@ -6,32 +6,39 @@ function getURLParameters() {
 }
 function displayReference(entry, items) {
 	if ( !entry.pathPart && !entry.sectionText ) {
+		var anyval = items.length;
 		var hiddenFrag = $("#hidden-frag").val();
-		items.push( "<div class='row reference' style='cursor:pointer' id='" + entry.fullFacet + "'>");
-		console.log("hf: " + hiddenFrag + ": entry.entries.length" + entry.entries.length);
-		items.push( "<div class='col-sm-1'>");
+		items.push( "<div class='row' style='cursor:pointer' id='" + entry.fullFacet + "'>");
+		items.push( "<div class='col-sm-1' style='cursor:pointer'>");
 		if ( entry.entries.length > 0 && hiddenFrag === 'true' ) {
-			items.push( '<svg class="bi bi-chevron-right" width="20" height="20" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M6.646 3.646a.5.5 0 01.708 0l6 6a.5.5 0 010 .708l-6 6a.5.5 0 01-.708-.708L12.293 10 6.646 4.354a.5.5 0 010-.708z"/></svg></div>' );
+			items.push( "<span class='icon' data-toggle='collapse' data-target='#collapse" + anyval + "'><svg class='bi bi-chevron-right' width='20' height='20' viewBox='0 0 20 20' fill='currentColor' xmlns='http://www.w3.org/2000/svg'><path fill-rule='evenodd' d='M6.646 3.646a.5.5 0 01.708 0l6 6a.5.5 0 010 .708l-6 6a.5.5 0 01-.708-.708L12.293 10 6.646 4.354a.5.5 0 010-.708z'/></svg></span></div>" );
 		} else {
 	    	items.push("&nbsp;</div>");	    	
 		}
-		items.push( "<div class='col-sm-3'>" + entry.displayTitle);
+		items.push( "<div class='reference col-sm-3' id='" + entry.fullFacet + "'>" + entry.displayTitle);
 	    if ( entry.count > 0 ) {
 	    	items.push('<span class="badge badge-primary pull-right"/>'+entry.count+'</span></div>');	    	
 	    } else {
 	    	items.push("&nbsp;</div>");	    	
 	    }
-	    items.push( "<div class='col-sm-6'>" + entry.statutesBaseClass.title + "</div>" );
+	    items.push( "<div class='reference col-sm-6' id='" + entry.fullFacet + "'>" + entry.statutesBaseClass.title + "</div>" );
 	    if ( entry.statutesBaseClass.statuteRange.sNumber != null && entry.statutesBaseClass.statuteRange.eNumber != null) {
-	    	items.push( "<div class='col-sm-2'>§§ " + entry.statutesBaseClass.statuteRange.sNumber.sectionNumber + " - " + entry.statutesBaseClass.statuteRange.eNumber.sectionNumber + "</div>" );
+	    	items.push( "<div class='reference col-sm-2' id='" + entry.fullFacet + "'>§§ " + entry.statutesBaseClass.statuteRange.sNumber.sectionNumber + " - " + entry.statutesBaseClass.statuteRange.eNumber.sectionNumber + "</div>" );
 	    } else if ( entry.statutesBaseClass.statuteRange.sNumber != null && entry.statutesBaseClass.statuteRange.eNumber == null) {
-	    	items.push( "<div class='col-sm-2'>§§ " + entry.statutesBaseClass.statuteRange.sNumber.sectionNumber + "</div>" );
+	    	items.push( "<div class='reference col-sm-2' id='" + entry.fullFacet + "'>§§ " + entry.statutesBaseClass.statuteRange.sNumber.sectionNumber + "</div>" );
 	    } else if ( entry.statutesBaseClass.statuteRange.sNumber == null && entry.statutesBaseClass.statuteRange.eNumber != null) {
-	    	items.push( "<div class='col-sm-2'>§§ " + entry.statutesBaseClass.statuteRange.eNumber.sectionNumber + "</div>" );
+	    	items.push( "<div class='reference col-sm-2' id='" + entry.fullFacet + "'>§§ " + entry.statutesBaseClass.statuteRange.eNumber.sectionNumber + "</div>" );
 	    } else if ( entry.statutesBaseClass.statuteRange.sNumber == null && entry.statutesBaseClass.statuteRange.eNumber == null) {
-	    	items.push( "<div class='col-sm-2'></div>" );
+	    	items.push( "<div class='reference col-sm-2' id='" + entry.fullFacet + "'></div>" );
 	    }
 		items.push( "</div>" );
+		if ( entry.entries.length != 0 ) {
+			items.push( "<div class='collapse' id='collapse" + anyval + "'>");
+			for(var i=0; i < entry.entries.length; ++i) {
+				items.push( "<p>"+entry.entries[i].text+"</p>");
+			}
+			items.push( "</div>" );
+		}
 	}
 }
 function displayText(entry, items) {
