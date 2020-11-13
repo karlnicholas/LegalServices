@@ -7,6 +7,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import statutes.SectionNumber;
 import statutes.StatutesBaseClass;
@@ -15,7 +16,6 @@ import statutes.StatutesNode;
 import statutes.StatutesRoot;
 import statutes.StatutesTitles;
 import statutes.api.IStatutesApi;
-import statutes.service.dto.StatuteHierarchy;
 import statutesca.code.FacetUtils;
 
 /**
@@ -298,8 +298,16 @@ public class CAStatutesApiImpl implements IStatutesApi {
 	}
 
 	@Override
-	public ArrayList<StatutesRoot> getStatutes() {
-		return statutes;
+	public List<StatutesRoot> getStatutes() {
+		return statutes.stream()
+		.map(statutesRoot-> new StatutesRoot(
+				statutesRoot.getLawCode(), 
+				statutesRoot.getTitle(), 
+				statutesRoot.getShortTitle(), 
+				statutesRoot.getFullFacet(),
+				statutesRoot.getStatuteRange()
+			))
+		.collect(Collectors.toList());
 	}
 /*	
 	public static void main(String[] args) throws Exception {
@@ -320,6 +328,7 @@ public class CAStatutesApiImpl implements IStatutesApi {
 		return mapStatutesToTitles;
 	}
 
+/*
 	@Override
 	public StatuteHierarchy getStatutesHierarchy(String fullFacet) {
 		StatutesTitles[] statutesTitles = getStatutesTitles();
@@ -418,6 +427,108 @@ public class CAStatutesApiImpl implements IStatutesApi {
 	    }
 	    return rwr;
 	}
+*/
+
+	@Override
+	public StatutesRoot getStatutesHierarchy(String fullFacet) {
+		StatutesTitles[] statutesTitles = getStatutesTitles();
+		String lawCode = FacetUtils.findLawCodeFromFacet(statutesTitles, fullFacet);
+		
+		StatutesRoot statutesRoot = findReferenceByLawCode(lawCode);
+		StatutesRoot returnStatutesRoot = new StatutesRoot(
+				statutesRoot.getLawCode(), 
+				statutesRoot.getTitle(), 
+				statutesRoot.getShortTitle(), 
+				statutesRoot.getFullFacet(),
+				statutesRoot.getStatuteRange()
+			); 
+		StatutesBaseClass currentBaseClass = returnStatutesRoot;
+		List<StatutesBaseClass> subPaths = statutesRoot.getReferences();
+
+		// ok .. now we are building parent paths ..
+		StringTokenizer tokenizer = new StringTokenizer(fullFacet, String.valueOf(FacetUtils.DELIMITER) );
+		// burn the first token
+		String token = tokenizer.nextToken();
+		while ( tokenizer.hasMoreTokens() ) {
+			token = tokenizer.nextToken();
+			for (StatutesBaseClass baseClass: subPaths ) {
+				String subPart = FacetUtils.getBaseClassFacet(baseClass);
+				if ( subPart.equals(token) ) {
+
+					// check terminating
+					StatutesLeaf cLeaf = baseClass.getStatutesLeaf();
+					if ( cLeaf == null ) {
+						StatutesNode entryReference = new StatutesNode(
+							currentBaseClass, 
+							baseClass.getFullFacet(), 
+							baseClass.getPart(), 
+							baseClass.getPartNumber(), 
+							baseClass.getTitle(), 
+							baseClass.getDepth(), 
+							baseClass.getStatuteRange()
+						);
+						subPaths = baseClass.getReferences();
+						entryReference.setParent(currentBaseClass);
+						currentBaseClass.addReference(entryReference);
+						currentBaseClass = entryReference; 
+
+					} else {
+						StatutesLeaf entryReference = new StatutesLeaf(
+							currentBaseClass,
+							cLeaf.getFullFacet(), 
+							cLeaf.getPart(), 
+							cLeaf.getPartNumber(), 
+							cLeaf.getTitle(), 
+							cLeaf.getDepth(), 
+							cLeaf.getStatuteRange() 
+						);
+						entryReference.getSectionNumbers().addAll(cLeaf.getSectionNumbers());
+						subPaths = baseClass.getReferences();
+						entryReference.setParent(currentBaseClass);
+						currentBaseClass.addReference(entryReference);
+						currentBaseClass = entryReference; 
+					}
+					break;	// out of for loop
+				}
+			}
+		}
+		currentBaseClass.setDisplayFlag(true);
+	    if ( subPaths != null ) {
+			for (StatutesBaseClass baseClass: subPaths ) {
+				// check terminating
+				StatutesLeaf cLeaf = baseClass.getStatutesLeaf();
+				if ( cLeaf == null ) {
+					StatutesNode entryReference = new StatutesNode(
+						currentBaseClass, 
+						baseClass.getFullFacet(), 
+						baseClass.getPart(), 
+						baseClass.getPartNumber(), 
+						baseClass.getTitle(), 
+						baseClass.getDepth(), 
+						baseClass.getStatuteRange()
+					);
+					entryReference.setParent(currentBaseClass);
+					currentBaseClass.addReference(entryReference);
+
+				} else {
+					StatutesLeaf entryReference = new StatutesLeaf(
+						currentBaseClass,
+						cLeaf.getFullFacet(), 
+						cLeaf.getPart(), 
+						cLeaf.getPartNumber(), 
+						cLeaf.getTitle(), 
+						cLeaf.getDepth(), 
+						cLeaf.getStatuteRange() 
+					);
+					entryReference.setParent(currentBaseClass);
+					currentBaseClass.addReference(entryReference);
+				}
+			}
+		}
+
+	    return returnStatutesRoot;
+	}
+
 
 	@Override
 	public StatutesRoot findReferenceByLawCode(String lawCode) {

@@ -44,7 +44,6 @@ import statutes.SectionNumberPosition;
 import statutes.StatutesBaseClass;
 import statutes.StatutesRoot;
 import statutes.service.StatutesService;
-import statutes.service.dto.StatuteHierarchy;
 
 /*
  * Changes to match spec and make thread safe .. 
@@ -120,7 +119,7 @@ public class GSearch {
 			});
 		} else {
 			monoViewModel = statutesService.getStatuteHierarchy(viewModel.getPath())
-			.map(rwr->processPathAndSubcodeList(viewModel, rwr));
+			.map(statutesRoot->processPathAndSubcodeList(viewModel, statutesRoot));
 		}
 		monoViewModel = monoViewModel.map(viewModelWork->{
 			if ( viewModelWork.getState() == STATES.TERMINATE || viewModelWork.isFragments() || !viewModelWork.getTerm().isEmpty() ) { 
@@ -137,23 +136,19 @@ public class GSearch {
 		return monoViewModel;
 	}
 
-	private ViewModel processPathAndSubcodeList( ViewModel viewModel, StatuteHierarchy rwr ) {
+	private ViewModel processPathAndSubcodeList( ViewModel viewModel, StatutesRoot statutesRoot ) {
 		// at this point, only exhange.path is filled out ..
 //		StatuteHierarchy rwr = statutesService.getStatuteHierarchy(viewModel.getPath());
-		List<StatutesBaseClass> subPaths = rwr.getStatutesPath();
-
-		StatutesRoot statutesRoot = (StatutesRoot)subPaths.remove(0);
 //			String facetHead = statutesRoot.getFacetHead();
 //			viewModel.setFacetHead(facetHead);
+		List<StatutesBaseClass> subPaths = statutesRoot.getReferences();
 		EntryReference entryReference = new StatuteEntry(statutesRoot);
 		viewModel.getEntries().add( entryReference );
 		List<EntryReference> entries = entryReference.getEntries();
-		StatutesBaseClass parent = statutesRoot;
+		StatutesBaseClass currentBaseClass = statutesRoot;
 		
 		for (StatutesBaseClass baseClass: subPaths ) {
 			// check terminating
-			baseClass.setParent(parent);
-			parent = baseClass; 
 			entryReference = new SubcodeEntry(baseClass);
 			entries.add(entryReference);
 			entries = entryReference.getEntries();
@@ -162,14 +157,11 @@ public class GSearch {
 			if ( baseClass.getStatutesLeaf() != null ) {
 				viewModel.setState(STATES.TERMINATE);
 			}
+			// end of facet path
+			if ( baseClass.isDisplayFlag() ) {
+				break;
+			}
 		}
-    	for ( StatutesBaseClass reference: rwr.getFinalReferences() ) {
-    		reference.setParent(parent);
-    		parent.addReference(reference);
-    		SubcodeEntry subcode = new SubcodeEntry( reference);
-    		subcode.setPathPart(false);
-    		entries.add( subcode );
-	    }
 		return viewModel;
 	}
 //	StatutesRoot statutesRoot = FacetUtils.findStatuteFromFacet(statutesWS, statutesTitles, viewModel.getPath());

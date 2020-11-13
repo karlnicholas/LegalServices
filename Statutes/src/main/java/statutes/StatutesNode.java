@@ -28,10 +28,12 @@ public class StatutesNode implements StatutesBaseClass, Serializable {
     private int depth;
     // and pointers to under Chapters, Parts, Articles, etc
     private ArrayList<StatutesBaseClass> references;
+    private transient boolean displayFlag;
         
     public StatutesNode() {
     	references = new ArrayList<StatutesBaseClass>();
     	statuteRange = new StatuteRange();
+    	displayFlag = false;
     }
     public StatutesNode(StatutesBaseClass parent, String fullFacet, String part, String partNumber, String title, int depth) {
     	this(parent, fullFacet, part, partNumber, title, depth, new StatuteRange());
@@ -77,7 +79,7 @@ public class StatutesNode implements StatutesBaseClass, Serializable {
     	references.add(reference);
     	mergeStatuteRange(reference.getStatuteRange());
     }
-	@JsonIgnore
+//	@JsonIgnore
     public ArrayList<StatutesBaseClass> getReferences() {
     	return references;
     }
@@ -256,5 +258,11 @@ public class StatutesNode implements StatutesBaseClass, Serializable {
 	public void setLawCode(String lawCode) {
 		// TODO Auto-generated method stub
 		
+	}
+	public boolean isDisplayFlag() {
+		return displayFlag;
+	}
+	public void setDisplayFlag(boolean displayFlag) {
+		this.displayFlag = displayFlag;
 	}
 }

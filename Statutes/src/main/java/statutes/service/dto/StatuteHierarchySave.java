@@ -9,7 +9,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import statutes.StatutesBaseClass;
 
 @JsonPropertyOrder({ "statutesPath", "finalReferences" })
-public class StatuteHierarchy {
+public class StatuteHierarchySave {
 
 	@JsonInclude
     protected List<StatutesBaseClass> statutesPath;

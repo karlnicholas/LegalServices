@@ -32,7 +32,6 @@ import opca.parser.ScrapedOpinionDocument;
 import opca.parser.ParsedOpinionCitationSet;
 import statutes.StatutesTitles;
 import statutes.service.StatutesService;
-import statutes.service.dto.StatutesTitlesArray;
 
 /**
  * 
@@ -133,90 +132,94 @@ public class CAOnlineUpdates {
 		logger.info("There are " + slipOpinions.size() + " SlipOpinions to process");
 		List<ScrapedOpinionDocument> scrapedOpinionDocuments = opinionScraper.scrapeOpinionFiles(slipOpinions);
 
-		StatutesTitles[] codeTitles = new StatutesTitles[0]; //parserInterface.getStatutesTitles();
+//		StatutesTitles[] codeTitles = new StatutesTitles[0]; //parserInterface.getStatutesTitles();
 
-		StatutesTitlesArray statutesArray = statutesService.getStatutesTitles();
-		codeTitles = statutesArray.getItem().toArray(codeTitles);
+//		StatutesTitlesArray statutesArray = statutesService.getStatutesTitles();
+//		Flux<StatutesTitles> statutesArray = statutesService.getStatutesTitles();
+		statutesService.getStatutesTitles().collectList().doOnNext(listStatutesTitles->{
+//			codeTitles = statutesArray.getItem().toArray(codeTitles);
 
-		OpinionDocumentParser opinionDocumentParser = new OpinionDocumentParser(codeTitles);
-		
-		// this is a holds things in memory
-		CitationStore citationStore = CitationStore.getInstance();
-		citationStore.clearDB();
+			OpinionDocumentParser opinionDocumentParser = new OpinionDocumentParser(listStatutesTitles.toArray(new StatutesTitles[listStatutesTitles.size()]));
+			
+			// this is a holds things in memory
+			CitationStore citationStore = CitationStore.getInstance();
+			citationStore.clearDB();
 
-		// all memory
-		for (ScrapedOpinionDocument scrapedOpinionDocument: scrapedOpinionDocuments ) {
-			ParsedOpinionCitationSet parsedOpinionResults = opinionDocumentParser.parseOpinionDocument(scrapedOpinionDocument, scrapedOpinionDocument.getOpinionBase(), citationStore );
-			// maybe someday deal with court issued modifications
-    		opinionDocumentParser.parseSlipOpinionDetails((SlipOpinion) scrapedOpinionDocument.getOpinionBase(), scrapedOpinionDocument);
-    		OpinionBase opinionBase = scrapedOpinionDocument.getOpinionBase();
-    		citationStore.mergeParsedDocumentCitations(scrapedOpinionDocument.getOpinionBase(), parsedOpinionResults);
-    		if ( logger.getLevel() == Level.FINE ) {
-    			logger.fine("scrapedOpinionDocument:= " 
-    				+ scrapedOpinionDocument.getOpinionBase().getTitle() 
-    				+ "\n	:OpinionKey= " + opinionBase.getOpinionKey()
-    				+ "\n	:CountReferringOpinions= " + opinionBase.getCountReferringOpinions()
-    				+ "\n	:ReferringOpinions.size()= " + (opinionBase.getReferringOpinions()== null?"xx":opinionBase.getReferringOpinions().size())
-    				+ "\n	:OpinionCitations().size()= " + (opinionBase.getOpinionCitations()== null?"xx":opinionBase.getOpinionCitations().size())
-    				+ "\n	:Paragraphs().size()= " + (scrapedOpinionDocument.getParagraphs()== null?"xx":scrapedOpinionDocument.getParagraphs().size())
-    				+ "\n	:Footnotes().size()= " + (scrapedOpinionDocument.getFootnotes()== null?"xx":scrapedOpinionDocument.getFootnotes().size())
-    				+ "\n	:OpinionTable= " + parsedOpinionResults.getOpinionTable().size()
-    				+ "\n	:StatuteTable= " + parsedOpinionResults.getStatuteTable().size()
-				);
-    		}
-		}
-
-		List<OpinionBase> persistOpinions = new ArrayList<>();
-		List<OpinionBase> mergeOpinions = new ArrayList<>();
-		List<StatuteCitation> mergeStatutes = new ArrayList<>();	  	
-		List<StatuteCitation> persistStatutes = new ArrayList<>();
-
-		processOpinions(citationStore, mergeOpinions, persistOpinions);
-	  	processStatutes(citationStore, mergeStatutes, persistStatutes);
-				
-		List<OpinionStatuteCitation> persistOpinionStatuteCitations = new ArrayList<>();
-		for( SlipOpinion slipOpinion: slipOpinions ) {
-			if ( slipOpinion.getStatuteCitations() != null ) {
-	    		for ( OpinionStatuteCitation statuteCitation: slipOpinion.getStatuteCitations() ) {
-					persistOpinionStatuteCitations.add(statuteCitation);
+			// all memory
+			for (ScrapedOpinionDocument scrapedOpinionDocument: scrapedOpinionDocuments ) {
+				ParsedOpinionCitationSet parsedOpinionResults = opinionDocumentParser.parseOpinionDocument(scrapedOpinionDocument, scrapedOpinionDocument.getOpinionBase(), citationStore );
+				// maybe someday deal with court issued modifications
+	    		opinionDocumentParser.parseSlipOpinionDetails((SlipOpinion) scrapedOpinionDocument.getOpinionBase(), scrapedOpinionDocument);
+	    		OpinionBase opinionBase = scrapedOpinionDocument.getOpinionBase();
+	    		citationStore.mergeParsedDocumentCitations(scrapedOpinionDocument.getOpinionBase(), parsedOpinionResults);
+	    		if ( logger.isTraceEnabled() ) {
+	    			logger.trace("scrapedOpinionDocument:= " 
+	    				+ scrapedOpinionDocument.getOpinionBase().getTitle() 
+	    				+ "\n	:OpinionKey= " + opinionBase.getOpinionKey()
+	    				+ "\n	:CountReferringOpinions= " + opinionBase.getCountReferringOpinions()
+	    				+ "\n	:ReferringOpinions.size()= " + (opinionBase.getReferringOpinions()== null?"xx":opinionBase.getReferringOpinions().size())
+	    				+ "\n	:OpinionCitations().size()= " + (opinionBase.getOpinionCitations()== null?"xx":opinionBase.getOpinionCitations().size())
+	    				+ "\n	:Paragraphs().size()= " + (scrapedOpinionDocument.getParagraphs()== null?"xx":scrapedOpinionDocument.getParagraphs().size())
+	    				+ "\n	:Footnotes().size()= " + (scrapedOpinionDocument.getFootnotes()== null?"xx":scrapedOpinionDocument.getFootnotes().size())
+	    				+ "\n	:OpinionTable= " + parsedOpinionResults.getOpinionTable().size()
+	    				+ "\n	:StatuteTable= " + parsedOpinionResults.getStatuteTable().size()
+					);
 	    		}
 			}
-			em.persist(slipOpinion);
-			if ( slipOpinion.getSlipProperties() == null ) {
-				System.out.println("SlipProperties == null " );
+
+			List<OpinionBase> persistOpinions = new ArrayList<>();
+			List<OpinionBase> mergeOpinions = new ArrayList<>();
+			List<StatuteCitation> mergeStatutes = new ArrayList<>();	  	
+			List<StatuteCitation> persistStatutes = new ArrayList<>();
+
+			processOpinions(citationStore, mergeOpinions, persistOpinions);
+		  	processStatutes(citationStore, mergeStatutes, persistStatutes);
+					
+			List<OpinionStatuteCitation> persistOpinionStatuteCitations = new ArrayList<>();
+			for( SlipOpinion slipOpinion: slipOpinions ) {
+				if ( slipOpinion.getStatuteCitations() != null ) {
+		    		for ( OpinionStatuteCitation statuteCitation: slipOpinion.getStatuteCitations() ) {
+						persistOpinionStatuteCitations.add(statuteCitation);
+		    		}
+				}
+				em.persist(slipOpinion);
+				if ( slipOpinion.getSlipProperties() == null ) {
+					System.out.println("SlipProperties == null " );
+				}
+				em.persist(slipOpinion.getSlipProperties());
 			}
-			em.persist(slipOpinion.getSlipProperties());
-		}
-		Date startTime = new Date();
-    	for(OpinionBase opinion: persistOpinions ) {
-			em.persist(opinion);
-    	}
-		logger.info("Persisted "+persistOpinions.size()+" opinions in "+((new Date().getTime()-startTime.getTime())/1000) + " seconds");
+			Date startTime = new Date();
+	    	for(OpinionBase opinion: persistOpinions ) {
+				em.persist(opinion);
+	    	}
+			logger.info("Persisted "+persistOpinions.size()+" opinions in "+((new Date().getTime()-startTime.getTime())/1000) + " seconds");
 
-		startTime = new Date();
+			startTime = new Date();
 
-    	for(OpinionBase opinion: mergeOpinions ) {
-			em.merge(opinion);
-    	}
-		logger.info("Merged "+mergeOpinions.size()+" opinions in "+((new Date().getTime()-startTime.getTime())/1000) + " seconds");
+	    	for(OpinionBase opinion: mergeOpinions ) {
+				em.merge(opinion);
+	    	}
+			logger.info("Merged "+mergeOpinions.size()+" opinions in "+((new Date().getTime()-startTime.getTime())/1000) + " seconds");
 
-		startTime = new Date();
-		for(OpinionStatuteCitation opinionStatuteCitation: persistOpinionStatuteCitations) {
-			em.persist(opinionStatuteCitation);
-    	}
-		logger.info("Persisted "+ persistOpinionStatuteCitations.size()+" opinionStatuteCitation in "+((new Date().getTime()-startTime.getTime())/1000) + " seconds");
+			startTime = new Date();
+			for(OpinionStatuteCitation opinionStatuteCitation: persistOpinionStatuteCitations) {
+				em.persist(opinionStatuteCitation);
+	    	}
+			logger.info("Persisted "+ persistOpinionStatuteCitations.size()+" opinionStatuteCitation in "+((new Date().getTime()-startTime.getTime())/1000) + " seconds");
 
-		startTime = new Date();
-    	for(StatuteCitation statute: persistStatutes ) {
-			em.persist(statute);
-    	}
-		logger.info("Persisted "+persistStatutes.size()+" statutes in "+((new Date().getTime()-startTime.getTime())/1000) + " seconds");
+			startTime = new Date();
+	    	for(StatuteCitation statute: persistStatutes ) {
+				em.persist(statute);
+	    	}
+			logger.info("Persisted "+persistStatutes.size()+" statutes in "+((new Date().getTime()-startTime.getTime())/1000) + " seconds");
 
-		startTime = new Date();
-    	for(StatuteCitation statute: mergeStatutes ) {
-			em.merge(statute);
-    	}
-		logger.info("Merged "+mergeStatutes.size()+" statutes in "+((new Date().getTime()-startTime.getTime())/1000) + " seconds");
+			startTime = new Date();
+	    	for(StatuteCitation statute: mergeStatutes ) {
+				em.merge(statute);
+	    	}
+			logger.info("Merged "+mergeStatutes.size()+" statutes in "+((new Date().getTime()-startTime.getTime())/1000) + " seconds");
+			
+		});
 	}
 
 	private void processOpinions(CitationStore citationStore,  
@@ -264,7 +267,7 @@ public class CAOnlineUpdates {
 */	    			
 				mergeOpinions.add(existingOpinion);
 			}
-			logger.fine("opinion "+opinion.getOpinionKey()
+			logger.trace("opinion "+opinion.getOpinionKey()
 				+ "\n	mergeOpinions:= " + mergeOpinions.size() 
 				+ "\n	persistOpinions:= " + persistOpinions.size() 
 			);

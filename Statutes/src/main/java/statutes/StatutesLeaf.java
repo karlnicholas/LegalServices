@@ -39,9 +39,12 @@ public class StatutesLeaf implements StatutesBaseClass, Serializable {
     // They define the correct ordering
     // can be a range if this leaf represents several sections.
     private ArrayList<SectionNumber> sectionNumbers;
+    private transient boolean displayFlag;
 
     public StatutesLeaf() {
     	sectionNumbers = new ArrayList<SectionNumber>();
+    	statuteRange = new StatuteRange();
+    	displayFlag = false;
     }
 //    public Section (String line, boolean statuteRange, Section p, int level) throws CodeException {
     public StatutesLeaf (
@@ -99,7 +102,7 @@ public class StatutesLeaf implements StatutesBaseClass, Serializable {
     public void addReference( StatutesBaseClass reference ) {
     }
     
-	@JsonIgnore
+//	@JsonIgnore
     @Override
 	public List<StatutesBaseClass> getReferences() {
 		return null;
@@ -294,6 +297,12 @@ public class StatutesLeaf implements StatutesBaseClass, Serializable {
 	public void setLawCode(String lawCode) {
 		// TODO Auto-generated method stub
 		
+	}
+	public boolean isDisplayFlag() {
+		return displayFlag;
+	}
+	public void setDisplayFlag(boolean displayFlag) {
+		this.displayFlag = displayFlag;
 	}
 
 }

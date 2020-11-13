@@ -7,7 +7,6 @@ import statutes.SectionNumber;
 import statutes.StatutesBaseClass;
 import statutes.StatutesRoot;
 import statutes.StatutesTitles;
-import statutes.service.dto.StatuteHierarchy;
 
 public interface IStatutesApi {
 	public List<StatutesRoot> getStatutes();
@@ -22,7 +21,7 @@ public interface IStatutesApi {
 
 	public StatutesRoot findReferenceByLawCode(String lawCode);
     
-	public StatuteHierarchy getStatutesHierarchy(String lawCode);
+	public StatutesRoot getStatutesHierarchy(String lawCode);
 
 
 }

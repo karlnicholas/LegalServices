@@ -4,8 +4,6 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import statutes.StatutesRoot;
 import statutes.StatutesTitles;
-import statutes.service.dto.KeyHierarchyPair;
-import statutes.service.dto.StatuteHierarchy;
 import statutes.service.dto.StatuteKey;
 
 public interface StatutesService {
@@ -19,8 +17,8 @@ public interface StatutesService {
 
 	Flux<StatutesTitles> getStatutesTitles();
 
-	Mono<StatuteHierarchy> getStatuteHierarchy(String fullFacet);
+	Mono<StatutesRoot> getStatuteHierarchy(String fullFacet);
 
-	Flux<KeyHierarchyPair> getStatutesAndHierarchies(Flux<StatuteKey> statuteKeys);
+	Flux<StatutesRoot> getStatutesAndHierarchies(Flux<StatuteKey> statuteKeys);
 
 }

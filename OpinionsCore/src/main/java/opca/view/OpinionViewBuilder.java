@@ -4,14 +4,19 @@ import java.util.*;
 import java.util.function.Supplier;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import statutes.StatutesBaseClass;
 import statutes.StatutesLeaf;
 import statutes.StatutesNode;
 import statutes.StatutesRoot;
 import statutes.service.StatutesService;
+import statutes.service.dto.KeyHierarchyPair;
+import statutes.service.dto.StatuteHierarchy;
 import opca.model.*;
 import opca.parser.ParsedOpinionCitationSet;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 public class OpinionViewBuilder {
 	private Logger logger = Logger.getLogger(OpinionViewBuilder.class.getName());
@@ -26,38 +31,42 @@ public class OpinionViewBuilder {
 		this.statutesRs = statutesRs;
 	}
 	
-    public OpinionView buildOpinionView(
+    public Mono<OpinionView> buildOpinionView(
     	SlipOpinion slipOpinion,
 		ParsedOpinionCitationSet parserResults  
 	) {
-        List<StatuteView> statuteViews = createStatuteViews(slipOpinion);
-        this.parserResults = parserResults;
-        // create a CaseView list.
-    	cases = new ArrayList<CaseView>();
-    	for ( OpinionBase opinionBase: slipOpinion.getOpinionCitations() ) {
-    		OpinionBase opcase = parserResults.findOpinion(opinionBase.getOpinionKey());
-			CaseView caseView = new CaseView(opcase.getTitle(), opinionBase.getOpinionKey().toString(), opcase.getOpinionDate(), opcase.getCountReferringOpinions());
-    		cases.add(caseView);
-    	}
-        opinionView = new OpinionView(slipOpinion, slipOpinion.getFileName(), statuteViews, cases);
-        sectionViews = opinionView.getSectionViews();
-        scoreCitations();
-        return opinionView;
+    	return createStatuteViews(slipOpinion).collectList().map(statuteViews->{
+            this.parserResults = parserResults;
+            // create a CaseView list.
+        	cases = new ArrayList<CaseView>();
+        	for ( OpinionBase opinionBase: slipOpinion.getOpinionCitations() ) {
+        		OpinionBase opcase = parserResults.findOpinion(opinionBase.getOpinionKey());
+    			CaseView caseView = new CaseView(opcase.getTitle(), opinionBase.getOpinionKey().toString(), opcase.getOpinionDate(), opcase.getCountReferringOpinions());
+        		cases.add(caseView);
+        	}
+            opinionView = new OpinionView(slipOpinion, slipOpinion.getFileName(), statuteViews, cases);
+            sectionViews = opinionView.getSectionViews();
+            scoreCitations();
+            return opinionView;
+    	});
     }
 
-    public List<StatuteView> createStatuteViews(OpinionBase opinionBase) {
+    public Flux<StatuteView> createStatuteViews(OpinionBase opinionBase) {
     	List<StatuteKey> errorKeys = new ArrayList<>();
         // statutes ws .. getStatuteKeys list to search for 
-    	statutes.service.dto.StatuteKeyArray statuteKeyArray = new statutes.service.dto.StatuteKeyArray();
-        for( StatuteCitation statuteCitation: opinionBase.getOnlyStatuteCitations() ) {
-            statutes.service.dto.StatuteKey statuteKey = new statutes.service.dto.StatuteKey();            
-            statuteKey.setLawCode(statuteCitation.getStatuteKey().getLawCode());
-            statuteKey.setSectionNumber(statuteCitation.getStatuteKey().getSectionNumber());
-            statuteKeyArray.getItem().add(statuteKey);
-        }
+        Flux<statutes.service.dto.StatuteKey> statuteKeyFlux = Flux.fromIterable(
+        		opinionBase.getOnlyStatuteCitations().stream()
+        		.map(statuteCitation->{
+		        	statutes.service.dto.StatuteKey statuteKey = new statutes.service.dto.StatuteKey();
+		            statuteKey.setLawCode(statuteCitation.getStatuteKey().getLawCode());
+		            statuteKey.setSectionNumber(statuteCitation.getStatuteKey().getSectionNumber());
+		            return statuteKey; 
+		        }).collect(Collectors.toList())
+    		);
         // call statutesws to get details of statutes 
-        statutes.service.dto.KeyHierarchyPairs keyHierarchyPairs = statutesRs.getStatutesAndHierarchies(statuteKeyArray);
+        //Flux<KeyHierarchyPair> keyHierarchyPairs = statutesRs.getStatutesAndHierarchies(statuteKeyFlux);
         //
+		Flux<StatuteHierarchy> statuteHierarchies = statutesRs.getStatutesAndHierarchies(statuteKeyFlux);
     	List<StatuteView> statuteViews = new ArrayList<>();
         // copy results into the new list ..
         Iterator<OpinionStatuteCitation> itc = opinionBase.getStatuteCitations().iterator();
@@ -66,7 +75,7 @@ public class OpinionViewBuilder {
         	OpinionStatuteCitation citation = itc.next();
         	if ( citation.getStatuteCitation().getStatuteKey().getLawCode() != null ) {
         		// find the statutesLeaf from the Statutes service and return with all parents filled out.
-	            StatutesLeaf statutesLeaf = findStatutesLeaf(keyHierarchyPairs, citation.getStatuteCitation().getStatuteKey());
+	            StatutesLeaf statutesLeaf = findStatutesLeaf(statuteHierarchies, citation.getStatuteCitation().getStatuteKey());
 	            if ( statutesLeaf == null ) {
 	            	if ( logger.getLevel() == Level.FINE ) {
 	            		errorKeys.add(citation.getStatuteCitation().getStatuteKey());
@@ -197,31 +206,32 @@ public class OpinionViewBuilder {
      * @param key
      * @return
      */
-    private StatutesLeaf findStatutesLeaf(statutes.service.dto.KeyHierarchyPairs keyHierarchyPairs, StatuteKey key) {
-		List<StatutesBaseClass> subPaths = null;
-    	final String title = key.getLawCode();
-    	final String sectionNumber = key.getSectionNumber();
-    	for ( statutes.service.dto.KeyHierarchyPair keyHierarchyPair: keyHierarchyPairs.getItem()) {
-    		statutes.service.dto.StatuteKey statuteKey = keyHierarchyPair.getStatuteKey();
-    		if ( title.equals(statuteKey.getLawCode()) && sectionNumber.equals(statuteKey.getSectionNumber()) ) {
-    			subPaths = keyHierarchyPair.getStatutesPath();
-    			break;
-    		}
-    	}
-		StatutesBaseClass returnBaseClass = null;
-    	if ( subPaths != null ) {
-			StatutesRoot statutesRoot = (StatutesRoot)subPaths.get(0);
-			StatutesBaseClass parent = statutesRoot;
-			returnBaseClass = statutesRoot;
-			for (StatutesBaseClass baseClass: subPaths ) {
-				// check terminating
-				baseClass.setParent(parent);
-				parent = baseClass; 
-				returnBaseClass = baseClass;
-				subPaths = baseClass.getReferences();
-			}
-    	}
-    	return (StatutesLeaf)returnBaseClass;
+    private Flux<StatutesLeaf> findStatutesLeaf(Flux<StatuteHierarchy> statuteHierarchies, StatuteKey key) {
+    	return statuteHierarchies.map(statuteHierarchy->{
+    		List<StatutesBaseClass> subPaths = null;
+        	final String lawCode = key.getLawCode();
+        	final String sectionNumber = key.getSectionNumber();
+        	for ( StatutesBaseClass statutesBaseClass: statuteHierarchy.getFinalReferences()) {
+        		if ( lawCode.equals(statutesBaseClass.getLawCode()) && sectionNumber.equals(statutesBaseClass.getStatuteRange().getsNumber().getSectionNumber()) ) {
+        			subPaths = statutesBaseClass.getReferences();
+        			break;
+        		}
+        	}
+    		StatutesBaseClass returnBaseClass = null;
+        	if ( subPaths != null ) {
+    			StatutesRoot statutesRoot = (StatutesRoot)subPaths.get(0);
+    			StatutesBaseClass parent = statutesRoot;
+    			returnBaseClass = statutesRoot;
+    			for (StatutesBaseClass baseClass: subPaths ) {
+    				// check terminating
+    				baseClass.setParent(parent);
+    				parent = baseClass; 
+    				returnBaseClass = baseClass;
+    				subPaths = baseClass.getReferences();
+    			}
+        	}
+        	return (StatutesLeaf)returnBaseClass;
+    	});
     }
 
     

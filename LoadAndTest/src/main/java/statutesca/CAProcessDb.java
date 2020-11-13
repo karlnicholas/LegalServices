@@ -31,7 +31,8 @@ public class CAProcessDb {
 
 	protected final QueryRunner queryRunner;
 	protected static final String url = "jdbc:mysql://localhost:3306/capublic?autoReconnect=true&useSSL=false";
-	protected static final String driver = "com.mysql.jdbc.Driver";
+//	protected static final String driver = "com.mysql.jdbc.Driver";
+	protected static final String driver = "com.mysql.cj.jdbc.Driver";
 	protected static final String usr = "root";
 	protected static final String pwd = "Fr0m5n@w";
 	protected final Connection conn;

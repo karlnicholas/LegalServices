@@ -9,8 +9,6 @@ import reactor.core.publisher.Mono;
 import statutes.StatutesRoot;
 import statutes.StatutesTitles;
 import statutes.service.StatutesService;
-import statutes.service.dto.KeyHierarchyPair;
-import statutes.service.dto.StatuteHierarchy;
 import statutes.service.dto.StatuteKey;
 
 public class StatutesServiceClientImpl implements StatutesService {
@@ -100,7 +98,7 @@ public class StatutesServiceClientImpl implements StatutesService {
 	}
 
 	@Override
-	public Mono<StatuteHierarchy> getStatuteHierarchy(String fullFacet) {
+	public Mono<StatutesRoot> getStatuteHierarchy(String fullFacet) {
 		return webClient
 				.get()
 				.uri(uriBuilder -> uriBuilder
@@ -109,11 +107,11 @@ public class StatutesServiceClientImpl implements StatutesService {
 				    .build())
 				.accept(MediaType.APPLICATION_JSON)
 				.retrieve()
-				.bodyToMono(StatuteHierarchy.class);
+				.bodyToMono(StatutesRoot.class);
 	}
 
 	@Override
-	public Flux<KeyHierarchyPair> getStatutesAndHierarchies(Flux<StatuteKey> statuteKeys) {
+	public Flux<StatutesRoot> getStatutesAndHierarchies(Flux<StatuteKey> statuteKeys) {
 		return webClient
 				.post()
 				.uri(StatutesService.STATUTESANDHIERARCHIES)
@@ -121,7 +119,7 @@ public class StatutesServiceClientImpl implements StatutesService {
 				.contentType(MediaType.APPLICATION_JSON)
 				.body(BodyInserters.fromProducer(statuteKeys, StatuteKey.class))
 				.retrieve()
-				.bodyToFlux(KeyHierarchyPair.class);
+				.bodyToFlux(StatutesRoot.class);
 	}
 
 }

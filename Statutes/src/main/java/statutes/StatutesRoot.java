@@ -29,11 +29,14 @@ public class StatutesRoot implements StatutesBaseClass, Serializable, Comparable
     private int depth;
     private StatuteRange codeRange;
     private ArrayList<StatutesBaseClass> references;
+    private transient boolean displayFlag;
     // wtf is this?
 //    private ArrayList<CodeReference> comparableList;
 
     public StatutesRoot() {
     	references = new ArrayList<StatutesBaseClass>();
+    	displayFlag = false;
+    	codeRange = new StatuteRange();
     }
     
     public StatutesRoot(String lawCode, String title, String shortTitle, String fullFacet) {
@@ -90,7 +93,7 @@ public class StatutesRoot implements StatutesBaseClass, Serializable, Comparable
 		references.add(reference);
     	mergeStatuteRange(reference.getStatuteRange());
 	}
-	@JsonIgnore
+//	@JsonIgnore
 	@Override
 	public ArrayList<StatutesBaseClass> getReferences() {
 		return references;
@@ -221,6 +224,14 @@ public class StatutesRoot implements StatutesBaseClass, Serializable, Comparable
 	@Override
 	public void setLawCode(String lawCode) {
 		this.lawCode = lawCode;
+	}
+
+	public boolean isDisplayFlag() {
+		return displayFlag;
+	}
+
+	public void setDisplayFlag(boolean displayFlag) {
+		this.displayFlag = displayFlag;
 	}
 
 }

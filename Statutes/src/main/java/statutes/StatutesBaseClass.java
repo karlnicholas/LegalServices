@@ -54,6 +54,8 @@ public interface StatutesBaseClass {
 	public void setPartNumber(String partNumber);
 	public StatuteRange getStatuteRange();
 	public void setStatuteRange(StatuteRange statuteRange);
+	public boolean isDisplayFlag();
+	public void setDisplayFlag(boolean displayFlag);
 	
 	// return true to keep iterating, false to stop iteration
 	public boolean iterateLeafs( IteratorHandler handler) throws Exception;

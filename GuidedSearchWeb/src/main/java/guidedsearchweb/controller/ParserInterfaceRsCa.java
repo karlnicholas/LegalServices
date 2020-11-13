@@ -6,7 +6,6 @@ import statutes.StatutesRoot;
 import statutes.StatutesTitles;
 import statutes.service.StatutesService;
 import statutes.service.client.StatutesServiceClientImpl;
-import statutes.service.dto.StatuteHierarchy;
 
 public class ParserInterfaceRsCa {
 	private static final String serviceURL;	
@@ -32,7 +31,7 @@ public class ParserInterfaceRsCa {
 		return statutesService.getStatutesTitles();
 	}
 
-	public Mono<StatuteHierarchy> getStatutesHierarchy(String fullFacet) {
+	public Mono<StatutesRoot> getStatutesHierarchy(String fullFacet) {
 		return statutesService.getStatuteHierarchy(fullFacet);
 	}
 

@@ -21,7 +21,6 @@ import opca.model.OpinionKey;
 import opca.model.SlipOpinion;
 import opca.model.SlipProperties;
 import opca.parser.ParsedOpinionCitationSet;
-import opca.scraper.CAParseScrapedDocument;
 import opca.service.OpinionViewSingleton.OpinionViewData;
 import opca.view.OpinionView;
 import opca.view.OpinionViewBuilder;
@@ -33,7 +32,7 @@ public class OpinionViewLoad {
 	@PersistenceContext(unitName="opee")
     private EntityManager em;
 
-	@Asynchronous
+//	@Asynchronous
 	public void load(OpinionViewData opinionViewData, StatutesService statutesService) {
 		// prevent all exceptions from leaving @Asynchronous block
 		try {
