@@ -1,14 +1,12 @@
 package gsearch;
 
 import java.io.IOException;
-import java.io.StringReader;
 import java.util.*;
 import java.util.logging.Logger;
 
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.en.EnglishAnalyzer;
-import org.apache.lucene.analysis.tokenattributes.OffsetAttribute;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.facet.DrillDownQuery;
 import org.apache.lucene.facet.FacetResult;
@@ -17,7 +15,6 @@ import org.apache.lucene.facet.FacetsCollector;
 import org.apache.lucene.facet.FacetsConfig;
 import org.apache.lucene.facet.LabelAndValue;
 import org.apache.lucene.facet.taxonomy.FastTaxonomyFacetCounts;
-import org.apache.lucene.index.Fields;
 import org.apache.lucene.index.IndexableField;
 import org.apache.lucene.queryparser.flexible.standard.StandardQueryParser;
 import org.apache.lucene.search.Collector;
@@ -32,7 +29,6 @@ import org.apache.lucene.search.highlight.InvalidTokenOffsetsException;
 import org.apache.lucene.search.highlight.QueryScorer;
 import org.apache.lucene.search.highlight.SimpleHTMLFormatter;
 import org.apache.lucene.search.highlight.TextFragment;
-import org.apache.lucene.search.highlight.TokenGroup;
 import org.apache.lucene.search.highlight.TokenSources;
 
 import gsearch.util.FacetUtils;
@@ -145,22 +141,29 @@ public class GSearch {
 		EntryReference entryReference = new StatuteEntry(statutesRoot);
 		viewModel.getEntries().add( entryReference );
 		List<EntryReference> entries = entryReference.getEntries();
-		StatutesBaseClass currentBaseClass = statutesRoot;
 		
-		for (StatutesBaseClass baseClass: subPaths ) {
-			// check terminating
+		// parent?
+		StatutesBaseClass currentBaseClass = statutesRoot;
+		while ( !currentBaseClass.isDisplayFlag() && subPaths.size() > 0 ) {
+			StatutesBaseClass baseClass = subPaths.get(0); 
+			baseClass.setParent(currentBaseClass);
+			currentBaseClass = baseClass;
 			entryReference = new SubcodeEntry(baseClass);
 			entries.add(entryReference);
 			entries = entryReference.getEntries();
 			subPaths = baseClass.getReferences();
-			// check terminating
-			if ( baseClass.getStatutesLeaf() != null ) {
-				viewModel.setState(STATES.TERMINATE);
-			}
-			// end of facet path
-			if ( baseClass.isDisplayFlag() ) {
-				break;
-			}
+		}
+		// check terminating
+		if ( currentBaseClass.getStatutesLeaf() != null ) {
+			viewModel.setState(STATES.TERMINATE);
+		}
+		if ( currentBaseClass.getReferences() != null ) {
+	    	for ( StatutesBaseClass reference: currentBaseClass.getReferences() ) {
+	    		reference.setParent(currentBaseClass);
+	    		SubcodeEntry subcode = new SubcodeEntry( reference);
+	    		subcode.setPathPart(false);
+	    		entries.add( subcode );
+		    }
 		}
 		return viewModel;
 	}
