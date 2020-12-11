@@ -1,6 +1,9 @@
 package statutes.service.server;
 
+import java.util.List;
+
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -27,31 +30,33 @@ public class StatutesServiceServer implements StatutesService {
 
 	@Override
 	@GetMapping(path = StatutesService.STATUTES, produces = MediaType.APPLICATION_JSON_VALUE)
-	public Flux<StatutesRoot> getStatutesRoots() {
+	public Mono<ResponseEntity<List<StatutesRoot>>> getStatutesRoots() {
 		log.info("get getStatutesRoots");
-		return Flux.fromIterable(iStatutesApi.getStatutes());
+		return Mono.just(iStatutesApi.getStatutes())
+				.map(ResponseEntity::ok);
 	}
 
 	@Override
 	@GetMapping(path = StatutesService.STATUTESTITLES, produces = MediaType.APPLICATION_JSON_VALUE)
-	public Flux<StatutesTitles> getStatutesTitles() {
-		return Flux.fromArray(iStatutesApi.getStatutesTitles());
+	public Mono<ResponseEntity<StatutesTitles[]>> getStatutesTitles() {
+		return Mono.just(ResponseEntity.ok(iStatutesApi.getStatutesTitles()));
 	}
 
 	@Override
 	@GetMapping(path = StatutesService.STATUTEHIERARCHY, produces = MediaType.APPLICATION_JSON_VALUE)
-	public Mono<StatutesRoot> getStatuteHierarchy(@RequestParam("fullFacet") String fullFacet) {
-		return Mono.just(iStatutesApi.getStatutesHierarchy(fullFacet));
+	public Mono<ResponseEntity<StatutesRoot>> getStatuteHierarchy(@RequestParam("fullFacet") String fullFacet) {
+		return Mono.just(ResponseEntity.ok(iStatutesApi.getStatutesHierarchy(fullFacet)));
 	}
 
 	@Override
 	@PostMapping(path=StatutesService.STATUTESANDHIERARCHIES, 
 		consumes = MediaType.APPLICATION_JSON_VALUE, 
 		produces = MediaType.APPLICATION_JSON_VALUE)
-	public Flux<StatutesRoot> getStatutesAndHierarchies(Flux<StatuteKey> keys) {
+	public Mono<ResponseEntity<List<StatutesRoot>>> getStatutesAndHierarchies(List<StatuteKey> keys) {
 		// Fill out the codeSections that these section are referencing ..
 		// If possible ...
-		return keys.map(key->{
+		
+		return Flux.fromIterable(keys).map(key->{
 			// This is a section
 			String lawCode = key.getLawCode();
 			SectionNumber sectionNumber = new SectionNumber();
@@ -63,7 +68,9 @@ public class StatutesServiceServer implements StatutesService {
 //					StatutesBaseClass statutesBaseClass = iStatutesApi.findReference(lawCode, sectionNumber);
 			return iStatutesApi.findReference(lawCode, sectionNumber).getFullFacet();
 		})
-		.map(iStatutesApi::getStatutesHierarchy);
+		.map(iStatutesApi::getStatutesHierarchy)
+		.collectList()
+		.map(ResponseEntity::ok);
 	}
 
 }

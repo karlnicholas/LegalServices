@@ -9,9 +9,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.springframework.stereotype.Component;
 
 import opca.ejb.util.StatutesServiceFactory;
@@ -24,8 +21,6 @@ import statutes.service.StatutesService;
 
 @Component
 public class OpinionViewSingleton {
-    @PersistenceContext(unitName="opee")
-    private EntityManager em;
 	private final OpinionViewLoad opinionViewLoad;
 	private final OpinionViewData opinionViewData;
 	public OpinionViewSingleton(OpinionViewLoad opinionViewLoad, OpinionViewData opinionViewData) {

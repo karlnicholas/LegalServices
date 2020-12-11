@@ -1,10 +1,11 @@
 package statutes.service.client;
 
+import java.util.List;
+
 import org.springframework.http.MediaType;
-import org.springframework.web.reactive.function.BodyInserters;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.reactive.function.client.WebClient;
 
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import statutes.StatutesRoot;
 import statutes.StatutesTitles;
@@ -75,30 +76,30 @@ public class StatutesServiceClientImpl implements StatutesService {
 	}
 	
 	@Override
-	public Flux<StatutesRoot> getStatutesRoots() {
+	public Mono<ResponseEntity<List<StatutesRoot>>> getStatutesRoots() {
 		return webClient
 				.get()
 				.uri(StatutesService.STATUTES)
 				.accept(MediaType.APPLICATION_JSON)
 				.retrieve()
-				.bodyToFlux(StatutesRoot.class);
+				.toEntityList(StatutesRoot.class);
 	}
 	
 //	.body(BodyInserters.fromProducer(accounts, AccountDto.class))
 //	.retrieve()
 	@Override
-	public Flux<StatutesTitles> getStatutesTitles() {
+	public Mono<ResponseEntity<StatutesTitles[]>> getStatutesTitles() {
 		return webClient
 				.get()
 				.uri(StatutesService.STATUTESTITLES)
 				.accept(MediaType.APPLICATION_JSON)
 				.retrieve()
-				.bodyToFlux(StatutesTitles.class);
+				.toEntity(StatutesTitles[].class);
 			
 	}
 
 	@Override
-	public Mono<StatutesRoot> getStatuteHierarchy(String fullFacet) {
+	public Mono<ResponseEntity<StatutesRoot>> getStatuteHierarchy(String fullFacet) {
 		return webClient
 				.get()
 				.uri(uriBuilder -> uriBuilder
@@ -107,19 +108,19 @@ public class StatutesServiceClientImpl implements StatutesService {
 				    .build())
 				.accept(MediaType.APPLICATION_JSON)
 				.retrieve()
-				.bodyToMono(StatutesRoot.class);
+				.toEntity(StatutesRoot.class);
 	}
 
 	@Override
-	public Flux<StatutesRoot> getStatutesAndHierarchies(Flux<StatuteKey> statuteKeys) {
+	public Mono<ResponseEntity<List<StatutesRoot>>> getStatutesAndHierarchies(List<StatuteKey> statuteKeys) {
 		return webClient
 				.post()
 				.uri(StatutesService.STATUTESANDHIERARCHIES)
 				.accept(MediaType.APPLICATION_JSON)
 				.contentType(MediaType.APPLICATION_JSON)
-				.body(BodyInserters.fromProducer(statuteKeys, StatuteKey.class))
+				.bodyValue(statuteKeys)
 				.retrieve()
-				.bodyToFlux(StatutesRoot.class);
+				.toEntityList(StatutesRoot.class);
 	}
 
 }

@@ -30,6 +30,7 @@ import org.apache.lucene.search.highlight.QueryScorer;
 import org.apache.lucene.search.highlight.SimpleHTMLFormatter;
 import org.apache.lucene.search.highlight.TextFragment;
 import org.apache.lucene.search.highlight.TokenSources;
+import org.springframework.http.ResponseEntity;
 
 import gsearch.util.FacetUtils;
 import gsearch.viewmodel.*;
@@ -106,16 +107,19 @@ public class GSearch {
 		// 
 		if ( viewModel.getState() == STATES.START ) {
 			monoViewModel = statutesService.getStatutesRoots()
-			.reduce(viewModel, (viewModelAcc, statutesRoot)-> {
-//				String facetHead = FacetUtils.getFacetHeadFromRoot(statutesTitles, statutesRoot);
-				StatuteEntry cEntry = new StatuteEntry(statutesRoot);
-				cEntry.setPathPart(false);
-		    	viewModel.getEntries().add( cEntry );
-				return viewModelAcc;
-			});
+					.map(ResponseEntity::getBody)
+					.map(statutesRoots->{
+						for ( StatutesRoot statutesRoot: statutesRoots ) {
+							StatuteEntry cEntry = new StatuteEntry(statutesRoot);
+							cEntry.setPathPart(false);
+					    	viewModel.getEntries().add( cEntry );
+						}
+						return viewModel;
+					});
 		} else {
 			monoViewModel = statutesService.getStatuteHierarchy(viewModel.getPath())
-			.map(statutesRoot->processPathAndSubcodeList(viewModel, statutesRoot));
+			.map(ResponseEntity::getBody)
+			.map(statutesRoots->processPathAndSubcodeList(viewModel, statutesRoots));
 		}
 		monoViewModel = monoViewModel.map(viewModelWork->{
 			if ( viewModelWork.getState() == STATES.TERMINATE || viewModelWork.isFragments() || !viewModelWork.getTerm().isEmpty() ) { 

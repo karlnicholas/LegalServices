@@ -1,6 +1,9 @@
 package statutes.service;
 
-import reactor.core.publisher.Flux;
+import java.util.List;
+
+import org.springframework.http.ResponseEntity;
+
 import reactor.core.publisher.Mono;
 import statutes.StatutesRoot;
 import statutes.StatutesTitles;
@@ -13,12 +16,12 @@ public interface StatutesService {
 	String STATUTEHIERARCHY = "statutehierarchy";
 	String STATUTESANDHIERARCHIES = "statutesandhierarchies";
 
-	Flux<StatutesRoot> getStatutesRoots();
+	Mono<ResponseEntity<List<StatutesRoot>>> getStatutesRoots();
 
-	Flux<StatutesTitles> getStatutesTitles();
+	Mono<ResponseEntity<StatutesTitles[]>> getStatutesTitles();
 
-	Mono<StatutesRoot> getStatuteHierarchy(String fullFacet);
+	Mono<ResponseEntity<StatutesRoot>> getStatuteHierarchy(String fullFacet);
 
-	Flux<StatutesRoot> getStatutesAndHierarchies(Flux<StatuteKey> statuteKeys);
+	Mono<ResponseEntity<List<StatutesRoot>>> getStatutesAndHierarchies(List<StatuteKey> statuteKeys);
 
 }

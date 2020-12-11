@@ -1,6 +1,9 @@
 package guidedsearchweb.controller;
 
-import reactor.core.publisher.Flux;
+import java.util.List;
+
+import org.springframework.http.ResponseEntity;
+
 import reactor.core.publisher.Mono;
 import statutes.StatutesRoot;
 import statutes.StatutesTitles;
@@ -22,17 +25,16 @@ public class ParserInterfaceRsCa {
 		statutesService = new StatutesServiceClientImpl(serviceURL);
 	}
 
-	public Flux<StatutesRoot> getStatutes() {
-		Flux<StatutesRoot> statutesList = statutesService.getStatutesRoots();
-		return statutesList;
+	public Mono<List<StatutesRoot>> getStatutes() {
+		return statutesService.getStatutesRoots().map(ResponseEntity::getBody);
 	}
 
-	public Flux<StatutesTitles> getStatutesTitles() {
-		return statutesService.getStatutesTitles();
+	public Mono<StatutesTitles[]> getStatutesTitles() {
+		return statutesService.getStatutesTitles().map(ResponseEntity::getBody);
 	}
 
 	public Mono<StatutesRoot> getStatutesHierarchy(String fullFacet) {
-		return statutesService.getStatuteHierarchy(fullFacet);
+		return statutesService.getStatuteHierarchy(fullFacet).map(ResponseEntity::getBody);
 	}
 
 }

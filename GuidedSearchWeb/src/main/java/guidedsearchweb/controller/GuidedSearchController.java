@@ -101,7 +101,7 @@ public class GuidedSearchController {
 				
 		response.sendRedirect("/"+urlBuilder.UrlArgs(path, term, frag));    	
     }
-*/    
+
     private String appendOp(String val, char op) {
     	val = val.trim();
     	if ( val.isEmpty()) return "";
@@ -113,7 +113,6 @@ public class GuidedSearchController {
     	return sb.toString();
     }
   
-/*
     private void setAdvancedSearchFields(HttpServletRequest request, String term) {
     	if ( term == null || term.isEmpty() ) return;
     	try {

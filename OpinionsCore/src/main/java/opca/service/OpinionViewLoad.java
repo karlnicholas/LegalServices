@@ -24,6 +24,8 @@ import opca.parser.ParsedOpinionCitationSet;
 import opca.service.OpinionViewSingleton.OpinionViewData;
 import opca.view.OpinionView;
 import opca.view.OpinionViewBuilder;
+import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
 import statutes.service.StatutesService;
 
 @Component
@@ -39,11 +41,12 @@ public class OpinionViewLoad {
 			logger.info("load start");
 			opinionViewData.setLoaded( true );
 			opinionViewData.setReady( false );
-			buildOpinionViews(opinionViewData, statutesService);
-			opinionViewData.setStringDateList();
-			opinionViewData.setReady( true );
-			opinionViewData.setLoaded( false );
-			logger.info("load finish: " + opinionViewData.getOpinionViews().size());
+			buildOpinionViews(opinionViewData, statutesService).publishOn(Schedulers.boundedElastic()).subscribe((opinionView)->{
+				opinionViewData.setStringDateList();
+				opinionViewData.setReady( true );
+				opinionViewData.setLoaded( false );
+				logger.info("load finish: " + opinionViewData.getOpinionViews().size());
+			});
 		} catch ( Exception ex ) {
 			opinionViewData.setLoaded( false );
 			logger.info("load failed: " + ex.getCause().getMessage());
@@ -140,10 +143,10 @@ public class OpinionViewLoad {
 		lastDay.add(Calendar.WEEK_OF_YEAR, 1);
 	}
 	
-	private void buildOpinionViews(OpinionViewData opinionViewData, StatutesService statutesService) {
+	private Mono<OpinionView> buildOpinionViews(OpinionViewData opinionViewData, StatutesService statutesService) {
 		opinionViewData.setOpinionViews(new ArrayList<>());
 		List<SlipOpinion> opinions = loadAllSlipOpinions();
-		buildListedOpinionViews(opinionViewData, opinions, statutesService);
+		return buildListedOpinionViews(opinionViewData, opinions, statutesService);
 	}
 	private void buildNewOpinionViews(OpinionViewData opinionViewData, List<OpinionKey> opinionKeys, StatutesService statutesService) {
 		// remove deleted opinions from cache
@@ -185,7 +188,7 @@ public class OpinionViewLoad {
 			buildOpinionViews(opinionViewData, statutesService);
 		}
 	}
-	private void buildListedOpinionViews(OpinionViewData opinionViewData, List<SlipOpinion> opinions, StatutesService statutesService) {
+	private Mono<OpinionView> buildListedOpinionViews(OpinionViewData opinionViewData, List<SlipOpinion> opinions, StatutesService statutesService) {
 		List<OpinionBase> opinionOpinionCitations = new ArrayList<>();
 		List<Integer> opinionIds = new ArrayList<>();
 		TypedQuery<OpinionBase> fetchOpinionCitationsForOpinions = em.createNamedQuery("OpinionBase.fetchOpinionCitationsForOpinions", OpinionBase.class);
@@ -206,12 +209,16 @@ public class OpinionViewLoad {
 				fetchOpinionCitationsForOpinions.setParameter("opinionIds", opinionIds).getResultList()
 			);
 		}
+		List<Mono<OpinionView>> opinionViewMonos = new ArrayList<>(); 
 		OpinionViewBuilder opinionViewBuilder = new OpinionViewBuilder(statutesService);
 		for ( SlipOpinion slipOpinion: opinions ) {
 			slipOpinion.setOpinionCitations( opinionOpinionCitations.get( opinionOpinionCitations.indexOf(slipOpinion)).getOpinionCitations() );
 			ParsedOpinionCitationSet parserResults = new ParsedOpinionCitationSet(slipOpinion);
-			OpinionView opinionView = opinionViewBuilder.buildOpinionView(slipOpinion, parserResults);
-			opinionViewData.getOpinionViews().add(opinionView);
+			opinionViewMonos.add(opinionViewBuilder.buildOpinionView(slipOpinion, parserResults)
+					.map(opinionView->{
+						opinionViewData.getOpinionViews().add(opinionView);
+						return opinionView;
+					}));
 		}
 		// sort results in descending date order
 		Collections.sort(
@@ -231,6 +238,7 @@ public class OpinionViewLoad {
 			}
 		}
 		initReportDates(opinionViewData, dates);
+		return Mono.zip(opinionViewMonos, null);
 	}
 
 	/**

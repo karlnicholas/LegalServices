@@ -16,6 +16,7 @@ import javax.persistence.TypedQuery;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 import opca.memorydb.CitationStore;
@@ -29,6 +30,8 @@ import opca.model.StatuteKey;
 import opca.parser.OpinionScraperInterface;
 import opca.parser.OpinionDocumentParser;
 import opca.parser.ScrapedOpinionDocument;
+import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
 import opca.parser.ParsedOpinionCitationSet;
 import statutes.StatutesTitles;
 import statutes.service.StatutesService;
@@ -119,7 +122,7 @@ public class CAOnlineUpdates {
 		}
 		if ( onlineOpinions.size() > 0 ) {
 			// no retries
-			processAndPersistCases(onlineOpinions, caseScraper, statutesService);
+			processAndPersistCases(onlineOpinions, caseScraper, statutesService).publishOn(Schedulers.boundedElastic()).subscribe();
 		} else {
 			logger.info("No new cases.");
 		}		
@@ -127,7 +130,7 @@ public class CAOnlineUpdates {
 		return opinionKeys; 
 	}
 	
-	private void processAndPersistCases(List<SlipOpinion> slipOpinions, OpinionScraperInterface opinionScraper, StatutesService statutesService) {
+	private Mono<StatutesTitles[]> processAndPersistCases(List<SlipOpinion> slipOpinions, OpinionScraperInterface opinionScraper, StatutesService statutesService) {
 		// Create the CACodes list
 		logger.info("There are " + slipOpinions.size() + " SlipOpinions to process");
 		List<ScrapedOpinionDocument> scrapedOpinionDocuments = opinionScraper.scrapeOpinionFiles(slipOpinions);
@@ -136,10 +139,10 @@ public class CAOnlineUpdates {
 
 //		StatutesTitlesArray statutesArray = statutesService.getStatutesTitles();
 //		Flux<StatutesTitles> statutesArray = statutesService.getStatutesTitles();
-		statutesService.getStatutesTitles().collectList().doOnNext(listStatutesTitles->{
+		return statutesService.getStatutesTitles().map(ResponseEntity::getBody).map(arrayStatutesTitles->{
 //			codeTitles = statutesArray.getItem().toArray(codeTitles);
 
-			OpinionDocumentParser opinionDocumentParser = new OpinionDocumentParser(listStatutesTitles.toArray(new StatutesTitles[listStatutesTitles.size()]));
+			OpinionDocumentParser opinionDocumentParser = new OpinionDocumentParser(arrayStatutesTitles);
 			
 			// this is a holds things in memory
 			CitationStore citationStore = CitationStore.getInstance();
@@ -218,7 +221,7 @@ public class CAOnlineUpdates {
 				em.merge(statute);
 	    	}
 			logger.info("Merged "+mergeStatutes.size()+" statutes in "+((new Date().getTime()-startTime.getTime())/1000) + " seconds");
-			
+			return arrayStatutesTitles;
 		});
 	}
 
