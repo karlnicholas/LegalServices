@@ -21,7 +21,6 @@ import opca.model.OpinionKey;
 import opca.model.SlipOpinion;
 import opca.model.SlipProperties;
 import opca.parser.ParsedOpinionCitationSet;
-import opca.service.OpinionViewSingleton.OpinionViewData;
 import opca.view.OpinionView;
 import opca.view.OpinionViewBuilder;
 import reactor.core.publisher.Mono;
@@ -31,9 +30,7 @@ import statutes.service.StatutesService;
 @Component
 public class OpinionViewLoad {
 	Logger logger = LoggerFactory.getLogger(OpinionViewLoad.class);
-	@PersistenceContext(unitName="opee")
-    private EntityManager em;
-
+/*
 //	@Asynchronous
 	public void load(OpinionViewData opinionViewData, StatutesService statutesService) {
 		// prevent all exceptions from leaving @Asynchronous block
@@ -116,14 +113,7 @@ public class OpinionViewLoad {
 		if ( firstDay.getTime().compareTo(date) < 0 && lastDay.getTime().compareTo(date) > 0 ) return true;
 		return retVal;
 	}
-	/**
-	 * This is round input dates to the first and last day of the week. The first and last day
-	 * passed in should be the same. firstDay should be set backwards to getFirstDayOfWeek and 
-	 * lastDay should be set forwards 1 week from the firstDay. 
-	 * 
-	 * @param firstDay return for firstDay
-	 * @param lastDay return for lastDay
-	 */
+
 	private void bracketWeek(Calendar firstDay, Calendar lastDay ) {
 		// get today and clear time of day
 		firstDay.set(Calendar.HOUR_OF_DAY, 0); // ! clear would not reset the hour of day !
@@ -241,13 +231,6 @@ public class OpinionViewLoad {
 		return Mono.zip(opinionViewMonos, null);
 	}
 
-	/**
-	 * Going to do a two stage load I think. Enough to build view first stage, and then enough to do graph analysis second stage.
-	 * 
-	 * @param startDate
-	 * @param endDate
-	 * @return
-	 */
 	private List<SlipOpinion> loadAllSlipOpinions() {
 		// just get all slip opinions
 		EntityGraph<?> fetchGraphForOpinionsWithJoins = em.getEntityGraph("fetchGraphForOpinionsWithJoins");
@@ -275,5 +258,5 @@ public class OpinionViewLoad {
 		}
 		return opinions;
 	}
-
+*/
 }

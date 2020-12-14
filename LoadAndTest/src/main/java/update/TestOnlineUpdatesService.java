@@ -26,7 +26,7 @@ public class TestOnlineUpdatesService {
 //			OpinionScraperInterface caseScraper = new CACaseScraper(true);
 //			OpinionScraperInterface caseScraper = new TestCACaseScraper(false);
 			OpinionScraperInterface caseScraper = new TestCAParseSlipDetails(false);
-			new CAOnlineUpdates(opinionViewSingleton).updateDatabase(caseScraper, statutesService);
+//			new CAOnlineUpdates(opinionViewSingleton).updateDatabase(caseScraper, statutesService);
 		
 	}
 }

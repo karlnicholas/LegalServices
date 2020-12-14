@@ -18,6 +18,7 @@
 		<module>GuidedSearchCore</module>
 		<module>StatutesCa</module>
 		<module>StatutesRestCa</module>
+		<module>OpinionsCore</module>
 	</modules>
 	<dependencyManagement>
 		<dependencies>

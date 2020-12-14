@@ -44,8 +44,7 @@ import statutes.service.StatutesService;
 @Component
 public class CAOnlineUpdates {	
 	Logger logger = LoggerFactory.getLogger(CAOnlineUpdates.class);
-	@PersistenceContext(unitName="opee")
-    private EntityManager em;
+/*	
     private final OpinionViewSingleton opinionViewSingleton;
 	
 	public CAOnlineUpdates(OpinionViewSingleton opinionViewSingleton) {
@@ -72,24 +71,25 @@ public class CAOnlineUpdates {
 //		onlineOpinions = onlineOpinions.subList(0, 340);
 //		onlineOpinions = onlineOpinions.subList(0, 0);
 //		onlineOpinions = onlineOpinions.subList(0, 1);
-/*
-		Iterator<SlipOpinion> oit = onlineOpinions.iterator();
-		while ( oit.hasNext() ) {
-			SlipOpinion opinion = oit.next();
-			if ( 
-				opinion.getFileName().equalsIgnoreCase("A153390M")
-				|| opinion.getFileName().equalsIgnoreCase("C080488")
-				|| opinion.getFileName().equalsIgnoreCase("E070545M")
-				|| opinion.getFileName().equalsIgnoreCase("C082144")
-				|| opinion.getFileName().equalsIgnoreCase("C080023")
-				|| opinion.getFileName().equalsIgnoreCase("B286043")
-				|| opinion.getFileName().equalsIgnoreCase("S087773")
-				|| opinion.getFileName().equalsIgnoreCase("JAD18-11")
-			) {
-				oit.remove();
-			}
-		}
-*/		
+
+//
+//		Iterator<SlipOpinion> oit = onlineOpinions.iterator();
+//		while ( oit.hasNext() ) {
+//			SlipOpinion opinion = oit.next();
+//			if ( 
+//				opinion.getFileName().equalsIgnoreCase("A153390M")
+//				|| opinion.getFileName().equalsIgnoreCase("C080488")
+//				|| opinion.getFileName().equalsIgnoreCase("E070545M")
+//				|| opinion.getFileName().equalsIgnoreCase("C082144")
+//				|| opinion.getFileName().equalsIgnoreCase("C080023")
+//				|| opinion.getFileName().equalsIgnoreCase("B286043")
+//				|| opinion.getFileName().equalsIgnoreCase("S087773")
+//				|| opinion.getFileName().equalsIgnoreCase("JAD18-11")
+//			) {
+//				oit.remove();
+//			}
+//		}
+//		
 		//
 		List<SlipOpinion> currentOpinions = em.createNamedQuery("SlipOpinion.findAll", SlipOpinion.class).getResultList();
 		List<SlipOpinion> currentCopy = new ArrayList<SlipOpinion>(currentOpinions);
@@ -259,15 +259,15 @@ public class CAOnlineUpdates {
 			} else {
 				OpinionBase existingOpinion = existingOpinionsArray[idx]; 
 				existingOpinion.mergePersistenceFromSlipLoad(opinion);
-/*				
-	    		logger.fine("existingOpinion:= " 
-	    				+ existingOpinion.getTitle() 
-	    				+ "\n	:OpinionKey= " + existingOpinion.getOpinionKey()
-	    				+ "\n	:CountReferringOpinions= " + existingOpinion.getCountReferringOpinions()
-	    				+ "\n	:ReferringOpinions.size()= " + (existingOpinion.getReferringOpinions()== null?"xx":existingOpinion.getReferringOpinions().size())
-	    				+ "\n	:OpinionCitations().size()= " + (existingOpinion.getOpinionCitations()== null?"xx":existingOpinion.getOpinionCitations().size())
-	    			);
-*/	    			
+//				
+//	    		logger.fine("existingOpinion:= " 
+//	    				+ existingOpinion.getTitle() 
+//	    				+ "\n	:OpinionKey= " + existingOpinion.getOpinionKey()
+//	    				+ "\n	:CountReferringOpinions= " + existingOpinion.getCountReferringOpinions()
+//	    				+ "\n	:ReferringOpinions.size()= " + (existingOpinion.getReferringOpinions()== null?"xx":existingOpinion.getReferringOpinions().size())
+//	    				+ "\n	:OpinionCitations().size()= " + (existingOpinion.getOpinionCitations()== null?"xx":existingOpinion.getOpinionCitations().size())
+//	    			);
+//	    			
 				mergeOpinions.add(existingOpinion);
 			}
 			logger.trace("opinion "+opinion.getOpinionKey()
@@ -377,5 +377,5 @@ public class CAOnlineUpdates {
 			em.remove(deleteOpinion);
 		}
 	}
-
+*/
 }
