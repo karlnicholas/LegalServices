@@ -8,12 +8,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import javax.persistence.EntityGraph;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-import javax.persistence.TypedQuery;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
@@ -30,6 +24,11 @@ import opca.model.StatuteKey;
 import opca.parser.OpinionScraperInterface;
 import opca.parser.OpinionDocumentParser;
 import opca.parser.ScrapedOpinionDocument;
+import opca.repository.OpinionBaseRepository;
+import opca.repository.OpinionStatuteCitationRepository;
+import opca.repository.SlipOpinionRepository;
+import opca.repository.SlipPropertiesRepository;
+import opca.repository.StatuteCitationRepository;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 import opca.parser.ParsedOpinionCitationSet;
@@ -44,13 +43,28 @@ import statutes.service.StatutesService;
 @Component
 public class CAOnlineUpdates {	
 	Logger logger = LoggerFactory.getLogger(CAOnlineUpdates.class);
-/*	
     private final OpinionViewSingleton opinionViewSingleton;
+	private final OpinionBaseRepository opinionBaseRepository;
+	private final StatuteCitationRepository statuteCitationRepository;
+	private final OpinionStatuteCitationRepository opinionStatuteCitationRepoistory;
+	private final SlipOpinionRepository slipOpinionRepository;
+	private final SlipPropertiesRepository slipPropertiesRepository;
 	
-	public CAOnlineUpdates(OpinionViewSingleton opinionViewSingleton) {
+	
+	public CAOnlineUpdates(OpinionViewSingleton opinionViewSingleton, OpinionBaseRepository opinionBaseRepository,
+			StatuteCitationRepository statuteCitationRepository,
+			OpinionStatuteCitationRepository opinionStatuteCitationRepoistory, 
+			SlipOpinionRepository slipOpinionRepository, 
+			SlipPropertiesRepository slipPropertiesRepository
+		) {
 		this.opinionViewSingleton = opinionViewSingleton;
+		this.opinionBaseRepository = opinionBaseRepository;
+		this.statuteCitationRepository = statuteCitationRepository;
+		this.opinionStatuteCitationRepoistory = opinionStatuteCitationRepoistory;
+		this.slipOpinionRepository = slipOpinionRepository;
+		this.slipPropertiesRepository = slipPropertiesRepository;
 	}
-	
+
 	public void updateOpinionViews(List<OpinionKey> opinionKeys, StatutesService statutesService) {
         opinionViewSingleton.updateOpinionViews(opinionKeys, statutesService);
 	}
@@ -91,7 +105,7 @@ public class CAOnlineUpdates {
 //		}
 //		
 		//
-		List<SlipOpinion> currentOpinions = em.createNamedQuery("SlipOpinion.findAll", SlipOpinion.class).getResultList();
+		List<SlipOpinion> currentOpinions = slipOpinionRepository.findAll();
 		List<SlipOpinion> currentCopy = new ArrayList<SlipOpinion>(currentOpinions);
 		logger.info("Found " + currentCopy.size() + " in the database.");
 		logger.info("Split Transactions" );		
@@ -185,40 +199,40 @@ public class CAOnlineUpdates {
 						persistOpinionStatuteCitations.add(statuteCitation);
 		    		}
 				}
-				em.persist(slipOpinion);
+				slipOpinionRepository.save(slipOpinion);
 				if ( slipOpinion.getSlipProperties() == null ) {
 					System.out.println("SlipProperties == null " );
 				}
-				em.persist(slipOpinion.getSlipProperties());
+				slipPropertiesRepository.save(slipOpinion.getSlipProperties());
 			}
 			Date startTime = new Date();
 	    	for(OpinionBase opinion: persistOpinions ) {
-				em.persist(opinion);
+				opinionBaseRepository.save(opinion);
 	    	}
 			logger.info("Persisted "+persistOpinions.size()+" opinions in "+((new Date().getTime()-startTime.getTime())/1000) + " seconds");
 
 			startTime = new Date();
 
 	    	for(OpinionBase opinion: mergeOpinions ) {
-				em.merge(opinion);
+	    		opinionBaseRepository.save(opinion);
 	    	}
 			logger.info("Merged "+mergeOpinions.size()+" opinions in "+((new Date().getTime()-startTime.getTime())/1000) + " seconds");
 
 			startTime = new Date();
 			for(OpinionStatuteCitation opinionStatuteCitation: persistOpinionStatuteCitations) {
-				em.persist(opinionStatuteCitation);
+				opinionStatuteCitationRepoistory.save(opinionStatuteCitation);
 	    	}
 			logger.info("Persisted "+ persistOpinionStatuteCitations.size()+" opinionStatuteCitation in "+((new Date().getTime()-startTime.getTime())/1000) + " seconds");
 
 			startTime = new Date();
 	    	for(StatuteCitation statute: persistStatutes ) {
-				em.persist(statute);
+	    		statuteCitationRepository.save(statute);
 	    	}
 			logger.info("Persisted "+persistStatutes.size()+" statutes in "+((new Date().getTime()-startTime.getTime())/1000) + " seconds");
 
 			startTime = new Date();
 	    	for(StatuteCitation statute: mergeStatutes ) {
-				em.merge(statute);
+	    		statuteCitationRepository.save(statute);
 	    	}
 			logger.info("Merged "+mergeStatutes.size()+" statutes in "+((new Date().getTime()-startTime.getTime())/1000) + " seconds");
 			return arrayStatutesTitles;
@@ -235,16 +249,16 @@ public class CAOnlineUpdates {
 		List<OpinionKey> opinionKeys = new ArrayList<>();
 		int i = 0;
 		List<OpinionBase> existingOpinions = new ArrayList<>();
-		TypedQuery<OpinionBase> opinionsWithReferringOpinions = em.createNamedQuery("OpinionBase.opinionsWithReferringOpinions", OpinionBase.class);
+//		TypedQuery<OpinionBase> opinionsWithReferringOpinions = opinionBaseRepository.opinionsWithReferringOpinions(opinionKeys)pem.createNamedQuery("OpinionBase.opinionsWithReferringOpinions", OpinionBase.class);
     	for(OpinionBase opinion: opinions ) {
     		opinionKeys.add(opinion.getOpinionKey());
     		if ( ++i % 100 == 0 ) {
-    			existingOpinions.addAll( opinionsWithReferringOpinions.setParameter("opinionKeys", opinionKeys).getResultList() );
+    			existingOpinions.addAll( opinionBaseRepository.opinionsWithReferringOpinions(opinionKeys) );
     			opinionKeys.clear();
     		}
     	}
     	if ( opinionKeys.size() != 0 ) {
-    		existingOpinions.addAll( opinionsWithReferringOpinions.setParameter("opinionKeys", opinionKeys).getResultList() );
+    		existingOpinions.addAll( opinionBaseRepository.opinionsWithReferringOpinions(opinionKeys) );
     	}
     	Collections.sort(existingOpinions);
     	OpinionBase[] existingOpinionsArray = existingOpinions.toArray(new OpinionBase[existingOpinions.size()]);
@@ -290,20 +304,20 @@ public class CAOnlineUpdates {
 		List<StatuteKey> statuteKeys = new ArrayList<>();
 		int i = 0;
 		List<StatuteCitation> existingStatutes = new ArrayList<>();
-		TypedQuery<StatuteCitation> statutesWithReferringOpinions 
-			= em.createNamedQuery("StatuteCitation.statutesWithReferringOpinions", StatuteCitation.class);
-		EntityGraph<?> fetchGraphForStatutesWithReferringOpinions = em.getEntityGraph("fetchGraphForStatutesWithReferringOpinions");
-		statutesWithReferringOpinions.setHint("javax.persistence.fetchgraph", fetchGraphForStatutesWithReferringOpinions);
+//		TypedQuery<StatuteCitation> statutesWithReferringOpinions 
+//			= em.createNamedQuery("StatuteCitation.statutesWithReferringOpinions", StatuteCitation.class);
+//		EntityGraph<?> fetchGraphForStatutesWithReferringOpinions = em.getEntityGraph("fetchGraphForStatutesWithReferringOpinions");
+//		statutesWithReferringOpinions.setHint("javax.persistence.fetchgraph", fetchGraphForStatutesWithReferringOpinions);
 		
     	for(StatuteCitation statuteCitation: statutes ) {
     		statuteKeys.add(statuteCitation.getStatuteKey());
     		if ( ++i % 100 == 0 ) {
-    			existingStatutes.addAll( statutesWithReferringOpinions.setParameter("statuteKeys", statuteKeys).getResultList() );
+    			existingStatutes.addAll( statuteCitationRepository.statutesWithReferringOpinions(statuteKeys));
     			statuteKeys.clear();
     		}
     	}
     	if ( statuteKeys.size() != 0 ) {
-    		existingStatutes.addAll( statutesWithReferringOpinions.setParameter("statuteKeys", statuteKeys).getResultList() );
+    		existingStatutes.addAll( statuteCitationRepository.statutesWithReferringOpinions(statuteKeys));
     	}
     	Collections.sort(existingStatutes);
     	StatuteCitation[] existingStatutesArray = existingStatutes.toArray(new StatuteCitation[existingStatutes.size()]);
@@ -329,16 +343,16 @@ public class CAOnlineUpdates {
 		List<OpinionBase> citedOpinions = new ArrayList<>(); 
 		List<Integer> opinionIds = new ArrayList<>();
 		int i = 0;
-		TypedQuery<OpinionBase> queryCitedOpinions = em.createNamedQuery("OpinionBase.fetchCitedOpinionsWithReferringOpinions", OpinionBase.class);
+//		TypedQuery<OpinionBase> queryCitedOpinions = em.createNamedQuery("OpinionBase.fetchCitedOpinionsWithReferringOpinions", OpinionBase.class);
 		for (SlipOpinion deleteOpinion: currentCopy) {
 			opinionIds.add(deleteOpinion.getId());
 			if ( ++i % 100 == 0 ) {
-				citedOpinions.addAll( queryCitedOpinions.setParameter("opinionIds", opinionIds).getResultList() );
+				citedOpinions.addAll( opinionBaseRepository.fetchCitedOpinionsWithReferringOpinions(opinionIds) );
 				opinionIds.clear();
 			}
 		}
 		if ( opinionIds.size() != 0 ) {
-			citedOpinions.addAll( queryCitedOpinions.setParameter("opinionIds", opinionIds).getResultList() );
+			citedOpinions.addAll( opinionBaseRepository.fetchCitedOpinionsWithReferringOpinions(opinionIds) );
 		}
 		
 		// ugly double loop ( O(n^2) )
@@ -353,29 +367,27 @@ public class CAOnlineUpdates {
 		
 		opinionIds.clear();
 		i = 0;
-		Query queryOpinionStatuteCitations = em.createNamedQuery("OpinionStatuteCitation.deleteOpinionStatuteCitations");
+//		Query queryOpinionStatuteCitations = em.createNamedQuery("OpinionStatuteCitation.deleteOpinionStatuteCitations");
 		for (SlipOpinion deleteOpinion: currentCopy) {
 			opinionIds.add(deleteOpinion.getId());
 			if ( ++i % 100 == 0 ) {
-				queryOpinionStatuteCitations.setParameter("opinionIds", opinionIds).executeUpdate();
+				opinionStatuteCitationRepoistory.deleteOpinionStatuteCitations(opinionIds);
 				opinionIds.clear();
 			}
 		}
 		if ( opinionIds.size() != 0 ) {
-			queryOpinionStatuteCitations.setParameter("opinionIds", opinionIds).executeUpdate();
+			opinionStatuteCitationRepoistory.deleteOpinionStatuteCitations(opinionIds);
 		}
 		
 
-		List<SlipProperties> slipProperties = em.createNamedQuery("SlipProperties.findAll", SlipProperties.class).getResultList();
 		for (SlipOpinion deleteOpinion: currentCopy) {
-			for ( SlipProperties slipProperty: slipProperties ) {
+			for ( SlipProperties slipProperty: slipPropertiesRepository.findAll() ) {
 				if ( slipProperty.getOpinionKey().equals(deleteOpinion.getId())) {
-					em.remove(slipProperty);
+					slipPropertiesRepository.delete(slipProperty);
 					break;
 				}
 			}
-			em.remove(deleteOpinion);
+			slipOpinionRepository.delete(deleteOpinion);
 		}
 	}
-*/
 }

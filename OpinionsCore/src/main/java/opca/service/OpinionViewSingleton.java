@@ -31,7 +31,7 @@ public class OpinionViewSingleton {
 		boolean ready = false;
 		if ( !opinionViewData.isReady() ) {
 			if ( !opinionViewData.isLoaded() ) {
-//				opinionViewLoad.load(opinionViewData, StatutesServiceFactory.getStatutesServiceClient());
+				opinionViewLoad.load(opinionViewData, StatutesServiceFactory.getStatutesServiceClient());
 			}		
 		} else {
 			ready = true;
@@ -140,7 +140,7 @@ public class OpinionViewSingleton {
 
 	public void updateOpinionViews(List<OpinionKey> opinionKeys, StatutesService statutesService) {
 		if ( opinionViewData.isReady() ) {
-//			opinionViewLoad.loadNewOpinions(opinionViewData, opinionKeys, statutesService);
+			opinionViewLoad.loadNewOpinions(opinionViewData, opinionKeys, statutesService);
 		}
 	}
 	public List<String[]> getStringDateList() {

@@ -7,11 +7,6 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.persistence.EntityGraph;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.TypedQuery;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -21,6 +16,9 @@ import opca.model.OpinionKey;
 import opca.model.SlipOpinion;
 import opca.model.SlipProperties;
 import opca.parser.ParsedOpinionCitationSet;
+import opca.repository.OpinionBaseRepository;
+import opca.repository.SlipOpinionRepository;
+import opca.repository.SlipPropertiesRepository;
 import opca.view.OpinionView;
 import opca.view.OpinionViewBuilder;
 import reactor.core.publisher.Mono;
@@ -30,8 +28,19 @@ import statutes.service.StatutesService;
 @Component
 public class OpinionViewLoad {
 	Logger logger = LoggerFactory.getLogger(OpinionViewLoad.class);
-/*
-//	@Asynchronous
+	private final OpinionBaseRepository opinionBaseRepository;
+	private final SlipOpinionRepository slipOpinionRepository;
+	private final SlipPropertiesRepository slipPropertiesRepository;
+	
+	public OpinionViewLoad(OpinionBaseRepository opinionBaseRepository, 
+			SlipOpinionRepository slipOpinionRepository, 
+			SlipPropertiesRepository slipPropertiesRepository) {
+		this.opinionBaseRepository = opinionBaseRepository;
+		this.slipOpinionRepository = slipOpinionRepository;
+		this.slipPropertiesRepository = slipPropertiesRepository;
+	}
+
+	//	@Asynchronous
 	public void load(OpinionViewData opinionViewData, StatutesService statutesService) {
 		// prevent all exceptions from leaving @Asynchronous block
 		try {
@@ -181,22 +190,22 @@ public class OpinionViewLoad {
 	private Mono<OpinionView> buildListedOpinionViews(OpinionViewData opinionViewData, List<SlipOpinion> opinions, StatutesService statutesService) {
 		List<OpinionBase> opinionOpinionCitations = new ArrayList<>();
 		List<Integer> opinionIds = new ArrayList<>();
-		TypedQuery<OpinionBase> fetchOpinionCitationsForOpinions = em.createNamedQuery("OpinionBase.fetchOpinionCitationsForOpinions", OpinionBase.class);
-		EntityGraph<?> fetchGraphForSlipOpinions = em.getEntityGraph("fetchGraphForSlipOpinions");
-		fetchOpinionCitationsForOpinions.setHint("javax.persistence.fetchgraph", fetchGraphForSlipOpinions);
+//		TypedQuery<OpinionBase> fetchOpinionCitationsForOpinions = em.createNamedQuery("OpinionBase.fetchOpinionCitationsForOpinions", OpinionBase.class);
+//		EntityGraph<?> fetchGraphForSlipOpinions = em.getEntityGraph("fetchGraphForSlipOpinions");
+//		fetchOpinionCitationsForOpinions.setHint("javax.persistence.fetchgraph", fetchGraphForSlipOpinions);
 		int i = 0;
 		for ( SlipOpinion slipOpinion: opinions ) {
 			opinionIds.add(slipOpinion.getId());
 			if ( ++i % 100 == 0 ) {
 				opinionOpinionCitations.addAll( 
-					fetchOpinionCitationsForOpinions.setParameter("opinionIds", opinionIds).getResultList()
+					opinionBaseRepository.fetchOpinionCitationsForOpinions(opinionIds)
 				);
 				opinionIds.clear();
 			}
 		}
 		if ( opinionIds.size() != 0 ) {
 			opinionOpinionCitations.addAll( 
-				fetchOpinionCitationsForOpinions.setParameter("opinionIds", opinionIds).getResultList()
+				opinionBaseRepository.fetchOpinionCitationsForOpinions(opinionIds)
 			);
 		}
 		List<Mono<OpinionView>> opinionViewMonos = new ArrayList<>(); 
@@ -233,12 +242,14 @@ public class OpinionViewLoad {
 
 	private List<SlipOpinion> loadAllSlipOpinions() {
 		// just get all slip opinions
-		EntityGraph<?> fetchGraphForOpinionsWithJoins = em.getEntityGraph("fetchGraphForOpinionsWithJoins");
-		List<SlipOpinion> opinions = em.createNamedQuery("SlipOpinion.loadOpinionsWithJoins", SlipOpinion.class)
-				.setHint("javax.persistence.fetchgraph", fetchGraphForOpinionsWithJoins)
-				.getResultList();
+//		EntityGraph<?> fetchGraphForOpinionsWithJoins = em.getEntityGraph("fetchGraphForOpinionsWithJoins");
+//		List<SlipOpinion> opinions = em.createNamedQuery("SlipOpinion.loadOpinionsWithJoins", SlipOpinion.class)
+//				.setHint("javax.persistence.fetchgraph", fetchGraphForOpinionsWithJoins)
+//				.getResultList();
+		List<SlipOpinion> opinions = slipOpinionRepository.loadOpinionsWithJoins();
 		// load slipOpinion properties from the database here ... ?
-		List<SlipProperties> spl = em.createNamedQuery("SlipProperties.findAll", SlipProperties.class).getResultList();
+// List<SlipProperties> spl = em.createNamedQuery("SlipProperties.findAll", SlipProperties.class).getResultList();
+		List<SlipProperties> spl = slipPropertiesRepository.findAll();
 		for ( SlipOpinion slipOpinion: opinions ) {
 			slipOpinion.setSlipProperties(spl.get(spl.indexOf(new SlipProperties(slipOpinion))));
 		}
@@ -246,17 +257,19 @@ public class OpinionViewLoad {
 	}
 	private List<SlipOpinion> loadSlipOpinionsForKeys(List<OpinionKey> opinionKeys) {
 		// just get all slip opinions
-		EntityGraph<?> fetchGraphForOpinionsWithJoins = em.getEntityGraph("fetchGraphForOpinionsWithJoins");
-		List<SlipOpinion> opinions = em.createNamedQuery("SlipOpinion.loadOpinionsWithJoinsForKeys", SlipOpinion.class)
-				.setHint("javax.persistence.fetchgraph", fetchGraphForOpinionsWithJoins)
-				.setParameter("opinionKeys", opinionKeys)
-				.getResultList();
+//		EntityGraph<?> fetchGraphForOpinionsWithJoins = em.getEntityGraph("fetchGraphForOpinionsWithJoins");
+//		List<SlipOpinion> opinions = em.createNamedQuery("SlipOpinion.loadOpinionsWithJoinsForKeys", SlipOpinion.class)
+//				.setHint("javax.persistence.fetchgraph", fetchGraphForOpinionsWithJoins)
+//				.setParameter("opinionKeys", opinionKeys)
+//				.getResultList();
+		List<SlipOpinion> opinions = slipOpinionRepository.loadOpinionsWithJoinsForKeys(opinionKeys);
 		// load slipOpinion properties from the database here ... ?
-		List<SlipProperties> spl = em.createNamedQuery("SlipProperties.findAll", SlipProperties.class).getResultList();
+//		List<SlipProperties> spl = em.createNamedQuery("SlipProperties.findAll", SlipProperties.class).getResultList();
+		List<SlipProperties> spl = slipPropertiesRepository.findAll();
 		for ( SlipOpinion slipOpinion: opinions ) {
 			slipOpinion.setSlipProperties(spl.get(spl.indexOf(new SlipProperties(slipOpinion))));
 		}
 		return opinions;
 	}
-*/
+
 }
