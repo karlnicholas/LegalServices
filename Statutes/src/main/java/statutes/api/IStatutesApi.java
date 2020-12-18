@@ -21,7 +21,7 @@ public interface IStatutesApi {
 
 	public StatutesRoot findReferenceByLawCode(String lawCode);
     
-	public StatutesRoot getStatutesHierarchy(String lawCode);
+	public StatutesRoot getStatutesHierarchy(String fullFacet);
 
 
 }

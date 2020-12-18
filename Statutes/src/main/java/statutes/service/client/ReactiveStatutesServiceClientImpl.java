@@ -20,66 +20,10 @@ import statutes.service.ReactiveStatutesService;
 import statutes.service.dto.StatuteKey;
 
 public class ReactiveStatutesServiceClientImpl implements ReactiveStatutesService {
-//	private WebClient statutes;
-//	private WebClient statutesTitles;
-//	private WebClient statuteHierarchy;
-//	private WebClient findStatutes;
 	private WebClient webClient;
 
 	public ReactiveStatutesServiceClientImpl(String baseUrl) {
 		webClient = WebClient.create(baseUrl);
-/*			
-			statutes = WebClient.create().get().uri(new URI(
-					apiLocation.getProtocol(), 
-					apiLocation.getUserInfo(), 
-					apiLocation.getHost(), 
-					apiLocation.getPort(), 
-					apiLocation.getPath() + StatutesService.STATUTES, 
-					null, null));
-			.create(apiLocation);
-			javax.ws.rs.client.Client client = ClientBuilder.newClient();
-			statutes = client
-				.target(new URI(
-					apiLocation.getProtocol(), 
-					apiLocation.getUserInfo(), 
-					apiLocation.getHost(), 
-					apiLocation.getPort(), 
-					apiLocation.getPath() + StatutesService.STATUTES, 
-					null, null)
-				);
-
-			statutesTitles = client
-				.target(new URI(
-					apiLocation.getProtocol(), 
-					apiLocation.getUserInfo(), 
-					apiLocation.getHost(), 
-					apiLocation.getPort(), 
-					apiLocation.getPath() + StatutesService.STATUTESTITLES, 
-					null, null)
-				);
-
-			statuteHierarchy = client
-					.target(new URI(
-							apiLocation.getProtocol(), 
-							apiLocation.getUserInfo(), 
-							apiLocation.getHost(), 
-							apiLocation.getPort(), 
-							apiLocation.getPath() + StatutesService.STATUTEHIERARCHY, 
-							null, null)
-						);
-			findStatutes = client
-				.target(new URI(
-					apiLocation.getProtocol(), 
-					apiLocation.getUserInfo(), 
-					apiLocation.getHost(), 
-					apiLocation.getPort(), 
-					apiLocation.getPath() + StatutesService.STATUTESANDHIERARCHIES, 
-					null, null)
-				);
-		} catch (URISyntaxException e) {
-			throw new RuntimeException(e);
-		}
-*/
 	}
 	
 	@Override
@@ -92,8 +36,6 @@ public class ReactiveStatutesServiceClientImpl implements ReactiveStatutesServic
 				.toEntityList(StatutesRoot.class);
 	}
 	
-//	.body(BodyInserters.fromProducer(accounts, AccountDto.class))
-//	.retrieve()
 	@Override
 	public Mono<ResponseEntity<StatutesTitles[]>> getStatutesTitles() {
 		return webClient
@@ -120,14 +62,6 @@ public class ReactiveStatutesServiceClientImpl implements ReactiveStatutesServic
 
 	@Override
 	public Mono<ResponseEntity<List<StatutesRoot>>> getStatutesAndHierarchies(List<StatuteKey> statuteKeys) {
-//		return webClient
-//				.post()
-//				.uri(StatutesService.STATUTESANDHIERARCHIES)
-//				.accept(MediaType.APPLICATION_JSON)
-//				.contentType(MediaType.APPLICATION_JSON)
-//				.bodyValue(statuteKeys)
-//				.retrieve()
-//				.toEntityList(StatutesRoot.class);
 		WebClient client3 = WebClient
 				  .builder()
 				    .baseUrl("http://localhost:8090")
@@ -138,8 +72,7 @@ public class ReactiveStatutesServiceClientImpl implements ReactiveStatutesServic
 				  .method(HttpMethod.GET)
 				  .uri("/");
 		
-		BodyInserter<List<StatuteKey>, ReactiveHttpOutputMessage> inserter3
-		 = BodyInserters.fromValue(statuteKeys);
+		BodyInserter<List<StatuteKey>, ReactiveHttpOutputMessage> inserter3 = BodyInserters.fromValue(statuteKeys);
 		
 		WebClient.ResponseSpec response1 = uri1
 				  .body(inserter3)
