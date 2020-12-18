@@ -40,7 +40,7 @@ import statutes.SectionNumber;
 import statutes.SectionNumberPosition;
 import statutes.StatutesBaseClass;
 import statutes.StatutesRoot;
-import statutes.service.StatutesService;
+import statutes.service.ReactiveStatutesService;
 
 /*
  * Changes to match spec and make thread safe .. 
@@ -56,15 +56,15 @@ public class GSearch {
 	private Analyzer analyzer;
 	private StandardQueryParser parser;
 	private int maxTopDocs;
-	private StatutesService statutesService;
+	private ReactiveStatutesService reactiveStatutesService;
 	private gsearch.util.Highlighter myHighlighter;
 
 	// This is meant to be put into an application scope
 	// after instantiation .. 
-	public GSearch(StatutesService statutesService) throws IOException {
+	public GSearch(ReactiveStatutesService reactiveStatutesService) throws IOException {
 //		statutesTitles = parserInterface.getStatutesTitles();
 		myHighlighter = new gsearch.util.Highlighter();
-		this.statutesService = statutesService;
+		this.reactiveStatutesService = reactiveStatutesService;
         facetsConfig = new FacetsConfig();
 	    facetsConfig.setHierarchical(FacetsConfig.DEFAULT_INDEX_FIELD_NAME, true);
 //	    facetsConfig.setRequireDimCount(FacetsConfig.DEFAULT_INDEX_FIELD_NAME, true);
@@ -106,7 +106,7 @@ public class GSearch {
 		// it can also, presumably, be built if the codeselect 
 		// 
 		if ( viewModel.getState() == STATES.START ) {
-			monoViewModel = statutesService.getStatutesRoots()
+			monoViewModel = reactiveStatutesService.getStatutesRoots()
 					.map(ResponseEntity::getBody)
 					.map(statutesRoots->{
 						for ( StatutesRoot statutesRoot: statutesRoots ) {
@@ -117,7 +117,7 @@ public class GSearch {
 						return viewModel;
 					});
 		} else {
-			monoViewModel = statutesService.getStatuteHierarchy(viewModel.getPath())
+			monoViewModel = reactiveStatutesService.getStatuteHierarchy(viewModel.getPath())
 			.map(ResponseEntity::getBody)
 			.map(statutesRoots->processPathAndSubcodeList(viewModel, statutesRoots));
 		}

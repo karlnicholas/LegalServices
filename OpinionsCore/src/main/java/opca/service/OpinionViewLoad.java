@@ -23,7 +23,7 @@ import opca.view.OpinionView;
 import opca.view.OpinionViewBuilder;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
-import statutes.service.StatutesService;
+import statutes.service.ReactiveStatutesService;
 
 @Component
 public class OpinionViewLoad {
@@ -41,13 +41,13 @@ public class OpinionViewLoad {
 	}
 
 	//	@Asynchronous
-	public void load(OpinionViewData opinionViewData, StatutesService statutesService) {
+	public void load(OpinionViewData opinionViewData, ReactiveStatutesService reactiveStatutesService) {
 		// prevent all exceptions from leaving @Asynchronous block
 		try {
 			logger.info("load start");
 			opinionViewData.setLoaded( true );
 			opinionViewData.setReady( false );
-			buildOpinionViews(opinionViewData, statutesService).publishOn(Schedulers.boundedElastic()).subscribe((opinionView)->{
+			buildOpinionViews(opinionViewData, reactiveStatutesService).publishOn(Schedulers.boundedElastic()).subscribe((opinionView)->{
 				opinionViewData.setStringDateList();
 				opinionViewData.setReady( true );
 				opinionViewData.setLoaded( false );
@@ -59,12 +59,12 @@ public class OpinionViewLoad {
 		}
 	}
 
-	public void loadNewOpinions(OpinionViewData opinionViewData, List<OpinionKey> opinionKeys, StatutesService statutesService) {
+	public void loadNewOpinions(OpinionViewData opinionViewData, List<OpinionKey> opinionKeys, ReactiveStatutesService reactiveStatutesService) {
 		try {
 			logger.info("loadNewOpinions start: " + opinionKeys.size());
 			opinionViewData.setLoaded( true );
 			opinionViewData.setReady( false );
-			buildNewOpinionViews(opinionViewData, opinionKeys, statutesService);
+			buildNewOpinionViews(opinionViewData, opinionKeys, reactiveStatutesService);
 			opinionViewData.setStringDateList();
 			opinionViewData.setReady( true );
 			opinionViewData.setLoaded( true );
@@ -142,12 +142,12 @@ public class OpinionViewLoad {
 		lastDay.add(Calendar.WEEK_OF_YEAR, 1);
 	}
 	
-	private Mono<OpinionView> buildOpinionViews(OpinionViewData opinionViewData, StatutesService statutesService) {
+	private Mono<OpinionView> buildOpinionViews(OpinionViewData opinionViewData, ReactiveStatutesService reactiveStatutesService) {
 		opinionViewData.setOpinionViews(new ArrayList<>());
 		List<SlipOpinion> opinions = loadAllSlipOpinions();
-		return buildListedOpinionViews(opinionViewData, opinions, statutesService);
+		return buildListedOpinionViews(opinionViewData, opinions, reactiveStatutesService);
 	}
-	private void buildNewOpinionViews(OpinionViewData opinionViewData, List<OpinionKey> opinionKeys, StatutesService statutesService) {
+	private void buildNewOpinionViews(OpinionViewData opinionViewData, List<OpinionKey> opinionKeys, ReactiveStatutesService reactiveStatutesService) {
 		// remove deleted opinions from cache
 		Iterator<OpinionView> ovIt = opinionViewData.getOpinionViews().iterator();
 		while ( ovIt.hasNext() ) {
@@ -181,13 +181,13 @@ public class OpinionViewLoad {
 		if ( opinionKeys.size() > 0 ) {
 			List<SlipOpinion> opinions = loadSlipOpinionsForKeys(opinionKeys);
 			logger.info("opinions size " + opinions.size());
-			buildListedOpinionViews(opinionViewData, opinions, statutesService);
+			buildListedOpinionViews(opinionViewData, opinions, reactiveStatutesService);
 		} else {
 			logger.info("Rebuilding entire cache");
-			buildOpinionViews(opinionViewData, statutesService);
+			buildOpinionViews(opinionViewData, reactiveStatutesService);
 		}
 	}
-	private Mono<OpinionView> buildListedOpinionViews(OpinionViewData opinionViewData, List<SlipOpinion> opinions, StatutesService statutesService) {
+	private Mono<OpinionView> buildListedOpinionViews(OpinionViewData opinionViewData, List<SlipOpinion> opinions, ReactiveStatutesService reactiveStatutesService) {
 		List<OpinionBase> opinionOpinionCitations = new ArrayList<>();
 		List<Integer> opinionIds = new ArrayList<>();
 //		TypedQuery<OpinionBase> fetchOpinionCitationsForOpinions = em.createNamedQuery("OpinionBase.fetchOpinionCitationsForOpinions", OpinionBase.class);
@@ -209,7 +209,7 @@ public class OpinionViewLoad {
 			);
 		}
 		List<Mono<OpinionView>> opinionViewMonos = new ArrayList<>(); 
-		OpinionViewBuilder opinionViewBuilder = new OpinionViewBuilder(statutesService);
+		OpinionViewBuilder opinionViewBuilder = new OpinionViewBuilder(reactiveStatutesService);
 		for ( SlipOpinion slipOpinion: opinions ) {
 			slipOpinion.setOpinionCitations( opinionOpinionCitations.get( opinionOpinionCitations.indexOf(slipOpinion)).getOpinionCitations() );
 			ParsedOpinionCitationSet parserResults = new ParsedOpinionCitationSet(slipOpinion);

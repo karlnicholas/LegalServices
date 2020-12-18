@@ -18,18 +18,18 @@ import statutes.SectionNumber;
 import statutes.StatutesRoot;
 import statutes.StatutesTitles;
 import statutes.api.IStatutesApi;
-import statutes.service.StatutesService;
+import statutes.service.ReactiveStatutesService;
 import statutes.service.dto.StatuteKey;
 
 @RestController
 @RequestMapping("/")
 @Slf4j
 @CrossOrigin(origins = "http://localhost:4200")
-public class StatutesServiceServer implements StatutesService {
+public class StatutesServiceServer implements ReactiveStatutesService {
 	private IStatutesApi iStatutesApi = ApiImplSingleton.getInstance().getStatutesApi();
 
 	@Override
-	@GetMapping(path = StatutesService.STATUTES, produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(path = ReactiveStatutesService.STATUTES, produces = MediaType.APPLICATION_JSON_VALUE)
 	public Mono<ResponseEntity<List<StatutesRoot>>> getStatutesRoots() {
 		log.info("get getStatutesRoots");
 		return Mono.just(iStatutesApi.getStatutes())
@@ -37,13 +37,13 @@ public class StatutesServiceServer implements StatutesService {
 	}
 
 	@Override
-	@GetMapping(path = StatutesService.STATUTESTITLES, produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(path = ReactiveStatutesService.STATUTESTITLES, produces = MediaType.APPLICATION_JSON_VALUE)
 	public Mono<ResponseEntity<StatutesTitles[]>> getStatutesTitles() {
 		return Mono.just(ResponseEntity.ok(iStatutesApi.getStatutesTitles()));
 	}
 
 	@Override
-	@GetMapping(path = StatutesService.STATUTEHIERARCHY, produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(path = ReactiveStatutesService.STATUTEHIERARCHY, produces = MediaType.APPLICATION_JSON_VALUE)
 	public Mono<ResponseEntity<StatutesRoot>> getStatuteHierarchy(@RequestParam("fullFacet") String fullFacet) {
 		return Mono.just(ResponseEntity.ok(iStatutesApi.getStatutesHierarchy(fullFacet)));
 	}
@@ -74,7 +74,7 @@ public class StatutesServiceServer implements StatutesService {
 //	}
 
 	@Override
-	@GetMapping(path=StatutesService.STATUTESANDHIERARCHIES, 
+	@GetMapping(path=ReactiveStatutesService.STATUTESANDHIERARCHIES, 
 		consumes = MediaType.APPLICATION_JSON_VALUE, 
 		produces = MediaType.APPLICATION_JSON_VALUE)
 	public Mono<ResponseEntity<List<StatutesRoot>>> getStatutesAndHierarchies(@RequestBody final List<StatuteKey> keys) {

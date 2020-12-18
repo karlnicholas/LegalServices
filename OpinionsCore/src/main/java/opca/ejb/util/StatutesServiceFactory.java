@@ -5,7 +5,7 @@ import statutes.service.client.StatutesServiceClientImpl;
 
 public class StatutesServiceFactory {
 	private static String rsLocation;
-	private static final String defaultAddress = "http://localhost:8080/statutesrs/rs/";
+	private static final String defaultAddress = "http://localhost:8090/";
 	static {
 		rsLocation = System.getenv("statutesrsservice");
 		if (rsLocation == null)

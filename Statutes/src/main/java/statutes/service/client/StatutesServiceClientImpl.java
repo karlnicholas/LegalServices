@@ -1,157 +1,77 @@
 package statutes.service.client;
 
-import java.nio.charset.Charset;
-import java.time.ZonedDateTime;
+import java.net.URI;
 import java.util.List;
 
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
-import org.springframework.http.ReactiveHttpOutputMessage;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.reactive.function.BodyInserter;
-import org.springframework.web.reactive.function.BodyInserters;
-import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
-import reactor.core.publisher.Mono;
 import statutes.StatutesRoot;
 import statutes.StatutesTitles;
 import statutes.service.StatutesService;
+import statutes.service.ReactiveStatutesService;
 import statutes.service.dto.StatuteKey;
 
 public class StatutesServiceClientImpl implements StatutesService {
-//	private WebClient statutes;
-//	private WebClient statutesTitles;
-//	private WebClient statuteHierarchy;
-//	private WebClient findStatutes;
-	private WebClient webClient;
+	private RestTemplate restTemplate;
+	private URI statutesURI;
+	private URI statuesTitlesURI;
+	private URI statuteHierarchyURI;
+	private URI statutesAndHierarchiesURI;
 
 	public StatutesServiceClientImpl(String baseUrl) {
-		webClient = WebClient.create(baseUrl);
-/*			
-			statutes = WebClient.create().get().uri(new URI(
-					apiLocation.getProtocol(), 
-					apiLocation.getUserInfo(), 
-					apiLocation.getHost(), 
-					apiLocation.getPort(), 
-					apiLocation.getPath() + StatutesService.STATUTES, 
-					null, null));
-			.create(apiLocation);
-			javax.ws.rs.client.Client client = ClientBuilder.newClient();
-			statutes = client
-				.target(new URI(
-					apiLocation.getProtocol(), 
-					apiLocation.getUserInfo(), 
-					apiLocation.getHost(), 
-					apiLocation.getPort(), 
-					apiLocation.getPath() + StatutesService.STATUTES, 
-					null, null)
-				);
-
-			statutesTitles = client
-				.target(new URI(
-					apiLocation.getProtocol(), 
-					apiLocation.getUserInfo(), 
-					apiLocation.getHost(), 
-					apiLocation.getPort(), 
-					apiLocation.getPath() + StatutesService.STATUTESTITLES, 
-					null, null)
-				);
-
-			statuteHierarchy = client
-					.target(new URI(
-							apiLocation.getProtocol(), 
-							apiLocation.getUserInfo(), 
-							apiLocation.getHost(), 
-							apiLocation.getPort(), 
-							apiLocation.getPath() + StatutesService.STATUTEHIERARCHY, 
-							null, null)
-						);
-			findStatutes = client
-				.target(new URI(
-					apiLocation.getProtocol(), 
-					apiLocation.getUserInfo(), 
-					apiLocation.getHost(), 
-					apiLocation.getPort(), 
-					apiLocation.getPath() + StatutesService.STATUTESANDHIERARCHIES, 
-					null, null)
-				);
-		} catch (URISyntaxException e) {
-			throw new RuntimeException(e);
-		}
-*/
+		restTemplate = new RestTemplate();
+		statutesURI = URI.create(baseUrl + ReactiveStatutesService.STATUTES);
+		statuesTitlesURI = URI.create(baseUrl + ReactiveStatutesService.STATUTESTITLES);
+		statuteHierarchyURI = URI.create(baseUrl + ReactiveStatutesService.STATUTEHIERARCHY);
+		statutesAndHierarchiesURI = URI.create(baseUrl + ReactiveStatutesService.STATUTESANDHIERARCHIES);
+		
 	}
 	
 	@Override
-	public Mono<ResponseEntity<List<StatutesRoot>>> getStatutesRoots() {
-		return webClient
-				.get()
-				.uri(StatutesService.STATUTES)
-				.accept(MediaType.APPLICATION_JSON)
-				.retrieve()
-				.toEntityList(StatutesRoot.class);
+	public ResponseEntity<List<StatutesRoot>> getStatutesRoots() {
+		return restTemplate.exchange(statutesURI, HttpMethod.GET, HttpEntity.EMPTY,  new ParameterizedTypeReference<List<StatutesRoot>>() {});
 	}
 	
-//	.body(BodyInserters.fromProducer(accounts, AccountDto.class))
-//	.retrieve()
 	@Override
-	public Mono<ResponseEntity<StatutesTitles[]>> getStatutesTitles() {
-		return webClient
-				.get()
-				.uri(StatutesService.STATUTESTITLES)
-				.accept(MediaType.APPLICATION_JSON)
-				.retrieve()
-				.toEntity(StatutesTitles[].class);
-			
+	public ResponseEntity<StatutesTitles[]> getStatutesTitles() {
+		return restTemplate.exchange(statuesTitlesURI, HttpMethod.GET, HttpEntity.EMPTY,  StatutesTitles[].class);
 	}
 
 	@Override
-	public Mono<ResponseEntity<StatutesRoot>> getStatuteHierarchy(String fullFacet) {
-		return webClient
-				.get()
-				.uri(uriBuilder -> uriBuilder
-				    .path(StatutesService.STATUTEHIERARCHY)
-				    .queryParam("fullFacet", fullFacet)
-				    .build())
-				.accept(MediaType.APPLICATION_JSON)
-				.retrieve()
-				.toEntity(StatutesRoot.class);
+	public ResponseEntity<StatutesRoot> getStatuteHierarchy(String fullFacet) {
+		HttpHeaders headers = new HttpHeaders();
+		headers.set("Accept", MediaType.APPLICATION_JSON_VALUE);
+
+		UriComponentsBuilder builder = UriComponentsBuilder.fromUri(statuteHierarchyURI).queryParam("fullFacet", fullFacet);
+
+		HttpEntity<?> entity = new HttpEntity<>(headers);
+
+		return restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity, StatutesRoot.class);	
+
 	}
 
-	@Override
-	public Mono<ResponseEntity<List<StatutesRoot>>> getStatutesAndHierarchies(List<StatuteKey> statuteKeys) {
-//		return webClient
-//				.post()
-//				.uri(StatutesService.STATUTESANDHIERARCHIES)
-//				.accept(MediaType.APPLICATION_JSON)
-//				.contentType(MediaType.APPLICATION_JSON)
-//				.bodyValue(statuteKeys)
-//				.retrieve()
-//				.toEntityList(StatutesRoot.class);
-		WebClient client3 = WebClient
-				  .builder()
-				    .baseUrl("http://localhost:8090")
-				    .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE) 
-				  .build();
-		
-		WebClient.RequestBodySpec uri1 = client3
-				  .method(HttpMethod.GET)
-				  .uri("/");
-		
-		BodyInserter<List<StatuteKey>, ReactiveHttpOutputMessage> inserter3
-		 = BodyInserters.fromValue(statuteKeys);
-		
-		WebClient.ResponseSpec response1 = uri1
-				  .body(inserter3)
-				    .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-				    .accept(MediaType.APPLICATION_JSON)
-				    .acceptCharset(Charset.forName("UTF-8"))
-				    .ifNoneMatch("*")
-				    .ifModifiedSince(ZonedDateTime.now())
-				  .retrieve();
 
-		return response1.toEntityList(StatutesRoot.class);
-		
+	@Override
+	public ResponseEntity<List<StatutesRoot>> getStatutesAndHierarchies(List<StatuteKey> statuteKeys) {
+
+		// Set the Content-Type header
+		HttpHeaders requestHeaders = new HttpHeaders();
+		requestHeaders.setContentType(new MediaType("application","json"));
+		requestHeaders.set("Accept", MediaType.APPLICATION_JSON_VALUE);
+		HttpEntity<List<StatuteKey>> requestEntity = new HttpEntity<>(statuteKeys, requestHeaders);
+
+		// Add the Jackson and String message converters
+//		restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
+//		restTemplate.getMessageConverters().add(new StringHttpMessageConverter());
+
+		return restTemplate.exchange(statutesAndHierarchiesURI, HttpMethod.GET, requestEntity, new ParameterizedTypeReference<List<StatutesRoot>>() {});
 	}
 
 }

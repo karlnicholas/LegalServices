@@ -11,7 +11,7 @@ import java.util.Set;
 
 import org.springframework.stereotype.Component;
 
-import opca.ejb.util.StatutesServiceFactory;
+import opca.ejb.util.ReactiveStatutesServiceFactory;
 import opca.model.User;
 import opca.view.OpinionView;
 import opca.view.SectionView;
@@ -29,7 +29,7 @@ public class OpinionViewSingleton {
 		boolean ready = false;
 		if ( !opinionViewData.isReady() ) {
 			if ( !opinionViewData.isLoaded() ) {
-				opinionViewLoad.load(opinionViewData, StatutesServiceFactory.getStatutesServiceClient());
+				opinionViewLoad.load(opinionViewData, ReactiveStatutesServiceFactory.getReactiveStatutesServiceClient());
 			}		
 		} else {
 			ready = true;

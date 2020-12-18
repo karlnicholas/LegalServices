@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import statutes.service.StatutesService;
-import statutes.service.client.StatutesServiceClientImpl;
+import statutes.service.ReactiveStatutesService;
+import statutes.service.client.ReactiveStatutesServiceClientImpl;
 import gsearch.GSearch;
 import gsearch.viewmodel.ViewModel;
 import reactor.core.publisher.Mono;
@@ -28,8 +28,8 @@ public class GuidedSearchController {
 	@GetMapping("/")
 	protected Mono<ViewModel> doGet(@RequestParam(required = false) String path, @RequestParam(required = false) String term, @RequestParam(required = false) boolean frag) throws IOException {
 
-		StatutesService statutesService = new StatutesServiceClientImpl("http://localhost:8090/");
-		GSearch gsearch = new GSearch(statutesService);
+		ReactiveStatutesService reactiveStatutesService = new ReactiveStatutesServiceClientImpl("http://localhost:8090/");
+		GSearch gsearch = new GSearch(reactiveStatutesService);
 		
 		Mono<ViewModel> viewModel = gsearch.handleRequest(path, term, frag);
 //		request.setAttribute("viewModel", viewModel );

@@ -11,17 +11,17 @@ import statutes.StatutesBaseClass;
 import statutes.StatutesLeaf;
 import statutes.StatutesNode;
 import statutes.StatutesRoot;
-import statutes.service.StatutesService;
+import statutes.service.ReactiveStatutesService;
 import opca.model.*;
 import opca.parser.ParsedOpinionCitationSet;
 import reactor.core.publisher.Mono;
 
 public class OpinionViewBuilder {
 	private static final int LEVEL_OF_INTEREST = 3; 
-	private final StatutesService statutesRs;
+	private final ReactiveStatutesService statutesRs;
 //	private List<SectionView> sectionViews;
 	
-	public OpinionViewBuilder(StatutesService statutesRs) {
+	public OpinionViewBuilder(ReactiveStatutesService statutesRs) {
 		this.statutesRs = statutesRs;
 	}
 	

@@ -30,7 +30,7 @@ import opca.repository.SlipPropertiesRepository;
 import opca.repository.StatuteCitationRepository;
 import opca.parser.ParsedOpinionCitationSet;
 import statutes.StatutesTitles;
-import statutes.service.BlockingStatutesService;
+import statutes.service.StatutesService;
 
 /**
  * 
@@ -62,7 +62,7 @@ public class CAOnlineUpdates {
 //	}
 
 	@Transactional
-	public void updateDatabase(OpinionScraperInterface caseScraper, BlockingStatutesService blockingStatutesService) {
+	public void updateDatabase(OpinionScraperInterface caseScraper, StatutesService statutesService) {
 		
  		List<SlipOpinion> onlineOpinions = caseScraper.getCaseList();
  		// save OpinionKeys for cache handling 
@@ -130,7 +130,7 @@ public class CAOnlineUpdates {
 		}
 		if ( onlineOpinions.size() > 0 ) {
 			// no retries
-			processAndPersistCases(onlineOpinions, caseScraper, blockingStatutesService);
+			processAndPersistCases(onlineOpinions, caseScraper, statutesService);
 		} else {
 			logger.info("No new cases.");
 		}		
@@ -138,7 +138,7 @@ public class CAOnlineUpdates {
 //			return opinionKeys; 
 	}
 	
-	private void processAndPersistCases(List<SlipOpinion> slipOpinions, OpinionScraperInterface opinionScraper, BlockingStatutesService blockingStatutesService) {
+	private void processAndPersistCases(List<SlipOpinion> slipOpinions, OpinionScraperInterface opinionScraper, StatutesService statutesService) {
 
 		// Create the CACodes list
 		logger.info("There are " + slipOpinions.size() + " SlipOpinions to process");
@@ -148,7 +148,7 @@ public class CAOnlineUpdates {
 
 //		StatutesTitlesArray statutesArray = blockingStatutesService.getStatutesTitles();
 //		Flux<StatutesTitles> statutesArray = blockingStatutesService.getStatutesTitles();
-		StatutesTitles[] arrayStatutesTitles = blockingStatutesService.getStatutesTitles().getBody();
+		StatutesTitles[] arrayStatutesTitles = statutesService.getStatutesTitles().getBody();
 //			codeTitles = statutesArray.getItem().toArray(codeTitles);
 
 		OpinionDocumentParser opinionDocumentParser = new OpinionDocumentParser(arrayStatutesTitles);

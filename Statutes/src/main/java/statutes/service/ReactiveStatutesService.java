@@ -4,23 +4,24 @@ import java.util.List;
 
 import org.springframework.http.ResponseEntity;
 
+import reactor.core.publisher.Mono;
 import statutes.StatutesRoot;
 import statutes.StatutesTitles;
 import statutes.service.dto.StatuteKey;
 
-public interface BlockingStatutesService {
+public interface ReactiveStatutesService {
 
 	String STATUTES = "statutes";
 	String STATUTESTITLES = "statutestitles";
 	String STATUTEHIERARCHY = "statutehierarchy";
 	String STATUTESANDHIERARCHIES = "statutesandhierarchies";
 
-	ResponseEntity<List<StatutesRoot>> getStatutesRoots();
+	Mono<ResponseEntity<List<StatutesRoot>>> getStatutesRoots();
 
-	ResponseEntity<StatutesTitles[]> getStatutesTitles();
+	Mono<ResponseEntity<StatutesTitles[]>> getStatutesTitles();
 
-	ResponseEntity<StatutesRoot> getStatuteHierarchy(String fullFacet);
+	Mono<ResponseEntity<StatutesRoot>> getStatuteHierarchy(String fullFacet);
 
-	ResponseEntity<List<StatutesRoot>> getStatutesAndHierarchies(List<StatuteKey> statuteKeys);
+	Mono<ResponseEntity<List<StatutesRoot>>> getStatutesAndHierarchies(List<StatuteKey> statuteKeys);
 
 }

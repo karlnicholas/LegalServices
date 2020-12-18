@@ -11,8 +11,8 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import opca.parser.OpinionScraperInterface;
 import opca.scraper.TestCAParseSlipDetails;
 import opca.service.CAOnlineUpdates;
-import statutes.service.BlockingStatutesService;
-import statutes.service.client.BlockingStatutesServiceClientImpl;
+import statutes.service.StatutesService;
+import statutes.service.client.StatutesServiceClientImpl;
 
 @SpringBootApplication(scanBasePackages = {"opca", "update"})
 @EnableJpaRepositories(basePackages = {"opca"})
@@ -27,11 +27,11 @@ public class TestOnlineUpdates implements ApplicationRunner {
 	@Override
 	public void run(ApplicationArguments args) {
 
-		BlockingStatutesService blockingStatutesService = new BlockingStatutesServiceClientImpl("http://localhost:8090/");
+		StatutesService statutesService = new StatutesServiceClientImpl("http://localhost:8090/");
 //				OpinionScraperInterface caseScraper = new CACaseScraper(true);
 //				OpinionScraperInterface caseScraper = new TestCACaseScraper(false);
 		OpinionScraperInterface caseScraper = new TestCAParseSlipDetails(false);
-		caOnlineUpdates.updateDatabase(caseScraper, blockingStatutesService);
+		caOnlineUpdates.updateDatabase(caseScraper, statutesService);
 
 //			List<ScrapedOpinionDocument> scrapedCases = caseScraper.scrapeOpinionFiles(caseScraper.getCaseList());
 //			scrapedCases.stream().forEach(sc->{
