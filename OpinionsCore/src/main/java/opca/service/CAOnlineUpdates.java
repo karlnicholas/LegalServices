@@ -43,18 +43,16 @@ import statutes.service.BlockingStatutesService;
 @Component
 public class CAOnlineUpdates {	
 	Logger logger = LoggerFactory.getLogger(CAOnlineUpdates.class);
-    private final OpinionViewSingleton opinionViewSingleton;
 	private final OpinionBaseRepository opinionBaseRepository;
 	private final StatuteCitationRepository statuteCitationRepository;
 	private final OpinionStatuteCitationRepository opinionStatuteCitationRepoistory;
 	private final SlipOpinionRepository slipOpinionRepository;
 	private final SlipPropertiesRepository slipPropertiesRepository;
 	
-	public CAOnlineUpdates(OpinionViewSingleton opinionViewSingleton, OpinionBaseRepository opinionBaseRepository,
+	public CAOnlineUpdates(OpinionBaseRepository opinionBaseRepository,
 			StatuteCitationRepository statuteCitationRepository,
 			OpinionStatuteCitationRepository opinionStatuteCitationRepoistory,
 			SlipOpinionRepository slipOpinionRepository, SlipPropertiesRepository slipPropertiesRepository) {
-		this.opinionViewSingleton = opinionViewSingleton;
 		this.opinionBaseRepository = opinionBaseRepository;
 		this.statuteCitationRepository = statuteCitationRepository;
 		this.opinionStatuteCitationRepoistory = opinionStatuteCitationRepoistory;
@@ -81,27 +79,27 @@ public class CAOnlineUpdates {
 		}
 		//
 //			onlineOpinions.remove(0);
-//			onlineOpinions = onlineOpinions.subList(0, 340);
+			onlineOpinions = onlineOpinions.subList(0, 340);
 //			onlineOpinions = onlineOpinions.subList(0, 0);
 //			onlineOpinions = onlineOpinions.subList(0, 1);
 
 //
-		Iterator<SlipOpinion> oit = onlineOpinions.iterator();
-		while ( oit.hasNext() ) {
-			SlipOpinion opinion = oit.next();
-			if ( 
-				!opinion.getFileName().equalsIgnoreCase("B299987")
-//					|| opinion.getFileName().equalsIgnoreCase("C080488")
-//					|| opinion.getFileName().equalsIgnoreCase("E070545M")
-//					|| opinion.getFileName().equalsIgnoreCase("C082144")
-//					|| opinion.getFileName().equalsIgnoreCase("C080023")
-//					|| opinion.getFileName().equalsIgnoreCase("B286043")
-//					|| opinion.getFileName().equalsIgnoreCase("S087773")
-//					|| opinion.getFileName().equalsIgnoreCase("JAD18-11")
-			) {
-				oit.remove();
-			}
-		}
+//		Iterator<SlipOpinion> oit = onlineOpinions.iterator();
+//		while ( oit.hasNext() ) {
+//			SlipOpinion opinion = oit.next();
+//			if ( 
+//				!opinion.getFileName().equalsIgnoreCase("B299987")
+////					|| opinion.getFileName().equalsIgnoreCase("C080488")
+////					|| opinion.getFileName().equalsIgnoreCase("E070545M")
+////					|| opinion.getFileName().equalsIgnoreCase("C082144")
+////					|| opinion.getFileName().equalsIgnoreCase("C080023")
+////					|| opinion.getFileName().equalsIgnoreCase("B286043")
+////					|| opinion.getFileName().equalsIgnoreCase("S087773")
+////					|| opinion.getFileName().equalsIgnoreCase("JAD18-11")
+//			) {
+//				oit.remove();
+//			}
+//		}
 //			
 		//
 		List<SlipOpinion> currentOpinions = slipOpinionRepository.findAll();
@@ -185,12 +183,12 @@ public class CAOnlineUpdates {
 		}
 
 		List<OpinionBase> persistOpinions = new ArrayList<>();
-		List<OpinionBase> mergeOpinions = new ArrayList<>();
-		List<StatuteCitation> mergeStatutes = new ArrayList<>();	  	
+//		List<OpinionBase> mergeOpinions = new ArrayList<>();
+//		List<StatuteCitation> mergeStatutes = new ArrayList<>();	  	
 		List<StatuteCitation> persistStatutes = new ArrayList<>();
 
-		processOpinions(citationStore, mergeOpinions, persistOpinions);
-	  	processStatutes(citationStore, mergeStatutes, persistStatutes);
+		processOpinions(citationStore, persistOpinions);
+	  	processStatutes(citationStore, persistStatutes);
 				
 		List<OpinionStatuteCitation> persistOpinionStatuteCitations = new ArrayList<>();
 
@@ -214,10 +212,10 @@ public class CAOnlineUpdates {
 
 		startTime = new Date();
 
-    	for(OpinionBase opinion: mergeOpinions ) {
-    		opinionBaseRepository.save(opinion);
-    	}
-		logger.info("Merged "+mergeOpinions.size()+" opinions in "+((new Date().getTime()-startTime.getTime())/1000) + " seconds");
+//    	for(OpinionBase opinion: mergeOpinions ) {
+//    		opinionBaseRepository.save(opinion);
+//    	}
+//		logger.info("Merged "+mergeOpinions.size()+" opinions in "+((new Date().getTime()-startTime.getTime())/1000) + " seconds");
 
 		startTime = new Date();
 		for(OpinionStatuteCitation opinionStatuteCitation: persistOpinionStatuteCitations) {
@@ -231,15 +229,14 @@ public class CAOnlineUpdates {
     	}
 		logger.info("Persisted "+persistStatutes.size()+" statutes in "+((new Date().getTime()-startTime.getTime())/1000) + " seconds");
 
-		startTime = new Date();
-    	for(StatuteCitation statute: mergeStatutes ) {
-    		statuteCitationRepository.save(statute);
-    	}
-		logger.info("Merged "+mergeStatutes.size()+" statutes in "+((new Date().getTime()-startTime.getTime())/1000) + " seconds");
+//		startTime = new Date();
+//    	for(StatuteCitation statute: mergeStatutes ) {
+//    		statuteCitationRepository.save(statute);
+//    	}
+//		logger.info("Merged "+mergeStatutes.size()+" statutes in "+((new Date().getTime()-startTime.getTime())/1000) + " seconds");
 	}
 
 	private void processOpinions(CitationStore citationStore,  
-		List<OpinionBase> mergeOpinions, 
 		List<OpinionBase> persistOpinions 
 		
 	) {
@@ -266,25 +263,26 @@ public class CAOnlineUpdates {
 //    		opinion.checkCountReferringOpinions();
     		// checking for opinionBase for citations
     		int idx = Arrays.binarySearch(existingOpinionsArray, opinion);
+			persistOpinions.add(opinion);
     		
-    		if ( idx < 0 ) {
-				persistOpinions.add(opinion);
-			} else {
-				OpinionBase existingOpinion = existingOpinionsArray[idx]; 
-				existingOpinion.mergePersistenceFromSlipLoad(opinion);
-//				
-//	    		logger.fine("existingOpinion:= " 
-//	    				+ existingOpinion.getTitle() 
-//	    				+ "\n	:OpinionKey= " + existingOpinion.getOpinionKey()
-//	    				+ "\n	:CountReferringOpinions= " + existingOpinion.getCountReferringOpinions()
-//	    				+ "\n	:ReferringOpinions.size()= " + (existingOpinion.getReferringOpinions()== null?"xx":existingOpinion.getReferringOpinions().size())
-//	    				+ "\n	:OpinionCitations().size()= " + (existingOpinion.getOpinionCitations()== null?"xx":existingOpinion.getOpinionCitations().size())
-//	    			);
-//	    			
-				mergeOpinions.add(existingOpinion);
-			}
+//    		if ( idx < 0 ) {
+//				persistOpinions.add(opinion);
+//			} else {
+//				OpinionBase existingOpinion = existingOpinionsArray[idx]; 
+//				existingOpinion.mergePersistenceFromSlipLoad(opinion);
+////				
+////	    		logger.fine("existingOpinion:= " 
+////	    				+ existingOpinion.getTitle() 
+////	    				+ "\n	:OpinionKey= " + existingOpinion.getOpinionKey()
+////	    				+ "\n	:CountReferringOpinions= " + existingOpinion.getCountReferringOpinions()
+////	    				+ "\n	:ReferringOpinions.size()= " + (existingOpinion.getReferringOpinions()== null?"xx":existingOpinion.getReferringOpinions().size())
+////	    				+ "\n	:OpinionCitations().size()= " + (existingOpinion.getOpinionCitations()== null?"xx":existingOpinion.getOpinionCitations().size())
+////	    			);
+////	    			
+//				mergeOpinions.add(existingOpinion);
+//			}
 			logger.trace("opinion "+opinion.getOpinionKey()
-				+ "\n	mergeOpinions:= " + mergeOpinions.size() 
+//				+ "\n	mergeOpinions:= " + mergeOpinions.size() 
 				+ "\n	persistOpinions:= " + persistOpinions.size() 
 			);
 
@@ -295,7 +293,6 @@ public class CAOnlineUpdates {
 
     private void processStatutes( 
     		CitationStore citationStore, 
-    		List<StatuteCitation> mergeStatutes, 
     		List<StatuteCitation> persistStatutes
 	) {
     	Date startTime = new Date();
@@ -324,14 +321,15 @@ public class CAOnlineUpdates {
     	int count = statutes.size();
     	for(StatuteCitation statute: statutes ) {
     		int idx = Arrays.binarySearch(existingStatutesArray, statute);
-			if ( idx < 0 ) {
-				persistStatutes.add(statute);
-			} else {
-	    		StatuteCitation existingStatute = existingStatutesArray[idx];
-				existingStatute.mergeStatuteCitationFromSlipLoad(statute);
-				
-				mergeStatutes.add(existingStatute);
-			}
+			persistStatutes.add(statute);
+//			if ( idx < 0 ) {
+//				persistStatutes.add(statute);
+//			} else {
+//	    		StatuteCitation existingStatute = existingStatutesArray[idx];
+//				existingStatute.mergeStatuteCitationFromSlipLoad(statute);
+//				
+//				mergeStatutes.add(existingStatute);
+//			}
     	}
 		logger.info("Divided "+count+" statutes in "+((new Date().getTime()-startTime.getTime())/1000) + " seconds");
     }
