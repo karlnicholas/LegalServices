@@ -1,7 +1,6 @@
 package opca.service;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
@@ -11,9 +10,7 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import opca.memorydb.CitationStore;
 import opca.model.OpinionBase;
@@ -257,12 +254,12 @@ public class CAOnlineUpdates {
     		existingOpinions.addAll( opinionBaseRepository.opinionsWithReferringOpinions(opinionKeys) );
     	}
     	Collections.sort(existingOpinions);
-    	OpinionBase[] existingOpinionsArray = existingOpinions.toArray(new OpinionBase[existingOpinions.size()]);
+//    	OpinionBase[] existingOpinionsArray = existingOpinions.toArray(new OpinionBase[existingOpinions.size()]);
     	for(OpinionBase opinion: opinions ) {
 //This causes a NPE !?!?	    		
 //    		opinion.checkCountReferringOpinions();
     		// checking for opinionBase for citations
-    		int idx = Arrays.binarySearch(existingOpinionsArray, opinion);
+//    		int idx = Arrays.binarySearch(existingOpinionsArray, opinion);
 			persistOpinions.add(opinion);
     		
 //    		if ( idx < 0 ) {
@@ -316,11 +313,11 @@ public class CAOnlineUpdates {
     		existingStatutes.addAll( statuteCitationRepository.statutesWithReferringOpinions(statuteKeys));
     	}
     	Collections.sort(existingStatutes);
-    	StatuteCitation[] existingStatutesArray = existingStatutes.toArray(new StatuteCitation[existingStatutes.size()]);
+//    	StatuteCitation[] existingStatutesArray = existingStatutes.toArray(new StatuteCitation[existingStatutes.size()]);
 		
     	int count = statutes.size();
     	for(StatuteCitation statute: statutes ) {
-    		int idx = Arrays.binarySearch(existingStatutesArray, statute);
+//    		int idx = Arrays.binarySearch(existingStatutesArray, statute);
 			persistStatutes.add(statute);
 //			if ( idx < 0 ) {
 //				persistStatutes.add(statute);
