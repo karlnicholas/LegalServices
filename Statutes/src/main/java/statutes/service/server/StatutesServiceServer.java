@@ -6,7 +6,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -48,11 +48,36 @@ public class StatutesServiceServer implements StatutesService {
 		return Mono.just(ResponseEntity.ok(iStatutesApi.getStatutesHierarchy(fullFacet)));
 	}
 
+//	@Override
+//	@PostMapping(path=StatutesService.STATUTESANDHIERARCHIES, 
+//		consumes = MediaType.APPLICATION_JSON_VALUE, 
+//		produces = MediaType.APPLICATION_JSON_VALUE)
+//	public Mono<ResponseEntity<List<StatutesRoot>>> getStatutesAndHierarchies(@RequestBody final List<StatuteKey> keys) {
+//		// Fill out the codeSections that these section are referencing ..
+//		// If possible ...
+//		
+//		return Flux.fromIterable(keys).map(key->{
+//			// This is a section
+//			String lawCode = key.getLawCode();
+//			SectionNumber sectionNumber = new SectionNumber();
+//			sectionNumber.setPosition(-1);
+//			sectionNumber.setSectionNumber(key.getSectionNumber());
+//			// int refCount = citation.getRefCount(opinionBase.getOpinionKey());
+//			// and place it within the sectionReference we previously parsed out of the
+//			// opinion
+////					StatutesBaseClass statutesBaseClass = iStatutesApi.findReference(lawCode, sectionNumber);
+//			return iStatutesApi.findReference(lawCode, sectionNumber).getFullFacet();
+//		})
+//		.map(iStatutesApi::getStatutesHierarchy)
+//		.collectList()
+//		.map(ResponseEntity::ok);
+//	}
+
 	@Override
-	@PostMapping(path=StatutesService.STATUTESANDHIERARCHIES, 
+	@GetMapping(path=StatutesService.STATUTESANDHIERARCHIES, 
 		consumes = MediaType.APPLICATION_JSON_VALUE, 
 		produces = MediaType.APPLICATION_JSON_VALUE)
-	public Mono<ResponseEntity<List<StatutesRoot>>> getStatutesAndHierarchies(List<StatuteKey> keys) {
+	public Mono<ResponseEntity<List<StatutesRoot>>> getStatutesAndHierarchies(@RequestBody final List<StatuteKey> keys) {
 		// Fill out the codeSections that these section are referencing ..
 		// If possible ...
 		

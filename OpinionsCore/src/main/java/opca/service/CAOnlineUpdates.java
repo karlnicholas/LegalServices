@@ -10,8 +10,10 @@ import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import opca.memorydb.CitationStore;
 import opca.model.OpinionBase;
@@ -29,11 +31,9 @@ import opca.repository.OpinionStatuteCitationRepository;
 import opca.repository.SlipOpinionRepository;
 import opca.repository.SlipPropertiesRepository;
 import opca.repository.StatuteCitationRepository;
-import reactor.core.publisher.Mono;
-import reactor.core.scheduler.Schedulers;
 import opca.parser.ParsedOpinionCitationSet;
 import statutes.StatutesTitles;
-import statutes.service.StatutesService;
+import statutes.service.BlockingStatutesService;
 
 /**
  * 
@@ -50,13 +50,10 @@ public class CAOnlineUpdates {
 	private final SlipOpinionRepository slipOpinionRepository;
 	private final SlipPropertiesRepository slipPropertiesRepository;
 	
-	
 	public CAOnlineUpdates(OpinionViewSingleton opinionViewSingleton, OpinionBaseRepository opinionBaseRepository,
 			StatuteCitationRepository statuteCitationRepository,
-			OpinionStatuteCitationRepository opinionStatuteCitationRepoistory, 
-			SlipOpinionRepository slipOpinionRepository, 
-			SlipPropertiesRepository slipPropertiesRepository
-		) {
+			OpinionStatuteCitationRepository opinionStatuteCitationRepoistory,
+			SlipOpinionRepository slipOpinionRepository, SlipPropertiesRepository slipPropertiesRepository) {
 		this.opinionViewSingleton = opinionViewSingleton;
 		this.opinionBaseRepository = opinionBaseRepository;
 		this.statuteCitationRepository = statuteCitationRepository;
@@ -65,11 +62,13 @@ public class CAOnlineUpdates {
 		this.slipPropertiesRepository = slipPropertiesRepository;
 	}
 
-	public void updateOpinionViews(List<OpinionKey> opinionKeys, StatutesService statutesService) {
-        opinionViewSingleton.updateOpinionViews(opinionKeys, statutesService);
-	}
+//	public void updateOpinionViews(List<OpinionKey> opinionKeys, BlockingStatutesService blockingStatutesService) {
+//        opinionViewSingleton.updateOpinionViews(opinionKeys, blockingStatutesService);
+//	}
 
-	public List<OpinionKey> updateDatabase(OpinionScraperInterface caseScraper, StatutesService statutesService) {
+	@Transactional
+	public void updateDatabase(OpinionScraperInterface caseScraper, BlockingStatutesService blockingStatutesService) {
+		
  		List<SlipOpinion> onlineOpinions = caseScraper.getCaseList();
  		// save OpinionKeys for cache handling 
 		List<OpinionKey> opinionKeys = new ArrayList<>();
@@ -78,32 +77,32 @@ public class CAOnlineUpdates {
 		}
 		if ( onlineOpinions == null || onlineOpinions.size() == 0 ) {
 			logger.info("No cases found online: returning.");
-			return opinionKeys;
+//				return opinionKeys;
 		}
 		//
-//		onlineOpinions.remove(0);
-//		onlineOpinions = onlineOpinions.subList(0, 340);
-//		onlineOpinions = onlineOpinions.subList(0, 0);
-//		onlineOpinions = onlineOpinions.subList(0, 1);
+//			onlineOpinions.remove(0);
+//			onlineOpinions = onlineOpinions.subList(0, 340);
+//			onlineOpinions = onlineOpinions.subList(0, 0);
+//			onlineOpinions = onlineOpinions.subList(0, 1);
 
 //
-//		Iterator<SlipOpinion> oit = onlineOpinions.iterator();
-//		while ( oit.hasNext() ) {
-//			SlipOpinion opinion = oit.next();
-//			if ( 
-//				opinion.getFileName().equalsIgnoreCase("A153390M")
-//				|| opinion.getFileName().equalsIgnoreCase("C080488")
-//				|| opinion.getFileName().equalsIgnoreCase("E070545M")
-//				|| opinion.getFileName().equalsIgnoreCase("C082144")
-//				|| opinion.getFileName().equalsIgnoreCase("C080023")
-//				|| opinion.getFileName().equalsIgnoreCase("B286043")
-//				|| opinion.getFileName().equalsIgnoreCase("S087773")
-//				|| opinion.getFileName().equalsIgnoreCase("JAD18-11")
-//			) {
-//				oit.remove();
-//			}
-//		}
-//		
+		Iterator<SlipOpinion> oit = onlineOpinions.iterator();
+		while ( oit.hasNext() ) {
+			SlipOpinion opinion = oit.next();
+			if ( 
+				!opinion.getFileName().equalsIgnoreCase("B299987")
+//					|| opinion.getFileName().equalsIgnoreCase("C080488")
+//					|| opinion.getFileName().equalsIgnoreCase("E070545M")
+//					|| opinion.getFileName().equalsIgnoreCase("C082144")
+//					|| opinion.getFileName().equalsIgnoreCase("C080023")
+//					|| opinion.getFileName().equalsIgnoreCase("B286043")
+//					|| opinion.getFileName().equalsIgnoreCase("S087773")
+//					|| opinion.getFileName().equalsIgnoreCase("JAD18-11")
+			) {
+				oit.remove();
+			}
+		}
+//			
 		//
 		List<SlipOpinion> currentOpinions = slipOpinionRepository.findAll();
 		List<SlipOpinion> currentCopy = new ArrayList<SlipOpinion>(currentOpinions);
@@ -136,107 +135,107 @@ public class CAOnlineUpdates {
 		}
 		if ( onlineOpinions.size() > 0 ) {
 			// no retries
-			processAndPersistCases(onlineOpinions, caseScraper, statutesService).publishOn(Schedulers.boundedElastic()).subscribe();
+			processAndPersistCases(onlineOpinions, caseScraper, blockingStatutesService);
 		} else {
 			logger.info("No new cases.");
 		}		
-//		processAndPersistCases(onlineOpinions, caseScraper);
-		return opinionKeys; 
+//			processAndPersistCases(onlineOpinions, caseScraper);
+//			return opinionKeys; 
 	}
 	
-	private Mono<StatutesTitles[]> processAndPersistCases(List<SlipOpinion> slipOpinions, OpinionScraperInterface opinionScraper, StatutesService statutesService) {
+	private void processAndPersistCases(List<SlipOpinion> slipOpinions, OpinionScraperInterface opinionScraper, BlockingStatutesService blockingStatutesService) {
+
 		// Create the CACodes list
 		logger.info("There are " + slipOpinions.size() + " SlipOpinions to process");
 		List<ScrapedOpinionDocument> scrapedOpinionDocuments = opinionScraper.scrapeOpinionFiles(slipOpinions);
 
-//		StatutesTitles[] codeTitles = new StatutesTitles[0]; //parserInterface.getStatutesTitles();
+//		StatutesTitles[] arrayStatutesTitles = new StatutesTitles[0]; //parserInterface.getStatutesTitles();
 
-//		StatutesTitlesArray statutesArray = statutesService.getStatutesTitles();
-//		Flux<StatutesTitles> statutesArray = statutesService.getStatutesTitles();
-		return statutesService.getStatutesTitles().map(ResponseEntity::getBody).map(arrayStatutesTitles->{
+//		StatutesTitlesArray statutesArray = blockingStatutesService.getStatutesTitles();
+//		Flux<StatutesTitles> statutesArray = blockingStatutesService.getStatutesTitles();
+		StatutesTitles[] arrayStatutesTitles = blockingStatutesService.getStatutesTitles().getBody();
 //			codeTitles = statutesArray.getItem().toArray(codeTitles);
 
-			OpinionDocumentParser opinionDocumentParser = new OpinionDocumentParser(arrayStatutesTitles);
-			
-			// this is a holds things in memory
-			CitationStore citationStore = CitationStore.getInstance();
-			citationStore.clearDB();
+		OpinionDocumentParser opinionDocumentParser = new OpinionDocumentParser(arrayStatutesTitles);
+		
+		// this is a holds things in memory
+		CitationStore citationStore = CitationStore.getInstance();
+		citationStore.clearDB();
 
-			// all memory
-			for (ScrapedOpinionDocument scrapedOpinionDocument: scrapedOpinionDocuments ) {
-				ParsedOpinionCitationSet parsedOpinionResults = opinionDocumentParser.parseOpinionDocument(scrapedOpinionDocument, scrapedOpinionDocument.getOpinionBase(), citationStore );
-				// maybe someday deal with court issued modifications
-	    		opinionDocumentParser.parseSlipOpinionDetails((SlipOpinion) scrapedOpinionDocument.getOpinionBase(), scrapedOpinionDocument);
-	    		OpinionBase opinionBase = scrapedOpinionDocument.getOpinionBase();
-	    		citationStore.mergeParsedDocumentCitations(scrapedOpinionDocument.getOpinionBase(), parsedOpinionResults);
-	    		if ( logger.isTraceEnabled() ) {
-	    			logger.trace("scrapedOpinionDocument:= " 
-	    				+ scrapedOpinionDocument.getOpinionBase().getTitle() 
-	    				+ "\n	:OpinionKey= " + opinionBase.getOpinionKey()
-	    				+ "\n	:CountReferringOpinions= " + opinionBase.getCountReferringOpinions()
-	    				+ "\n	:ReferringOpinions.size()= " + (opinionBase.getReferringOpinions()== null?"xx":opinionBase.getReferringOpinions().size())
-	    				+ "\n	:OpinionCitations().size()= " + (opinionBase.getOpinionCitations()== null?"xx":opinionBase.getOpinionCitations().size())
-	    				+ "\n	:Paragraphs().size()= " + (scrapedOpinionDocument.getParagraphs()== null?"xx":scrapedOpinionDocument.getParagraphs().size())
-	    				+ "\n	:Footnotes().size()= " + (scrapedOpinionDocument.getFootnotes()== null?"xx":scrapedOpinionDocument.getFootnotes().size())
-	    				+ "\n	:OpinionTable= " + parsedOpinionResults.getOpinionTable().size()
-	    				+ "\n	:StatuteTable= " + parsedOpinionResults.getStatuteTable().size()
-					);
+		// all memory
+		for (ScrapedOpinionDocument scrapedOpinionDocument: scrapedOpinionDocuments ) {
+			ParsedOpinionCitationSet parsedOpinionResults = opinionDocumentParser.parseOpinionDocument(scrapedOpinionDocument, scrapedOpinionDocument.getOpinionBase(), citationStore );
+			// maybe someday deal with court issued modifications
+    		opinionDocumentParser.parseSlipOpinionDetails((SlipOpinion) scrapedOpinionDocument.getOpinionBase(), scrapedOpinionDocument);
+    		OpinionBase opinionBase = scrapedOpinionDocument.getOpinionBase();
+    		citationStore.mergeParsedDocumentCitations(scrapedOpinionDocument.getOpinionBase(), parsedOpinionResults);
+    		if ( logger.isTraceEnabled() ) {
+    			logger.trace("scrapedOpinionDocument:= " 
+    				+ scrapedOpinionDocument.getOpinionBase().getTitle() 
+    				+ "\n	:OpinionKey= " + opinionBase.getOpinionKey()
+    				+ "\n	:CountReferringOpinions= " + opinionBase.getCountReferringOpinions()
+    				+ "\n	:ReferringOpinions.size()= " + (opinionBase.getReferringOpinions()== null?"xx":opinionBase.getReferringOpinions().size())
+    				+ "\n	:OpinionCitations().size()= " + (opinionBase.getOpinionCitations()== null?"xx":opinionBase.getOpinionCitations().size())
+    				+ "\n	:Paragraphs().size()= " + (scrapedOpinionDocument.getParagraphs()== null?"xx":scrapedOpinionDocument.getParagraphs().size())
+    				+ "\n	:Footnotes().size()= " + (scrapedOpinionDocument.getFootnotes()== null?"xx":scrapedOpinionDocument.getFootnotes().size())
+    				+ "\n	:OpinionTable= " + parsedOpinionResults.getOpinionTable().size()
+    				+ "\n	:StatuteTable= " + parsedOpinionResults.getStatuteTable().size()
+				);
+    		}
+		}
+
+		List<OpinionBase> persistOpinions = new ArrayList<>();
+		List<OpinionBase> mergeOpinions = new ArrayList<>();
+		List<StatuteCitation> mergeStatutes = new ArrayList<>();	  	
+		List<StatuteCitation> persistStatutes = new ArrayList<>();
+
+		processOpinions(citationStore, mergeOpinions, persistOpinions);
+	  	processStatutes(citationStore, mergeStatutes, persistStatutes);
+				
+		List<OpinionStatuteCitation> persistOpinionStatuteCitations = new ArrayList<>();
+
+		for( SlipOpinion slipOpinion: slipOpinions ) {
+			if ( slipOpinion.getStatuteCitations() != null ) {
+	    		for ( OpinionStatuteCitation statuteCitation: slipOpinion.getStatuteCitations() ) {
+					persistOpinionStatuteCitations.add(statuteCitation);
 	    		}
 			}
-
-			List<OpinionBase> persistOpinions = new ArrayList<>();
-			List<OpinionBase> mergeOpinions = new ArrayList<>();
-			List<StatuteCitation> mergeStatutes = new ArrayList<>();	  	
-			List<StatuteCitation> persistStatutes = new ArrayList<>();
-
-			processOpinions(citationStore, mergeOpinions, persistOpinions);
-		  	processStatutes(citationStore, mergeStatutes, persistStatutes);
-					
-			List<OpinionStatuteCitation> persistOpinionStatuteCitations = new ArrayList<>();
-			for( SlipOpinion slipOpinion: slipOpinions ) {
-				if ( slipOpinion.getStatuteCitations() != null ) {
-		    		for ( OpinionStatuteCitation statuteCitation: slipOpinion.getStatuteCitations() ) {
-						persistOpinionStatuteCitations.add(statuteCitation);
-		    		}
-				}
-				slipOpinionRepository.save(slipOpinion);
-				if ( slipOpinion.getSlipProperties() == null ) {
-					System.out.println("SlipProperties == null " );
-				}
-				slipPropertiesRepository.save(slipOpinion.getSlipProperties());
+			slipOpinionRepository.save(slipOpinion);
+			if ( slipOpinion.getSlipProperties() == null ) {
+				System.out.println("SlipProperties == null " );
 			}
-			Date startTime = new Date();
-	    	for(OpinionBase opinion: persistOpinions ) {
-				opinionBaseRepository.save(opinion);
-	    	}
-			logger.info("Persisted "+persistOpinions.size()+" opinions in "+((new Date().getTime()-startTime.getTime())/1000) + " seconds");
+			slipPropertiesRepository.save(slipOpinion.getSlipProperties());
+		}
+		Date startTime = new Date();
+    	for(OpinionBase opinion: persistOpinions ) {
+			opinionBaseRepository.save(opinion);
+    	}
+		logger.info("Persisted "+persistOpinions.size()+" opinions in "+((new Date().getTime()-startTime.getTime())/1000) + " seconds");
 
-			startTime = new Date();
+		startTime = new Date();
 
-	    	for(OpinionBase opinion: mergeOpinions ) {
-	    		opinionBaseRepository.save(opinion);
-	    	}
-			logger.info("Merged "+mergeOpinions.size()+" opinions in "+((new Date().getTime()-startTime.getTime())/1000) + " seconds");
+    	for(OpinionBase opinion: mergeOpinions ) {
+    		opinionBaseRepository.save(opinion);
+    	}
+		logger.info("Merged "+mergeOpinions.size()+" opinions in "+((new Date().getTime()-startTime.getTime())/1000) + " seconds");
 
-			startTime = new Date();
-			for(OpinionStatuteCitation opinionStatuteCitation: persistOpinionStatuteCitations) {
-				opinionStatuteCitationRepoistory.save(opinionStatuteCitation);
-	    	}
-			logger.info("Persisted "+ persistOpinionStatuteCitations.size()+" opinionStatuteCitation in "+((new Date().getTime()-startTime.getTime())/1000) + " seconds");
+		startTime = new Date();
+		for(OpinionStatuteCitation opinionStatuteCitation: persistOpinionStatuteCitations) {
+			opinionStatuteCitationRepoistory.save(opinionStatuteCitation);
+    	}
+		logger.info("Persisted "+ persistOpinionStatuteCitations.size()+" opinionStatuteCitation in "+((new Date().getTime()-startTime.getTime())/1000) + " seconds");
 
-			startTime = new Date();
-	    	for(StatuteCitation statute: persistStatutes ) {
-	    		statuteCitationRepository.save(statute);
-	    	}
-			logger.info("Persisted "+persistStatutes.size()+" statutes in "+((new Date().getTime()-startTime.getTime())/1000) + " seconds");
+		startTime = new Date();
+    	for(StatuteCitation statute: persistStatutes ) {
+    		statuteCitationRepository.save(statute);
+    	}
+		logger.info("Persisted "+persistStatutes.size()+" statutes in "+((new Date().getTime()-startTime.getTime())/1000) + " seconds");
 
-			startTime = new Date();
-	    	for(StatuteCitation statute: mergeStatutes ) {
-	    		statuteCitationRepository.save(statute);
-	    	}
-			logger.info("Merged "+mergeStatutes.size()+" statutes in "+((new Date().getTime()-startTime.getTime())/1000) + " seconds");
-			return arrayStatutesTitles;
-		});
+		startTime = new Date();
+    	for(StatuteCitation statute: mergeStatutes ) {
+    		statuteCitationRepository.save(statute);
+    	}
+		logger.info("Merged "+mergeStatutes.size()+" statutes in "+((new Date().getTime()-startTime.getTime())/1000) + " seconds");
 	}
 
 	private void processOpinions(CitationStore citationStore,  

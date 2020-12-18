@@ -1,3 +1,11 @@
+alter table opinionbase_opinionbase drop foreign key FKv9vgyvlfwws091112o975tdf;
+alter table opinionbase_opinionbase drop foreign key FKta2uodkexsd423u05p76th66o;
+alter table opinionstatutecitation drop foreign key FKj4m7y817yxpioeb629x56h8u6;
+alter table opinionstatutecitation drop foreign key FKfeousb71h1ayu6myk7wp7mgfc;
+alter table partyattorneypair drop foreign key FK8la3eiphk0wnmel0ail3winl4;
+alter table slipproperties drop foreign key FK97edwcyxhia5mmhb1qqgury8o;
+alter table user_role drop foreign key FKeog8p06nu33ihk13roqnrp1y6;
+alter table user_role drop foreign key FK859n2jvi8ivhui0rl0esws6o;
 drop table if exists opinionbase;
 drop table if exists opinionbase_opinionbase;
 drop table if exists opinionstatutecitation;
