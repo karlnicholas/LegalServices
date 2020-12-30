@@ -9,6 +9,7 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 import opca.model.OpinionBase;
@@ -21,9 +22,7 @@ import opca.repository.SlipOpinionRepository;
 import opca.repository.SlipPropertiesRepository;
 import opca.view.OpinionView;
 import opca.view.OpinionViewBuilder;
-import reactor.core.publisher.Mono;
-import reactor.core.scheduler.Schedulers;
-import statutes.service.ReactiveStatutesService;
+import statutes.service.StatutesService;
 
 @Component
 public class OpinionViewLoad {
@@ -40,31 +39,32 @@ public class OpinionViewLoad {
 		this.slipPropertiesRepository = slipPropertiesRepository;
 	}
 
-	//	@Asynchronous
-	public void load(OpinionViewData opinionViewData, ReactiveStatutesService reactiveStatutesService) {
+	@Async
+	public void load(OpinionViewData opinionViewData, StatutesService statutesService) {
 		// prevent all exceptions from leaving @Asynchronous block
 		try {
 			logger.info("load start");
 			opinionViewData.setLoaded( true );
 			opinionViewData.setReady( false );
-			buildOpinionViews(opinionViewData, reactiveStatutesService).publishOn(Schedulers.boundedElastic()).subscribe((opinionView)->{
-				opinionViewData.setStringDateList();
-				opinionViewData.setReady( true );
-				opinionViewData.setLoaded( false );
-				logger.info("load finish: " + opinionViewData.getOpinionViews().size());
-			});
+			buildOpinionViews(opinionViewData, statutesService);
+			opinionViewData.setStringDateList();
+			opinionViewData.setReady( true );
+			opinionViewData.setLoaded( false );
+			logger.info("load finish: " + opinionViewData.getOpinionViews().size());
 		} catch ( Exception ex ) {
 			opinionViewData.setLoaded( false );
-			logger.info("load failed: " + ex.getCause().getMessage());
+//			logger.info("load failed: " + ex.getCause().getMessage());
+			logger.info("load failed: " + ex.getMessage());
+			ex.printStackTrace();
 		}
 	}
 
-	public void loadNewOpinions(OpinionViewData opinionViewData, List<OpinionKey> opinionKeys, ReactiveStatutesService reactiveStatutesService) {
+	public void loadNewOpinions(OpinionViewData opinionViewData, List<OpinionKey> opinionKeys, StatutesService statutesService) {
 		try {
 			logger.info("loadNewOpinions start: " + opinionKeys.size());
 			opinionViewData.setLoaded( true );
 			opinionViewData.setReady( false );
-			buildNewOpinionViews(opinionViewData, opinionKeys, reactiveStatutesService);
+			buildNewOpinionViews(opinionViewData, opinionKeys, statutesService);
 			opinionViewData.setStringDateList();
 			opinionViewData.setReady( true );
 			opinionViewData.setLoaded( true );
@@ -142,12 +142,12 @@ public class OpinionViewLoad {
 		lastDay.add(Calendar.WEEK_OF_YEAR, 1);
 	}
 	
-	private Mono<OpinionView> buildOpinionViews(OpinionViewData opinionViewData, ReactiveStatutesService reactiveStatutesService) {
+	private void buildOpinionViews(OpinionViewData opinionViewData, StatutesService statutesService) {
 		opinionViewData.setOpinionViews(new ArrayList<>());
 		List<SlipOpinion> opinions = loadAllSlipOpinions();
-		return buildListedOpinionViews(opinionViewData, opinions, reactiveStatutesService);
+		buildListedOpinionViews(opinionViewData, opinions, statutesService);
 	}
-	private void buildNewOpinionViews(OpinionViewData opinionViewData, List<OpinionKey> opinionKeys, ReactiveStatutesService reactiveStatutesService) {
+	private void buildNewOpinionViews(OpinionViewData opinionViewData, List<OpinionKey> opinionKeys, StatutesService statutesService) {
 		// remove deleted opinions from cache
 		Iterator<OpinionView> ovIt = opinionViewData.getOpinionViews().iterator();
 		while ( ovIt.hasNext() ) {
@@ -181,13 +181,13 @@ public class OpinionViewLoad {
 		if ( opinionKeys.size() > 0 ) {
 			List<SlipOpinion> opinions = loadSlipOpinionsForKeys(opinionKeys);
 			logger.info("opinions size " + opinions.size());
-			buildListedOpinionViews(opinionViewData, opinions, reactiveStatutesService);
+			buildListedOpinionViews(opinionViewData, opinions, statutesService);
 		} else {
 			logger.info("Rebuilding entire cache");
-			buildOpinionViews(opinionViewData, reactiveStatutesService);
+			buildOpinionViews(opinionViewData, statutesService);
 		}
 	}
-	private Mono<OpinionView> buildListedOpinionViews(OpinionViewData opinionViewData, List<SlipOpinion> opinions, ReactiveStatutesService reactiveStatutesService) {
+	private void buildListedOpinionViews(OpinionViewData opinionViewData, List<SlipOpinion> opinions, StatutesService statutesService) {
 		List<OpinionBase> opinionOpinionCitations = new ArrayList<>();
 		List<Integer> opinionIds = new ArrayList<>();
 //		TypedQuery<OpinionBase> fetchOpinionCitationsForOpinions = em.createNamedQuery("OpinionBase.fetchOpinionCitationsForOpinions", OpinionBase.class);
@@ -208,16 +208,12 @@ public class OpinionViewLoad {
 				opinionBaseRepository.fetchOpinionCitationsForOpinions(opinionIds)
 			);
 		}
-		List<Mono<OpinionView>> opinionViewMonos = new ArrayList<>(); 
-		OpinionViewBuilder opinionViewBuilder = new OpinionViewBuilder(reactiveStatutesService);
+		OpinionViewBuilder opinionViewBuilder = new OpinionViewBuilder(statutesService);
 		for ( SlipOpinion slipOpinion: opinions ) {
 			slipOpinion.setOpinionCitations( opinionOpinionCitations.get( opinionOpinionCitations.indexOf(slipOpinion)).getOpinionCitations() );
 			ParsedOpinionCitationSet parserResults = new ParsedOpinionCitationSet(slipOpinion);
-			opinionViewMonos.add(opinionViewBuilder.buildOpinionView(slipOpinion, parserResults)
-					.map(opinionView->{
-						opinionViewData.getOpinionViews().add(opinionView);
-						return opinionView;
-					}));
+			OpinionView opinionView = opinionViewBuilder.buildOpinionView(slipOpinion, parserResults);
+			opinionViewData.getOpinionViews().add(opinionView);
 		}
 		// sort results in descending date order
 		Collections.sort(
@@ -237,7 +233,6 @@ public class OpinionViewLoad {
 			}
 		}
 		initReportDates(opinionViewData, dates);
-		return Mono.zip(opinionViewMonos, null);
 	}
 
 	private List<SlipOpinion> loadAllSlipOpinions() {

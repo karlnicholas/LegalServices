@@ -20,8 +20,12 @@ import javax.persistence.*;
 	subgraphs= {
 		@NamedSubgraph(
 			name = "fetchGraphForOpinionsWithJoinsPartB", 
-			attributeNodes = { @NamedAttributeNode(value = "statuteCitation") } 
+			attributeNodes = { @NamedAttributeNode(value = "statuteCitation", subgraph="fetchGraphForOpinionsWithJoinsPartC") } 
 		),
+		@NamedSubgraph(
+				name = "fetchGraphForOpinionsWithJoinsPartC", 
+				attributeNodes = { @NamedAttributeNode(value = "statuteKey") } 
+			),
 	}) 
 })
 @SuppressWarnings("serial")

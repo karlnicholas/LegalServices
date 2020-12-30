@@ -4,47 +4,43 @@ import java.util.*;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-import org.springframework.http.ResponseEntity;
-
 import statutes.SectionNumber;
 import statutes.StatutesBaseClass;
 import statutes.StatutesLeaf;
 import statutes.StatutesNode;
 import statutes.StatutesRoot;
-import statutes.service.ReactiveStatutesService;
+import statutes.service.StatutesService;
 import opca.model.*;
 import opca.parser.ParsedOpinionCitationSet;
-import reactor.core.publisher.Mono;
 
 public class OpinionViewBuilder {
 	private static final int LEVEL_OF_INTEREST = 3; 
-	private final ReactiveStatutesService statutesRs;
+	private final StatutesService statutesService;
 //	private List<SectionView> sectionViews;
 	
-	public OpinionViewBuilder(ReactiveStatutesService statutesRs) {
-		this.statutesRs = statutesRs;
+	public OpinionViewBuilder(StatutesService statutesService) {
+		this.statutesService = statutesService;
 	}
 	
-    public Mono<OpinionView> buildOpinionView(
+    public OpinionView buildOpinionView(
     	SlipOpinion slipOpinion,
 		ParsedOpinionCitationSet parserResults  
 	) {
-    	return createStatuteViews(slipOpinion).flatMap(statuteViews->{
+    	List<StatuteView> statuteViews = createStatuteViews(slipOpinion);
 //            this.parserResults = parserResults;
-            // create a CaseView list.
-            List<CaseView> cases = new ArrayList<CaseView>();
-        	for ( OpinionBase opinionBase: slipOpinion.getOpinionCitations() ) {
-        		OpinionBase opcase = parserResults.findOpinion(opinionBase.getOpinionKey());
-    			CaseView caseView = new CaseView(opcase.getTitle(), opinionBase.getOpinionKey().toString(), opcase.getOpinionDate(), opcase.getCountReferringOpinions());
-        		cases.add(caseView);
-        	}
-        	OpinionView opinionView = new OpinionView(slipOpinion, slipOpinion.getFileName(), statuteViews, cases);
-            Mono<OpinionView> t = scoreCitations(opinionView, parserResults, cases, opinionView.getSectionViews(), statuteViews);
-            return t;
-    	});
+        // create a CaseView list.
+        List<CaseView> cases = new ArrayList<CaseView>();
+    	for ( OpinionBase opinionBase: slipOpinion.getOpinionCitations() ) {
+    		OpinionBase opcase = parserResults.findOpinion(opinionBase.getOpinionKey());
+			CaseView caseView = new CaseView(opcase.getTitle(), opinionBase.getOpinionKey().toString(), opcase.getOpinionDate(), opcase.getCountReferringOpinions());
+    		cases.add(caseView);
+    	}
+    	OpinionView opinionView = new OpinionView(slipOpinion, slipOpinion.getFileName(), statuteViews, cases);
+        scoreCitations(opinionView, parserResults, cases, opinionView.getSectionViews(), statuteViews);
+        return opinionView;
     }
 
-	public Mono<List<StatuteView>> createStatuteViews(OpinionBase opinionBase) {
+	public List<StatuteView> createStatuteViews(OpinionBase opinionBase) {
 		List<statutes.service.dto.StatuteKey> statuteKeys = opinionBase.getOnlyStatuteCitations().stream()
 				.map(statuteCitation -> {
 					statutes.service.dto.StatuteKey statuteKey = new statutes.service.dto.StatuteKey();
@@ -56,40 +52,38 @@ public class OpinionViewBuilder {
 		// Flux<KeyHierarchyPair> keyHierarchyPairs =
 		// statutesRs.getStatutesAndHierarchies(statuteKeyFlux);
 		//
-		return statutesRs.getStatutesAndHierarchies(statuteKeys).map(ResponseEntity::getBody).map(statuteHierarchies -> {
-			List<StatuteView> statuteViews = new ArrayList<>();
-			// copy results into the new list ..
-			Iterator<OpinionStatuteCitation> itc = opinionBase.getStatuteCitations().iterator();
+		List<StatutesRoot> statuteHierarchies = statutesService.getStatutesAndHierarchies(statuteKeys).getBody();
+		List<StatuteView> statuteViews = new ArrayList<>();
+		// copy results into the new list ..
+		Iterator<OpinionStatuteCitation> itc = opinionBase.getStatuteCitations().iterator();
 
-			while (itc.hasNext()) {
-				OpinionStatuteCitation citation = itc.next();
-				if (citation.getStatuteCitation().getStatuteKey().getLawCode() != null) {
-					// find the statutesLeaf from the Statutes service and return with all parents
-					// filled out.
-					findStatutesLeaf(statuteHierarchies, citation.getStatuteCitation().getStatuteKey())
-							.ifPresent((statutesLeaf) -> {
-								// get the root
-								StatutesBaseClass statutesRoot = statutesLeaf;
-								while (statutesRoot.getParent() != null) {
-									statutesRoot = statutesRoot.getParent();
-								}
-								// see if StatuteView has already been created
-								StatuteView statuteView = findExistingStatuteView(statuteViews, statutesRoot);
-								if (statuteView == null) {
-									// else, construct one ...
-									statuteView = new StatuteView();
-									statuteView.initialize((StatutesRoot) statutesRoot, 0, null);
-									statuteViews.add(statuteView);
-								}
-								addSectionViewToSectionRoot(statuteView, statutesLeaf, citation.getCountReferences());
-							});
+		while (itc.hasNext()) {
+			OpinionStatuteCitation citation = itc.next();
+			if (citation.getStatuteCitation().getStatuteKey().getLawCode() != null) {
+				// find the statutesLeaf from the Statutes service and return with all parents
+				// filled out.
+				findStatutesLeaf(statuteHierarchies, citation.getStatuteCitation().getStatuteKey())
+						.ifPresent((statutesLeaf) -> {
+							// get the root
+							StatutesBaseClass statutesRoot = statutesLeaf;
+							while (statutesRoot.getParent() != null) {
+								statutesRoot = statutesRoot.getParent();
+							}
+							// see if StatuteView has already been created
+							StatuteView statuteView = findExistingStatuteView(statuteViews, statutesRoot);
+							if (statuteView == null) {
+								// else, construct one ...
+								statuteView = new StatuteView();
+								statuteView.initialize((StatutesRoot) statutesRoot, 0, null);
+								statuteViews.add(statuteView);
+							}
+							addSectionViewToSectionRoot(statuteView, statutesLeaf, citation.getCountReferences());
+						});
 
-				}
 			}
-			trimToLevelOfInterest(statuteViews, LEVEL_OF_INTEREST, true);
-			return statuteViews;
-
-		});
+		}
+		trimToLevelOfInterest(statuteViews, LEVEL_OF_INTEREST, true);
+		return statuteViews;
 	}
 
     /**
@@ -257,7 +251,7 @@ public class OpinionViewBuilder {
 //	ParsedOpinionCitationSet parserResults, 
 //	List<CaseView> cases
 	
-	private Mono<OpinionView> scoreCitations(
+	private OpinionView scoreCitations(
 			OpinionView opinionView, 
 			ParsedOpinionCitationSet parserResults, 
 			List<CaseView> cases, 
@@ -270,85 +264,74 @@ public class OpinionViewBuilder {
 		List<OpinionView> tempOpinionViewList = new ArrayList<>();
 		// need a collection StatutueCitations.
 		
-		List<Mono<List<StatuteView>>> listStatuteViewsMono = parserResults.getOpinionTable().stream()
-		.map(opinionCited->{
+		for ( OpinionBase opinionCited: parserResults.getOpinionTable() ) {
+			List<StatuteView> localStatuteViews = createStatuteViews(opinionCited);
+        	List<SectionView> sectionViewsLocal = new ArrayList<>();
+            OpinionView tempOpinionView = new OpinionView();
+			for( StatuteView statuteView: localStatuteViews  ) {
+            	sectionViewsLocal.addAll(statuteView.getSectionViews());
+            }
+            rankSectionViews(sectionViewsLocal);
+            // create a temporary OpinionView to use its functions
+            // store the opinionView in the Cases list.
+            List<CaseView> tempCaseViews = new ArrayList<>();
+            CaseView caseView = findCaseView(opinionCited, cases);
+            tempCaseViews.add( caseView );
+            tempOpinionView.setStatutes(localStatuteViews);
+            tempOpinionView.setCases(tempCaseViews); 
+            if ( tempOpinionView.getStatutes().size() == 0 ) {
+            	caseView.setScore(-1);
+            	// well, just remove cases with no interesting citations
+            	cases.remove(caseView);
+            	continue;
+            }
+            // save this for next loop
+            tempOpinionViewList.add(tempOpinionView);
+            for ( SectionView sectionView: sectionViews ) {
+            	if ( !sectionUnion.contains(sectionView) ) {
+            		sectionUnion.add(sectionView);
+            	}
+            }		
+        }
+	
+        // create a ranked slipAdjacencyMatrix
+        int[] slipAdjacencyMatrix = createAdjacencyMatrix(sectionUnion, sectionViews);
+        for ( OpinionView tempOpinionView: tempOpinionViewList ) {
 
-//            Mono<List<StatuteView>> statuteViews = createStatuteViews(opinionCited);
-			Mono<List<StatuteView>> statuteViewsMono = createStatuteViews(opinionCited).map(localStatuteViews->{
-            	List<SectionView> sectionViewsLocal = new ArrayList<>();
-                OpinionView tempOpinionView = new OpinionView();
-    			for( StatuteView statuteView: localStatuteViews ) {
-                	sectionViewsLocal.addAll(statuteView.getSectionViews());
-                }
-                rankSectionViews(sectionViewsLocal);
-                // create a temporary OpinionView to use its functions
-                // store the opinionView in the Cases list.
-                List<CaseView> tempCaseViews = new ArrayList<>();
-                CaseView caseView = findCaseView(opinionCited, cases);
-                tempCaseViews.add( caseView );
-                tempOpinionView.setStatutes(localStatuteViews);
-                tempOpinionView.setCases(tempCaseViews); 
-                if ( tempOpinionView.getStatutes().size() == 0 ) {
-                	caseView.setScore(-1);
-                	// well, just remove cases with no interesting citations
-                	cases.remove(caseView);
-                } else {
-	                // save this for next loop
-	                tempOpinionViewList.add(tempOpinionView);
-	                for ( SectionView sectionView: sectionViewsLocal ) {
-	                	if ( !sectionUnion.contains(sectionView) ) {
-	                		sectionUnion.add(sectionView);
-	                	}
-	                }
-                }
-                return localStatuteViews;
-            });
-
-            return statuteViewsMono;
-		}).collect(Collectors.toList());
-		
-		return Mono.zip(listStatuteViewsMono, monos->{
-			// sectionViews = opinionView.getSectionViews()
-	        // create a ranked slipAdjacencyMatrix
-	        int[] slipAdjacencyMatrix = createAdjacencyMatrix(sectionUnion, opinionView.getSectionViews());
-	        for ( OpinionView tempOpinionView: tempOpinionViewList ) {
-
-	            int[] opinionAdjacencyMatrix = createAdjacencyMatrix(sectionUnion, tempOpinionView.getSectionViews());
-	            // find the distance between the matrices
-	            int sum = 0;
-	            for ( int i=slipAdjacencyMatrix.length-1; i >= 0; --i ) {
-	            	sum = sum + Math.abs( slipAdjacencyMatrix[i] - opinionAdjacencyMatrix[i] ); 
-	            }
-	            tempOpinionView.getCases().get(0).setScore(sum);
-	        }
-	        // rank "scores"
-	        // note that scores is actually a distance computation
-	        // and lower is better
-	        // so the final result is subtracted from 4
-	        // because importance is higher is better.
-	    	long maxScore = 0;
-			for ( CaseView c: cases ) {
-				if ( c.getScore() > maxScore )
-					maxScore = c.getScore();
-			}	
-			double d = ((maxScore+1) / 4.0);
-			for ( CaseView c: cases ) {
-				if ( c.getScore() == -1 ) {
-					c.setImportance(0);
-				} else {
-					int imp = (int)(((double)c.getScore())/d)+1;
-					c.setImportance(5-imp);
-				}
-			}	
-			Collections.sort(cases, new Comparator<CaseView>() {
-				@Override
-				public int compare(CaseView o1, CaseView o2) {
-					return o2.getImportance() - o1.getImportance();
-				}
-			});
-			return opinionView;
+            int[] opinionAdjacencyMatrix = createAdjacencyMatrix(sectionUnion, tempOpinionView.getSectionViews());
+            // find the distance between the matrices
+            int sum = 0;
+            for ( int i=slipAdjacencyMatrix.length-1; i >= 0; --i ) {
+            	sum = sum + Math.abs( slipAdjacencyMatrix[i] - opinionAdjacencyMatrix[i] ); 
+            }
+            tempOpinionView.getCases().get(0).setScore(sum);
+        }
+        // rank "scores"
+        // note that scores is actually a distance computation
+        // and lower is better
+        // so the final result is subtracted from 4
+        // because importance is higher is better.
+    	long maxScore = 0;
+		for ( CaseView c: cases ) {
+			if ( c.getScore() > maxScore )
+				maxScore = c.getScore();
+		}	
+		double d = ((maxScore+1) / 4.0);
+		for ( CaseView c: cases ) {
+			if ( c.getScore() == -1 ) {
+				c.setImportance(0);
+			} else {
+				int imp = (int)(((double)c.getScore())/d)+1;
+				c.setImportance(5-imp);
+			}
+		}	
+		Collections.sort(cases, new Comparator<CaseView>() {
+			@Override
+			public int compare(CaseView o1, CaseView o2) {
+				return o2.getImportance() - o1.getImportance();
+			}
 		});
-		
+		return opinionView;
 	}
 
 //	// end: supporting methods for JSF pages 

@@ -56,6 +56,7 @@ public class OpinionBase implements Comparable<OpinionBase>, Serializable {
 	@OneToMany(mappedBy="opinionBase")
 	protected Set<OpinionStatuteCitation> statuteCitations;
     @ManyToMany
+    @JoinTable(name="opinionbase_opinioncitations")
     protected Set<OpinionBase> opinionCitations;
     @ManyToMany(mappedBy="opinionCitations")
     protected Set<OpinionBase> referringOpinions;

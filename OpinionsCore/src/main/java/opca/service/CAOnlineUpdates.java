@@ -1,6 +1,7 @@
 package opca.service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
@@ -76,9 +77,9 @@ public class CAOnlineUpdates {
 		}
 		//
 //			onlineOpinions.remove(0);
-			onlineOpinions = onlineOpinions.subList(0, 340);
+//			onlineOpinions = onlineOpinions.subList(0, 340);
 //			onlineOpinions = onlineOpinions.subList(0, 0);
-//			onlineOpinions = onlineOpinions.subList(0, 1);
+			onlineOpinions = onlineOpinions.subList(0, 1);
 
 //
 //		Iterator<SlipOpinion> oit = onlineOpinions.iterator();
@@ -254,30 +255,30 @@ public class CAOnlineUpdates {
     		existingOpinions.addAll( opinionBaseRepository.opinionsWithReferringOpinions(opinionKeys) );
     	}
     	Collections.sort(existingOpinions);
-//    	OpinionBase[] existingOpinionsArray = existingOpinions.toArray(new OpinionBase[existingOpinions.size()]);
+    	OpinionBase[] existingOpinionsArray = existingOpinions.toArray(new OpinionBase[existingOpinions.size()]);
     	for(OpinionBase opinion: opinions ) {
 //This causes a NPE !?!?	    		
 //    		opinion.checkCountReferringOpinions();
     		// checking for opinionBase for citations
-//    		int idx = Arrays.binarySearch(existingOpinionsArray, opinion);
+    		int idx = Arrays.binarySearch(existingOpinionsArray, opinion);
 			persistOpinions.add(opinion);
     		
-//    		if ( idx < 0 ) {
-//				persistOpinions.add(opinion);
-//			} else {
-//				OpinionBase existingOpinion = existingOpinionsArray[idx]; 
-//				existingOpinion.mergePersistenceFromSlipLoad(opinion);
-////				
-////	    		logger.fine("existingOpinion:= " 
-////	    				+ existingOpinion.getTitle() 
-////	    				+ "\n	:OpinionKey= " + existingOpinion.getOpinionKey()
-////	    				+ "\n	:CountReferringOpinions= " + existingOpinion.getCountReferringOpinions()
-////	    				+ "\n	:ReferringOpinions.size()= " + (existingOpinion.getReferringOpinions()== null?"xx":existingOpinion.getReferringOpinions().size())
-////	    				+ "\n	:OpinionCitations().size()= " + (existingOpinion.getOpinionCitations()== null?"xx":existingOpinion.getOpinionCitations().size())
-////	    			);
-////	    			
-//				mergeOpinions.add(existingOpinion);
-//			}
+    		if ( idx < 0 ) {
+				persistOpinions.add(opinion);
+			} else {
+				OpinionBase existingOpinion = existingOpinionsArray[idx]; 
+				existingOpinion.mergePersistenceFromSlipLoad(opinion);
+//				
+//	    		logger.fine("existingOpinion:= " 
+//	    				+ existingOpinion.getTitle() 
+//	    				+ "\n	:OpinionKey= " + existingOpinion.getOpinionKey()
+//	    				+ "\n	:CountReferringOpinions= " + existingOpinion.getCountReferringOpinions()
+//	    				+ "\n	:ReferringOpinions.size()= " + (existingOpinion.getReferringOpinions()== null?"xx":existingOpinion.getReferringOpinions().size())
+//	    				+ "\n	:OpinionCitations().size()= " + (existingOpinion.getOpinionCitations()== null?"xx":existingOpinion.getOpinionCitations().size())
+//	    			);
+//	    			
+				persistOpinions.add(existingOpinion);
+			}
 			logger.trace("opinion "+opinion.getOpinionKey()
 //				+ "\n	mergeOpinions:= " + mergeOpinions.size() 
 				+ "\n	persistOpinions:= " + persistOpinions.size() 
@@ -302,7 +303,7 @@ public class CAOnlineUpdates {
 //		EntityGraph<?> fetchGraphForStatutesWithReferringOpinions = em.getEntityGraph("fetchGraphForStatutesWithReferringOpinions");
 //		statutesWithReferringOpinions.setHint("javax.persistence.fetchgraph", fetchGraphForStatutesWithReferringOpinions);
 		
-    	for(StatuteCitation statuteCitation: statutes ) {
+		for(StatuteCitation statuteCitation: statutes ) {
     		statuteKeys.add(statuteCitation.getStatuteKey());
     		if ( ++i % 100 == 0 ) {
     			existingStatutes.addAll( statuteCitationRepository.statutesWithReferringOpinions(statuteKeys));
@@ -313,20 +314,20 @@ public class CAOnlineUpdates {
     		existingStatutes.addAll( statuteCitationRepository.statutesWithReferringOpinions(statuteKeys));
     	}
     	Collections.sort(existingStatutes);
-//    	StatuteCitation[] existingStatutesArray = existingStatutes.toArray(new StatuteCitation[existingStatutes.size()]);
+    	StatuteCitation[] existingStatutesArray = existingStatutes.toArray(new StatuteCitation[existingStatutes.size()]);
 		
     	int count = statutes.size();
     	for(StatuteCitation statute: statutes ) {
-//    		int idx = Arrays.binarySearch(existingStatutesArray, statute);
+    		int idx = Arrays.binarySearch(existingStatutesArray, statute);
 			persistStatutes.add(statute);
-//			if ( idx < 0 ) {
-//				persistStatutes.add(statute);
-//			} else {
-//	    		StatuteCitation existingStatute = existingStatutesArray[idx];
-//				existingStatute.mergeStatuteCitationFromSlipLoad(statute);
-//				
-//				mergeStatutes.add(existingStatute);
-//			}
+			if ( idx < 0 ) {
+				persistStatutes.add(statute);
+			} else {
+	    		StatuteCitation existingStatute = existingStatutesArray[idx];
+				existingStatute.mergeStatuteCitationFromSlipLoad(statute);
+				
+				persistStatutes.add(existingStatute);
+			}
     	}
 		logger.info("Divided "+count+" statutes in "+((new Date().getTime()-startTime.getTime())/1000) + " seconds");
     }

@@ -8,7 +8,7 @@ import javax.persistence.*;
 
 @NamedQueries({
 	@NamedQuery(name="SlipProperties.findAll", 
-		query="select p from SlipProperties p"), 
+		query="select p from SlipProperties p join fetch p.slipOpinion"), 
 })
 @Entity
 @SuppressWarnings("serial")
