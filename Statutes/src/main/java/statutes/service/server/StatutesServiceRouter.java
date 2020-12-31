@@ -12,8 +12,7 @@ import statutes.service.ReactiveStatutesService;
 
 @Configuration
 public class StatutesServiceRouter {
-
-	  @Bean
+	@Bean
 	  public RouterFunction<ServerResponse> route(StatutesServiceHandler statutesServiceHandler) {
 	    return RouterFunctions
 	      .route(RequestPredicates.GET(ReactiveStatutesService.STATUTES)
@@ -23,6 +22,8 @@ public class StatutesServiceRouter {
 	      .andRoute(RequestPredicates.GET(ReactiveStatutesService.STATUTEHIERARCHY)
 	    		  .and(RequestPredicates.accept(MediaType.APPLICATION_JSON)), statutesServiceHandler::getStatuteHierarchy)
 	      .andRoute(RequestPredicates.GET(ReactiveStatutesService.STATUTESANDHIERARCHIES)
+	    		  .and(RequestPredicates.accept(MediaType.APPLICATION_JSON)), statutesServiceHandler::getStatutesAndHierarchies)
+	      .andRoute(RequestPredicates.POST(ReactiveStatutesService.STATUTESANDHIERARCHIES)
 	    		  .and(RequestPredicates.accept(MediaType.APPLICATION_JSON)), statutesServiceHandler::getStatutesAndHierarchies)
 	      ;
 	  }
