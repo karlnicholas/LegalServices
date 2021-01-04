@@ -238,10 +238,11 @@ public class StatutesRoot implements StatutesBaseClass, Serializable, Comparable
 	public StatutesBaseClass mergeReferenceStatute(StatutesBaseClass referenceStatute) {
 		if ( referenceStatute.equals(this) ) {
 			for ( StatutesBaseClass referenceBaseClass: referenceStatute.getReferences()) {
-				if ( this.references.contains(referenceBaseClass)) {
-					mergeReferenceStatute(referenceBaseClass);
-				} else {
+				if ( !this.references.contains(referenceBaseClass)) {
 					this.addReference(referenceBaseClass);
+				} else {
+					StatutesBaseClass commonBaseClass = this.references.get(this.references.indexOf(referenceBaseClass));
+					commonBaseClass.mergeReferenceStatute(referenceBaseClass);
 				}
 			}
 		}
