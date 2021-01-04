@@ -17,8 +17,8 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 		"depth", "part", "partNumber", "statuteRange", 
 		"lawCode", "title", "shortTitle", "fullFacet"
 	})
-@SuppressWarnings("serial")
 public class StatutesRoot implements StatutesBaseClass, Serializable, Comparable<StatutesRoot> {
+	private static final long serialVersionUID = 1L;
 	//	private static final Logger logger = Logger.getLogger(Code.class.getName());
 	// lawCode = primary identifier
 	private String lawCode;
@@ -195,7 +195,7 @@ public class StatutesRoot implements StatutesBaseClass, Serializable, Comparable
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((shortTitle == null) ? 0 : shortTitle.hashCode());
+		result = prime * result + ((lawCode == null) ? 0 : lawCode.hashCode());
 		return result;
 	}
 	@Override
@@ -207,10 +207,10 @@ public class StatutesRoot implements StatutesBaseClass, Serializable, Comparable
 		if (getClass() != obj.getClass())
 			return false;
 		StatutesRoot other = (StatutesRoot) obj;
-		if (shortTitle == null) {
-			if (other.shortTitle != null)
+		if (lawCode == null) {
+			if (other.lawCode != null)
 				return false;
-		} else if (!shortTitle.equals(other.shortTitle))
+		} else if (!lawCode.equals(other.lawCode))
 			return false;
 		return true;
 	}
@@ -218,7 +218,7 @@ public class StatutesRoot implements StatutesBaseClass, Serializable, Comparable
 	@JsonInclude
 	@Override
 	public String getLawCode() {
-		return lawCode;
+		return lawCode;	
 	}
 
 	@Override
@@ -232,6 +232,20 @@ public class StatutesRoot implements StatutesBaseClass, Serializable, Comparable
 
 	public void setDisplayFlag(boolean displayFlag) {
 		this.displayFlag = displayFlag;
+	}
+
+	@Override
+	public StatutesBaseClass mergeReferenceStatute(StatutesBaseClass referenceStatute) {
+		if ( referenceStatute.equals(this) ) {
+			for ( StatutesBaseClass referenceBaseClass: referenceStatute.getReferences()) {
+				if ( this.references.contains(referenceBaseClass)) {
+					mergeReferenceStatute(referenceBaseClass);
+				} else {
+					this.addReference(referenceBaseClass);
+				}
+			}
+		}
+		return this;
 	}
 
 }

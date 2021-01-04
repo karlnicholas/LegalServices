@@ -19,6 +19,7 @@ public interface StatutesBaseClass {
 
 	//	public String returnFullpath();
 	public void mergeStatuteRange(StatuteRange statuteRange);
+	public StatutesBaseClass mergeReferenceStatute(StatutesBaseClass referenceStatute);
 		
 	public void addReference(StatutesBaseClass reference);
 

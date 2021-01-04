@@ -1,6 +1,7 @@
 package statutes.service.server;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.core.ParameterizedTypeReference;
@@ -24,10 +25,8 @@ public class StatutesServiceHandler {
 
 	public StatutesServiceHandler() {
 		this.iStatutesApi = ApiImplSingleton.getInstance().getStatutesApi();
-		this.statutesRootsType = new ParameterizedTypeReference<List<StatutesRoot>>() {
-		};
-		this.statutesKeysType = new ParameterizedTypeReference<List<StatuteKey>>() {
-		};
+		this.statutesRootsType = new ParameterizedTypeReference<List<StatutesRoot>>() {};
+		this.statutesKeysType = new ParameterizedTypeReference<List<StatuteKey>>() {};
 	}
 
 	public Mono<ServerResponse> getStatutesRoots(ServerRequest request) {
@@ -49,13 +48,18 @@ public class StatutesServiceHandler {
 		return ServerResponse.ok().contentType(MediaType.APPLICATION_JSON)
 				.body(request.bodyToMono(statutesKeysType).map(statutesKeys -> {
 					// This is a section
-					return statutesKeys.stream().map(statuteKey -> {
+					List<StatutesRoot> rv = statutesKeys.stream().map(statuteKey -> {
 						String lawCode = statuteKey.getLawCode();
 						SectionNumber sectionNumber = new SectionNumber();
 						sectionNumber.setPosition(-1);
 						sectionNumber.setSectionNumber(statuteKey.getSectionNumber());
 						return iStatutesApi.findReference(lawCode, sectionNumber).getFullFacet();
-					}).map(iStatutesApi::getStatutesHierarchy).collect(Collectors.toList());
+					}).map(iStatutesApi::getStatutesHierarchy)
+							.collect(Collectors.groupingBy(StatutesRoot::getLawCode, Collectors.reducing((sr1, sr2)->{
+								return (StatutesRoot)sr1.mergeReferenceStatute(sr2);
+							})))
+						.values().stream().map(Optional::get).collect(Collectors.toList());
+					return rv;
 				}), statutesRootsType);
 	}
 

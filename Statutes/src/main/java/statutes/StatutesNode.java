@@ -14,8 +14,8 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 	"depth", "part", "partNumber", "statuteRange", 
 	"title", "fullFacet" 
 })
-@SuppressWarnings("serial")
 public class StatutesNode implements StatutesBaseClass, Serializable {
+	private static final long serialVersionUID = 1L;
 	//	private static final Logger logger = Logger.getLogger(Subcode.class.getName());
 	private StatutesBaseClass parent;
     private String fullFacet;
@@ -258,6 +258,19 @@ public class StatutesNode implements StatutesBaseClass, Serializable {
 	public void setLawCode(String lawCode) {
 		// TODO Auto-generated method stub
 		
+	}
+	@Override
+	public StatutesBaseClass mergeReferenceStatute(StatutesBaseClass referenceStatute) {
+		if ( referenceStatute.equals(this) ) {
+			for ( StatutesBaseClass referenceBaseClass: referenceStatute.getReferences()) {
+				if ( this.references.contains(referenceBaseClass)) {
+					mergeReferenceStatute(referenceBaseClass);
+				} else {
+					this.addReference(referenceBaseClass);
+				}
+			}
+		}
+		return this;
 	}
 	public boolean isDisplayFlag() {
 		return displayFlag;

@@ -19,8 +19,8 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 	"depth", "part", "partNumber", "statuteRange", 
 	"title", "fullFacet", "sectionNumbers"
 })
-@SuppressWarnings("serial")
 public class StatutesLeaf implements StatutesBaseClass, Serializable {
+	private static final long serialVersionUID = 1L;
 	//	private static final Logger logger = Logger.getLogger(Section.class.getName());
     private StatutesBaseClass parent;
     private String fullFacet;
@@ -155,6 +155,12 @@ public class StatutesLeaf implements StatutesBaseClass, Serializable {
 	public void getParents(ArrayList<StatutesBaseClass> returnPath) {
 		returnPath.add(parent);
 		parent.getParents(returnPath);
+	}
+
+	@Override
+	public StatutesBaseClass mergeReferenceStatute(StatutesBaseClass referenceStatute) {
+		// nothing to do.
+		return this;
 	}
 
 	@JsonIgnore
