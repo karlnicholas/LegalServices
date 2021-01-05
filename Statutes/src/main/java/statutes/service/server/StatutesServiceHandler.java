@@ -53,8 +53,12 @@ public class StatutesServiceHandler {
 						SectionNumber sectionNumber = new SectionNumber();
 						sectionNumber.setPosition(-1);
 						sectionNumber.setSectionNumber(statuteKey.getSectionNumber());
-						return iStatutesApi.findReference(lawCode, sectionNumber).getFullFacet();
-					}).map(iStatutesApi::getStatutesHierarchy)
+						return Optional.ofNullable(iStatutesApi.findReference(lawCode, sectionNumber))
+								.map(statutesBaseClass->statutesBaseClass.getFullFacet());
+					})
+					.filter(Optional::isPresent)
+					.map(Optional::get)
+					.map(iStatutesApi::getStatutesHierarchy)
 							.collect(Collectors.groupingBy(StatutesRoot::getLawCode, Collectors.reducing((sr1, sr2)->{
 								return (StatutesRoot)sr1.mergeReferenceStatute(sr2);
 							})))

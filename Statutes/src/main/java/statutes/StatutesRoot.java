@@ -12,13 +12,13 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 /**
  * Root element of a Statute Hierarchy.
  */
+@SuppressWarnings("serial")
 @JsonTypeName("statutesRoot")
 @JsonPropertyOrder({
 		"depth", "part", "partNumber", "statuteRange", 
 		"lawCode", "title", "shortTitle", "fullFacet"
 	})
 public class StatutesRoot implements StatutesBaseClass, Serializable, Comparable<StatutesRoot> {
-	private static final long serialVersionUID = 1L;
 	//	private static final Logger logger = Logger.getLogger(Code.class.getName());
 	// lawCode = primary identifier
 	private String lawCode;

@@ -14,13 +14,13 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
  * @author Karl Nicholas
  *
  */
+@SuppressWarnings("serial")
 @JsonTypeName("statutesLeaf")
 @JsonPropertyOrder({
 	"depth", "part", "partNumber", "statuteRange", 
 	"title", "fullFacet", "sectionNumbers"
 })
 public class StatutesLeaf implements StatutesBaseClass, Serializable {
-	private static final long serialVersionUID = 1L;
 	//	private static final Logger logger = Logger.getLogger(Section.class.getName());
     private StatutesBaseClass parent;
     private String fullFacet;

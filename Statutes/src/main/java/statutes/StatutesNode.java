@@ -9,13 +9,13 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 
+@SuppressWarnings("serial")
 @JsonTypeName("statutesNode")
 @JsonPropertyOrder({
 	"depth", "part", "partNumber", "statuteRange", 
 	"title", "fullFacet" 
 })
 public class StatutesNode implements StatutesBaseClass, Serializable {
-	private static final long serialVersionUID = 1L;
 	//	private static final Logger logger = Logger.getLogger(Subcode.class.getName());
 	private StatutesBaseClass parent;
     private String fullFacet;

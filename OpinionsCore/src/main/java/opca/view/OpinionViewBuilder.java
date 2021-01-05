@@ -53,6 +53,8 @@ public class OpinionViewBuilder {
 		// statutesRs.getStatutesAndHierarchies(statuteKeyFlux);
 		//
 		List<StatutesRoot> statuteHierarchies = statutesService.getStatutesAndHierarchies(statuteKeys).getBody();
+		// set parents within hierarchy.
+		statuteHierarchies.forEach(statutesRoot->statutesRoot.rebuildParentReferences(statutesRoot));
 		List<StatuteView> statuteViews = new ArrayList<>();
 		// copy results into the new list ..
 		Iterator<OpinionStatuteCitation> itc = opinionBase.getStatuteCitations().iterator();
@@ -194,8 +196,10 @@ public class OpinionViewBuilder {
 			SectionNumber sectionNumber = new SectionNumber();
 			sectionNumber.setPosition(-1);
 			sectionNumber.setSectionNumber(key.getSectionNumber());
-			return statutesRoot.findReference(sectionNumber);
+			return Optional.ofNullable(statutesRoot.findReference(sectionNumber));
 		})
+		.filter(Optional::isPresent)
+		.map(Optional::get)
 		.map(StatutesLeaf.class::cast)
 		.findFirst();
 /*
