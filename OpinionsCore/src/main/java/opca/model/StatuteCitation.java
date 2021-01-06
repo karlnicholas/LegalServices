@@ -169,6 +169,7 @@ public class StatuteCitation implements Comparable<StatuteCitation>, Serializabl
 	}
 	@Override
 	public int hashCode() {
+		if ( statuteKey == null ) System.out.println("id: statuteKey: " + id +":" + statuteKey + ":" + referringOpinions.size());
 	    return statuteKey.hashCode();
 	}
 	@Override

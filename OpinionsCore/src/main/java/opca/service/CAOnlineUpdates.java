@@ -79,7 +79,7 @@ public class CAOnlineUpdates {
 //			onlineOpinions.remove(0);
 //			onlineOpinions = onlineOpinions.subList(0, 340);
 //			onlineOpinions = onlineOpinions.subList(0, 0);
-			onlineOpinions = onlineOpinions.subList(0, 1);
+//			onlineOpinions = onlineOpinions.subList(0, 1);
 
 //
 //		Iterator<SlipOpinion> oit = onlineOpinions.iterator();
@@ -188,7 +188,14 @@ public class CAOnlineUpdates {
 		processOpinions(citationStore, persistOpinions);
 	  	processStatutes(citationStore, persistStatutes);
 				
-		List<OpinionStatuteCitation> persistOpinionStatuteCitations = new ArrayList<>();
+	  	System.out.println("statute.size() == " + persistStatutes.size());
+    	for ( StatuteCitation statute: persistStatutes) {
+    		if ( statute.getStatuteKey() == null ) {
+System.out.println("statute.getStatuteKey() == null");
+    		}
+    	}
+
+    	List<OpinionStatuteCitation> persistOpinionStatuteCitations = new ArrayList<>();
 
 		for( SlipOpinion slipOpinion: slipOpinions ) {
 			if ( slipOpinion.getStatuteCitations() != null ) {
@@ -221,8 +228,21 @@ public class CAOnlineUpdates {
     	}
 		logger.info("Persisted "+ persistOpinionStatuteCitations.size()+" opinionStatuteCitation in "+((new Date().getTime()-startTime.getTime())/1000) + " seconds");
 
+System.out.println("statute.size() == " + persistStatutes.size());
+    	for ( StatuteCitation statute: persistStatutes) {
+    		if ( statute.getStatuteKey() == null ) {
+System.out.println("statute.getStatuteKey() == null");
+    		}
+    	}
 		startTime = new Date();
     	for(StatuteCitation statute: persistStatutes ) {
+			if ( statute.getStatuteKey() == null ) {
+			System.out.println("statute.getStatuteKey() == null");
+			}
+	    	for( OpinionStatuteCitation referringOpinion: statute.getReferringOpinions() ) {
+	    		referringOpinion.hashCode();
+	    	}
+			
     		statuteCitationRepository.save(statute);
     	}
 		logger.info("Persisted "+persistStatutes.size()+" statutes in "+((new Date().getTime()-startTime.getTime())/1000) + " seconds");

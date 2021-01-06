@@ -28,7 +28,7 @@ public class RequestLoggingDecorator extends ServerHttpRequestDecorator {
 			try {
 				Channels.newChannel(baos).write(dataBuffer.asByteBuffer().asReadOnlyBuffer());
 				String body = new String(baos.toByteArray(), StandardCharsets.UTF_8);
-				LOGGER.info("Request: payload={}", body);
+				LOGGER.debug("Request: payload={}", body);
 			} catch (IOException e) {
 				e.printStackTrace();
 			} finally {
