@@ -5,6 +5,8 @@ import java.util.regex.Pattern;
 
 import javax.persistence.*;
 
+import org.hibernate.annotations.NaturalIdCache;
+
 @NamedQueries({
 	@NamedQuery(name="SlipOpinion.findAll", 
 		query="select s from SlipOpinion s"),
@@ -15,18 +17,29 @@ import javax.persistence.*;
 })
 @NamedEntityGraphs({ 
 	@NamedEntityGraph(name="fetchGraphForOpinionsWithJoins", attributeNodes= {
-		@NamedAttributeNode(value="statuteCitations", subgraph="fetchGraphForOpinionsWithJoinsPartB")
+		@NamedAttributeNode(value="statuteCitations", subgraph="fetchGraphForOpinionsWithJoinsPartB"), 
 	}, 
 	subgraphs= {
 		@NamedSubgraph(
 			name = "fetchGraphForOpinionsWithJoinsPartB", 
-			attributeNodes = { @NamedAttributeNode(value = "statuteCitation", subgraph="fetchGraphForOpinionsWithJoinsPartC") } 
+			attributeNodes = { @NamedAttributeNode(value = "statuteCitation") } 
 		),
-		@NamedSubgraph(
-				name = "fetchGraphForOpinionsWithJoinsPartC", 
-				attributeNodes = { @NamedAttributeNode(value = "statuteKey") } 
+	}), 	
+	@NamedEntityGraph(name="fetchGraphForOpinionsWithJoinsForKeys", attributeNodes= {
+			@NamedAttributeNode(value="statuteCitations", subgraph="fetchGraphForOpinionsWithJoinsPartKB"), 
+			@NamedAttributeNode(value="opinionCitations", subgraph="fetchGraphForOpinionsWithJoinsPartKC"), 
+		}, 
+	subgraphs= {
+			@NamedSubgraph(
+				name = "fetchGraphForOpinionsWithJoinsPartKB", 
+				attributeNodes = { @NamedAttributeNode(value = "statuteCitation") } 
 			),
-	}) 
+			@NamedSubgraph(
+					name = "fetchGraphForOpinionsWithJoinsPartKC", 
+					attributeNodes = { @NamedAttributeNode(value = "statuteCitations") } 
+				),
+		}
+	) 
 })
 @SuppressWarnings("serial")
 @Entity

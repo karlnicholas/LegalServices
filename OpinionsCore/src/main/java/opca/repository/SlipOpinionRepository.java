@@ -16,7 +16,7 @@ public interface SlipOpinionRepository extends JpaRepository<SlipOpinion, Intege
 	List<SlipOpinion> loadOpinionsWithJoins();
 
 	@Query(nativeQuery = true)
-	@EntityGraph("fetchGraphForOpinionsWithJoins")
+	@EntityGraph("fetchGraphForOpinionsWithJoinsForKeys")
 	List<SlipOpinion> loadOpinionsWithJoinsForKeys(@Param("opinionKeys") List<OpinionKey> opinionKeys);
 
 }

@@ -57,8 +57,10 @@ import javax.persistence.Table;
 public class StatuteCitation implements Comparable<StatuteCitation>, Serializable { 
 	@Id @GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Integer id;
+	
 	@Embedded
     private StatuteKey statuteKey;
+
 	@OneToMany(mappedBy="statuteCitation")
 	private Set<OpinionStatuteCitation> referringOpinions;
     

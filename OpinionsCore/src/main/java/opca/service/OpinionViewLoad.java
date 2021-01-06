@@ -7,8 +7,13 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.persistence.EntityGraph;
+import javax.persistence.EntityManager;
+import javax.persistence.Tuple;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
@@ -235,12 +240,59 @@ public class OpinionViewLoad {
 		initReportDates(opinionViewData, dates);
 	}
 
+	@Autowired
+	private EntityManager entityManager;
+	String nQuery="select distinct \r\n" + 
+			"	slipopinio0_.id as id2_0_0_, \r\n" + 
+			"	opinionbas2_.id as id2_0_1_, \r\n" + 
+			"	statutecit3_.opinionbase_id as opinionb2_2_2_, \r\n" + 
+			"	statutecit3_.statutecitation_id as statutec3_2_2_, \r\n" + 
+			"	statutecit4_.id as id1_6_3_, \r\n" + 
+			"	statutecit5_.opinionbase_id as opinionb2_2_4_, \r\n" + 
+			"	statutecit5_.statutecitation_id as statutec3_2_4_, \r\n" + 
+			"	statutecit6_.id as id1_6_5_, \r\n" + 
+			"	slipopinio0_.countreferringopinions as countref3_0_0_, \r\n" + 
+			"	slipopinio0_.opiniondate as opiniond4_0_0_, \r\n" + 
+			"	slipopinio0_.page as page5_0_0_, \r\n" + 
+			"	slipopinio0_.volume as volume6_0_0_, \r\n" + 
+			"	slipopinio0_.vset as vset7_0_0_, \r\n" + 
+			"	slipopinio0_.title as title8_0_0_, \r\n" + 
+			"	opinionbas2_.countreferringopinions as countref3_0_1_, \r\n" + 
+			"	opinionbas2_.opiniondate as opiniond4_0_1_, \r\n" + 
+			"	opinionbas2_.page as page5_0_1_, \r\n" + 
+			"	opinionbas2_.volume as volume6_0_1_, \r\n" + 
+			"	opinionbas2_.vset as vset7_0_1_, \r\n" + 
+			"	opinionbas2_.title as title8_0_1_, \r\n" + 
+			"	opinionbas2_.dtype as dtype1_0_1_, \r\n" + 
+			"	opinioncit1_.referringopinions_id as referrin1_1_0__, \r\n" + 
+			"	opinioncit1_.opinioncitations_id as opinionc2_1_0__, \r\n" + 
+			"	statutecit3_.countreferences as countref1_2_2_, \r\n" + 
+			"	statutecit3_.opinionbase_id as opinionb2_2_1__, \r\n" + 
+			"	statutecit3_.statutecitation_id as statutec3_2_1__, \r\n" + 
+			"	statutecit4_.designated as designat2_6_3_, \r\n" + 
+			"	statutecit4_.lawcode as lawcode3_6_3_, \r\n" + 
+			"	statutecit4_.sectionnumber as sectionn4_6_3_, \r\n" + 
+			"	statutecit5_.countreferences as countref1_2_4_, \r\n" + 
+			"	statutecit5_.opinionbase_id as opinionb2_2_2__, \r\n" + 
+			"	statutecit5_.statutecitation_id as statutec3_2_2__, \r\n" + 
+			"	statutecit6_.designated as designat2_6_5_, \r\n" + 
+			"	statutecit6_.lawcode as lawcode3_6_5_, \r\n" + 
+			"	statutecit6_.sectionnumber as sectionn4_6_5_ \r\n" + 
+			"from opinionbase slipopinio0_ \r\n" + 
+			"left outer join opinionbase_opinioncitations opinioncit1_ on slipopinio0_.id=opinioncit1_.referringopinions_id \r\n" + 
+			"left outer join opinionbase opinionbas2_ on opinioncit1_.opinioncitations_id=opinionbas2_.id \r\n" + 
+			"left outer join opinionstatutecitation statutecit3_ on opinionbas2_.id=statutecit3_.opinionbase_id \r\n" + 
+			"left outer join statutecitation statutecit4_ on statutecit3_.statutecitation_id=statutecit4_.id \r\n" + 
+			"left outer join opinionstatutecitation statutecit5_ on slipopinio0_.id=statutecit5_.opinionbase_id \r\n" + 
+			"left outer join statutecitation statutecit6_ on statutecit5_.statutecitation_id=statutecit6_.id \r\n" + 
+			"where slipopinio0_.dtype=-1344462334\r\n" + 
+			"";
+	
 	private List<SlipOpinion> loadAllSlipOpinions() {
 		// just get all slip opinions
-//		EntityGraph<?> fetchGraphForOpinionsWithJoins = em.getEntityGraph("fetchGraphForOpinionsWithJoins");
-//		List<SlipOpinion> opinions = em.createNamedQuery("SlipOpinion.loadOpinionsWithJoins", SlipOpinion.class)
-//				.setHint("javax.persistence.fetchgraph", fetchGraphForOpinionsWithJoins)
-//				.getResultList();
+//		EntityGraph<?> fetchGraphForOpinionsWithJoins = entityManager.getEntityGraph("fetchGraphForOpinionsWithJoins");
+		List<Tuple> l = entityManager.createNativeQuery(nQuery, Tuple.class).getResultList();
+//		List<SlipOpinion> opinions = slipOpinionRepository.loadOpinionsWithJoins();
 		List<SlipOpinion> opinions = slipOpinionRepository.loadOpinionsWithJoins();
 		// load slipOpinion properties from the database here ... ?
 // List<SlipProperties> spl = em.createNamedQuery("SlipProperties.findAll", SlipProperties.class).getResultList();
