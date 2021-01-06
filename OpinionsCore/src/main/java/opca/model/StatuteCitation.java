@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeSet;
 
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -56,6 +57,7 @@ import javax.persistence.Table;
 public class StatuteCitation implements Comparable<StatuteCitation>, Serializable { 
 	@Id @GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Integer id;
+	@Embedded
     private StatuteKey statuteKey;
 	@OneToMany(mappedBy="statuteCitation")
 	private Set<OpinionStatuteCitation> referringOpinions;
@@ -167,6 +169,9 @@ public class StatuteCitation implements Comparable<StatuteCitation>, Serializabl
 	public int compareTo(StatuteCitation o) {
         return statuteKey.compareTo(o.statuteKey);
 	}
+    public Integer getId() {
+    	return id;
+    }
 	@Override
 	public int hashCode() {
 		if ( statuteKey == null ) System.out.println("id: statuteKey: " + id +":" + statuteKey + ":" + referringOpinions.size());

@@ -188,13 +188,6 @@ public class CAOnlineUpdates {
 		processOpinions(citationStore, persistOpinions);
 	  	processStatutes(citationStore, persistStatutes);
 				
-	  	System.out.println("statute.size() == " + persistStatutes.size());
-    	for ( StatuteCitation statute: persistStatutes) {
-    		if ( statute.getStatuteKey() == null ) {
-System.out.println("statute.getStatuteKey() == null");
-    		}
-    	}
-
     	List<OpinionStatuteCitation> persistOpinionStatuteCitations = new ArrayList<>();
 
 		for( SlipOpinion slipOpinion: slipOpinions ) {
@@ -228,13 +221,6 @@ System.out.println("statute.getStatuteKey() == null");
     	}
 		logger.info("Persisted "+ persistOpinionStatuteCitations.size()+" opinionStatuteCitation in "+((new Date().getTime()-startTime.getTime())/1000) + " seconds");
 
-System.out.println("statute.size() == " + persistStatutes.size());
-    	for ( StatuteCitation statute: persistStatutes) {
-    		if ( statute.getStatuteKey() == null ) {
-System.out.println("statute.getStatuteKey() == null");
-    		}
-    	}
-		startTime = new Date();
     	for(StatuteCitation statute: persistStatutes ) {
 			if ( statute.getStatuteKey() == null ) {
 			System.out.println("statute.getStatuteKey() == null");
@@ -281,7 +267,7 @@ System.out.println("statute.getStatuteKey() == null");
 //    		opinion.checkCountReferringOpinions();
     		// checking for opinionBase for citations
     		int idx = Arrays.binarySearch(existingOpinionsArray, opinion);
-			persistOpinions.add(opinion);
+//			persistOpinions.add(opinion);
     		
     		if ( idx < 0 ) {
 				persistOpinions.add(opinion);
@@ -339,7 +325,7 @@ System.out.println("statute.getStatuteKey() == null");
     	int count = statutes.size();
     	for(StatuteCitation statute: statutes ) {
     		int idx = Arrays.binarySearch(existingStatutesArray, statute);
-			persistStatutes.add(statute);
+//			persistStatutes.add(statute);
 			if ( idx < 0 ) {
 				persistStatutes.add(statute);
 			} else {
