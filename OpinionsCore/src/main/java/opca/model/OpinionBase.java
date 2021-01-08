@@ -122,7 +122,7 @@ public class OpinionBase implements Comparable<OpinionBase>, Serializable {
 	    	}
     	}
     }
-	public void addStatuteCitations(Set<StatuteCitation> goodStatutes) {
+	public void addStatuteCitations(Collection<StatuteCitation> goodStatutes) {
 		if ( statuteCitations == null ) {
 			setStatuteCitations(new TreeSet<>());
 		}
