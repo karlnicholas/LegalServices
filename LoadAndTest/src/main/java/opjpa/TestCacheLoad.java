@@ -1,7 +1,10 @@
 package opjpa;
 
+import java.time.LocalDate;
+import java.time.ZoneOffset;
+import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -16,6 +19,12 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+
+import opca.model.OpinionBase;
+import opca.model.OpinionKey;
+import opca.model.OpinionStatuteCitation;
+import opca.model.SlipOpinion;
+import opca.model.StatuteCitation;
 
 @SpringBootApplication(scanBasePackages = {"opca", "opjpa"})
 @ConditionalOnProperty(name = "TestCacheLoad.active", havingValue = "true", matchIfMissing = false)
@@ -70,8 +79,73 @@ public class TestCacheLoad implements ApplicationRunner {
 //		StatutesService statutesService = new StatutesServiceClientImpl("http://localhost:8090/");
 		@SuppressWarnings("unchecked")
 		List<Tuple> l = entityManager.createNativeQuery(nQuery, Tuple.class).getResultList();
-		Map<String, Optional<DecodeClass>> c = l.stream().parallel().collect(Collectors.groupingBy(tuple->tuple.get("o_id").toString(), 
-				Collectors.mapping(DecodeClass::new, Collectors.reducing(DecodeClass::combine))));
-        c.forEach((id, dc)->System.out.println(id+":"+dc.get().slipOpinion+":"+dc.get().slipOpinion.getStatuteCitations().size()));
+		List<SlipOpinion> opinions = l.stream().parallel().collect(Collectors.groupingBy(tuple->tuple.get("o_id").toString(), 
+				Collectors.mapping(this::decodeTuple, Collectors.reducing((sp1, sp2)->{
+					sp1.mergePublishedOpinion(sp2);
+					return sp1;
+				}))))
+				.values().stream()
+				.map(Optional::get)
+				.collect(Collectors.toList());
+		opinions.forEach((opinion)->System.out.println(opinion+":"+opinion.getStatuteCitations().size()));
+	}
+	
+	private SlipOpinion decodeTuple(Tuple tuple) {
+		SlipOpinion slipOpinion = new SlipOpinion(
+				tuple.get("filename").toString(), 
+				tuple.get("fileextension").toString(), 
+				String.valueOf(tuple.get("o_title")), 
+				Date.from(LocalDate.parse(tuple.get("o_opiniondate").toString()).atStartOfDay().toInstant(ZoneOffset.UTC)), 
+				"court", 
+				"searchUrl"
+			);
+		slipOpinion.setStatuteCitations(new HashSet<>());
+		slipOpinion.setOpinionCitations(new HashSet<>());
+		// do StatuteCitation
+		if ( tuple.get("sc_lawcode") != null && tuple.get("sc_sectionnumber") != null ) {
+			StatuteCitation statuteCitation = new StatuteCitation(slipOpinion, 
+					tuple.get("sc_lawcode").toString(), 
+					tuple.get("sc_sectionnumber").toString());
+			statuteCitation.setDesignated(Boolean.parseBoolean(tuple.get("sc_designated").toString()));
+			OpinionStatuteCitation opinionStatuteCitation = new OpinionStatuteCitation(statuteCitation, slipOpinion, 
+					Integer.parseInt(tuple.get("osc_countreferences").toString()));
+			if ( !slipOpinion.getStatuteCitations().contains(opinionStatuteCitation)) {
+				slipOpinion.getStatuteCitations().add(opinionStatuteCitation); 
+			}
+		}
+		if ( tuple.get("oc_page") != null && tuple.get("oc_volume") != null && tuple.get("oc_vset") != null ) {
+			// do OpinionCitation
+			OpinionKey opinionKey = new OpinionKey(
+					Integer.parseInt(tuple.get("oc_page").toString()), 
+					Integer.parseInt(tuple.get("oc_volume").toString()), 
+					Integer.parseInt(tuple.get("oc_vset").toString())
+				);
+			OpinionBase opinionCitation = new OpinionBase(opinionKey);
+			OpinionBase finalOpinionCitation = slipOpinion.getOpinionCitations().stream().filter(oc->oc.equals(opinionCitation)).findAny().orElseGet(
+				()->{
+					opinionCitation.setCountReferringOpinions(Integer.parseInt(tuple.get("oc_countreferringopinions").toString()));
+					if ( tuple.get("oc_opiniondate") != null ) {
+						opinionCitation.setOpinionDate(Date.from(LocalDate.parse(tuple.get("oc_opiniondate").toString()).atStartOfDay().toInstant(ZoneOffset.UTC)));
+					}
+					opinionCitation.setStatuteCitations(new HashSet<>());
+					slipOpinion.getOpinionCitations().add(opinionCitation); 
+					return opinionCitation;}
+			);
+			// do OpinionCitation->StatuteCitation
+			if ( tuple.get("ocsc_lawcode") != null && tuple.get("ocsc_sectionnumber") != null ) {
+				StatuteCitation statuteCitation = new StatuteCitation(slipOpinion, 
+						tuple.get("ocsc_lawcode").toString(), 
+						tuple.get("ocsc_sectionnumber").toString());
+				statuteCitation.setDesignated(Boolean.parseBoolean(tuple.get("ocsc_designated").toString()));
+				OpinionStatuteCitation opinionStatuteCitation = new OpinionStatuteCitation(statuteCitation, slipOpinion, 
+						Integer.parseInt(tuple.get("ocosc_countreferences").toString()));		
+
+				if ( !finalOpinionCitation.getStatuteCitations().contains(opinionStatuteCitation)) {
+					finalOpinionCitation.getStatuteCitations().add(opinionStatuteCitation); 
+				}
+			}
+		}
+		
+		return slipOpinion;
 	}
 }
