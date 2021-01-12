@@ -19,6 +19,7 @@
 		<module>StatutesCa</module>
 		<module>StatutesRestCa</module>
 		<module>OpinionsCore</module>
+		<module>OpinionsWeb</module>
 	</modules>
 	<dependencyManagement>
 		<dependencies>
@@ -49,6 +50,20 @@
 			<dependency>
 				<groupId>com.github.karlnicholas.legalservices</groupId>
 				<artifactId>guidedsearch-core</artifactId>
+				<version>${project.version}</version>
+				<type>jar</type>
+				<scope>compile</scope>
+			</dependency>
+			<dependency>
+				<groupId>com.github.karlnicholas.legalservices</groupId>
+				<artifactId>guidedsearch-web</artifactId>
+				<version>${project.version}</version>
+				<type>jar</type>
+				<scope>compile</scope>
+			</dependency>
+			<dependency>
+				<groupId>com.github.karlnicholas.legalservices</groupId>
+				<artifactId>opinions-core</artifactId>
 				<version>${project.version}</version>
 				<type>jar</type>
 				<scope>compile</scope>

@@ -10,8 +10,7 @@ import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.stereotype.Service;
 
 import opca.memorydb.CitationStore;
 import opca.model.OpinionBase;
@@ -38,7 +37,7 @@ import statutes.service.StatutesService;
  * @author karl
  *
  */
-@Component
+@Service
 public class CAOnlineUpdates {	
 	Logger logger = LoggerFactory.getLogger(CAOnlineUpdates.class);
 	private final OpinionBaseRepository opinionBaseRepository;
@@ -62,8 +61,7 @@ public class CAOnlineUpdates {
 //        opinionViewSingleton.updateOpinionViews(opinionKeys, blockingStatutesService);
 //	}
 
-	@Transactional
-	public void updateDatabase(OpinionScraperInterface caseScraper, StatutesService statutesService) {
+	public List<OpinionKey> updateDatabase(OpinionScraperInterface caseScraper, StatutesService statutesService) {
 		
  		List<SlipOpinion> onlineOpinions = caseScraper.getCaseList();
  		// save OpinionKeys for cache handling 
@@ -136,7 +134,7 @@ public class CAOnlineUpdates {
 			logger.info("No new cases.");
 		}		
 //			processAndPersistCases(onlineOpinions, caseScraper);
-//			return opinionKeys; 
+		return opinionKeys; 
 	}
 	
 	private void processAndPersistCases(List<SlipOpinion> slipOpinions, OpinionScraperInterface opinionScraper, StatutesService statutesService) {

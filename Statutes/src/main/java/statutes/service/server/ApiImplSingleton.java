@@ -8,8 +8,7 @@ public class ApiImplSingleton {
 	private IStatutesApi iStatutesApi;
 	private static final ApiImplSingleton INSTANCE = new ApiImplSingleton();
 	private ApiImplSingleton() {
-		ServiceLoader<IStatutesApi> parserLoader = 
-				ServiceLoader.load(IStatutesApi.class);
+		ServiceLoader<IStatutesApi> parserLoader = ServiceLoader.load(IStatutesApi.class);
 		iStatutesApi = parserLoader.iterator().next();
 		if ( iStatutesApi == null ) {
 			throw new RuntimeException("ParserInterface not found.");

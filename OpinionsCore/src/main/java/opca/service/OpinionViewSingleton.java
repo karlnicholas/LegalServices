@@ -12,10 +12,12 @@ import java.util.Set;
 import org.springframework.stereotype.Component;
 
 import opca.ejb.util.StatutesServiceFactory;
+import opca.model.OpinionKey;
 import opca.model.User;
 import opca.view.OpinionView;
 import opca.view.SectionView;
 import opca.view.ViewReference;
+import statutes.service.StatutesService;
 
 @Component
 public class OpinionViewSingleton {
@@ -136,11 +138,11 @@ public class OpinionViewSingleton {
 		return opinionViewData.getReportDates();
 	}
 
-//	public void updateOpinionViews(List<OpinionKey> opinionKeys, BlockingStatutesService blockingStatutesService) {
-//		if ( opinionViewData.isReady() ) {
-//			opinionViewLoad.loadNewOpinions(opinionViewData, opinionKeys, blockingStatutesService);
-//		}
-//	}
+	public void updateOpinionViews(List<OpinionKey> opinionKeys, StatutesService statutesService) {
+		if ( opinionViewData.isReady() ) {
+			opinionViewLoad.loadNewOpinions(opinionViewData, opinionKeys, statutesService);
+		}
+	}
 	public List<String[]> getStringDateList() {
 		return opinionViewData.getStringDateList();
 	}
