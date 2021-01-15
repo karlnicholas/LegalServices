@@ -2,20 +2,15 @@ package opca.view;
 
 import java.util.Date;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonTypeName;
 
-@XmlRootElement
-@XmlAccessorType(XmlAccessType.FIELD)
+@JsonTypeName("caseView")
 public class CaseView implements Comparable<CaseView> {
 	private String title;
 	private String citation;
 	private Date opinionDate;
-	@XmlTransient
 	private int countReferringOpinions;
-	@XmlTransient
 	private int score;
 	private int importance;
 	
@@ -36,6 +31,7 @@ public class CaseView implements Comparable<CaseView> {
 	public Date getOpinionDate() {
 		return opinionDate;
 	}
+	@JsonIgnore
 	public int getCountReferringOpinions() {
 		return countReferringOpinions;
 	}
@@ -45,6 +41,7 @@ public class CaseView implements Comparable<CaseView> {
 	public void setImportance(int importance) {
 		this.importance = importance;
 	}
+	@JsonIgnore
 	public int getScore() {
 		return score;
 	}

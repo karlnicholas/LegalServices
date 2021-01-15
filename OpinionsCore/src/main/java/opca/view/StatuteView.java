@@ -2,10 +2,8 @@ package opca.view;
 
 import java.util.*;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonTypeName;
 
 import statutes.StatutesBaseClass;
 
@@ -16,8 +14,7 @@ import statutes.StatutesBaseClass;
  * Time: 3:26 PM
  * To change this template use File | Settings | File Templates.
  */
-@XmlRootElement
-@XmlAccessorType(XmlAccessType.PROPERTY)
+@JsonTypeName("statuteView")
 public class StatuteView extends ViewReference implements Comparable<StatuteView> {
 
     private String fullFacet; 
@@ -52,7 +49,7 @@ public class StatuteView extends ViewReference implements Comparable<StatuteView
     	return shortTitle.compareTo(statuteView.shortTitle);
     }
 
-    @XmlTransient
+    @JsonIgnore
     @Override
     public ArrayList<ViewReference> getChildReferences() {
     	return this.childReferences;
@@ -60,7 +57,7 @@ public class StatuteView extends ViewReference implements Comparable<StatuteView
     public void setChildReferences(ArrayList<ViewReference> childReferences) {
     	this.childReferences = childReferences;
     }
-    @XmlTransient
+    @JsonIgnore
     @Override
     public int getRefCount() {
         return refCount;
@@ -83,22 +80,22 @@ public class StatuteView extends ViewReference implements Comparable<StatuteView
 	public String toString() {
         return "\n" + childReferences;
     }
-    @XmlTransient
+    @JsonIgnore
 	public List<SectionView> getSectionViews() {
 		final List<SectionView> sectionList = new ArrayList<SectionView>();
 		iterateSections( s -> {sectionList.add(s); return true;});
 		return sectionList;
 	}
-    @XmlTransient
+    @JsonIgnore
 	public String getFullFacet() {
 		return fullFacet;
 	}
-    @XmlTransient
+    @JsonIgnore
 	@Override
 	public String getTitle() {
 		return title;
 	}
-    @XmlTransient
+    @JsonIgnore
 	@Override
 	public String getShortTitle() {
 		return shortTitle;
@@ -123,7 +120,7 @@ public class StatuteView extends ViewReference implements Comparable<StatuteView
 	}
 
 	@Override
-    @XmlTransient
+    @JsonIgnore
 	public ViewReference getParent() {
 		return null;
 	}

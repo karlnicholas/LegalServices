@@ -2,10 +2,8 @@ package opca.view;
 
 import java.util.*;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonTypeName;
 
 import statutes.StatutesBaseClass;
 
@@ -16,15 +14,13 @@ import statutes.StatutesBaseClass;
  * Time: 3:26 PM
  * To change this template use File | Settings | File Templates.
  */
-@XmlRootElement
-@XmlAccessorType(XmlAccessType.FIELD)
+@JsonTypeName("sectionView")
 public class SubcodeView extends ViewReference {
     private String fullFacet;
 	private String part;
     private String partNumber;
     private String title;
     private int refCount;
-    @XmlTransient
     private ViewReference parent;
     // and pointers to under Chapters, Parts, Articles, etc
     private ArrayList<ViewReference> childReferences;
@@ -125,6 +121,7 @@ public class SubcodeView extends ViewReference {
 		return title;
 	}
     @Override
+    @JsonIgnore
 	public ViewReference getParent() {
 		return parent;
 	}

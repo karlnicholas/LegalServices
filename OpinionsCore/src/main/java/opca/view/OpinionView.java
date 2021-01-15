@@ -2,18 +2,14 @@ package opca.view;
 
 import java.util.*;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonTypeName;
 
 import opca.model.OpinionKey;
 import opca.model.SlipOpinion;
 
-@XmlRootElement
-@XmlAccessorType(XmlAccessType.PROPERTY)
+@JsonTypeName("opinionView")
 public class OpinionView {
 	private static final int MAX_INFO_LENGTH = 75;
 	// reverse sorted by the constructor.
@@ -50,7 +46,7 @@ public class OpinionView {
 		this.setSummary(slipOpinion.getSlipProperties().getSummary());
 	}
 	
-    @XmlElement
+    @JsonProperty
     public List<SectionView> getSectionViews() {
     	List<SectionView> sectionViews = new ArrayList<>();
     	for ( StatuteView statueView: statutes ) {
@@ -59,6 +55,7 @@ public class OpinionView {
     	return sectionViews;
     }
 	// supporting methods for JSF pages
+    @JsonProperty
 	public String getCondensedStatuteInfo() {
 		StringBuilder sb = new StringBuilder();
 		boolean shortened = false;
@@ -80,6 +77,7 @@ public class OpinionView {
 		return sb.toString();
 	}
 	
+    @JsonProperty
 	public String getCondensedCaseInfo() {
 		StringBuilder sb = new StringBuilder();
 		boolean shortened = false;
@@ -102,26 +100,28 @@ public class OpinionView {
 		}
 		return sb.toString();
 	}
-    @XmlTransient
+    @JsonIgnore
     public List<StatuteView> getStatutes() {
         return statutes;
     }
     public void setStatutes(List<StatuteView> statutes) {
         this.statutes = statutes;
     }
+    @JsonProperty
     public String getName() {
 		return name;
 	}
 	public void setName(String name) {
 		this.name = name;
 	}
+    @JsonProperty
     public String getTitle() {
 		return title;
 	}
 	public void setTitle(String title) {
 		this.title = title;
 	}
-    @XmlTransient
+    @JsonIgnore
 	public List<CaseView> getCases() {
 		return cases;
 	}
@@ -132,41 +132,42 @@ public class OpinionView {
     public String toString() {
     	return name + " " + this.getTitle();
     }
-	@XmlElement
-	@XmlJavaTypeAdapter(DateTimeAdapter.class)
+    @JsonProperty
 	public Date getOpinionDate() {
 		return opinionDate;
 	}
 	public void setOpinionDate(Date opinionDate) {
 		this.opinionDate = opinionDate;
 	}
+    @JsonProperty
 	public String getFileName() {
 		return fileName;
 	}
 	public void setFileName(String fileName) {
 		this.fileName = fileName;
 	}
+    @JsonProperty
 	public String getDisposition() {
 		return disposition;
 	}
 	public void setDisposition(String disposition) {
 		this.disposition = disposition;
 	}
-    @XmlTransient
+    @JsonIgnore
 	public OpinionKey getOpinionKey() {
 		return opinionKey;
 	}
 	public void setOpinionKey(OpinionKey opinionKey) {
 		this.opinionKey = opinionKey;
 	}
-    @XmlTransient
+    @JsonProperty
 	public String getPublicationStatus() {
 		return publicationStatus;
 	}
 	public void setPublicationStatus(String publicationStatus) {
 		this.publicationStatus = publicationStatus;
 	}
-    @XmlTransient
+    @JsonProperty
 	public String getSummary() {
 		return summary;
 	}

@@ -2,11 +2,9 @@ package opca.view;
 
 import java.util.*;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonTypeName;
 
 import statutes.StatuteRange;
 import statutes.StatutesBaseClass;
@@ -18,8 +16,7 @@ import statutes.StatutesBaseClass;
  * Time: 4:06 PM
  * To change this template use File | Settings | File Templates.
  */
-@XmlRootElement
-@XmlAccessorType(XmlAccessType.PROPERTY)
+@JsonTypeName("sectionView")
 public class SectionView extends ViewReference { 
 	//	private static final Logger logger = Logger.getLogger(OpinionSection.class.getName());
 	// This stuff holds the reference .. 
@@ -42,12 +39,12 @@ public class SectionView extends ViewReference {
         this.setParent(parent);
     }
 
-	@XmlTransient
+	@JsonIgnore
     public StatuteRange getStatuteRange() {
         return statuteRange;
     }
 
-	@XmlTransient
+	@JsonIgnore
 	@Override
     public String getTitle() {
         return title;
@@ -55,7 +52,7 @@ public class SectionView extends ViewReference {
     public void setTitle( String code) {
     	this.title = code;
     }
-	@XmlTransient
+	@JsonIgnore
 	@Override
     public int getRefCount() {
         return refCount;
@@ -74,7 +71,7 @@ public class SectionView extends ViewReference {
 		// do nothing
 	}
 
-	@XmlTransient
+	@JsonIgnore
 	@Override
 	public ArrayList<ViewReference> getChildReferences() {
 		// nothing to return
@@ -91,7 +88,7 @@ public class SectionView extends ViewReference {
 		return handler.handleOpinionSection(this);
 	}
 	
-	@XmlTransient
+	@JsonIgnore
 	public SectionView getSectionView() {
 		return this;
 	}
@@ -101,7 +98,7 @@ public class SectionView extends ViewReference {
     }
 
     @Override
-	@XmlTransient
+	@JsonIgnore
 	public ViewReference getParent() {
 		return parent;
 	}
@@ -109,13 +106,14 @@ public class SectionView extends ViewReference {
 	public void setParent(ViewReference parent) {
 		this.parent = parent;
 	}
-	@XmlTransient
+	@JsonIgnore
 	public int getScore() {
 		return score;
 	}
 	public void setScore(int score) {
 		this.score = score;
 	}
+    @JsonProperty
 	public int getImportance() {
 		return importance;
 	}
@@ -123,17 +121,17 @@ public class SectionView extends ViewReference {
 		this.importance = importance;
 	}
 
-	@XmlTransient
+	@JsonIgnore
 	public String getFullFacet() {
 		return fullFacet;
 	}
 
-    @XmlElement
+    @JsonProperty
 	public String getDisplayTitlePath() {
     	List<String> shortTitles = getShortTitles();
     	return shortTitles.toString().replace("[", "").replace("]", "") + ", " + title;
 	}
-	@XmlElement
+    @JsonProperty
 	public String getDisplaySections() {
 		if ( statuteRange.geteNumber().getSectionNumber() == null ) {
 	    	return ("§ " + statuteRange.getsNumber().toString());
@@ -157,7 +155,7 @@ public class SectionView extends ViewReference {
 	}
 
 	@Override
-    @XmlTransient
+	@JsonIgnore
 	public String getShortTitle() {
 		return title;
 	}
