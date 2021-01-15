@@ -9,33 +9,28 @@ export default class Home extends React.Component {
    super(props);
    this.handleLoadingClick = this.handleLoadingClick.bind(this);
    this.state = {
-     opinionsLoading: false, 
-     opinionsLoaded: false
+     ready: false
    };
   }
   handleLoadingClick() {
     if (!this.state.opinionsLoading) {
-    	http.get('/opinions/load').then(response => {});
+    	http.get('/home/load').then(response => {});
     }
-    this.setState({opinionsLoading: true});
+    this.setState({ready: true});
   }
   componentDidMount() {
-    http.get('/opinions/ready').then(response => {
+    http.get('/home/ready').then(response => {
       this.setState({
-    	  opinionsLoaded: response.data
+    	  ready: response.data
       });
     });
   }
 
   render() {
-	  const opinionsLoaded = this.state.opinionsLoaded;
+	  const ready = this.state.ready;
 	  let loadedButton;
-	  if ( !this.state.opinionsLoaded && !this.state.opinionsLoading) {
+	  if ( !ready) {
 		  loadedButton = <Button variant="primary" onClick = {this.handleLoadingClick}>Load Opinions</Button>
-	  } else if ( this.state.opinionsLoading ) {
-		  loadedButton = <Button variant="primary" disabled>Opinions Loading</Button>
-	  } else {
-		  loadedButton = <Button variant="primary" disabled>Opinions Loaded</Button>
 	  }
     return (
       <Container>

@@ -15,6 +15,7 @@
 	</properties>
 	<modules>
 		<module>Statutes</module>
+		<module>StatutesServer</module>
 		<module>GuidedSearchCore</module>
 		<module>StatutesCa</module>
 		<module>StatutesRestCa</module>
@@ -36,6 +37,13 @@
 			<dependency>
 				<groupId>com.github.karlnicholas.legalservices</groupId>
 				<artifactId>statutes</artifactId>
+				<version>${project.version}</version>
+				<type>jar</type>
+				<scope>compile</scope>
+			</dependency>
+			<dependency>
+				<groupId>com.github.karlnicholas.legalservices</groupId>
+				<artifactId>statutes-server</artifactId>
 				<version>${project.version}</version>
 				<type>jar</type>
 				<scope>compile</scope>

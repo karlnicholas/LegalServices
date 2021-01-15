@@ -2,9 +2,12 @@ package opinionsweb.controller;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import opca.service.OpinionViewSingleton;
 import opca.service.ScheduledService;
 
 @RestController
@@ -13,12 +16,25 @@ public class IndexController {
 	Logger logger = LoggerFactory.getLogger(IndexController.class);
     private String userCountMessage;
     private final ScheduledService scheduledService; 
-    
-    public IndexController(ScheduledService scheduledService) {
+	private final OpinionViewSingleton opinionViewSingleton;
+
+    public IndexController(ScheduledService scheduledService, 
+    		OpinionViewSingleton opinionViewSingleton
+	) {
 		super();
 		this.scheduledService = scheduledService;
+		this.opinionViewSingleton = opinionViewSingleton;
 	}
 
+    @GetMapping(value="ready", produces = MediaType.APPLICATION_JSON_VALUE)
+	public boolean isCacheReady() {
+		return opinionViewSingleton.isReady();
+	}
+    @GetMapping(value="load", produces = MediaType.APPLICATION_JSON_VALUE)
+	public boolean loadCache() {
+		return opinionViewSingleton.checkStatus();
+	}
+    
 	public void testUpdate() {
     	scheduledService.updateSlipOpinions();
     }
