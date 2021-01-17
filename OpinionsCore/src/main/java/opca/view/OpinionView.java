@@ -121,7 +121,7 @@ public class OpinionView {
 	public void setTitle(String title) {
 		this.title = title;
 	}
-    @JsonIgnore
+    @JsonProperty
 	public List<CaseView> getCases() {
 		return cases;
 	}

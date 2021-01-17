@@ -1,8 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import http from "./http-common";
 import Container from "react-bootstrap/Container";
 import Button from "react-bootstrap/Button";
-import BootstrapTable from "react-bootstrap-table-next";
 
 export default class Home extends React.Component {
   constructor(props) {
