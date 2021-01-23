@@ -1,7 +1,5 @@
 import React from "react";
 import http from "./http-common";
-import Container from "react-bootstrap/Container";
-import Button from "react-bootstrap/Button";
 
 export default class Home extends React.Component {
   constructor(props) {
@@ -29,12 +27,12 @@ export default class Home extends React.Component {
 	  const ready = this.state.ready;
 	  let loadedButton;
 	  if ( !ready) {
-		  loadedButton = <Button variant="primary" onClick = {this.handleLoadingClick}>Load Opinions</Button>
+		  loadedButton = <button type="button" className="btn btn-primary" onClick = {this.handleLoadingClick}>Load Opinions</button>
 	  }
     return (
-      <Container>
+      <div>
       {loadedButton}
-      </Container>
+      </div>
     );
   }
 }
