@@ -1,12 +1,13 @@
 import React from "react";
-import Nbsp from "./nbsp";
+import './css/opinion.css'
+import { BsStarFill } from "react-icons/bs";
 
 export default class OpinionView extends React.Component {
 	createImportance(n){
-		let r1 = Array(n).fill("*");
+		let r1 = [];
 		var i;
-		for( i=0; i < 4-n; ++i ) {
-			r1.push(<Nbsp key={i}/>)
+		for ( i=0; i<n; ++i ) {
+			r1.push(<BsStarFill />);
 		}
 		return r1;
 	}
@@ -15,13 +16,13 @@ export default class OpinionView extends React.Component {
 		if ( sections != null ) {
 			r.push(sections.map((section, index) => {
 				return (
-					<div key={index}>
-					&nbsp;&nbsp;&nbsp;&nbsp;<span>{this.createImportance(section.importance)}</span>
-					&nbsp;&nbsp;&nbsp;&nbsp;<span>{section.displayTitlePath}</span>
-					&nbsp;&nbsp;&nbsp;&nbsp;<span>{section.displaySections}</span>
+			        <div className="openstat srow" key={index}>
+			        <span className="casestar">{this.createImportance(section.importance)}</span>
+			        <span className="openstat code titlepath">{section.displayTitlePath}</span>
+			        <span className="openstat code sections">{section.displaySections}</span>
 					</div>
 				)
-			}))
+			}));
 		}
 		return r;
 	}
@@ -30,18 +31,22 @@ export default class OpinionView extends React.Component {
 		if ( cases != null ) {
 			r.push(cases.slice(0,10).map((c, index) => {
 				return (
-					<div key={index}>
-					&nbsp;&nbsp;&nbsp;&nbsp;<span>{this.createImportance(c.importance)}</span>
-					&nbsp;&nbsp;&nbsp;&nbsp;<span>{c.title}</span>
-					&nbsp;&nbsp;&nbsp;&nbsp;<span>{new Date(c.opinionDate).toLocaleDateString()}</span>
-					</div>
+		          <div key={index} className="opencase orow">
+		          <span className="casestar">{this.createImportance(c.importance)}</span>
+		          <span className="opencase title">{c.title}</span>
+		          <span className="opencase citedetails">{new Date(c.opinionDate).toLocaleDateString()}</span>
+		          </div>          
 				)
 			}))
-			if ( cases.length > 10 ) {
-				r.push(<div key="10">&nbsp;&nbsp;&nbsp;&nbsp;{cases.length - 10} more cases</div>);
-			}
 		}
 		return r;
+	}
+    moreCases(cases) {
+		if ( cases.length > 10 ) {
+	        return (<div className="opencase casehead"><span className="opencase case">[{cases.length - 10} more cases cited.]</span></div>);
+		} else {
+			return null;
+		}
 	}
 	disposition(disposition){
 		if ( disposition != null ) return (<div>{disposition}</div>);
@@ -54,17 +59,26 @@ export default class OpinionView extends React.Component {
 	}
 	render() {
 		return (
-			<div>
-			<div>
-			<span>{new Date(this.props.opinion.opinionDate).toLocaleDateString()}</span>
-			<span>{this.props.opinion.name}</span>
-			<span>{this.props.opinion.title}</span>
-			<span>{this.props.opinion.fileName}.PDF</span>
-			</div>
-			{this.sectionViews(this.props.opinion.sectionViews)}
-			{this.opinionCases(this.props.opinion.cases)}
-			{this.disposition(this.props.opinion.disposition)}
-			{this.summary(this.props.opinion.summary, this.props.opinion.publicationStatus)}
+	        <div className="opinion">
+		        <div className="ophead">
+		        <span className="ophead date">{new Date(this.props.opinion.opinionDate).toLocaleDateString()}</span>
+		        <span className="ophead title">{this.props.opinion.title}</span>
+		        <span className="ophead title">{this.props.opinion.name}</span>{this.props.opinion.fileName}
+		        </div>
+		        <div className="openstat wrap">
+				{this.sectionViews(this.props.opinion.sectionViews)}
+				</div>
+				<div className="opencase wrap"><div className="opencase casehead"><span className="opencase case">Cases Cited:</span></div>
+				<div className="opencase casewrap">
+				{this.opinionCases(this.props.opinion.cases)}
+		        </div>
+	        	{this.moreCases(this.props.opinion.cases)}
+				</div>
+				<div className="summary wrap"><div className="summary outer"><div className="summary inner">
+				<span><b>{this.disposition(this.props.opinion.disposition)}</b></span>
+				{this.summary(this.props.opinion.summary, this.props.opinion.publicationStatus)}
+				</div></div></div>
+				<div className="opinion tail" />
 			</div>
 		);
 	}
