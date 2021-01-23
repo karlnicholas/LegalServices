@@ -53,7 +53,6 @@ export default class OpinionView extends React.Component {
 		else return null;
 	}
 	render() {
-		console.log(this.props);
 		return (
 			<div>
 			<div>

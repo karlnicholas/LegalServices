@@ -30,7 +30,7 @@ public class ApiOpinion
 
     public void setJoined_by (String[] joined_by)
     {
-        this.joined_by = joined_by;
+    	this.joined_by = joined_by;
     }
 
     public String getHtml_lawbox ()

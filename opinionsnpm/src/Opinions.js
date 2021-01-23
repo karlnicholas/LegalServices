@@ -1,6 +1,5 @@
 import React from "react";
 import http from "./http-common";
-import Container from "react-bootstrap/Container";
 import OpinionView from "./OpinionView";
 
 
@@ -38,10 +37,10 @@ export default class Opinions extends React.Component {
 	  }
   render() {
 	  return (
-			  <Container>
+			  <div>
 			  <LoadingMessage status={this.state.status} />
 			  <OpinionViews status={this.state.status} opinions={this.state.opinions} />
-			  </Container>
+			  </div>
 			  );
 	  }
   }
