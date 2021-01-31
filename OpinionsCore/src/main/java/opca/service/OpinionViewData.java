@@ -58,7 +58,8 @@ public class OpinionViewData {
 			e[0] = String.format("%s - %s", 
 				sform.format(dates[0]),
 				sform.format(dates[1]));
-			e[1] = String.format("?startDate=%s", lform.format(dates[0]));
+//			e[1] = String.format("?startDate=%s", lform.format(dates[0]));
+			e[1] = lform.format(dates[0]);
 			stringDateList.add(e);	
 		}
 	}

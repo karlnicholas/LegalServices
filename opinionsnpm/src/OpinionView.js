@@ -7,7 +7,7 @@ export default class OpinionView extends React.Component {
 		let r1 = [];
 		var i;
 		for ( i=0; i<n; ++i ) {
-			r1.push(<BsStarFill />);
+			r1.push(<BsStarFill key={i}/>);
 		}
 		return r1;
 	}

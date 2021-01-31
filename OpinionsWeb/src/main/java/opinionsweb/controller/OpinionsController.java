@@ -1,5 +1,6 @@
 package opinionsweb.controller;
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -24,14 +25,22 @@ public class OpinionsController {
 	}
 
 	@GetMapping(value = "opinions", produces = MediaType.APPLICATION_JSON_VALUE)
-	public List<OpinionView> getOpinionViewList(@RequestParam("dateListIndex") String dateListIndex) {
-		// done this way so that this information is not serialized in the viewScope
-		if (opinionViewSingleton.getReportDates().size() == 0) {
-			return null;
+	public List<OpinionView> getOpinionViewList(@RequestParam(name = "startDate", required = false) String startDate) {
+		if ( opinionViewSingleton.getReportDates() != null ) {
+			// done this way so that this information is not serialized in the viewScope
+			if (opinionViewSingleton.getReportDates().size() == 0) {
+				return null;
+			}
+			int currentIndex = 0;
+	    	if ( startDate != null ) {
+	        	currentIndex = opinionViewSingleton.currentDateIndex(startDate);
+	    	}
+	    	Date[] dates = opinionViewSingleton.getReportDates().get(currentIndex);
+			ViewParameters viewInfo = new ViewParameters(dates[0], dates[1]);
+			return opinionViewSingleton.getOpinionCases(viewInfo);
+		} else {
+			return Collections.emptyList();
 		}
-		Date[] dates = opinionViewSingleton.getReportDates().get(Integer.parseInt(dateListIndex));
-		ViewParameters viewInfo = new ViewParameters(dates[0], dates[1]);
-		return opinionViewSingleton.getOpinionCases(viewInfo);
 	}
 
 	@GetMapping(value = "dates", produces = MediaType.APPLICATION_JSON_VALUE)
