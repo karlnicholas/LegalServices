@@ -34,6 +34,7 @@ public class TestOnlineUpdates implements ApplicationRunner {
 //				OpinionScraperInterface caseScraper = new TestCACaseScraper(false);
 		OpinionScraperInterface caseScraper = new TestCAParseSlipDetails(false);
 		caOnlineUpdates.updateDatabase(caseScraper, statutesService);
+		System.out.println("Completed");
 
 //			List<ScrapedOpinionDocument> scrapedCases = caseScraper.scrapeOpinionFiles(caseScraper.getCaseList());
 //			scrapedCases.stream().forEach(sc->{

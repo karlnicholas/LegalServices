@@ -32,7 +32,7 @@ export default class OpinionsDatesDropdown extends React.Component {
 	          <div className="dropdown-menu" aria-labelledby="navbarDropdown">
 	      		{dates.map((date, index) => (
 			        <h5 key={index}>
-			          <Link className="dropdown-item" to={`/opinions/${date[1]}`}>{date[0]}</Link>
+			          <a className="dropdown-item" href={`/opinions/${date[1]}`}>{date[0]}</a>
 			        </h5>
 			      ))}
 	          </div>

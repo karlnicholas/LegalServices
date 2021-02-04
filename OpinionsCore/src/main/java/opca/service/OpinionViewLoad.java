@@ -110,6 +110,9 @@ public class OpinionViewLoad {
 				addToCurrentDates(date, currentDates);
 			}
 		}
+		if ( reportDates.size() == 0 && dates.size() > 0 ) {
+			reportDates.add(currentDates);
+		}
 		opinionViewData.setReportDates(reportDates);
 	}
 	
@@ -239,6 +242,12 @@ public class OpinionViewLoad {
 		List<Date> dates = new ArrayList<>();
 		for ( OpinionView opinionView: opinionViewData.getOpinionViews() ) {
 			Date date = opinionView.getOpinionDate();
+//			Calendar utcDate = Calendar.getInstance();
+//			utcDate.setTime(date);
+//			utcDate.set(Calendar.HOUR_OF_DAY, 0); // ! clear would not reset the hour of day !
+//			utcDate.clear(Calendar.MINUTE);
+//			utcDate.clear(Calendar.SECOND);
+//			utcDate.clear(Calendar.MILLISECOND);
 			if ( !dates.contains(date)) {
 				dates.add(date);
 			}
@@ -250,7 +259,6 @@ public class OpinionViewLoad {
 	private EntityManager entityManager;
 	String nQuery="select \r\n" + 
 			"o.id as o_id,\r\n" + 
-			"o.countreferringopinions as o_countreferringopinions,\r\n" + 
 			"o.opiniondate as o_opiniondate,\r\n" + 
 			"o.page as o_page,\r\n" + 
 			"o.volume as o_volume,\r\n" + 
@@ -360,7 +368,17 @@ public class OpinionViewLoad {
 					return sp1;
 				}))))
 				.values().stream()
-				.map(Optional::get)
+				.map(optOp->{
+					SlipOpinion op = optOp.get();
+					Calendar utcDate = Calendar.getInstance();
+					utcDate.setTime(op.getOpinionDate());
+					utcDate.set(Calendar.HOUR_OF_DAY, 0); // ! clear would not reset the hour of day !
+					utcDate.clear(Calendar.MINUTE);
+					utcDate.clear(Calendar.SECOND);
+					utcDate.clear(Calendar.MILLISECOND);
+					op.setOpinionDate(utcDate.getTime());
+					return op;
+				})
 				.collect(Collectors.toList());
 		
 // List<SlipProperties> spl = em.createNamedQuery("SlipProperties.findAll", SlipProperties.class).getResultList();
