@@ -5,8 +5,6 @@ import java.util.regex.Pattern;
 
 import javax.persistence.*;
 
-import org.hibernate.annotations.NaturalIdCache;
-
 @NamedQueries({
 	@NamedQuery(name="SlipOpinion.findAll", 
 		query="select s from SlipOpinion s"),

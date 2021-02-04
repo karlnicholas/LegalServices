@@ -8,6 +8,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import javax.transaction.Transactional;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -61,6 +63,8 @@ public class CAOnlineUpdates {
 //        opinionViewSingleton.updateOpinionViews(opinionKeys, blockingStatutesService);
 //	}
 
+	// @Transactional very important, won't work without it.
+	@Transactional
 	public List<OpinionKey> updateDatabase(OpinionScraperInterface caseScraper, StatutesService statutesService) {
 		
  		List<SlipOpinion> onlineOpinions = caseScraper.getCaseList();
@@ -78,6 +82,7 @@ public class CAOnlineUpdates {
 //			onlineOpinions = onlineOpinions.subList(0, 340);
 //			onlineOpinions = onlineOpinions.subList(0, 0);
 //			onlineOpinions = onlineOpinions.subList(0, 1);
+//		onlineOpinions = onlineOpinions.subList(0,1);
 
 //
 //		Iterator<SlipOpinion> oit = onlineOpinions.iterator();

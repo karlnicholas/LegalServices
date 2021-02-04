@@ -28,6 +28,7 @@ public class OpinionsController {
 	public List<OpinionView> getOpinionViewList(@RequestParam(name = "startDate", required = false) String startDate) {
 		if ( opinionViewSingleton.getReportDates() != null ) {
 			// done this way so that this information is not serialized in the viewScope
+			// Is this something left over from JSF?
 			if (opinionViewSingleton.getReportDates().size() == 0) {
 				return null;
 			}

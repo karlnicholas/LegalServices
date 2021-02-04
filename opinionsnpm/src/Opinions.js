@@ -13,24 +13,26 @@ export default class Opinions extends React.Component {
 	}
 
 	componentDidUpdate(prevProps) {
+		console.log("c + p : date" + new Date());
+		console.log("c + p : " + this.props.match.params.startDate + " : " + prevProps.match.params.startDate);
 		// Typical usage (don't forget to compare props):
 		if (this.props.match.params.startDate !== prevProps.match.params.startDate) {
-			let startDate = this.props.match.params.startDate;
-			http.get('/opinions/opinions?startDate='+startDate).then(response => {
+			console.log("updating: " + this.props.match.params.startDate);
+			http.get('/opinions/opinions?startDate='+this.props.match.params.startDate).then(response => {
 				this.setState({
-					opinions: response.data
+					opinions: response.data,
+					startDate: this.props.match.params.startDate
 				});
+				
 			});
-			this.setState({startDate: startDate});
 			console.log("updated");
 		}
 	}
 	
     render() {
-    	const opinions = this.state.opinions;
 		return (
 				<div>
-				{opinions.map((opinion, index) => (<OpinionView key={index} opinion={opinion}>test</OpinionView>))}
+				{this.state.opinions.map((opinion, index) => (<OpinionView key={index} opinion={opinion}>test</OpinionView>))}
 				</div>
 		);
 	}
