@@ -32,7 +32,6 @@ export default class App extends React.Component {
 						});
 					});
 				} else {
-					console.log("setting timeOut");
 					this.intervalID = setTimeout(this.getData.bind(this), 1000);
 				}
 			});
