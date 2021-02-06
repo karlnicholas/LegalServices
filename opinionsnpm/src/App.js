@@ -1,13 +1,43 @@
 import React from "react";
 import { Link, BrowserRouter as Router, Route } from "react-router-dom";
+import http from "./http-common";
 
-import Load from "./Load";
 import Home from "./Home";
 import Opinions from "./Opinions";
 import OpinionsDatesDropdown from "./OpinionsDatesDropdown";
 
 
 export default class App extends React.Component {
+	state = {
+		status: false, 
+		dates: []
+	}
+	intervalID;
+	componentDidMount() {
+		this.getData();
+	}
+    componentWillUnmount() {
+    	clearTimeout(this.intervalID);
+    }
+    getData = () => {
+		if ( this.state.status === false ) {
+			http.get('/opinions/status').then(response => {
+				this.setState({
+					status: response.data
+				});
+				if (this.state.status) {
+					http.get('/opinions/dates').then(response => {
+						this.setState({
+							dates: response.data
+						});
+					});
+				} else {
+					console.log("setting timeOut");
+					this.intervalID = setTimeout(this.getData.bind(this), 1000);
+				}
+			});
+		}
+	}
 	render() {
 	  return (
 	    <section className="App">
@@ -23,15 +53,11 @@ export default class App extends React.Component {
 		          <li className="nav-item active">
 		          <Link to="/" className="nav-link">Home<span className="sr-only">(current)</span></Link>
 		          </li>
-		          <li className="nav-item">
-		          <Link to="/load" className="nav-link">Load</Link>
-		          </li>
-		          <OpinionsDatesDropdown />
+		          <OpinionsDatesDropdown status={this.state.status} dates={this.state.dates}/>
 		          </ul>
 		      </div>
 		    </nav>
-	        <Route exact path="/" component={Home} />
-	        <Route exact path="/load" component={Load} />
+	        <Route exact path="/" render={() => <Home status={this.state.status}/>}/>
 	        <Route exact path="/opinions/:startDate" component={Opinions} />
 	      </Router>
 	    </section>

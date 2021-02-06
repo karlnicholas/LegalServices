@@ -12,9 +12,8 @@ export default class OpinionView extends React.Component {
 		return r1;
 	}
 	sectionViews(sections){
-		var r = [];
 		if ( sections != null ) {
-			r.push(sections.map((section, index) => {
+			return sections.map((section, index) => {
 				return (
 			        <div className="openstat srow" key={index}>
 			        <span className="casestar">{this.createImportance(section.importance)}</span>
@@ -22,14 +21,14 @@ export default class OpinionView extends React.Component {
 			        <span className="openstat code sections">{section.displaySections}</span>
 					</div>
 				)
-			}));
+			});
+		} else {
+			return null;
 		}
-		return r;
 	}
 	opinionCases(cases){
-		var r = [];
 		if ( cases != null ) {
-			r.push(cases.slice(0,10).map((c, index) => {
+			return cases.slice(0,10).map((c, index) => {
 				return (
 		          <div key={index} className="opencase orow">
 		          <span className="casestar">{this.createImportance(c.importance)}</span>
@@ -37,9 +36,10 @@ export default class OpinionView extends React.Component {
 		          <span className="opencase citedetails">{new Date(c.opinionDate).toLocaleDateString()}</span>
 		          </div>          
 				)
-			}))
+			})
+		} else {
+			return null;
 		}
-		return r;
 	}
     moreCases(cases) {
 		if ( cases.length > 10 ) {
@@ -49,13 +49,18 @@ export default class OpinionView extends React.Component {
 		}
 	}
 	disposition(disposition){
-		if ( disposition != null ) return (<div>{disposition}</div>);
-		else return (<div>Disposition Unknown</div>);
+		if ( disposition != null ) 
+			return (<div>{disposition}</div>);
+		else 
+			return (<div>Disposition Unknown</div>);
 	}
 	summary(summary, publicationStatus){
-		if ( summary != null ) return (<div>{summary}</div>);
-		else if ( publicationStatus != null ) return (<div>{publicationStatus}</div>);
-		else return null;
+		if ( summary != null ) 
+			return (<div>{summary}</div>);
+		else if ( publicationStatus != null ) 
+			return (<div>{publicationStatus}</div>);
+		else 
+			return null;
 	}
 	render() {
 		return (

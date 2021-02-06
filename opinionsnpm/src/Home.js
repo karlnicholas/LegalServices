@@ -1,9 +1,13 @@
 import React from "react";
+import http from "./http-common";
+
 
 export default class Home extends React.Component {
 	render() {
-	  return (
-		  <h3>Home Page</h3>
-	  );
+		let statusVal = "Loading opinions ...";
+		if (this.props.status) {
+			statusVal = "Loaded";
+		}
+		return (statusVal);
 	}
-};
+}
