@@ -9,7 +9,6 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.persistence.EntityManager;
@@ -133,7 +132,9 @@ public class OpinionViewLoad {
 	
 	private boolean testBracket(Date date, Calendar firstDay, Calendar lastDay ) {
 		boolean retVal = false;
-		if ( firstDay.getTime().compareTo(date) < 0 && lastDay.getTime().compareTo(date) > 0 ) return true;
+		Date firstDayTime = firstDay.getTime();
+		Date lastDayTime = lastDay.getTime();
+		if ( firstDayTime.compareTo(date) <= 0 && lastDayTime.compareTo(date) > 0 ) return true;
 		return retVal;
 	}
 
@@ -356,8 +357,7 @@ public class OpinionViewLoad {
 		// just get all slip opinions
 //		EntityGraph<?> fetchGraphForOpinionsWithJoins = entityManager.getEntityGraph("fetchGraphForOpinionsWithJoins");
 //		List<Tuple> l = entityManager.createNativeQuery(nQuery, Tuple.class).getResultList();
-//		List<SlipOpinion> opinions = slipOpinionRepository.loadOpinionsWithJoins();
-//		List<SlipOpinion> opinions = slipOpinionRepository.loadOpinionsWithJoins();
+//		List<SlipOpinion> opinions2 = slipOpinionRepository.loadOpinionsWithJoins();
 		// load slipOpinion properties from the database here ... ?
 //			StatutesService statutesService = new StatutesServiceClientImpl("http://localhost:8090/");
 		@SuppressWarnings("unchecked")

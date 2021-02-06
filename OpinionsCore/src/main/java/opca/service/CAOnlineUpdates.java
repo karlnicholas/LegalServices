@@ -81,7 +81,7 @@ public class CAOnlineUpdates {
 //			onlineOpinions.remove(0);
 //			onlineOpinions = onlineOpinions.subList(0, 340);
 //			onlineOpinions = onlineOpinions.subList(0, 0);
-			onlineOpinions = onlineOpinions.subList(0, 1);
+//			onlineOpinions = onlineOpinions.subList(0, 1);
 //		onlineOpinions = onlineOpinions.subList(0,1);
 
 //

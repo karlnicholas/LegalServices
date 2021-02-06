@@ -15,13 +15,18 @@ import javax.persistence.*;
 })
 @NamedEntityGraphs({ 
 	@NamedEntityGraph(name="fetchGraphForOpinionsWithJoins", attributeNodes= {
-		@NamedAttributeNode(value="statuteCitations", subgraph="fetchGraphForOpinionsWithJoinsPartB"), 
+		@NamedAttributeNode(value="statuteCitations", subgraph = "fetchGraphForOpinionsWithJoinsPartB"), 
+		@NamedAttributeNode(value="opinionCitations", subgraph = "fetchGraphForOpinionsWithJoinsPartC"),
 	}, 
 	subgraphs= {
 		@NamedSubgraph(
 			name = "fetchGraphForOpinionsWithJoinsPartB", 
 			attributeNodes = { @NamedAttributeNode(value = "statuteCitation") } 
 		),
+		@NamedSubgraph(
+				name = "fetchGraphForOpinionsWithJoinsPartC", 
+				attributeNodes = { @NamedAttributeNode(value = "statuteCitations") } 
+			),
 	}), 	
 	@NamedEntityGraph(name="fetchGraphForOpinionsWithJoinsForKeys", attributeNodes= {
 			@NamedAttributeNode(value="statuteCitations", subgraph="fetchGraphForOpinionsWithJoinsPartKB"), 
