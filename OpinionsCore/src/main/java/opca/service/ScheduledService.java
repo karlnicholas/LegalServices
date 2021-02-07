@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import opca.ejb.util.StatutesServiceFactory;
 import opca.model.OpinionKey;
 import opca.scraper.CACaseScraper;
+import opca.scraper.TestCAParseSlipDetails;
 import statutes.service.StatutesService;
 
 //@TransactionManagement(TransactionManagementType.BEAN)
@@ -47,17 +48,11 @@ public ScheduledService(CAOnlineUpdates caOnlineUpdates, SystemService systemSer
     // though it is currently pretty fast, so maybe not needed.
 	//    @Scheduled(second="0", minute="00", hour="18", dayOfWeek="Mon-Fri", persistent=false)        // 03:30 am (12:30 am AZ ) every day
 //	@Scheduled(cron = "0 0 18 * * MON-FRI")
-    @Transactional
     public void updateSlipOpinions() {
         logger.info("STARTING updateSlipOpinions");
-//      caOnlineUpdates.updateDatabase(new TestCACaseScraper(false));
-//		caOnlineUpdates.updateDatabase(new CACaseScraper(false), statutesService);
         List<OpinionKey> opinionKeys = null;
-//        UserTransaction userTransaction = context.getUserTransaction();
         StatutesService statutesService = StatutesServiceFactory.getStatutesServiceClient();
-//			userTransaction.begin();
-        opinionKeys = caOnlineUpdates.updateDatabase(new CACaseScraper(false), statutesService);
-//			userTransaction.commit();
+        opinionKeys = caOnlineUpdates.updateDatabase(new TestCAParseSlipDetails(false), statutesService);
         if ( opinionKeys != null ) {
         	opinionViewSingleton.updateOpinionViews(opinionKeys, statutesService);
         }

@@ -35,8 +35,10 @@ public class IndexController {
 		return opinionViewSingleton.checkStatus();
 	}
     
-	public void testUpdate() {
+    @GetMapping(value="testUpdate", produces = MediaType.APPLICATION_JSON_VALUE)
+	public boolean testUpdate() {
     	scheduledService.updateSlipOpinions();
+    	return Boolean.TRUE;
     }
     
     public void testWelcome() {
