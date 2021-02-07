@@ -121,7 +121,7 @@ public class SectionView extends ViewReference {
 		this.importance = importance;
 	}
 
-	@JsonIgnore
+    @JsonProperty
 	public String getFullFacet() {
 		return fullFacet;
 	}

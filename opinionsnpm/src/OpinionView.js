@@ -18,12 +18,17 @@ export default class OpinionView extends React.Component {
 			        <div className="openstat srow" key={index}>
 			        <span className="casestar">{this.createImportance(section.importance)}</span>
 			        <span className="openstat code titlepath">{section.displayTitlePath}</span>
-			        <span className="openstat code sections">{section.displaySections}</span>
+			        <a href={'http://op-opca.b9ad.pro-us-east-1.openshiftapps.com/?path='+section.fullFacet}><span className="openstat code sections">{section.displaySections}</span></a>
 					</div>
 				)
 			});
 		} else {
 			return null;
+		}
+	}
+	citationDate(c) {
+		if ( c.opinionDate != null ) {
+			return ' (' + new Date(c.opinionDate).toLocaleDateString('en-US', { year: 'numeric'}) + ')';
 		}
 	}
 	opinionCases(cases){
@@ -33,7 +38,7 @@ export default class OpinionView extends React.Component {
 		          <div key={index} className="opencase orow">
 		          <span className="casestar">{this.createImportance(c.importance)}</span>
 		          <span className="opencase title">{c.title}</span>
-		          <span className="opencase citedetails">{new Date(c.opinionDate).toLocaleDateString()}</span>
+        		  <span className="opencase citedetails">{this.citationDate(c)} {c.citation}</span>
 		          </div>          
 				)
 			})
@@ -66,9 +71,9 @@ export default class OpinionView extends React.Component {
 		return (
 	        <div className="opinion">
 		        <div className="ophead">
-		        <span className="ophead date">{new Date(this.props.opinion.opinionDate).toLocaleDateString()}</span>
+		        <span className="ophead date">{new Date(this.props.opinion.opinionDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>
 		        <span className="ophead title">{this.props.opinion.title}</span>
-		        <span className="ophead title">{this.props.opinion.name}</span>{this.props.opinion.fileName}
+		        <a className="ophead right" href={'http://www.courts.ca.gov/opinions/documents/' + this.props.opinion.fileName + '.PDF'}>{this.props.opinion.fileName}</a>
 		        </div>
 		        <div className="openstat wrap">
 				{this.sectionViews(this.props.opinion.sectionViews)}

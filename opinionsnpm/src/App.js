@@ -1,6 +1,7 @@
 import React from "react";
 import { Link, BrowserRouter as Router, Route } from "react-router-dom";
 import http from "./http-common";
+import logo from './spring-logo-30.png';
 
 import Home from "./Home";
 import Opinions from "./Opinions";
@@ -20,29 +21,30 @@ export default class App extends React.Component {
     	clearTimeout(this.intervalID);
     }
     getData = () => {
-		if ( this.state.status === false ) {
-			http.get('/opinions/status').then(response => {
+		http.get('/opinions/status').then(response => {
+			var status = Boolean(response.data);
+			if ( this.state.status !== status ) {
 				this.setState({
-					status: response.data
-				});
-				if (this.state.status) {
-					http.get('/opinions/dates').then(response => {
-						this.setState({
-							dates: response.data
-						});
+					status: status
+				})
+			};
+			if (status) {
+				http.get('/opinions/dates').then(response => {
+					this.setState({
+						dates: response.data
 					});
-				} else {
-					this.intervalID = setTimeout(this.getData.bind(this), 1000);
-				}
-			});
-		}
+				});
+			} else {
+				this.intervalID = setTimeout(this.getData.bind(this), 1000);
+			}
+		});
 	}
 	render() {
 	  return (
 	    <section className="App">
 	      <Router>
 		      <nav className="navbar navbar-expand-lg navbar-light bg-light">
-	          <Link to="/" className="navbar-brand" >Navbar</Link>
+	          <Link to="/" ><img className="navbar-brand" src={logo} alt="logo"/></Link>
 		      <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
 		        <span className="navbar-toggler-icon"></span>
 		      </button>
