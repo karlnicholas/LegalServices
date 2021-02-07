@@ -1,6 +1,4 @@
 import React from "react";
-import http from "./http-common";
-
 
 export default class Home extends React.Component {
 	render() {

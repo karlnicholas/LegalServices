@@ -1,15 +1,12 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import React from "react";
 import { Link } from "react-router-dom";
-import http from "./http-common";
 
 export default class OpinionsDatesDropdown extends React.Component {
 	getDropdown() {
 		if ( this.props.dates.length > 0 ) {
 	  		return this.props.dates.map((date, index) => (
-	  		        <h5 key={index}>
-	  		          <a className="dropdown-item" href={`/opinions/${date[1]}`}>{date[0]}</a>
-	  		        </h5>
+  		          <Link key={index} className="dropdown-item" to={`/opinions/${date[1]}`}>{date[0]}</Link>
 	  		      ))
 		} else {
 			return ( <a key={1} className="dropdown-item" href='/opinions'>Loading ...</a>); 
