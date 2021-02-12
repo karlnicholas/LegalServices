@@ -1,58 +1,58 @@
 package opca.model;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.regex.Pattern;
 
-import javax.persistence.*;
+import io.netty.util.internal.ThreadLocalRandom;
 
-@NamedQueries({
-	@NamedQuery(name="SlipOpinion.findAll", 
-		query="select s from SlipOpinion s"),
-	@NamedQuery(name="SlipOpinion.loadOpinionsWithJoins", 
-		query="select distinct o from SlipOpinion o"),
-	@NamedQuery(name="SlipOpinion.loadOpinionsWithJoinsForKeys", 
-		query="select distinct o from SlipOpinion o where o.opinionKey in :opinionKeys"),
-})
-@NamedEntityGraphs({ 
-	@NamedEntityGraph(name="fetchGraphForOpinionsWithJoins", attributeNodes= {
-		@NamedAttributeNode(value="statuteCitations", subgraph = "fetchGraphForOpinionsWithJoinsPartB"), 
-		@NamedAttributeNode(value="opinionCitations", subgraph = "fetchGraphForOpinionsWithJoinsPartC"),
-	}, 
-	subgraphs= {
-		@NamedSubgraph(
-			name = "fetchGraphForOpinionsWithJoinsPartB", 
-			attributeNodes = { @NamedAttributeNode(value = "statuteCitation") } 
-		),
-		@NamedSubgraph(
-				name = "fetchGraphForOpinionsWithJoinsPartC", 
-				attributeNodes = { @NamedAttributeNode(value = "statuteCitations") } 
-			),
-	}), 	
-	@NamedEntityGraph(name="fetchGraphForOpinionsWithJoinsForKeys", attributeNodes= {
-			@NamedAttributeNode(value="statuteCitations", subgraph="fetchGraphForOpinionsWithJoinsPartKB"), 
-			@NamedAttributeNode(value="opinionCitations", subgraph="fetchGraphForOpinionsWithJoinsPartKC"), 
-		}, 
-	subgraphs= {
-			@NamedSubgraph(
-				name = "fetchGraphForOpinionsWithJoinsPartKB", 
-				attributeNodes = { @NamedAttributeNode(value = "statuteCitation") } 
-			),
-			@NamedSubgraph(
-					name = "fetchGraphForOpinionsWithJoinsPartKC", 
-					attributeNodes = { @NamedAttributeNode(value = "statuteCitations") } 
-				),
-		}
-	) 
-})
+//@NamedQueries({
+//	@NamedQuery(name="SlipOpinion.findAll", 
+//		query="select s from SlipOpinion s"),
+//	@NamedQuery(name="SlipOpinion.loadOpinionsWithJoins", 
+//		query="select distinct o from SlipOpinion o"),
+//	@NamedQuery(name="SlipOpinion.loadOpinionsWithJoinsForKeys", 
+//		query="select distinct o from SlipOpinion o where o.opinionKey in :opinionKeys"),
+//})
+//@NamedEntityGraphs({ 
+//	@NamedEntityGraph(name="fetchGraphForOpinionsWithJoins", attributeNodes= {
+//		@NamedAttributeNode(value="statuteCitations", subgraph = "fetchGraphForOpinionsWithJoinsPartB"), 
+//		@NamedAttributeNode(value="opinionCitations", subgraph = "fetchGraphForOpinionsWithJoinsPartC"),
+//	}, 
+//	subgraphs= {
+//		@NamedSubgraph(
+//			name = "fetchGraphForOpinionsWithJoinsPartB", 
+//			attributeNodes = { @NamedAttributeNode(value = "statuteCitation") } 
+//		),
+//		@NamedSubgraph(
+//				name = "fetchGraphForOpinionsWithJoinsPartC", 
+//				attributeNodes = { @NamedAttributeNode(value = "statuteCitations") } 
+//			),
+//	}), 	
+//	@NamedEntityGraph(name="fetchGraphForOpinionsWithJoinsForKeys", attributeNodes= {
+//			@NamedAttributeNode(value="statuteCitations", subgraph="fetchGraphForOpinionsWithJoinsPartKB"), 
+//			@NamedAttributeNode(value="opinionCitations", subgraph="fetchGraphForOpinionsWithJoinsPartKC"), 
+//		}, 
+//	subgraphs= {
+//			@NamedSubgraph(
+//				name = "fetchGraphForOpinionsWithJoinsPartKB", 
+//				attributeNodes = { @NamedAttributeNode(value = "statuteCitation") } 
+//			),
+//			@NamedSubgraph(
+//					name = "fetchGraphForOpinionsWithJoinsPartKC", 
+//					attributeNodes = { @NamedAttributeNode(value = "statuteCitations") } 
+//				),
+//		}
+//	) 
+//})
 @SuppressWarnings("serial")
-@Entity
+//@Entity
 public class SlipOpinion extends OpinionBase {
 	private static Pattern fileNameSplit = Pattern.compile("(?<=\\d)(?=\\D)|(?=\\d)(?<=\\D)");
 	private final static int ONEMMM = 10000000;
 
-	@Transient
+//	@Transient
 	private SlipProperties slipProperties;
-	@Transient
+//	@Transient
 	private String searchUrl;
 
 	public SlipOpinion() {
@@ -62,7 +62,7 @@ public class SlipOpinion extends OpinionBase {
 		super(slipOpinion);
 		this.slipProperties = new SlipProperties(this, slipOpinion);
     }
-	public SlipOpinion(String fileName, String fileExtension, String title, Date opinionDate, String court, String searchUrl) {
+	public SlipOpinion(String fileName, String fileExtension, String title, LocalDate opinionDate, String court, String searchUrl) {
 		super(null, title, opinionDate, court);
 		setOpinionKey(new OpinionKey("1 Slip.Op " + generateOpinionKey(fileName)));
 		slipProperties = new SlipProperties(this, fileName, fileExtension, court);
@@ -113,8 +113,7 @@ public class SlipOpinion extends OpinionBase {
 			return (ONEMMM*10) + (2*Integer.parseInt(split[1])) + (split.length > 2?1:0); 
 		default:
 			// ouch
-			Date d = new Date();
-			return (int)d.getTime();
+			return ThreadLocalRandom.current().nextInt();
 		}
 	}
 	public String getFileName() {

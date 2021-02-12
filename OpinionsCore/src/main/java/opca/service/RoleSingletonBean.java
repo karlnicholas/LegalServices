@@ -7,10 +7,10 @@ import javax.annotation.PostConstruct;
 
 import org.springframework.stereotype.Component;
 
+import opca.dao.RoleDao;
+import opca.dao.UserDao;
 import opca.model.Role;
 import opca.model.User;
-import opca.repository.RoleRepository;
-import opca.repository.UserRepository;
 
 /**
  * This class is a singleton that loads and holds all Role definitions from 
@@ -23,28 +23,28 @@ import opca.repository.UserRepository;
 @Component
 public class RoleSingletonBean {
     private List<Role> allRoles;
-    private final RoleRepository roleRepository;
-    private final UserRepository userRepository;
+    private final RoleDao roleDao;
+    private final UserDao userDao;
 
-    public RoleSingletonBean(RoleRepository roleRepository, UserRepository userRepository) {
+    public RoleSingletonBean(RoleDao roleDao, UserDao userDao) {
 		super();
-		this.roleRepository = roleRepository;
-		this.userRepository = userRepository;
+		this.roleDao = roleDao;
+		this.userDao = userDao;
 	}
 
 	//private constructor to avoid client applications to use constructor
     @PostConstruct
     protected void postConstruct(){
-        allRoles = roleRepository.listAvailable();
+        allRoles = roleDao.listAvailable();
         // initialize if needed
         if ( allRoles.size() == 0 ) {
         	Role userRole = new Role();
         	userRole.setRole("USER");
-        	roleRepository.save(userRole);
+        	roleDao.save(userRole);
         	allRoles.add(userRole);
         	Role adminRole = new Role();
         	adminRole.setRole("ADMIN");
-        	roleRepository.save(adminRole);
+        	roleDao.save(adminRole);
         	allRoles.add(adminRole);
         	// might as well add an administrator now as well.
         	User admin = new User("karl.nicholas@outlook.com", true, "N3sPSBxOjdhCygeA8LkqtBskJ+v8TR0do4zJRTIQ4Aw=", Locale.US);
@@ -52,7 +52,7 @@ public class RoleSingletonBean {
         	admin.setLastName("Nicholas");
         	admin.setVerified(true);
         	admin.setRoles(allRoles);
-        	userRepository.save(admin);
+        	userDao.save(admin);
         }
     }
 

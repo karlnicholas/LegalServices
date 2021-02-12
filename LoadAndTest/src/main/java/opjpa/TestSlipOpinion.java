@@ -1,5 +1,6 @@
 package opjpa;
 
+import java.time.LocalDate;
 import java.util.Calendar;
 import java.util.List;
 import java.util.logging.Logger;
@@ -49,13 +50,11 @@ public class TestSlipOpinion implements ApplicationRunner {
 //	        calLastWeek.set(Calendar.YEAR, year);
 //	        calLastWeek.set(Calendar.DAY_OF_YEAR, dayOfYear);
 
-		Calendar startDate = Calendar.getInstance();
-		startDate.set(2020, 10, 15);
-		Calendar endDate = Calendar.getInstance();
-		endDate.set(2020, 10, 22);
+		LocalDate startDate = LocalDate.of(2020, 10, 15);
+		LocalDate endDate = LocalDate.of(2020, 10, 22);
 
 		List<OpinionView> opinionCases = slipOpinionSingleton
-				.getOpinionCases(new ViewParameters(startDate.getTime(), endDate.getTime()));
+				.getOpinionCases(new ViewParameters(startDate, endDate));
 //		System.out.println(opinionCases);
 		opinionCases.forEach(this::opinionView);
 		

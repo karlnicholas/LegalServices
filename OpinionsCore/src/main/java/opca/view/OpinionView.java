@@ -1,5 +1,6 @@
 package opca.view;
 
+import java.time.LocalDate;
 import java.util.*;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -18,7 +19,7 @@ public class OpinionView {
 	private List<CaseView> cases;
 	private String name;
 	private String title;
-	private Date opinionDate;
+	private LocalDate opinionDate;
 	private String fileName;
 	private String disposition;
 	private String summary;
@@ -133,10 +134,10 @@ public class OpinionView {
     	return name + " " + this.getTitle();
     }
     @JsonProperty
-	public Date getOpinionDate() {
+	public LocalDate getOpinionDate() {
 		return opinionDate;
 	}
-	public void setOpinionDate(Date opinionDate) {
+	public void setOpinionDate(LocalDate opinionDate) {
 		this.opinionDate = opinionDate;
 	}
     @JsonProperty

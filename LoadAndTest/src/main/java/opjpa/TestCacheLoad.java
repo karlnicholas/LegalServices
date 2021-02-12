@@ -2,15 +2,11 @@ package opjpa;
 
 import java.time.LocalDate;
 import java.time.ZoneOffset;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
-
-import javax.persistence.EntityManager;
-import javax.persistence.Tuple;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
@@ -37,8 +33,6 @@ public class TestCacheLoad implements ApplicationRunner {
 		SpringApplication.run(TestCacheLoad.class, args);
 	}
 	
-	@Autowired
-	private EntityManager entityManager;
 	String nQuery="select \r\n" + 
 			"o.id as o_id,\r\n" + 
 			"o.countreferringopinions as o_countreferringopinions,\r\n" + 
@@ -95,7 +89,7 @@ public class TestCacheLoad implements ApplicationRunner {
 				tuple.get("filename").toString(), 
 				tuple.get("fileextension").toString(), 
 				String.valueOf(tuple.get("o_title")), 
-				Date.from(LocalDate.parse(tuple.get("o_opiniondate").toString()).atStartOfDay().toInstant(ZoneOffset.UTC)), 
+				LocalDate.parse(tuple.get("o_opiniondate")), 
 				"court", 
 				"searchUrl"
 			);
@@ -125,7 +119,7 @@ public class TestCacheLoad implements ApplicationRunner {
 				()->{
 					opinionCitation.setCountReferringOpinions(Integer.parseInt(tuple.get("oc_countreferringopinions").toString()));
 					if ( tuple.get("oc_opiniondate") != null ) {
-						opinionCitation.setOpinionDate(Date.from(LocalDate.parse(tuple.get("oc_opiniondate").toString()).atStartOfDay().toInstant(ZoneOffset.UTC)));
+						opinionCitation.setOpinionDate(LocalDate.parse(tuple.get("oc_opiniondate")));
 					}
 					opinionCitation.setStatuteCitations(new HashSet<>());
 					slipOpinion.getOpinionCitations().add(opinionCitation); 

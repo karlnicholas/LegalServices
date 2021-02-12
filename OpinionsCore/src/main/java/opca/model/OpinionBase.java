@@ -1,68 +1,66 @@
 package opca.model;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.Collection;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeSet;
-
-import javax.persistence.*;
 
 import opca.memorydb.CitationStore;
 import opca.parser.ParsedOpinionCitationSet;
 
 @SuppressWarnings("serial")
-@Entity
-@NamedQueries({
-	@NamedQuery(name="OpinionBase.findOpinionByKeyFetchReferringOpinions", 
-		query="select distinct o from OpinionBase o left join fetch o.referringOpinions where o.opinionKey = :key"),
-	@NamedQuery(name="OpinionBase.opinionsWithReferringOpinions", 
-		query="select distinct o from OpinionBase o left join fetch o.referringOpinions where o.opinionKey in :opinionKeys"),
+//@Entity
+//@NamedQueries({
+//	@NamedQuery(name="OpinionBase.findOpinionByKeyFetchReferringOpinions", 
+//		query="select distinct o from OpinionBase o left join fetch o.referringOpinions where o.opinionKey = :key"),
+//	@NamedQuery(name="OpinionBase.opinionsWithReferringOpinions", 
+//		query="select distinct o from OpinionBase o left join fetch o.referringOpinions where o.opinionKey in :opinionKeys"),
+////	@NamedQuery(name="OpinionBase.fetchOpinionCitationsForOpinions", 
+////	query="select distinct o from OpinionBase o left join fetch o.opinionCitations ooc left join fetch ooc.statuteCitations oocsc left join fetch oocsc.statuteCitation where o.id in :opinionIds"), 
 //	@NamedQuery(name="OpinionBase.fetchOpinionCitationsForOpinions", 
-//	query="select distinct o from OpinionBase o left join fetch o.opinionCitations ooc left join fetch ooc.statuteCitations oocsc left join fetch oocsc.statuteCitation where o.id in :opinionIds"), 
-	@NamedQuery(name="OpinionBase.fetchOpinionCitationsForOpinions", 
-		query="select distinct o from OpinionBase o where o.id in :opinionIds"), 
-	@NamedQuery(name="OpinionBase.fetchCitedOpinionsWithReferringOpinions", 
-		query="select distinct oro from OpinionBase o2 left outer join o2.opinionCitations oro left join fetch oro.referringOpinions where o2.id in :opinionIds"),
-	
-	})
-@NamedEntityGraphs({ 
-	@NamedEntityGraph(name="fetchGraphForSlipOpinions", attributeNodes= {
-		@NamedAttributeNode(value="opinionCitations", subgraph="fetchGraphForSlipOpinionsPartB")
-	}, 
-	subgraphs= {
-		@NamedSubgraph(
-			name = "fetchGraphForSlipOpinionsPartB", 
-			attributeNodes = { @NamedAttributeNode(value = "statuteCitations", subgraph="fetchGraphForSlipOpinionsPartC") } 
-		),
-		@NamedSubgraph(
-			name = "fetchGraphForSlipOpinionsPartC", 
-			attributeNodes = { @NamedAttributeNode(value = "statuteCitation") } 
-		),
-	}) 
-})
-@Inheritance(strategy=InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(discriminatorType=DiscriminatorType.INTEGER)
-@Table(indexes= {@Index(columnList = "vset,volume,page")})
+//		query="select distinct o from OpinionBase o where o.id in :opinionIds"), 
+//	@NamedQuery(name="OpinionBase.fetchCitedOpinionsWithReferringOpinions", 
+//		query="select distinct oro from OpinionBase o2 left outer join o2.opinionCitations oro left join fetch oro.referringOpinions where o2.id in :opinionIds"),
+//	
+//	})
+//@NamedEntityGraphs({ 
+//	@NamedEntityGraph(name="fetchGraphForSlipOpinions", attributeNodes= {
+//		@NamedAttributeNode(value="opinionCitations", subgraph="fetchGraphForSlipOpinionsPartB")
+//	}, 
+//	subgraphs= {
+//		@NamedSubgraph(
+//			name = "fetchGraphForSlipOpinionsPartB", 
+//			attributeNodes = { @NamedAttributeNode(value = "statuteCitations", subgraph="fetchGraphForSlipOpinionsPartC") } 
+//		),
+//		@NamedSubgraph(
+//			name = "fetchGraphForSlipOpinionsPartC", 
+//			attributeNodes = { @NamedAttributeNode(value = "statuteCitation") } 
+//		),
+//	}) 
+//})
+//@Inheritance(strategy=InheritanceType.SINGLE_TABLE)
+//@DiscriminatorColumn(discriminatorType=DiscriminatorType.INTEGER)
+//@Table(indexes= {@Index(columnList = "vset,volume,page")})
 public class OpinionBase implements Comparable<OpinionBase>, Serializable {
-	@Id @GeneratedValue(strategy=GenerationType.IDENTITY)
+//	@Id @GeneratedValue(strategy=GenerationType.IDENTITY)
 	protected Integer id;
 	protected OpinionKey opinionKey;
-	@Column(columnDefinition="varchar(127)")
+//	@Column(columnDefinition="varchar(127)")
 	protected String title;
-    @Temporal(TemporalType.DATE)
-    protected Date opinionDate;
-	@OneToMany(mappedBy="opinionBase")
+//    @Temporal(TemporalType.DATE)
+    protected LocalDate opinionDate;
+//	@OneToMany(mappedBy="opinionBase")
 	protected Set<OpinionStatuteCitation> statuteCitations;
-    @ManyToMany
-    @JoinTable(name="opinionbase_opinioncitations")
+//    @ManyToMany
+//    @JoinTable(name="opinionbase_opinioncitations")
     protected Set<OpinionBase> opinionCitations;
-    @ManyToMany(mappedBy="opinionCitations")
+//    @ManyToMany(mappedBy="opinionCitations")
     protected Set<OpinionBase> referringOpinions;
     // performance optimization equal to size of referringOpinions 
     protected int countReferringOpinions;
-	@Transient
+//	@Transient
 	private boolean newlyLoadedOpinion;
 
     public OpinionBase() {}
@@ -75,7 +73,7 @@ public class OpinionBase implements Comparable<OpinionBase>, Serializable {
     	this.referringOpinions = opinionBase.referringOpinions;
     	this.countReferringOpinions = opinionBase.countReferringOpinions;
     }
-	public OpinionBase(OpinionKey opinionKey, String title, Date opinionDate, String court) {
+	public OpinionBase(OpinionKey opinionKey, String title, LocalDate opinionDate, String court) {
 		this.opinionKey = opinionKey;
 		setTitle(title);
     	this.opinionDate = opinionDate;
@@ -160,10 +158,10 @@ public class OpinionBase implements Comparable<OpinionBase>, Serializable {
 		if ( title != null && title.length() > 127 ) title = title.substring(0, 127);
 		this.title = title;
 	}
-	public Date getOpinionDate() {
+	public LocalDate getOpinionDate() {
 		return opinionDate;
 	}
-	public void setOpinionDate(Date opinionDate) {
+	public void setOpinionDate(LocalDate opinionDate) {
 		this.opinionDate = opinionDate;
 	}
 	public Set<OpinionStatuteCitation> getStatuteCitations() {

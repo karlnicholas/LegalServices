@@ -6,13 +6,13 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import opca.dao.OpinionBaseDao;
+import opca.dao.OpinionStatuteCitationDao;
+import opca.dao.StatuteCitationDao;
 import opca.memorydb.CitationStore;
 import opca.model.OpinionBase;
 import opca.model.OpinionStatuteCitation;
 import opca.model.StatuteCitation;
-import opca.repository.OpinionBaseRepository;
-import opca.repository.OpinionStatuteCitationRepository;
-import opca.repository.StatuteCitationRepository;
 import statutes.api.IStatutesApi;
 import statutesca.statutesapi.CAStatutesApiImpl;
 
@@ -20,18 +20,18 @@ import statutesca.statutesapi.CAStatutesApiImpl;
 public class LoadHistoricalOpinions {
 //	private static Logger logger = Logger.getLogger(LoadHistoricalOpinions.class.getName());
 	private final CitationStore citationStore;
-	private final OpinionBaseRepository opinionBaseRepository;
-	private final StatuteCitationRepository statuteCitationRepository;
-	private final OpinionStatuteCitationRepository opinionStatuteCitationRepoistory;
+	private final OpinionBaseDao opinionBaseDao;
+	private final StatuteCitationDao statuteCitationDao;
+	private final OpinionStatuteCitationDao opinionStatuteCitationRepoistory;
 //	OpinionDocumentParser parser;
 	
 
-	public LoadHistoricalOpinions(OpinionBaseRepository opinionBaseRepository,
-			StatuteCitationRepository statuteCitationRepository,
-			OpinionStatuteCitationRepository opinionStatuteCitationRepoistory) {
+	public LoadHistoricalOpinions(OpinionBaseDao opinionBaseDao,
+			StatuteCitationDao statuteCitationDao,
+			OpinionStatuteCitationDao opinionStatuteCitationRepoistory) {
 		this.citationStore = CitationStore.getInstance(); 
-		this.opinionBaseRepository = opinionBaseRepository;
-		this.statuteCitationRepository = statuteCitationRepository;
+		this.opinionBaseDao = opinionBaseDao;
+		this.statuteCitationDao = statuteCitationDao;
 		this.opinionStatuteCitationRepoistory = opinionStatuteCitationRepoistory;
 	}
 
@@ -59,11 +59,11 @@ public class LoadHistoricalOpinions {
 	    			opinionStatuteCitations.add(statuteCitation);
 	    		}
     		}
-    		opinionBaseRepository.save(opinion);
+    		opinionBaseDao.save(opinion);
     	}
 
     	for(StatuteCitation statute: citationStore.getAllStatutes() ) {
-    		statuteCitationRepository.save(statute);
+    		statuteCitationDao.save(statute);
     	}
     	for(OpinionStatuteCitation opinionStatuteCitation: opinionStatuteCitations ) {
     		opinionStatuteCitationRepoistory.save(opinionStatuteCitation);

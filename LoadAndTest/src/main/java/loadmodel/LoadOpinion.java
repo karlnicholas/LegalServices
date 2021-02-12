@@ -1,8 +1,7 @@
 package loadmodel;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.time.LocalDate;
+import java.util.Calendar;
 import java.util.regex.Pattern;
 
 import apimodel.Cluster;
@@ -11,7 +10,7 @@ public class LoadOpinion {
 	private static final Pattern pattern = Pattern.compile("/");
 	private Long id;
 	private String citation;
-	private Date dateFiled;
+	private LocalDate dateFiled;
 	private String caseName;
 	private String fullCaseName;
 	private String shortCaseName;
@@ -19,15 +18,15 @@ public class LoadOpinion {
     private String html_lawbox;
     private String[] opinions_cited;
     //
-    private DateFormat dateFormat;
-    //
     private String clusterSource;
     public LoadOpinion() {}
     public LoadOpinion(Cluster cluster) {
         // http://www.courtlistener.com/api/rest/v3/clusters/1361768/
     	id = new Long(pattern.split(cluster.getResource_uri())[7]);
     	clusterSource = cluster.getSource();
-		dateFiled = cluster.getDate_filed();
+    	Calendar cal = Calendar.getInstance();
+    	cal.setTime(cluster.getDate_filed());
+		dateFiled = LocalDate.of(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH));
 		String citeOne = cluster.getState_cite_one().replace(". ", "."); 
 		String citeTwo = cluster.getState_cite_two().replace(". ", "."); 
 		String citeThree = cluster.getState_cite_three().replace(". ", ".");
@@ -69,10 +68,10 @@ public class LoadOpinion {
 	public void setCitation(String citation) {
 		this.citation = citation;
 	}
-	public Date getDateFiled() {
+	public LocalDate getDateFiled() {
 		return dateFiled;
 	}
-	public void setDateFiled(Date dateFiled) {
+	public void setDateFiled(LocalDate dateFiled) {
 		this.dateFiled = dateFiled;
 	}
 	public String getFullCaseName() {
@@ -110,9 +109,6 @@ public class LoadOpinion {
 	}
 	@Override
 	public String toString() {
-		if ( dateFormat == null ) {
-			dateFormat = new SimpleDateFormat("MMM dd, yyyy");
-		}
-		return new StringBuilder("LoadOpinion: ").append(caseName).append(" (").append(citation).append(") ").append(dateFormat.format(dateFiled)).toString();
+		return new StringBuilder("LoadOpinion: ").append(caseName).append(" (").append(citation).append(") ").append(dateFiled.toString()).toString();
 	}
 }

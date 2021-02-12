@@ -1,23 +1,16 @@
 package opca.model;
 
-import javax.persistence.EmbeddedId;
-import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
-import javax.persistence.MapsId;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-
-@NamedQueries( {
-	@NamedQuery(name="OpinionStatuteCitation.deleteOpinionStatuteCitations", 
-		query="delete from OpinionStatuteCitation c where c.opinionBase.id in :opinionIds"), 
-})
-@Entity
+//@NamedQueries( {
+//	@NamedQuery(name="OpinionStatuteCitation.deleteOpinionStatuteCitations", 
+//		query="delete from OpinionStatuteCitation c where c.opinionBase.id in :opinionIds"), 
+//})
+//@Entity
 public class OpinionStatuteCitation implements Comparable<OpinionStatuteCitation> {
-	@EmbeddedId
+//	@EmbeddedId
 	private OpinionStatuteCitationId id;
-    @ManyToOne @MapsId("opinionId")
+//    @ManyToOne @MapsId("opinionId")
     private OpinionBase opinionBase;
-    @ManyToOne @MapsId("statuteId")
+//    @ManyToOne @MapsId("statuteId")
     private StatuteCitation statuteCitation;
     private int countReferences;
 	public OpinionStatuteCitation() {

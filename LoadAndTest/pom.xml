@@ -11,7 +11,7 @@
 	</parent>
 	<groupId>com.github.karlnicholas.legalservices</groupId>
 	<artifactId>loadandtest</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>2.0.0-SNAPSHOT</version>
 	<name>LoadAndTest</name>
 	<description>Demo project for Spring Boot</description>
 
@@ -47,17 +47,17 @@
 		<dependency>
 			<groupId>com.github.karlnicholas.legalservices</groupId>
 			<artifactId>guidedsearch-core</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
+			<version>2.0.0-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>com.github.karlnicholas.legalservices</groupId>
 			<artifactId>statutesca</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
+			<version>2.0.0-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>com.github.karlnicholas.legalservices</groupId>
 			<artifactId>opinions-core</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
+			<version>2.0.0-SNAPSHOT</version>
 		</dependency>
 
 		<dependency>

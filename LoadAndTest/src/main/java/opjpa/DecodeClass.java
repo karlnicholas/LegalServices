@@ -2,10 +2,7 @@ package opjpa;
 
 import java.time.LocalDate;
 import java.time.ZoneOffset;
-import java.util.Date;
 import java.util.HashSet;
-
-import javax.persistence.Tuple;
 
 import opca.model.OpinionBase;
 import opca.model.OpinionKey;

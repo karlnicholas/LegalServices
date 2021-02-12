@@ -2,10 +2,8 @@ package opca.model;
 
 import java.io.Serializable;
 
-import javax.persistence.Embeddable;
-
 @SuppressWarnings("serial")
-@Embeddable
+//@Embeddable
 public class OpinionKey implements Serializable, Comparable<OpinionKey> { 
     public static final String[] appellateSets = {
     	"Slip.Op",		// 0

@@ -9,8 +9,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import javax.transaction.Transactional;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -92,7 +90,7 @@ public ScheduledService(CAOnlineUpdates caOnlineUpdates, SystemService systemSer
     
 //    @Schedule(second="0", minute="20", hour="18", persistent=false)        // 04:00 am every day
 //    @Scheduled(cron = "0 20 18 * * *")
-    @Transactional	// user
+//    @Transactional	// user
     public void welcomingService() {
         logger.info("STARTING welcomingService");
 		systemService.doWelcomeService();

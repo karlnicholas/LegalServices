@@ -3,16 +3,11 @@ package opca.service;
 import java.time.LocalDate;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import javax.persistence.EntityManager;
-import javax.persistence.Tuple;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,6 +15,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
+import opca.dao.OpinionBaseDao;
+import opca.dao.SlipOpinionDao;
+import opca.dao.SlipPropertiesDao;
 import opca.model.OpinionBase;
 import opca.model.OpinionKey;
 import opca.model.OpinionStatuteCitation;
@@ -27,9 +25,6 @@ import opca.model.SlipOpinion;
 import opca.model.SlipProperties;
 import opca.model.StatuteCitation;
 import opca.parser.ParsedOpinionCitationSet;
-import opca.repository.OpinionBaseRepository;
-import opca.repository.SlipOpinionRepository;
-import opca.repository.SlipPropertiesRepository;
 import opca.view.OpinionView;
 import opca.view.OpinionViewBuilder;
 import statutes.service.StatutesService;
@@ -37,16 +32,16 @@ import statutes.service.StatutesService;
 @Component
 public class OpinionViewLoad {
 	Logger logger = LoggerFactory.getLogger(OpinionViewLoad.class);
-	private final OpinionBaseRepository opinionBaseRepository;
-	private final SlipOpinionRepository slipOpinionRepository;
-	private final SlipPropertiesRepository slipPropertiesRepository;
+	private final OpinionBaseDao opinionBaseDao;
+	private final SlipOpinionDao slipOpinionDao;
+	private final SlipPropertiesDao slipPropertiesDao;
 	
-	public OpinionViewLoad(OpinionBaseRepository opinionBaseRepository, 
-			SlipOpinionRepository slipOpinionRepository, 
-			SlipPropertiesRepository slipPropertiesRepository) {
-		this.opinionBaseRepository = opinionBaseRepository;
-		this.slipOpinionRepository = slipOpinionRepository;
-		this.slipPropertiesRepository = slipPropertiesRepository;
+	public OpinionViewLoad(OpinionBaseDao opinionBaseDao, 
+			SlipOpinionDao slipOpinionDao, 
+			SlipPropertiesDao slipPropertiesDao) {
+		this.opinionBaseDao = opinionBaseDao;
+		this.slipOpinionDao = slipOpinionDao;
+		this.slipPropertiesDao = slipPropertiesDao;
 	}
 
 	@Async
@@ -213,14 +208,14 @@ public class OpinionViewLoad {
 			opinionIds.add(slipOpinion.getId());
 			if ( ++i % 100 == 0 ) {
 				opinionOpinionCitations.addAll( 
-					opinionBaseRepository.fetchOpinionCitationsForOpinions(opinionIds)
+					opinionBaseDao.fetchOpinionCitationsForOpinions(opinionIds)
 				);
 				opinionIds.clear();
 			}
 		}
 		if ( opinionIds.size() != 0 ) {
 			opinionOpinionCitations.addAll( 
-				opinionBaseRepository.fetchOpinionCitationsForOpinions(opinionIds)
+				opinionBaseDao.fetchOpinionCitationsForOpinions(opinionIds)
 			);
 		}
 		OpinionViewBuilder opinionViewBuilder = new OpinionViewBuilder(statutesService);
@@ -240,9 +235,9 @@ public class OpinionViewLoad {
 			}
 		);
 		// build report dates
-		List<Date> dates = new ArrayList<>();
+		List<LocalDate> dates = new ArrayList<>();
 		for ( OpinionView opinionView: opinionViewData.getOpinionViews() ) {
-			Date date = opinionView.getOpinionDate();
+			LocalDate date = opinionView.getOpinionDate();
 //			Calendar utcDate = Calendar.getInstance();
 //			utcDate.setTime(date);
 //			utcDate.set(Calendar.HOUR_OF_DAY, 0); // ! clear would not reset the hour of day !
@@ -256,8 +251,8 @@ public class OpinionViewLoad {
 		initReportDates(opinionViewData, dates);
 	}
 
-	@Autowired
-	private EntityManager entityManager;
+//	@Autowired
+//	private EntityManager entityManager;
 	String nQuery="select \r\n" + 
 			"o.id as o_id,\r\n" + 
 			"o.opiniondate as o_opiniondate,\r\n" + 
@@ -382,7 +377,7 @@ public class OpinionViewLoad {
 				.collect(Collectors.toList());
 		
 // List<SlipProperties> spl = em.createNamedQuery("SlipProperties.findAll", SlipProperties.class).getResultList();
-		List<SlipProperties> spl = slipPropertiesRepository.findAll();
+		List<SlipProperties> spl = slipPropertiesDao.findAll();
 		for ( SlipOpinion slipOpinion: opinions ) {
 			slipOpinion.setSlipProperties(spl.get(spl.indexOf(new SlipProperties(slipOpinion))));
 		}
@@ -395,10 +390,10 @@ public class OpinionViewLoad {
 //				.setHint("javax.persistence.fetchgraph", fetchGraphForOpinionsWithJoins)
 //				.setParameter("opinionKeys", opinionKeys)
 //				.getResultList();
-		List<SlipOpinion> opinions = slipOpinionRepository.loadOpinionsWithJoinsForKeys(opinionKeys);
+		List<SlipOpinion> opinions = slipOpinionDao.loadOpinionsWithJoinsForKeys(opinionKeys);
 		// load slipOpinion properties from the database here ... ?
 //		List<SlipProperties> spl = em.createNamedQuery("SlipProperties.findAll", SlipProperties.class).getResultList();
-		List<SlipProperties> spl = slipPropertiesRepository.findAll();
+		List<SlipProperties> spl = slipPropertiesDao.findAll();
 		for ( SlipOpinion slipOpinion: opinions ) {
 			slipOpinion.setSlipProperties(spl.get(spl.indexOf(new SlipProperties(slipOpinion))));
 		}

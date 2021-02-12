@@ -2,7 +2,6 @@ package opca.service;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -10,10 +9,10 @@ import javax.xml.bind.DatatypeConverter;
 
 import org.springframework.stereotype.Service;
 
+import opca.dao.RoleDao;
+import opca.dao.UserDao;
 import opca.model.Role;
 import opca.model.User;
-import opca.repository.RoleRepository;
-import opca.repository.UserRepository;
 
 import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
@@ -22,14 +21,14 @@ import javax.annotation.security.RolesAllowed;
 @Service
 public class UserService {
     private final RoleSingletonBean roleBean;
-    private final UserRepository userRepository;
-    private final RoleRepository roleRepository;
+    private final UserDao userDao;
+    private final RoleDao roleDao;
 
-	public UserService(RoleSingletonBean roleBean, UserRepository userRepository, RoleRepository roleRepository) {
+	public UserService(RoleSingletonBean roleBean, UserDao userDao, RoleDao roleDao) {
 		super();
 		this.roleBean = roleBean;
-		this.userRepository = userRepository;
-		this.roleRepository = roleRepository;
+		this.userDao = userDao;
+		this.roleDao = roleDao;
 	}
 
 	/**
@@ -41,28 +40,29 @@ public class UserService {
      */
     @PermitAll
     public User encodeAndSave(User user) throws NoSuchAlgorithmException {
-        // sanity check to see if user already exists.
-//        TypedQuery<Long> q = userRepository.createNamedQuery(User.COUNT_EMAIL, Long.class).setParameter("email", user.getEmail());
-//        if ( q.getSingleResult().longValue() > 0L ) {
-//            // show error condition
-//            return null;
-//        }
-    	Long existingUser = userRepository.countByEmail(user.getEmail());
-		if ( existingUser > 0L ) {
-			// show error condition
-			return null;
-		}
-        // Encode password
-        byte[] hash = MessageDigest.getInstance("SHA-256").digest(user.getPassword().getBytes());
-        user.setPassword( DatatypeConverter.printBase64Binary(hash) );
-        // Add role "USER" to user.
-        Role role = roleBean.getUserRole();
-        List<Role> roles = new ArrayList<Role>();
-        roles.add(roleRepository.save(role));
-        user.setRoles(roles);
-        // Persist user.
-        userRepository.saveAndFlush(user);
-        return user;
+//        // sanity check to see if user already exists.
+////        TypedQuery<Long> q = userRepository.createNamedQuery(User.COUNT_EMAIL, Long.class).setParameter("email", user.getEmail());
+////        if ( q.getSingleResult().longValue() > 0L ) {
+////            // show error condition
+////            return null;
+////        }
+//    	Long existingUser = userDao.countByEmail(user.getEmail());
+//		if ( existingUser > 0L ) {
+//			// show error condition
+//			return null;
+//		}
+//        // Encode password
+//        byte[] hash = MessageDigest.getInstance("SHA-256").digest(user.getPassword().getBytes());
+//        user.setPassword( DatatypeConverter.printBase64Binary(hash) );
+//        // Add role "USER" to user.
+//        Role role = roleBean.getUserRole();
+//        List<Role> roles = new ArrayList<Role>();
+//        roles.add(roleDao.save(role));
+//        user.setRoles(roles);
+//        // Persist user.
+//        userDao.saveAndFlush(user);
+//        return user;
+    	return null;
     }
     
     /**
@@ -71,7 +71,7 @@ public class UserService {
      */
     @PermitAll
     public Long userCount() {
-        return userRepository.count();
+        return userDao.count();
     }
 
     /**
@@ -84,7 +84,7 @@ public class UserService {
     public User updatePassword(User user) throws NoSuchAlgorithmException {
         byte[] hash = MessageDigest.getInstance("SHA-256").digest(user.getPassword().getBytes());
         user.setPassword( DatatypeConverter.printBase64Binary(hash) ); 
-        return userRepository.save(user);
+        return userDao.save(user);
     }
 
     /**
@@ -94,7 +94,7 @@ public class UserService {
      */
     @PermitAll
     public User merge(User user) {
-        return userRepository.save(user);
+        return userDao.save(user);
     }
     
     /**
@@ -104,7 +104,7 @@ public class UserService {
      */
     @PermitAll
     public User findByEmail(String email) {
-        return userRepository.findByEmail(email);
+        return userDao.findByEmail(email);
     }
 
     /**
@@ -118,7 +118,7 @@ public class UserService {
 //        List<User> users = em.createNamedQuery(User.FIND_BY_EMAIL, User.class)
 //            .setParameter("email", email)
 //            .getResultList();
-    	User user = userRepository.findByEmail(email); 
+    	User user = userDao.findByEmail(email); 
         if ( user != null && user.getVerifyKey().equals(verifyKey)) {
         	user.setVerified(true);
         	user.setStartVerify(false);
@@ -130,7 +130,7 @@ public class UserService {
 
     @PermitAll
     public User checkUserByEmail(String email) {
-    	return userRepository.findByEmail(email);
+    	return userDao.findByEmail(email);
     }
     /**
      * Delete User by Database Id
@@ -139,7 +139,7 @@ public class UserService {
 //    @RolesAllowed({"ADMIN"})
     @PermitAll // because welcoming service uses it. 
     public void delete(Long id) {
-        userRepository.deleteById(id);
+        userDao.deleteById(id);
     }
     
     /**
@@ -148,7 +148,7 @@ public class UserService {
      */
     @RolesAllowed({"ADMIN"})    
 	public void unverify(Long id) {
-        User user = userRepository.getOne(id);
+        User user = userDao.getOne(id);
         user.setVerified(false);
 	}
     /**
@@ -158,7 +158,7 @@ public class UserService {
      */
     @RolesAllowed({"ADMIN"})
     public User findById(Long id) {
-        return userRepository.getOne(id);
+        return userDao.getOne(id);
     }
     
     /**
@@ -168,7 +168,7 @@ public class UserService {
     // @RolesAllowed({"ADMIN"})
     @PermitAll // because court Report service uses it. 
     public List<User> findAll() {
-        return userRepository.findAll();
+        return userDao.findAll();
     }
     
     /**
@@ -178,7 +178,7 @@ public class UserService {
      */
     @RolesAllowed({"ADMIN"})
     public User promoteUser(Long id) {
-        User user = userRepository.getOne(id);
+        User user = userDao.getOne(id);
         user.getRoles().add(roleBean.getAdminRole());
 //        return em.merge( user );
         return user;
@@ -191,13 +191,13 @@ public class UserService {
      */
     @RolesAllowed({"ADMIN"})
     public User demoteUser(Long id) {
-        User user = userRepository.getOne(id);
+        User user = userDao.getOne(id);
         Iterator<Role> rIt = user.getRoles().iterator();
         while ( rIt.hasNext()  ) {
             Role role = rIt.next();
             if ( role.getRole().equals("ADMIN")) rIt.remove();
         }
-        return userRepository.save(user);
+        return userDao.save(user);
     }
 
     /**
@@ -213,45 +213,45 @@ public class UserService {
     @PermitAll
 	public void incrementVerifyCount(User user) {
 		user.setVerifyCount( user.getVerifyCount() + 1);
-        userRepository.save(user);
+        userDao.save(user);
 	}
     @PermitAll
 	public void incrementVerifyErrors(User user) {
 		user.setVerifyErrors( user.getVerifyErrors() + 1);
-        userRepository.save(user);
+        userDao.save(user);
 	}
     @PermitAll
 	public List<User> findAllUnverified() {
-        return userRepository.findUnverified();
+        return userDao.findUnverified();
 	}
 
     @PermitAll
 	public void incrementWelcomeErrors(User user) {
 		user.setWelcomeErrors( user.getWelcomeErrors() + 1);
-        userRepository.save(user);
+        userDao.save(user);
 	}
 
     @PermitAll
 	public void setWelcomedTrue(User user) {
 		user.setWelcomed( true );
-        userRepository.save(user);
+        userDao.save(user);
 	}
 
     @PermitAll
 	public void setOptOut(User user) {
 		user.setOptout( true );
-        userRepository.save(user);
+        userDao.save(user);
 	}
 
     @PermitAll
 	public void clearOptOut(User user) {
 		user.setOptout( false );
-        userRepository.save(user);
+        userDao.save(user);
 	}
 
     @PermitAll
     public List<User> findAllUnWelcomed() {
-        return userRepository.findUnwelcomed();
+        return userDao.findUnwelcomed();
 	}
 
 }

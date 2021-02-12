@@ -1,22 +1,15 @@
 package opca.model;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-
-@Entity
+//@Entity
 public class PartyAttorneyPair {
-	@Id @GeneratedValue(strategy=GenerationType.IDENTITY)
+//	@Id @GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Integer id;
 
-	@ManyToOne
+//	@ManyToOne
 	private SlipProperties slipProperties;	
-    @Column(columnDefinition="varchar(1022)")
+//    @Column(columnDefinition="varchar(1022)")
 	private String party;
-    @Column(columnDefinition="varchar(3070)")
+//    @Column(columnDefinition="varchar(3070)")
 	private String attorney;
     
 	public PartyAttorneyPair() {}

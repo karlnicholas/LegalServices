@@ -4,12 +4,10 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -51,7 +49,8 @@ public class CACaseScraper implements OpinionScraperInterface {
 	public static final String  disposition = "disposition";
 	public static final String  partiesAndAttorneys = "partiesAndAttorneys";
 	public static final String  trialCourt = "trialCourt";
-	private static final DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
+//	private static final DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
+	private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
 		
 	public CACaseScraper(boolean debugFiles) {
 		this.debugFiles = debugFiles;
@@ -299,7 +298,7 @@ public class CACaseScraper implements OpinionScraperInterface {
 						slipOpinion.getSlipProperties().setTrialCourtJudge(nodeValue);
 					} else if ( nodeName.equalsIgnoreCase("trialCourtJudgmentDate") ) {
 						try {
-							slipOpinion.getSlipProperties().setTrialCourtJudgmentDate(dateFormat.parse(nodeValue));
+							slipOpinion.getSlipProperties().setTrialCourtJudgmentDate(LocalDate.parse(nodeValue, formatter));
 						} catch (Exception ignored) {}						
 					}
 				}
@@ -346,7 +345,7 @@ public class CACaseScraper implements OpinionScraperInterface {
 						slipOpinion.getSlipProperties().setDisposition(nodeValue);
 					} else if ( nodeName.equalsIgnoreCase("date") ) {
 						try {
-							slipOpinion.getSlipProperties().setDate(dateFormat.parse(nodeValue));
+							slipOpinion.getSlipProperties().setDate(LocalDate.parse(nodeValue, formatter));
 						} catch (Exception ignored) {}
 					} else if ( nodeName.equalsIgnoreCase("dispositionType") ) {
 						slipOpinion.getSlipProperties().setDispositionDescription(nodeValue);
@@ -387,11 +386,11 @@ public class CACaseScraper implements OpinionScraperInterface {
 						slipOpinion.getSlipProperties().setCaseType(nodeValue);
 					} else if ( nodeName.equalsIgnoreCase("filingDate") ) {
 						try {
-							slipOpinion.getSlipProperties().setFilingDate(dateFormat.parse(nodeValue));
+							slipOpinion.getSlipProperties().setFilingDate(LocalDate.parse(nodeValue, formatter));
 						} catch (Exception ignored) {}
 					} else if ( nodeName.equalsIgnoreCase("completionDate") ) {
 						try {
-							slipOpinion.getSlipProperties().setCompletionDate(dateFormat.parse(nodeValue));
+							slipOpinion.getSlipProperties().setCompletionDate(LocalDate.parse(nodeValue, formatter));
 						} catch (Exception ignored) {}
 					}
 				}
@@ -436,9 +435,12 @@ public class CACaseScraper implements OpinionScraperInterface {
 
 	protected List<SlipOpinion> parseCaseList(InputStream inputStream) {
 		ArrayList<SlipOpinion> cases = new ArrayList<SlipOpinion>();
-		DateFormat dfs = DateFormat.getDateInstance(DateFormat.SHORT);
-		Date sopDate;
-		Date opDate = null;
+//		DateFormat dfs = DateFormat.getDateInstance(DateFormat.SHORT);
+		DateTimeFormatter dfs = DateTimeFormatter.ofPattern("YY/mm/DD");
+//		Date sopDate;
+//		Date opDate = null;
+		LocalDate sopDate;
+		LocalDate opDate = null;
 		try {
 			Document doc = Jsoup.parse(inputStream, StandardCharsets.UTF_8.name(), "http://www.courts.ca.gov/");
 			Elements trs = doc.select("table>tbody>tr");
@@ -462,33 +464,21 @@ public class CACaseScraper implements OpinionScraperInterface {
 				}
 				// store all this in a class
 				sopDate = opDate;
-				Calendar cal = Calendar.getInstance();
-				cal.setTime(new Date());
-				cal.set(Calendar.HOUR_OF_DAY, 0);
-				cal.set(Calendar.MINUTE, 0);
-				cal.set(Calendar.SECOND, 0);
-				cal.set(Calendar.MILLISECOND, 0);
 		        try {
-		        	opDate = dfs.parse(opinionDate);
-		        } catch (ParseException e ) {
+		        	opDate = LocalDate.parse(opinionDate, dfs);
+		        } catch (DateTimeParseException e ) {
 		        	if ( sopDate == null ) {
 			        	// Default to current date.
-			        	// not very good, but best that can be done, I suppose.
-						cal.set(Calendar.HOUR_OF_DAY, 0);
-						cal.set(Calendar.MINUTE, 0);
-						cal.set(Calendar.SECOND, 0);
-						cal.set(Calendar.MILLISECOND, 0);
-						opDate = cal.getTime();
+						opDate = LocalDate.now();
 		        	} else {
 		        		opDate = sopDate;
 		        	}
 		        }
-	    		Calendar parsedDate = Calendar.getInstance();
-	    		parsedDate.setTime(opDate);
+//	    		Calendar parsedDate = Calendar.getInstance();
+//	    		parsedDate.setTime(opDate);
 	    		// test to see if year out of whack.
-	    		if ( parsedDate.get(Calendar.YEAR) > cal.get(Calendar.YEAR) ) {
-	    			parsedDate.set(Calendar.YEAR, cal.get(Calendar.YEAR));
-	    			opDate = parsedDate.getTime();
+	    		if ( opDate.getYear() > LocalDate.now().getYear() ) {
+	    			opDate = LocalDate.of(LocalDate.now().getYear(), opDate.getMonth(), opDate.getDayOfMonth());
 	    		}
 				
 				String fileName = tds.get(1).text().replace("[PDF]", "").replace("[DOC]", "").trim();

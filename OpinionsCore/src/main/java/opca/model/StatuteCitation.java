@@ -5,21 +5,6 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeSet;
 
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Index;
-import javax.persistence.NamedAttributeNode;
-import javax.persistence.NamedEntityGraph;
-import javax.persistence.NamedEntityGraphs;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.NamedSubgraph;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-
 /**
  * Created with IntelliJ IDEA.
  * User: karl
@@ -28,40 +13,40 @@ import javax.persistence.Table;
  * To change this template use File | Settings | File Templates.
  */
 
-@NamedQueries({
-	@NamedQuery(name="StatuteCitation.findStatutesForKeys", 
-		query="select s from StatuteCitation s where s.statuteKey in :keys"),
-/*	
-	@NamedQuery(name="StatuteCitation.findByStatuteKeyJoinReferringOpinions", 
-	query="select distinct(s) from StatuteCitation s left join fetch s.referringOpinions ro left join fetch ro.opinionBase where s.statuteKey = :statuteKey"),
-	@NamedQuery(name="StatuteCitation.statutesWithReferringOpinions", 
-	query="select distinct(s) from StatuteCitation s left join fetch s.referringOpinions ro left join fetch ro.opinionBase where s.statuteKey in :statuteKeys"),
-*/
-	@NamedQuery(name="StatuteCitation.statutesWithReferringOpinions", 
-		query="select distinct(s) from StatuteCitation s where s.statuteKey in :statuteKeys"),
-})
-@NamedEntityGraphs({ 
-	@NamedEntityGraph(name="fetchGraphForStatutesWithReferringOpinions", attributeNodes= {
-		@NamedAttributeNode(value="referringOpinions", subgraph="fetchGraphForStatutesWithReferringOpinionsPartB")
-	}, 
-	subgraphs= {
-		@NamedSubgraph(
-			name = "fetchGraphForStatutesWithReferringOpinionsPartB", 
-			attributeNodes = { @NamedAttributeNode(value = "opinionBase") } 
-		),
-	}) 
-})
+//@NamedQueries({
+//	@NamedQuery(name="StatuteCitation.findStatutesForKeys", 
+//		query="select s from StatuteCitation s where s.statuteKey in :keys"),
+///*	
+//	@NamedQuery(name="StatuteCitation.findByStatuteKeyJoinReferringOpinions", 
+//	query="select distinct(s) from StatuteCitation s left join fetch s.referringOpinions ro left join fetch ro.opinionBase where s.statuteKey = :statuteKey"),
+//	@NamedQuery(name="StatuteCitation.statutesWithReferringOpinions", 
+//	query="select distinct(s) from StatuteCitation s left join fetch s.referringOpinions ro left join fetch ro.opinionBase where s.statuteKey in :statuteKeys"),
+//*/
+//	@NamedQuery(name="StatuteCitation.statutesWithReferringOpinions", 
+//		query="select distinct(s) from StatuteCitation s where s.statuteKey in :statuteKeys"),
+//})
+//@NamedEntityGraphs({ 
+//	@NamedEntityGraph(name="fetchGraphForStatutesWithReferringOpinions", attributeNodes= {
+//		@NamedAttributeNode(value="referringOpinions", subgraph="fetchGraphForStatutesWithReferringOpinionsPartB")
+//	}, 
+//	subgraphs= {
+//		@NamedSubgraph(
+//			name = "fetchGraphForStatutesWithReferringOpinionsPartB", 
+//			attributeNodes = { @NamedAttributeNode(value = "opinionBase") } 
+//		),
+//	}) 
+//})
 @SuppressWarnings("serial")
-@Entity
-@Table(indexes = {@Index(columnList="lawCode,sectionNumber")})
+//@Entity
+//@Table(indexes = {@Index(columnList="lawCode,sectionNumber")})
 public class StatuteCitation implements Comparable<StatuteCitation>, Serializable { 
-	@Id @GeneratedValue(strategy=GenerationType.IDENTITY)
+//	@Id @GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Integer id;
 	
-	@Embedded
+//	@Embedded
     private StatuteKey statuteKey;
 
-	@OneToMany(mappedBy="statuteCitation")
+//	@OneToMany(mappedBy="statuteCitation")
 	private Set<OpinionStatuteCitation> referringOpinions;
     
     private boolean designated;

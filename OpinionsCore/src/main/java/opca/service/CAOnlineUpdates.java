@@ -8,12 +8,15 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import javax.transaction.Transactional;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import opca.dao.OpinionBaseDao;
+import opca.dao.OpinionStatuteCitationDao;
+import opca.dao.SlipOpinionDao;
+import opca.dao.SlipPropertiesDao;
+import opca.dao.StatuteCitationDao;
 import opca.memorydb.CitationStore;
 import opca.model.OpinionBase;
 import opca.model.OpinionKey;
@@ -25,11 +28,6 @@ import opca.model.StatuteKey;
 import opca.parser.OpinionScraperInterface;
 import opca.parser.OpinionDocumentParser;
 import opca.parser.ScrapedOpinionDocument;
-import opca.repository.OpinionBaseRepository;
-import opca.repository.OpinionStatuteCitationRepository;
-import opca.repository.SlipOpinionRepository;
-import opca.repository.SlipPropertiesRepository;
-import opca.repository.StatuteCitationRepository;
 import opca.parser.ParsedOpinionCitationSet;
 import statutes.StatutesTitles;
 import statutes.service.StatutesService;
@@ -42,21 +40,21 @@ import statutes.service.StatutesService;
 @Service
 public class CAOnlineUpdates {	
 	Logger logger = LoggerFactory.getLogger(CAOnlineUpdates.class);
-	private final OpinionBaseRepository opinionBaseRepository;
-	private final StatuteCitationRepository statuteCitationRepository;
-	private final OpinionStatuteCitationRepository opinionStatuteCitationRepoistory;
-	private final SlipOpinionRepository slipOpinionRepository;
-	private final SlipPropertiesRepository slipPropertiesRepository;
+	private final OpinionBaseDao opinionBaseDao;
+	private final StatuteCitationDao statuteCitationDao;
+	private final OpinionStatuteCitationDao opinionStatuteCitationRepoistory;
+	private final SlipOpinionDao slipOpinionDao;
+	private final SlipPropertiesDao slipPropertiesDao;
 	
-	public CAOnlineUpdates(OpinionBaseRepository opinionBaseRepository,
-			StatuteCitationRepository statuteCitationRepository,
-			OpinionStatuteCitationRepository opinionStatuteCitationRepoistory,
-			SlipOpinionRepository slipOpinionRepository, SlipPropertiesRepository slipPropertiesRepository) {
-		this.opinionBaseRepository = opinionBaseRepository;
-		this.statuteCitationRepository = statuteCitationRepository;
+	public CAOnlineUpdates(OpinionBaseDao opinionBaseDao,
+			StatuteCitationDao statuteCitationDao,
+			OpinionStatuteCitationDao opinionStatuteCitationRepoistory,
+			SlipOpinionDao slipOpinionDao, SlipPropertiesDao slipPropertiesDao) {
+		this.opinionBaseDao = opinionBaseDao;
+		this.statuteCitationDao = statuteCitationDao;
 		this.opinionStatuteCitationRepoistory = opinionStatuteCitationRepoistory;
-		this.slipOpinionRepository = slipOpinionRepository;
-		this.slipPropertiesRepository = slipPropertiesRepository;
+		this.slipOpinionDao = slipOpinionDao;
+		this.slipPropertiesDao = slipPropertiesDao;
 	}
 
 //	public void updateOpinionViews(List<OpinionKey> opinionKeys, BlockingStatutesService blockingStatutesService) {
@@ -64,7 +62,6 @@ public class CAOnlineUpdates {
 //	}
 
 	// @Transactional very important, won't work without it.
-	@Transactional
 	public List<OpinionKey> updateDatabase(OpinionScraperInterface caseScraper, StatutesService statutesService) {
 		
  		List<SlipOpinion> onlineOpinions = caseScraper.getCaseList();
@@ -103,7 +100,7 @@ public class CAOnlineUpdates {
 //		}
 //			
 		//
-		List<SlipOpinion> currentOpinions = slipOpinionRepository.findAll();
+		List<SlipOpinion> currentOpinions = slipOpinionDao.findAll();
 		List<SlipOpinion> currentCopy = new ArrayList<SlipOpinion>(currentOpinions);
 		logger.info("Found " + currentCopy.size() + " in the database.");
 		logger.info("Split Transactions" );		
@@ -199,15 +196,15 @@ public class CAOnlineUpdates {
 					persistOpinionStatuteCitations.add(statuteCitation);
 	    		}
 			}
-			slipOpinionRepository.save(slipOpinion);
+			slipOpinionDao.save(slipOpinion);
 			if ( slipOpinion.getSlipProperties() == null ) {
 				System.out.println("SlipProperties == null " );
 			}
-			slipPropertiesRepository.save(slipOpinion.getSlipProperties());
+			slipPropertiesDao.save(slipOpinion.getSlipProperties());
 		}
 		Date startTime = new Date();
     	for(OpinionBase opinion: persistOpinions ) {
-			opinionBaseRepository.save(opinion);
+			opinionBaseDao.save(opinion);
     	}
 		logger.info("Persisted "+persistOpinions.size()+" opinions in "+((new Date().getTime()-startTime.getTime())/1000) + " seconds");
 
@@ -232,7 +229,7 @@ public class CAOnlineUpdates {
 	    		referringOpinion.hashCode();
 	    	}
 			
-    		statuteCitationRepository.save(statute);
+    		statuteCitationDao.save(statute);
     	}
 		logger.info("Persisted "+persistStatutes.size()+" statutes in "+((new Date().getTime()-startTime.getTime())/1000) + " seconds");
 
@@ -256,12 +253,12 @@ public class CAOnlineUpdates {
     	for(OpinionBase opinion: opinions ) {
     		opinionKeys.add(opinion.getOpinionKey());
     		if ( ++i % 100 == 0 ) {
-    			existingOpinions.addAll( opinionBaseRepository.opinionsWithReferringOpinions(opinionKeys) );
+    			existingOpinions.addAll( opinionBaseDao.opinionsWithReferringOpinions(opinionKeys) );
     			opinionKeys.clear();
     		}
     	}
     	if ( opinionKeys.size() != 0 ) {
-    		existingOpinions.addAll( opinionBaseRepository.opinionsWithReferringOpinions(opinionKeys) );
+    		existingOpinions.addAll( opinionBaseDao.opinionsWithReferringOpinions(opinionKeys) );
     	}
     	Collections.sort(existingOpinions);
     	OpinionBase[] existingOpinionsArray = existingOpinions.toArray(new OpinionBase[existingOpinions.size()]);
@@ -315,12 +312,12 @@ public class CAOnlineUpdates {
 		for(StatuteCitation statuteCitation: statutes ) {
     		statuteKeys.add(statuteCitation.getStatuteKey());
     		if ( ++i % 100 == 0 ) {
-    			existingStatutes.addAll( statuteCitationRepository.statutesWithReferringOpinions(statuteKeys));
+    			existingStatutes.addAll( statuteCitationDao.statutesWithReferringOpinions(statuteKeys));
     			statuteKeys.clear();
     		}
     	}
     	if ( statuteKeys.size() != 0 ) {
-    		existingStatutes.addAll( statuteCitationRepository.statutesWithReferringOpinions(statuteKeys));
+    		existingStatutes.addAll( statuteCitationDao.statutesWithReferringOpinions(statuteKeys));
     	}
     	Collections.sort(existingStatutes);
     	StatuteCitation[] existingStatutesArray = existingStatutes.toArray(new StatuteCitation[existingStatutes.size()]);
@@ -351,12 +348,12 @@ public class CAOnlineUpdates {
 		for (SlipOpinion deleteOpinion: currentCopy) {
 			opinionIds.add(deleteOpinion.getId());
 			if ( ++i % 100 == 0 ) {
-				citedOpinions.addAll( opinionBaseRepository.fetchCitedOpinionsWithReferringOpinions(opinionIds) );
+				citedOpinions.addAll( opinionBaseDao.fetchCitedOpinionsWithReferringOpinions(opinionIds) );
 				opinionIds.clear();
 			}
 		}
 		if ( opinionIds.size() != 0 ) {
-			citedOpinions.addAll( opinionBaseRepository.fetchCitedOpinionsWithReferringOpinions(opinionIds) );
+			citedOpinions.addAll( opinionBaseDao.fetchCitedOpinionsWithReferringOpinions(opinionIds) );
 		}
 		
 		// ugly double loop ( O(n^2) )
@@ -385,13 +382,13 @@ public class CAOnlineUpdates {
 		
 
 		for (SlipOpinion deleteOpinion: currentCopy) {
-			for ( SlipProperties slipProperty: slipPropertiesRepository.findAll() ) {
+			for ( SlipProperties slipProperty: slipPropertiesDao.findAll() ) {
 				if ( slipProperty.getOpinionKey().equals(deleteOpinion.getId())) {
-					slipPropertiesRepository.delete(slipProperty);
+					slipPropertiesDao.delete(slipProperty);
 					break;
 				}
 			}
-			slipOpinionRepository.delete(deleteOpinion);
+			slipOpinionDao.delete(deleteOpinion);
 		}
 	}
 }

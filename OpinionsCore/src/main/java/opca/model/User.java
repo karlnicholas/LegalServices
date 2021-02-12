@@ -1,39 +1,25 @@
 package opca.model;
 
 import java.io.Serializable;
-import java.util.Calendar;
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
 
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
 @SuppressWarnings("serial")
-@Table(uniqueConstraints = @UniqueConstraint(columnNames = "email"))
-@Entity
-@NamedQueries({
-    @NamedQuery(name = User.FIND_BY_EMAIL, query = "select u from User u where u.email = :email"), 
-    @NamedQuery(name = User.COUNT_EMAIL, query = "select Count(u.email) from User u where u.email = :email"), 
-    @NamedQuery(name = User.FIND_ALL, query = "select u from User u"), 
-    @NamedQuery(name = User.USER_COUNT, query = "select count(u) from User u"),
-	@NamedQuery(name = User.FIND_UNVERIFIED, query = "select u from User u where u.verified = false and u.verifyErrors <= 3 and u.verifyCount <= 5"), 
-	@NamedQuery(name = User.FIND_UNWELCOMED, query = "select u from User u where u.welcomed = false and u.welcomeErrors <= 3"), 
-})
+//@Table(uniqueConstraints = @UniqueConstraint(columnNames = "email"))
+//@Entity
+//@NamedQueries({
+//    @NamedQuery(name = User.FIND_BY_EMAIL, query = "select u from User u where u.email = :email"), 
+//    @NamedQuery(name = User.COUNT_EMAIL, query = "select Count(u.email) from User u where u.email = :email"), 
+//    @NamedQuery(name = User.FIND_ALL, query = "select u from User u"), 
+//    @NamedQuery(name = User.USER_COUNT, query = "select count(u) from User u"),
+//	@NamedQuery(name = User.FIND_UNVERIFIED, query = "select u from User u where u.verified = false and u.verifyErrors <= 3 and u.verifyCount <= 5"), 
+//	@NamedQuery(name = User.FIND_UNWELCOMED, query = "select u from User u where u.welcomed = false and u.welcomeErrors <= 3"), 
+//})
 public class User implements Serializable {
     public static final String FIND_BY_EMAIL = "User.findByEmail";
     public static final String COUNT_EMAIL = "User.countEmail";
@@ -42,8 +28,8 @@ public class User implements Serializable {
 	public static final String FIND_UNVERIFIED = "User.findUnverified";
 	public static final String FIND_UNWELCOMED = "User.findUnwelcomed";
 
-    @Id
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
+//    @Id
+//    @GeneratedValue(strategy=GenerationType.IDENTITY)
     private Long id;
 
     @NotNull(message="{email.required}")
@@ -70,15 +56,15 @@ public class User implements Serializable {
     private String optoutKey;
 	private boolean optout;
     //
-    @Temporal(TemporalType.TIMESTAMP)
-	private Date updateDate;
-    @Temporal(TemporalType.TIMESTAMP)
-	private Date createDate;
+//    @Temporal(TemporalType.TIMESTAMP)
+	private LocalDate updateDate;
+//    @Temporal(TemporalType.TIMESTAMP)
+	private LocalDate createDate;
     private Locale locale;
 	private String[] titles;
     
-    @ManyToMany(fetch=FetchType.EAGER)
-    @JoinTable(name="user_roles")
+//    @ManyToMany(fetch=FetchType.EAGER)
+//    @JoinTable(name="user_roles")
     private List<Role> roles;
     
     public User() {
@@ -104,19 +90,20 @@ public class User implements Serializable {
 	private void init() {
 		this.verified = false;
 		this.verifyKey = UUID.randomUUID().toString();
-		this.createDate = new Date();
+		this.createDate = LocalDate.now();
 		
-		Calendar firstDay = Calendar.getInstance();
-		int year = firstDay.get(Calendar.YEAR);
-		int dayOfYear = firstDay.get(Calendar.DAY_OF_YEAR);
-		dayOfYear = dayOfYear - 4;
-		if ( dayOfYear < 1 ) {
-			year = year - 1;
-			dayOfYear = 365 + dayOfYear;
-		}
-		firstDay.set(Calendar.YEAR, year);
-		firstDay.set(Calendar.DAY_OF_YEAR, dayOfYear);
-		this.updateDate = firstDay.getTime();
+//		Calendar firstDay = Calendar.getInstance();
+//		int year = firstDay.get(Calendar.YEAR);
+//		int dayOfYear = firstDay.get(Calendar.DAY_OF_YEAR);
+//		dayOfYear = dayOfYear - 4;
+//		if ( dayOfYear < 1 ) {
+//			year = year - 1;
+//			dayOfYear = 365 + dayOfYear;
+//		}
+//		firstDay.set(Calendar.YEAR, year);
+//		firstDay.set(Calendar.DAY_OF_YEAR, dayOfYear);
+
+		this.updateDate = LocalDate.now().minusDays(4);
 		
 		this.verifyErrors = 0;
 	}
@@ -267,16 +254,16 @@ public class User implements Serializable {
 	public void setOptout(boolean optout) {
 		this.optout = optout;
 	}
-	public Date getUpdateDate() {
+	public LocalDate getUpdateDate() {
 		return updateDate;
 	}
-	public void setUpdateDate(Date updateDate) {
+	public void setUpdateDate(LocalDate updateDate) {
 		this.updateDate = updateDate;
 	}
-	public Date getCreateDate() {
+	public LocalDate getCreateDate() {
 		return createDate;
 	}
-	public void setCreateDate(Date createDate) {
+	public void setCreateDate(LocalDate createDate) {
 		this.createDate = createDate;
 	}
 	public Locale getLocale() {

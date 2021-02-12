@@ -1,6 +1,6 @@
 package opca.view;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeName;
@@ -9,13 +9,13 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 public class CaseView implements Comparable<CaseView> {
 	private String title;
 	private String citation;
-	private Date opinionDate;
+	private LocalDate opinionDate;
 	private int countReferringOpinions;
 	private int score;
 	private int importance;
 	
 	public CaseView() {}
-	public CaseView(String title, String citation, Date opinionDate, int countReferringOpinions) {
+	public CaseView(String title, String citation, LocalDate opinionDate, int countReferringOpinions) {
 		this.title = title;
 		this.citation = citation;
 		this.opinionDate = opinionDate;
@@ -28,7 +28,7 @@ public class CaseView implements Comparable<CaseView> {
 	public String getCitation() {
 		return citation;
 	}
-	public Date getOpinionDate() {
+	public LocalDate getOpinionDate() {
 		return opinionDate;
 	}
 	@JsonIgnore

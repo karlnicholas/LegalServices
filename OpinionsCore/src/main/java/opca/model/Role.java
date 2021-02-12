@@ -2,27 +2,19 @@ package opca.model;
 
 import java.io.Serializable;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-
 @SuppressWarnings("serial")
-@Entity
-@NamedQueries({
-    @NamedQuery(name = Role.LIST_AVAILABLE, query = "select r from Role r"), 
-})
+//@Entity
+//@NamedQueries({
+//    @NamedQuery(name = Role.LIST_AVAILABLE, query = "select r from Role r"), 
+//})
 public class Role implements Serializable {
     public static final String LIST_AVAILABLE = "Role.listAvailable";
 
-    @Id
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
+//    @Id
+//    @GeneratedValue(strategy=GenerationType.IDENTITY)
     private Long id;
     
-    @Column(unique = true, nullable=false)
+//    @Column(unique = true, nullable=false)
     private String role;
 
     /**

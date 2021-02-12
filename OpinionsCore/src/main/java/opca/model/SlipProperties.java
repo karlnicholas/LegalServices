@@ -1,64 +1,62 @@
 package opca.model;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.Set;
 
-import javax.persistence.*;
-
-@NamedQueries({
-	@NamedQuery(name="SlipProperties.findAll", 
-		query="select p from SlipProperties p join fetch p.slipOpinion"), 
-})
-@Entity
+//@NamedQueries({
+//	@NamedQuery(name="SlipProperties.findAll", 
+//		query="select p from SlipProperties p join fetch p.slipOpinion"), 
+//})
+//@Entity
 @SuppressWarnings("serial")
 public class SlipProperties implements Serializable {
 	// does this space count? Don't think so, row allocation is dynamic anyway.
-	@Id
+//	@Id
 	private Integer opinionId;
-    @OneToOne(fetch=FetchType.LAZY) @MapsId
+//    @OneToOne(fetch=FetchType.LAZY) @MapsId
 	private SlipOpinion slipOpinion; 
-	@Column(columnDefinition="varchar(15)")
+//	@Column(columnDefinition="varchar(15)")
 	private String court;
-	@Column(columnDefinition = "varchar(31)")
+//	@Column(columnDefinition = "varchar(31)")
     private String fileName;
-	@Column(columnDefinition = "varchar(7)")
+//	@Column(columnDefinition = "varchar(7)")
 	private String fileExtension;
-    @Column(columnDefinition="varchar(63)")
+//    @Column(columnDefinition="varchar(63)")
     private String trialCourtCase;
-    @Column(columnDefinition="varchar(255)")
+//    @Column(columnDefinition="varchar(255)")
     private String caseCaption;    
-    @Column(columnDefinition="varchar(31)")
+//    @Column(columnDefinition="varchar(31)")
     private String division;
-    @Column(columnDefinition="varchar(15)")
+//    @Column(columnDefinition="varchar(15)")
     private String caseType;
-    private Date filingDate;
-    private Date completionDate;
-    @Column(columnDefinition="varchar(127)")
+    private LocalDate filingDate;
+    private LocalDate completionDate;
+//    @Column(columnDefinition="varchar(127)")
 	private String disposition; 
-	private Date date; 
-    @Column(columnDefinition="varchar(255)")
+	private LocalDate date; 
+//    @Column(columnDefinition="varchar(255)")
 	private String dispositionDescription; 
-    @Column(columnDefinition="varchar(31)")
+//    @Column(columnDefinition="varchar(31)")
 	private String publicationStatus; 
-    @Column(columnDefinition="varchar(63)")
+//    @Column(columnDefinition="varchar(63)")
 	private String author; 
-    @Column(columnDefinition="varchar(255)")
+//    @Column(columnDefinition="varchar(255)")
 	private String participants; 
-    @Column(columnDefinition="varchar(255)")
+//    @Column(columnDefinition="varchar(255)")
 	private String caseCitation;
-    @Column(columnDefinition="varchar(127)")
+//    @Column(columnDefinition="varchar(127)")
     private String trialCourtName; 
-    @Column(columnDefinition="varchar(127)")
+//    @Column(columnDefinition="varchar(127)")
     private String county; 
-    @Column(columnDefinition="varchar(63)")
+//    @Column(columnDefinition="varchar(63)")
     private String trialCourtCaseNumber; 
-    @Column(columnDefinition="varchar(127)")
+//    @Column(columnDefinition="varchar(127)")
     private String trialCourtJudge; 
-    private Date trialCourtJudgmentDate;
-    @OneToMany(mappedBy="slipProperties")
+    private LocalDate trialCourtJudgmentDate;
+//    @OneToMany(mappedBy="slipProperties")
     private Set<PartyAttorneyPair> partyAttorneyPairs;
-    @Column(columnDefinition="varchar(4094)")	// length of 2 bytes for lengths greater than 255
+//    @Column(columnDefinition="varchar(4094)")	// length of 2 bytes for lengths greater than 255
     private String summary;
 
 	public String getSummary() {
@@ -146,16 +144,16 @@ public class SlipProperties implements Serializable {
 		if ( caseType != null && caseType.length() > 15 ) caseType = caseType.substring(0, 15);
 		this.caseType = caseType;
 	}
-	public Date getFilingDate() {
+	public LocalDate getFilingDate() {
 		return filingDate;
 	}
-	public void setFilingDate(Date filingDate) {
+	public void setFilingDate(LocalDate filingDate) {
 		this.filingDate = filingDate;
 	}
-	public Date getCompletionDate() {
+	public LocalDate getCompletionDate() {
 		return completionDate;
 	}
-	public void setCompletionDate(Date completionDate) {
+	public void setCompletionDate(LocalDate completionDate) {
 		this.completionDate = completionDate;
 	}
 	public String getDisposition() {
@@ -165,10 +163,10 @@ public class SlipProperties implements Serializable {
 		if ( disposition != null && disposition.length() > 127 ) disposition = disposition.substring(0, 127);
 		this.disposition = disposition;
 	}
-	public Date getDate() {
+	public LocalDate getDate() {
 		return date;
 	}
-	public void setDate(Date date) {
+	public void setDate(LocalDate date) {
 		this.date = date;
 	}
 	public String getDispositionDescription() {
@@ -234,10 +232,10 @@ public class SlipProperties implements Serializable {
 		if ( trialCourtName != null && trialCourtName.length() > 127 ) trialCourtName = trialCourtName.substring(0, 127);
 		this.trialCourtJudge = trialCourtJudge;
 	}
-	public Date getTrialCourtJudgmentDate() {
+	public LocalDate getTrialCourtJudgmentDate() {
 		return trialCourtJudgmentDate;
 	}
-	public void setTrialCourtJudgmentDate(Date trialCourtJudgmentDate) {
+	public void setTrialCourtJudgmentDate(LocalDate trialCourtJudgmentDate) {
 		this.trialCourtJudgmentDate = trialCourtJudgmentDate;
 	} 
 	public Set<PartyAttorneyPair> getPartyAttorneyPairs() {

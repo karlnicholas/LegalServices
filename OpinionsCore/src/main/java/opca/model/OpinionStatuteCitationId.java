@@ -2,9 +2,7 @@ package opca.model;
 
 import java.io.Serializable;
 
-import javax.persistence.Embeddable;
-
-@Embeddable
+//@Embeddable
 @SuppressWarnings("serial")
 public class OpinionStatuteCitationId implements Serializable {
 	private Integer statuteId;
