@@ -11,20 +11,16 @@ import org.springframework.stereotype.Service;
 
 import opca.mailer.SendGridMailer;
 import opca.model.User;
-import opca.view.OpinionView;
 
 //@Stateless
 @Service
 public class SystemService {
 	private final UserService userService;
-	private final OpinionViewSingleton opinionViewSingleton;
 	private final SendGridMailer sendGridMailer;
     private Logger logger = LoggerFactory.getLogger(SystemService.class);
-    public SystemService(UserService userService, OpinionViewSingleton opinionViewSingleton,
-			SendGridMailer sendGridMailer) {
+    public SystemService(UserService userService, SendGridMailer sendGridMailer) {
 		super();
 		this.userService = userService;
-		this.opinionViewSingleton = opinionViewSingleton;
 		this.sendGridMailer = sendGridMailer;
 	}
 

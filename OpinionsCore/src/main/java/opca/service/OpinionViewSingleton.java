@@ -1,9 +1,7 @@
 package opca.service;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -100,24 +98,20 @@ public class OpinionViewSingleton {
 		return opinionViewCopy;
 	}
 	
-	public Date dateParam(String startDate) {
-    	SimpleDateFormat lform = new SimpleDateFormat("yyyy-MM-dd");
-    	Date dateParam = null;
+	public LocalDate dateParam(String startDate) {
+    	LocalDate dateParam = null;
     	if ( startDate != null && !startDate.trim().isEmpty() ) {
-    		try {
-				dateParam = lform.parse(startDate);
-			} catch (ParseException ignored) {
-			}
+				dateParam = LocalDate.parse(startDate);
     	}
     	return dateParam;
 	}
 	
 	public int currentDateIndex(String startDate) {
-		Date dateParam = dateParam(startDate);
+		LocalDate dateParam = dateParam(startDate);
     	int i=0;
     	int currentIndex = 0;
-    	Date dateRecent = opinionViewData.getReportDates().get(0)[0];    	
-    	for ( Date[] dates: opinionViewData.getReportDates() ) {
+    	LocalDate dateRecent = opinionViewData.getReportDates().get(0)[0];    	
+    	for ( LocalDate[] dates: opinionViewData.getReportDates() ) {
     		if ( dates[0] == null || dates[1] == null ) continue;  
     		if ( dateParam != null ) {
 	    		if ( dateParam.compareTo(dateRecent) < 0 ) {
@@ -134,7 +128,7 @@ public class OpinionViewSingleton {
 		return opinionViewData.isReady();
 	}
 
-	public List<Date[]> getReportDates() {
+	public List<LocalDate[]> getReportDates() {
 		return opinionViewData.getReportDates();
 	}
 

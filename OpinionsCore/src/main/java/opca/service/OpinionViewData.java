@@ -1,8 +1,8 @@
 package opca.service;
 
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import org.springframework.stereotype.Component;
@@ -11,7 +11,7 @@ import opca.view.OpinionView;
 
 @Component
 public class OpinionViewData {
-    private List<Date[]> reportDates;
+    private List<LocalDate[]> reportDates;
     private List<OpinionView> opinionViews;    
 	private List<String[]> stringDateList = new ArrayList<>();
 	public List<String[]> getStringDateList() {
@@ -20,10 +20,10 @@ public class OpinionViewData {
 	private boolean ready = false;
 	private boolean loaded = false;
 	
-	public synchronized List<Date[]> getReportDates() {
+	public synchronized List<LocalDate[]> getReportDates() {
 		return reportDates;
 	}
-	public synchronized void setReportDates(List<Date[]> reportDates) {
+	public synchronized void setReportDates(List<LocalDate[]> reportDates) {
 		this.reportDates = reportDates;
 	}
 	public synchronized List<OpinionView> getOpinionViews() {
@@ -48,10 +48,10 @@ public class OpinionViewData {
 		stringDateList.clear();
 		SimpleDateFormat lform = new SimpleDateFormat("yyyy-MM-dd");
 		SimpleDateFormat sform = new SimpleDateFormat("MMM dd");
-		List<Date[]> reportDates = getReportDates();
+		List<LocalDate[]> reportDates = getReportDates();
 		if ( reportDates == null )
 			return;
-		for ( Date[] dates: reportDates ) {
+		for ( LocalDate[] dates: reportDates ) {
 			//TODO fix this dates having null in the dates list
 			if ( dates[0] == null || dates[1] == null ) continue;  
 			String[] e = new String[2]; 

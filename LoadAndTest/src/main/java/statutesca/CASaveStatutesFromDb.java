@@ -12,6 +12,8 @@ import java.util.*;
 
 import javax.xml.bind.JAXBException;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import statutes.SectionNumber;
 import statutes.StatuteRange;
 import statutes.StatutesLeaf;
@@ -47,7 +49,7 @@ public class CASaveStatutesFromDb extends CAProcessDb {
 			}
 			try {
 				StatutesRoot statutesRoot = parseLawCode(lawCode.getCode(), this::processStatutesLeaf);
-				filePaths.add(processFile(statutesRoot));
+				filePaths.add(processJsonFile(statutesRoot));
 			} catch (Exception ex) {
 				System.out.println(lawCode.getCode());
 				throw ex;
@@ -107,4 +109,14 @@ public class CASaveStatutesFromDb extends CAProcessDb {
 		// System.out.println(c.getTitle());
 	}
 
+	Path processJsonFile(StatutesRoot statutesRoot) throws Exception {
+		ObjectMapper mapper = new ObjectMapper();
+		Path outputFile = Paths.get(lawCodesPath.toString(), "\\", statutesRoot.getTitle(false) + ".json");
+		try ( OutputStream os = Files.newOutputStream(outputFile) ) {
+			mapper.writeValue(os, statutesRoot);
+		}
+
+		return outputFile;
+		// System.out.println(c.getTitle());
+	}
 }

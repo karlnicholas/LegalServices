@@ -9,6 +9,8 @@ import java.util.*;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import statutes.SectionNumber;
 import statutes.StatutesBaseClass;
 import statutes.StatutesLeaf;
@@ -235,6 +237,7 @@ public class CAStatutesApiImpl implements IStatutesApi {
 	}
 	@Override
 	public boolean loadStatutes() {
+		ObjectMapper mapper = new ObjectMapper();
 		statutes = new ArrayList<StatutesRoot>();
 		try {
 			String resourcePath = System.getenv("californiastatutesloc");
@@ -246,12 +249,13 @@ public class CAStatutesApiImpl implements IStatutesApi {
 			for ( String file: files ) {
 				Path filePath = Paths.get(resourcePath + "/" + file );
 				logger.info("Processing " + filePath );
-				ObjectInputStream ois = new ObjectInputStream( Files.newInputStream(filePath) );
-				StatutesRoot c = (StatutesRoot)ois.readObject();
+//				ObjectInputStream ois = new ObjectInputStream( Files.newInputStream(filePath) );
+//				StatutesRoot c = (StatutesRoot)ois.readObject();
+				StatutesRoot c = mapper.readValue(Files.newInputStream(filePath), StatutesRoot.class);
 				c.rebuildParentReferences(null);
 				statutes.add( c );
 			}
-		} catch (ClassNotFoundException | IOException e) {
+		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
 		Collections.sort( statutes );
