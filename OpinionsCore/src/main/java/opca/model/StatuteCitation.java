@@ -159,6 +159,10 @@ public class StatuteCitation implements Comparable<StatuteCitation>, Serializabl
     public Integer getId() {
     	return id;
     }
+	public void setId(Integer id) {
+		this.id = id;
+	}
+
 	@Override
 	public int hashCode() {
 		if ( statuteKey == null ) System.out.println("id: statuteKey: " + id +":" + statuteKey + ":" + referringOpinions.size());

@@ -515,7 +515,7 @@ if ( !statuteCitation.toString().equals("pen:245") ) {
     	if ( parts[2].length() == 0 ) return null;
     	for ( String appellateSet: OpinionKey.appellateSets ) {
         	if ( parts[1].equalsIgnoreCase(appellateSet) ) {
-        		return new OpinionBase(opinionBase, parts[0], parts[1], parts[2]);
+        		return new OpinionBase(DTYPES.OPINIONBASE, opinionBase, parts[0], parts[1], parts[2]);
         	}
     	}
         return null;

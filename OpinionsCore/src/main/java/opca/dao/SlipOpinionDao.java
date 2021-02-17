@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
+import opca.model.DTYPES;
 import opca.model.OpinionBase;
 import opca.model.OpinionKey;
 import opca.model.OpinionStatuteCitation;
@@ -217,7 +218,7 @@ public class SlipOpinionDao {
 					resultSet.getInt("oc_volume"), 
 					resultSet.getInt("oc_vset")
 				);
-			OpinionBase opinionCitation = new OpinionBase(opinionKey);
+			OpinionBase opinionCitation = new OpinionBase(DTYPES.OPINIONBASE, opinionKey);
 			OpinionBase finalOpinionCitation = slipOpinion.getOpinionCitations().stream().filter(oc->oc.equals(opinionCitation)).findAny().orElseGet(
 				()->{
 					try {

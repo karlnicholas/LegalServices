@@ -35,25 +35,25 @@ public class RoleSingletonBean {
 	//private constructor to avoid client applications to use constructor
     @PostConstruct
     protected void postConstruct(){
-        allRoles = roleDao.listAvailable();
-        // initialize if needed
-        if ( allRoles.size() == 0 ) {
-        	Role userRole = new Role();
-        	userRole.setRole("USER");
-        	roleDao.save(userRole);
-        	allRoles.add(userRole);
-        	Role adminRole = new Role();
-        	adminRole.setRole("ADMIN");
-        	roleDao.save(adminRole);
-        	allRoles.add(adminRole);
-        	// might as well add an administrator now as well.
-        	User admin = new User("karl.nicholas@outlook.com", true, "N3sPSBxOjdhCygeA8LkqtBskJ+v8TR0do4zJRTIQ4Aw=", Locale.US);
-        	admin.setFirstName("Karl");
-        	admin.setLastName("Nicholas");
-        	admin.setVerified(true);
-        	admin.setRoles(allRoles);
-        	userDao.save(admin);
-        }
+//        allRoles = roleDao.listAvailable();
+//        // initialize if needed
+//        if ( allRoles.size() == 0 ) {
+//        	Role userRole = new Role();
+//        	userRole.setRole("USER");
+//        	roleDao.save(userRole);
+//        	allRoles.add(userRole);
+//        	Role adminRole = new Role();
+//        	adminRole.setRole("ADMIN");
+//        	roleDao.save(adminRole);
+//        	allRoles.add(adminRole);
+//        	// might as well add an administrator now as well.
+//        	User admin = new User("karl.nicholas@outlook.com", true, "N3sPSBxOjdhCygeA8LkqtBskJ+v8TR0do4zJRTIQ4Aw=", Locale.US);
+//        	admin.setFirstName("Karl");
+//        	admin.setLastName("Nicholas");
+//        	admin.setVerified(true);
+//        	admin.setRoles(allRoles);
+//        	userDao.save(admin);
+//        }
     }
 
     /**

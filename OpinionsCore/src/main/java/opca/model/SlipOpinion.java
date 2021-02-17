@@ -57,13 +57,14 @@ public class SlipOpinion extends OpinionBase {
 
 	public SlipOpinion() {
     	super();
+    	setDtype(DTYPES.SLIPOPINION);
     }
 	public SlipOpinion(SlipOpinion slipOpinion) {
 		super(slipOpinion);
 		this.slipProperties = new SlipProperties(this, slipOpinion);
     }
 	public SlipOpinion(String fileName, String fileExtension, String title, LocalDate opinionDate, String court, String searchUrl) {
-		super(null, title, opinionDate, court);
+		super(DTYPES.SLIPOPINION, null, title, opinionDate, court);
 		setOpinionKey(new OpinionKey("1 Slip.Op " + generateOpinionKey(fileName)));
 		slipProperties = new SlipProperties(this, fileName, fileExtension, court);
 		this.searchUrl = searchUrl;

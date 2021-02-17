@@ -27,7 +27,7 @@ public class OpinionStatuteCitationDao {
 			sb.append(")");
 			PreparedStatement ps = conn.prepareStatement(sb.toString());
 			for ( int i=0; i < opinionIds.size(); ++i ) {
-				ps.setInt(i, opinionIds.get(i));
+				ps.setInt((i+1), opinionIds.get(i));
 			}
 			return ps;
 		});
@@ -38,9 +38,9 @@ public class OpinionStatuteCitationDao {
 			PreparedStatement ps = conn.prepareStatement(
 					"insert into opinionstatutecitation(countreferences, opinionbase_id, statutecitation_id) " +
 					"values(?, ?, ?)");
-			ps.setInt(0, opinionStatuteCitation.getCountReferences());
-			ps.setInt(1, opinionStatuteCitation.getOpinionBase().getId());
-			ps.setObject(2, opinionStatuteCitation.getStatuteCitation().getId());
+			ps.setInt(1, opinionStatuteCitation.getCountReferences());
+			ps.setInt(2, opinionStatuteCitation.getOpinionBase().getId());
+			ps.setObject(3, opinionStatuteCitation.getStatuteCitation().getId());
 			return ps;
 		});
 	}
@@ -49,7 +49,7 @@ public class OpinionStatuteCitationDao {
 		jdbcTemplate.update((conn)->{
 			PreparedStatement ps = conn.prepareStatement(
 					"update opinionstatutecitation set countreferences = ?");
-			ps.setInt(0, opinionStatuteCitation.getCountReferences());
+			ps.setInt(1, opinionStatuteCitation.getCountReferences());
 			return ps;
 		});
 	}

@@ -74,19 +74,20 @@ public class OpinionBase implements Comparable<OpinionBase>, Serializable {
     	this.referringOpinions = opinionBase.referringOpinions;
     	this.countReferringOpinions = opinionBase.countReferringOpinions;
     }
-	public OpinionBase(OpinionKey opinionKey, String title, LocalDate opinionDate, String court) {
+	public OpinionBase(DTYPES dtype, OpinionKey opinionKey, String title, LocalDate opinionDate, String court) {
+		this.dtype = dtype;
 		this.opinionKey = opinionKey;
 		setTitle(title);
     	this.opinionDate = opinionDate;
     	this.newlyLoadedOpinion = true;
     }
 	// making a new OpinionBase from only a citation.
-	public OpinionBase(int volume, int vset, int page) {
-		this(new OpinionKey(volume, vset, page), null, null, null);
+	public OpinionBase(DTYPES dtype, int volume, int vset, int page) {
+		this(dtype, new OpinionKey(volume, vset, page), null, null, null);
 	}
 	// making a new OpinionBase from only a citation.
-    public OpinionBase(OpinionBase opinionBase, String volume, String vset, String page) {
-    	this(new OpinionKey(volume, vset, page));
+    public OpinionBase(DTYPES dtype, OpinionBase opinionBase, String volume, String vset, String page) {
+    	this(dtype, new OpinionKey(volume, vset, page));
     	addReferringOpinion(opinionBase);
     	this.newlyLoadedOpinion = false;
     }
@@ -95,7 +96,8 @@ public class OpinionBase implements Comparable<OpinionBase>, Serializable {
 	 * Only meant for comparison purposes.
 	 * @param opinionKey for opinion
 	 */
-    public OpinionBase(OpinionKey opinionKey) {
+    public OpinionBase(DTYPES dtype, OpinionKey opinionKey) {
+    	this.dtype = dtype;
         this.opinionKey = opinionKey;
     }
 	/**

@@ -2,6 +2,7 @@ package opca.parser;
 
 import java.util.TreeSet;
 
+import opca.model.DTYPES;
 import opca.model.OpinionBase;
 import opca.model.OpinionKey;
 import opca.model.StatuteCitation;
@@ -34,7 +35,7 @@ public class ParsedOpinionCitationSet {
 	}
     
 	public OpinionBase findOpinion(OpinionKey key) {
-		OpinionBase tempOpinion = new OpinionBase(key);
+		OpinionBase tempOpinion = new OpinionBase(DTYPES.OPINIONBASE, key);
         if ( opinionTable.contains(tempOpinion))
         	return opinionTable.floor(tempOpinion);
         else return null;

@@ -3,6 +3,7 @@ package opca.dao;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.List;
@@ -10,8 +11,11 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Service;
 
+import opca.model.DTYPES;
 import opca.model.OpinionBase;
 import opca.model.OpinionStatuteCitation;
 import opca.model.StatuteCitation;
@@ -40,7 +44,7 @@ public class StatuteCitationDao {
 			sb.append(")");
 			PreparedStatement ps = conn.prepareStatement(sb.toString());
 			for ( int i=0; i < keys.size(); ++i ) {
-				ps.setInt(i*2, keys.get(i));
+				ps.setInt(i+1, keys.get(i));
 			}
 			return ps;
 		}, this::mapStatuteCitation).collect(Collectors.toList());
@@ -78,8 +82,8 @@ public class StatuteCitationDao {
 			sb.append(")");
 			PreparedStatement ps = conn.prepareStatement(sb.toString());
 			for ( int i=0; i < statuteKeys.size(); ++i ) {
-				ps.setString(i*2, statuteKeys.get(i).getLawCode());
-				ps.setString(i*2+1, statuteKeys.get(i).getSectionNumber());
+				ps.setString((i+1)*2, statuteKeys.get(i).getLawCode());
+				ps.setString((i+1)*2+1, statuteKeys.get(i).getSectionNumber());
 			}
 			return ps;
 		}, this::mapStatuteCitationsWithReferringOpinions).collect(Collectors.groupingBy(StatuteCitation::getId, Collectors.reducing((sc1, sc2)->{
@@ -94,6 +98,7 @@ public class StatuteCitationDao {
 		statuteCitation.setDesignated(resultSet.getBoolean("s_designated"));
 		statuteCitation.setReferringOpinions(new HashSet<>());
 		OpinionBase opinionBaseReferring = new OpinionBase(
+				DTYPES.OPINIONBASE, 
 				resultSet.getInt("obro_page"), 
 				resultSet.getInt("obro_volume"), 
 				resultSet.getInt("obro_vset"));
@@ -106,13 +111,15 @@ public class StatuteCitationDao {
 		return statuteCitation;
 	}
 	public void insert(StatuteCitation statute) {
+		KeyHolder keyHolder = new GeneratedKeyHolder();
 		jdbcTemplate.update((conn)->{
 			PreparedStatement ps = conn.prepareStatement(
-					"insert into statutecitation(designated, lawcode, sectionnumber) values(?, ?, ?)");
-			ps.setBoolean(0, statute.getDesignated());
-			ps.setString(1, statute.getStatuteKey().getLawCode());
-			ps.setObject(2, statute.getStatuteKey().getSectionNumber());
+					"insert into statutecitation(designated, lawcode, sectionnumber) values(?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
+			ps.setBoolean(1, statute.getDesignated());
+			ps.setString(2, statute.getStatuteKey().getLawCode());
+			ps.setObject(3, statute.getStatuteKey().getSectionNumber());
 			return ps;
-		});
+		}, keyHolder);
+		statute.setId(keyHolder.getKey().intValue());
 	}
 }

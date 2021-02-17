@@ -6,7 +6,6 @@ import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.builder.SpringApplicationBuilder;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import opca.parser.OpinionScraperInterface;
@@ -17,7 +16,6 @@ import statutes.service.client.StatutesServiceClientImpl;
 
 @SpringBootApplication(scanBasePackages = {"opca", "update"})
 @ConditionalOnProperty(name = "TestOnlineUpdates.active", havingValue = "true", matchIfMissing = false)
-@EnableJpaRepositories(basePackages = {"opca"})
 @EnableTransactionManagement
 public class TestOnlineUpdates implements ApplicationRunner {
 	public static void main(String... args) {

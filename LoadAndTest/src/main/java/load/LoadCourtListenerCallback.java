@@ -15,6 +15,7 @@ import org.jsoup.select.Elements;
 
 import loadmodel.LoadOpinion;
 import opca.memorydb.CitationStore;
+import opca.model.DTYPES;
 import opca.model.OpinionBase;
 import opca.model.OpinionKey;
 import opca.parser.OpinionDocumentParser;
@@ -119,7 +120,7 @@ public class LoadCourtListenerCallback implements CourtListenerCallback {
 					// name = name.toLowerCase().replace(". ",
 					// ".").replace("app.", "App.").replace("cal.",
 					// "Cal.").replace("supp.", "Supp.");
-					OpinionBase opinionBase = new OpinionBase(new OpinionKey(name), op.getCaseName(), op.getDateFiled(), "");
+					OpinionBase opinionBase = new OpinionBase(DTYPES.OPINIONBASE, new OpinionKey(name), op.getCaseName(), op.getDateFiled(), "");
 					//
 		        	OpinionBase existingOpinion = citationStore.findOpinionByOpinion(opinionBase);
 		            if ( existingOpinion != null ) {

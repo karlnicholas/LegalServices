@@ -1,5 +1,7 @@
 package loadmodel;
 
+import java.text.SimpleDateFormat;
+import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.util.Calendar;
 import java.util.regex.Pattern;
@@ -8,6 +10,7 @@ import apimodel.Cluster;
 
 public class LoadOpinion {
 	private static final Pattern pattern = Pattern.compile("/");
+	private static SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 	private Long id;
 	private String citation;
 	private LocalDate dateFiled;
@@ -26,7 +29,16 @@ public class LoadOpinion {
     	clusterSource = cluster.getSource();
     	Calendar cal = Calendar.getInstance();
     	cal.setTime(cluster.getDate_filed());
-		dateFiled = LocalDate.of(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH));
+    	try { 
+    		dateFiled = LocalDate.parse(format.format(cluster.getDate_filed()));
+    	} catch ( DateTimeException ex) {
+    		System.out.println(cal.get(Calendar.YEAR) + ":" + cal.get(Calendar.MONTH) + ":" + cal.get(Calendar.DAY_OF_MONTH));
+    		System.out.println(id);
+    		System.out.println(clusterSource);
+    		System.out.println(cal);
+    		dateFiled = LocalDate.of(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH)-1);
+//    		throw ex;
+    	}
 		String citeOne = cluster.getState_cite_one().replace(". ", "."); 
 		String citeTwo = cluster.getState_cite_two().replace(". ", "."); 
 		String citeThree = cluster.getState_cite_three().replace(". ", ".");

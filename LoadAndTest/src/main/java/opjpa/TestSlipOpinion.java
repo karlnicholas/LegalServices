@@ -11,7 +11,6 @@ import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 //import opca.mailer.EmailInformation;
 import opca.service.OpinionViewSingleton;
@@ -22,7 +21,6 @@ import opca.view.SectionView;
 
 @SpringBootApplication(scanBasePackages = { "opca", "opjpa" })
 @ConditionalOnProperty(name = "TestSlipOpinion.active", havingValue = "true", matchIfMissing = false)
-@EnableJpaRepositories(basePackages = { "opca" })
 public class TestSlipOpinion implements ApplicationRunner {
 
 	Logger logger = Logger.getLogger(TestSlipOpinion.class.getName());
