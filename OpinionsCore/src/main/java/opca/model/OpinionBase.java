@@ -44,6 +44,7 @@ import opca.parser.ParsedOpinionCitationSet;
 //@DiscriminatorColumn(discriminatorType=DiscriminatorType.INTEGER)
 //@Table(indexes= {@Index(columnList = "vset,volume,page")})
 public class OpinionBase implements Comparable<OpinionBase>, Serializable {
+	protected DTYPES dtype;
 //	@Id @GeneratedValue(strategy=GenerationType.IDENTITY)
 	protected Integer id;
 	protected OpinionKey opinionKey;
@@ -341,6 +342,12 @@ public class OpinionBase implements Comparable<OpinionBase>, Serializable {
 	}
 	public void setNewlyLoadedOpinion(boolean newlyLoadedOpinion) {
 		this.newlyLoadedOpinion = newlyLoadedOpinion;
+	}
+	public DTYPES getDtype() {
+		return dtype;
+	}
+	public void setDtype(DTYPES dtype) {
+		this.dtype = dtype;
 	}
 	@Override
 	public String toString() {

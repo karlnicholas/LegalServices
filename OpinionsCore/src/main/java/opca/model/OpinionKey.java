@@ -130,5 +130,14 @@ public class OpinionKey implements Serializable, Comparable<OpinionKey> {
 	public String getVSetAsString() {
 		return appellateSets[vset];
 	}
+	public int getPage() {
+		return page;
+	}
+	public int getVolume() {
+		return volume;
+	}
+	public int getVset() {
+		return vset;
+	}
 }
 

@@ -20,11 +20,13 @@ import opca.model.StatuteCitation;
 
 @Service
 public class SlipOpinionDao {
-	private final JdbcTemplate jdbcTemplate;
 	private final SlipPropertiesDao slipPropertiesDao;
+	private final JdbcTemplate jdbcTemplate;
 
-	public SlipOpinionDao(JdbcTemplate jdbcTemplate, SlipPropertiesDao slipPropertiesDao) {
-		super();
+	public SlipOpinionDao(
+			SlipPropertiesDao slipPropertiesDao, 
+			JdbcTemplate jdbcTemplate
+	) {
 		this.jdbcTemplate = jdbcTemplate;
 		this.slipPropertiesDao = slipPropertiesDao;
 	}
@@ -68,71 +70,9 @@ public class SlipOpinionDao {
 		
 	}
 
-	private SlipOpinion decodeResultSets(ResultSet resultSet, int rowNum) throws SQLException {
-		SlipOpinion slipOpinion = new SlipOpinion(
-				resultSet.getString("filename"), 
-				resultSet.getString("fileextension"), 
-				resultSet.getString("o_title"), 
-				(LocalDate)resultSet.getObject("o_opiniondate"), 
-				"court", 
-				"searchUrl"
-			);
-		slipOpinion.setId(Integer.valueOf(resultSet.getString("o_id")));
-		slipOpinion.setStatuteCitations(new HashSet<>());
-		slipOpinion.setOpinionCitations(new HashSet<>());
-		// do StatuteCitation
-		if ( resultSet.getString("sc_lawcode") != null && resultSet.getString("sc_sectionnumber") != null ) {
-			StatuteCitation statuteCitation = new StatuteCitation(slipOpinion, 
-					resultSet.getString("sc_lawcode"), 
-					resultSet.getString("sc_sectionnumber"));
-			statuteCitation.setDesignated(Boolean.parseBoolean(resultSet.getString("sc_designated")));
-			OpinionStatuteCitation opinionStatuteCitation = new OpinionStatuteCitation(statuteCitation, slipOpinion, 
-					resultSet.getInt("osc_countreferences"));
-			if ( !slipOpinion.getStatuteCitations().contains(opinionStatuteCitation)) {
-				slipOpinion.getStatuteCitations().add(opinionStatuteCitation); 
-			}
-		}
-		if ( resultSet.getRef("oc_page") != null && resultSet.getRef("oc_volume") != null && resultSet.getRef("oc_vset") != null ) {
-			// do OpinionCitation
-			OpinionKey opinionKey = new OpinionKey(
-					resultSet.getInt("oc_page"), 
-					resultSet.getInt("oc_volume"), 
-					resultSet.getInt("oc_vset")
-				);
-			OpinionBase opinionCitation = new OpinionBase(opinionKey);
-			OpinionBase finalOpinionCitation = slipOpinion.getOpinionCitations().stream().filter(oc->oc.equals(opinionCitation)).findAny().orElseGet(
-				()->{
-					try {
-					opinionCitation.setCountReferringOpinions(resultSet.getInt("oc_countreferringopinions"));
-					if ( resultSet.getRef("oc_opiniondate") != null ) {
-						opinionCitation.setOpinionDate((LocalDate)resultSet.getObject("oc_opiniondate"));
-					}
-					opinionCitation.setStatuteCitations(new HashSet<>());
-					slipOpinion.getOpinionCitations().add(opinionCitation); 
-					return opinionCitation;
-					} catch ( Exception e ) {throw new RuntimeException(e);}
-				});
-			// do OpinionCitation->StatuteCitation
-			if ( resultSet.getRef("ocsc_lawcode") != null && resultSet.getRef("ocsc_sectionnumber") != null ) {
-				StatuteCitation statuteCitation = new StatuteCitation(slipOpinion, 
-						resultSet.getString("ocsc_lawcode"), 
-						resultSet.getString("ocsc_sectionnumber"));
-				statuteCitation.setDesignated(Boolean.parseBoolean(resultSet.getString("ocsc_designated")));
-				OpinionStatuteCitation opinionStatuteCitation = new OpinionStatuteCitation(statuteCitation, slipOpinion, 
-						Integer.parseInt(resultSet.getString("ocosc_countreferences")));		
-
-				if ( !finalOpinionCitation.getStatuteCitations().contains(opinionStatuteCitation)) {
-					finalOpinionCitation.getStatuteCitations().add(opinionStatuteCitation); 
-				}
-			}
-		}
-		
-		return slipOpinion;
-	}
-	
-	public List<SlipOpinion> loadAllSlipOpinions() {
+	public List<SlipOpinion> selectAllForView() {
 		// just get all slip opinions
-		List<SlipOpinion> opinions = jdbcTemplate.queryForStream(loadAllSlipOpinionsQuery, this::decodeResultSets)
+		List<SlipOpinion> opinions = jdbcTemplate.queryForStream(loadAllSlipOpinionsQuery, this::decodeSelectForView)
 	        .parallel()
 	        .collect(Collectors.groupingBy(SlipOpinion::getId, Collectors.reducing((sp1, sp2)->{
 					sp1.mergePublishedOpinion(sp2);
@@ -148,13 +88,12 @@ public class SlipOpinionDao {
 		return opinions;
 	}
 	
-	public List<SlipOpinion> loadSlipOpinionsForKeys(List<OpinionKey> opinionKeys) {
+	public List<SlipOpinion> selectFromKeysForView(List<OpinionKey> opinionKeys) {
 		// just get all slip opinions
 		StringBuilder sb = new StringBuilder(loadSlipOpinionsForKeysQuery);
 		sb.append("(");
 		for ( int i=0; i < opinionKeys.size(); ++i) {
-			sb.append("?");
-			sb.append(",");
+			sb.append("?,");
 		}
 		sb.deleteCharAt(sb.length()-1);
 		sb.append(")");
@@ -162,7 +101,7 @@ public class SlipOpinionDao {
 			for ( int i=0; i < opinionKeys.size(); ++i ) {
 				preparedStatement.setString(i, opinionKeys.get(i).getVSetAsString());
 			}
-		}, this::decodeResultSets)
+		}, this::decodeSelectForView)
 	        .parallel()
 	        .collect(Collectors.groupingBy(SlipOpinion::getId, Collectors.reducing((sp1, sp2)->{
 					sp1.mergePublishedOpinion(sp2);
@@ -247,4 +186,66 @@ public class SlipOpinionDao {
 			"where o.dtype=-1344462334 and o_id in " + 
 			"";
 
+	private SlipOpinion decodeSelectForView(ResultSet resultSet, int rowNum) throws SQLException {
+		SlipOpinion slipOpinion = new SlipOpinion(
+				resultSet.getString("filename"), 
+				resultSet.getString("fileextension"), 
+				resultSet.getString("o_title"), 
+				(LocalDate)resultSet.getObject("o_opiniondate"), 
+				"court", 
+				"searchUrl"
+			);
+		slipOpinion.setId(resultSet.getInt("o_id"));
+		slipOpinion.setStatuteCitations(new HashSet<>());
+		slipOpinion.setOpinionCitations(new HashSet<>());
+		// do StatuteCitation
+		if ( resultSet.getString("sc_lawcode") != null && resultSet.getString("sc_sectionnumber") != null ) {
+			StatuteCitation statuteCitation = new StatuteCitation(slipOpinion, 
+					resultSet.getString("sc_lawcode"), 
+					resultSet.getString("sc_sectionnumber"));
+			statuteCitation.setDesignated(Boolean.parseBoolean(resultSet.getString("sc_designated")));
+			OpinionStatuteCitation opinionStatuteCitation = new OpinionStatuteCitation(statuteCitation, slipOpinion, 
+					resultSet.getInt("osc_countreferences"));
+			if ( !slipOpinion.getStatuteCitations().contains(opinionStatuteCitation)) {
+				slipOpinion.getStatuteCitations().add(opinionStatuteCitation); 
+			}
+		}
+		if ( resultSet.getRef("oc_page") != null && resultSet.getRef("oc_volume") != null && resultSet.getRef("oc_vset") != null ) {
+			// do OpinionCitation
+			OpinionKey opinionKey = new OpinionKey(
+					resultSet.getInt("oc_page"), 
+					resultSet.getInt("oc_volume"), 
+					resultSet.getInt("oc_vset")
+				);
+			OpinionBase opinionCitation = new OpinionBase(opinionKey);
+			OpinionBase finalOpinionCitation = slipOpinion.getOpinionCitations().stream().filter(oc->oc.equals(opinionCitation)).findAny().orElseGet(
+				()->{
+					try {
+					opinionCitation.setCountReferringOpinions(resultSet.getInt("oc_countreferringopinions"));
+					if ( resultSet.getRef("oc_opiniondate") != null ) {
+						opinionCitation.setOpinionDate((LocalDate)resultSet.getObject("oc_opiniondate"));
+					}
+					opinionCitation.setStatuteCitations(new HashSet<>());
+					slipOpinion.getOpinionCitations().add(opinionCitation); 
+					return opinionCitation;
+					} catch ( Exception e ) {throw new RuntimeException(e);}
+				});
+			// do OpinionCitation->StatuteCitation
+			if ( resultSet.getRef("ocsc_lawcode") != null && resultSet.getRef("ocsc_sectionnumber") != null ) {
+				StatuteCitation statuteCitation = new StatuteCitation(slipOpinion, 
+						resultSet.getString("ocsc_lawcode"), 
+						resultSet.getString("ocsc_sectionnumber"));
+				statuteCitation.setDesignated(Boolean.parseBoolean(resultSet.getString("ocsc_designated")));
+				OpinionStatuteCitation opinionStatuteCitation = new OpinionStatuteCitation(statuteCitation, slipOpinion, 
+						resultSet.getInt("ocosc_countreferences"));		
+
+				if ( !finalOpinionCitation.getStatuteCitations().contains(opinionStatuteCitation)) {
+					finalOpinionCitation.getStatuteCitations().add(opinionStatuteCitation); 
+				}
+			}
+		}
+		
+		return slipOpinion;
+	}
+	
 }

@@ -59,14 +59,14 @@ public class LoadHistoricalOpinions {
 	    			opinionStatuteCitations.add(statuteCitation);
 	    		}
     		}
-    		opinionBaseDao.save(opinion);
+    		opinionBaseDao.insert(opinion);
     	}
 
     	for(StatuteCitation statute: citationStore.getAllStatutes() ) {
-    		statuteCitationDao.save(statute);
+    		statuteCitationDao.insert(statute);
     	}
     	for(OpinionStatuteCitation opinionStatuteCitation: opinionStatuteCitations ) {
-    		opinionStatuteCitationRepoistory.save(opinionStatuteCitation);
+    		opinionStatuteCitationRepoistory.insert(opinionStatuteCitation);
     	}
    	
     }

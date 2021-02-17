@@ -1,7 +1,7 @@
 package opinionsweb.controller;
 
+import java.time.LocalDate;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 
 import org.springframework.http.MediaType;
@@ -36,7 +36,7 @@ public class OpinionsController {
 	    	if ( startDate != null ) {
 	        	currentIndex = opinionViewSingleton.currentDateIndex(startDate);
 	    	}
-	    	Date[] dates = opinionViewSingleton.getReportDates().get(currentIndex);
+	    	LocalDate[] dates = opinionViewSingleton.getReportDates().get(currentIndex);
 			ViewParameters viewInfo = new ViewParameters(dates[0], dates[1]);
 			return opinionViewSingleton.getOpinionCases(viewInfo);
 		} else {

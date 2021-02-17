@@ -127,7 +127,7 @@ public class OpinionViewLoad {
 	
 	private void buildOpinionViews(OpinionViewData opinionViewData, StatutesService statutesService) {
 		opinionViewData.setOpinionViews(new ArrayList<>());
-		List<SlipOpinion> opinions = slipOpinionDao.loadAllSlipOpinions();
+		List<SlipOpinion> opinions = slipOpinionDao.selectAllForView();
 		buildListedOpinionViews(opinionViewData, opinions, statutesService);
 	}
 
@@ -163,7 +163,7 @@ public class OpinionViewLoad {
 			}
 		}
 		if ( opinionKeys.size() > 0 ) {
-			List<SlipOpinion> opinions = slipOpinionDao.loadSlipOpinionsForKeys(opinionKeys);
+			List<SlipOpinion> opinions = slipOpinionDao.selectFromKeysForView(opinionKeys);
 			logger.info("opinions size " + opinions.size());
 			buildListedOpinionViews(opinionViewData, opinions, statutesService);
 		} else {

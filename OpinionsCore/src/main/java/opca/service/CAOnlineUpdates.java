@@ -204,20 +204,20 @@ public class CAOnlineUpdates {
 		}
 		Date startTime = new Date();
     	for(OpinionBase opinion: persistOpinions ) {
-			opinionBaseDao.save(opinion);
+			opinionBaseDao.insert(opinion);
     	}
 		logger.info("Persisted "+persistOpinions.size()+" opinions in "+((new Date().getTime()-startTime.getTime())/1000) + " seconds");
 
 		startTime = new Date();
 
 //    	for(OpinionBase opinion: mergeOpinions ) {
-//    		opinionBaseRepository.save(opinion);
+//    		opinionBaseDao.update(opinion);
 //    	}
 //		logger.info("Merged "+mergeOpinions.size()+" opinions in "+((new Date().getTime()-startTime.getTime())/1000) + " seconds");
 
 		startTime = new Date();
 		for(OpinionStatuteCitation opinionStatuteCitation: persistOpinionStatuteCitations) {
-			opinionStatuteCitationRepoistory.save(opinionStatuteCitation);
+			opinionStatuteCitationRepoistory.insert(opinionStatuteCitation);
     	}
 		logger.info("Persisted "+ persistOpinionStatuteCitations.size()+" opinionStatuteCitation in "+((new Date().getTime()-startTime.getTime())/1000) + " seconds");
 
@@ -229,7 +229,7 @@ public class CAOnlineUpdates {
 	    		referringOpinion.hashCode();
 	    	}
 			
-    		statuteCitationDao.save(statute);
+    		statuteCitationDao.insert(statute);
     	}
 		logger.info("Persisted "+persistStatutes.size()+" statutes in "+((new Date().getTime()-startTime.getTime())/1000) + " seconds");
 
