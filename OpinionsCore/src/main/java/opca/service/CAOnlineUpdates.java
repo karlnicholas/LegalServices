@@ -216,10 +216,10 @@ public class CAOnlineUpdates {
 //		logger.info("Merged "+mergeOpinions.size()+" opinions in "+((new Date().getTime()-startTime.getTime())/1000) + " seconds");
 
 		startTime = new Date();
-		for(OpinionStatuteCitation opinionStatuteCitation: persistOpinionStatuteCitations) {
-			opinionStatuteCitationRepoistory.insert(opinionStatuteCitation);
-    	}
-		logger.info("Persisted "+ persistOpinionStatuteCitations.size()+" opinionStatuteCitation in "+((new Date().getTime()-startTime.getTime())/1000) + " seconds");
+//		for(OpinionStatuteCitation opinionStatuteCitation: persistOpinionStatuteCitations) {
+//			opinionStatuteCitationRepoistory.insert(opinionStatuteCitation);
+//    	}
+//		logger.info("Persisted "+ persistOpinionStatuteCitations.size()+" opinionStatuteCitation in "+((new Date().getTime()-startTime.getTime())/1000) + " seconds");
 
     	for(StatuteCitation statute: persistStatutes ) {
 			if ( statute.getStatuteKey() == null ) {
@@ -366,19 +366,19 @@ public class CAOnlineUpdates {
 			}
 		}
 		
-		opinionIds.clear();
-		i = 0;
-//		Query queryOpinionStatuteCitations = em.createNamedQuery("OpinionStatuteCitation.deleteOpinionStatuteCitations");
-		for (SlipOpinion deleteOpinion: currentCopy) {
-			opinionIds.add(deleteOpinion.getId());
-			if ( ++i % 100 == 0 ) {
-				opinionStatuteCitationRepoistory.deleteOpinionStatuteCitations(opinionIds);
-				opinionIds.clear();
-			}
-		}
-		if ( opinionIds.size() != 0 ) {
-			opinionStatuteCitationRepoistory.deleteOpinionStatuteCitations(opinionIds);
-		}
+//		opinionIds.clear();
+//		i = 0;
+////		Query queryOpinionStatuteCitations = em.createNamedQuery("OpinionStatuteCitation.deleteOpinionStatuteCitations");
+//		for (SlipOpinion deleteOpinion: currentCopy) {
+//			opinionIds.add(deleteOpinion.getId());
+//			if ( ++i % 100 == 0 ) {
+//				opinionStatuteCitationRepoistory.deleteOpinionStatuteCitations(opinionIds);
+//				opinionIds.clear();
+//			}
+//		}
+//		if ( opinionIds.size() != 0 ) {
+//			opinionStatuteCitationRepoistory.deleteOpinionStatuteCitations(opinionIds);
+//		}
 		
 
 		for (SlipOpinion deleteOpinion: currentCopy) {

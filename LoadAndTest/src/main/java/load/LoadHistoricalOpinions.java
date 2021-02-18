@@ -1,17 +1,14 @@
 package load;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import opca.dao.OpinionBaseDao;
+import opca.dao.OpinionBaseOpinionCitationsDao;
 import opca.dao.OpinionStatuteCitationDao;
 import opca.dao.StatuteCitationDao;
 import opca.memorydb.CitationStore;
 import opca.model.OpinionBase;
-import opca.model.OpinionStatuteCitation;
 import opca.model.StatuteCitation;
 import statutes.api.IStatutesApi;
 import statutesca.statutesapi.CAStatutesApiImpl;
@@ -22,17 +19,20 @@ public class LoadHistoricalOpinions {
 	private final CitationStore citationStore;
 	private final OpinionBaseDao opinionBaseDao;
 	private final StatuteCitationDao statuteCitationDao;
-	private final OpinionStatuteCitationDao opinionStatuteCitationRepoistory;
+	private final OpinionStatuteCitationDao opinionStatuteCitationDao;
+	private final OpinionBaseOpinionCitationsDao opinionBaseOpinionCitationsDao;
 //	OpinionDocumentParser parser;
 	
 
 	public LoadHistoricalOpinions(OpinionBaseDao opinionBaseDao,
 			StatuteCitationDao statuteCitationDao,
-			OpinionStatuteCitationDao opinionStatuteCitationRepoistory) {
+			OpinionStatuteCitationDao opinionStatuteCitationDao, 
+			OpinionBaseOpinionCitationsDao opinionBaseOpinionCitationsDao) {
 		this.citationStore = CitationStore.getInstance(); 
 		this.opinionBaseDao = opinionBaseDao;
 		this.statuteCitationDao = statuteCitationDao;
-		this.opinionStatuteCitationRepoistory = opinionStatuteCitationRepoistory;
+		this.opinionStatuteCitationDao = opinionStatuteCitationDao;
+		this.opinionBaseOpinionCitationsDao = opinionBaseOpinionCitationsDao;
 	}
 
 
@@ -50,24 +50,23 @@ public class LoadHistoricalOpinions {
 	    LoadCourtListenerFiles file2 = new LoadCourtListenerFiles(cb2);
 	    file2.loadFiles("c:/users/karln/downloads/cal-opinions.tar.gz", "c:/users/karln/downloads/cal-clusters.tar.gz", 1000);
 
-
-		List<OpinionStatuteCitation> opinionStatuteCitations = new ArrayList<>();
-
 		for(OpinionBase opinion: citationStore.getAllOpinions() ) {
-    		if ( opinion.getStatuteCitations() != null ) {
-	    		for ( OpinionStatuteCitation statuteCitation: opinion.getStatuteCitations() ) {
-	    			opinionStatuteCitations.add(statuteCitation);
-	    		}
-    		}
     		opinionBaseDao.insert(opinion);
     	}
 
-    	for(StatuteCitation statute: citationStore.getAllStatutes() ) {
+		for(OpinionBase opinion: citationStore.getAllOpinions() ) {
+			opinionBaseOpinionCitationsDao.insert(opinion);
+		}
+		System.out.println(OpinionBaseOpinionCitationsDao.good.get()+":"+OpinionBaseOpinionCitationsDao.bad.get());
+
+		for(StatuteCitation statute: citationStore.getAllStatutes() ) {
     		statuteCitationDao.insert(statute);
     	}
-    	for(OpinionStatuteCitation opinionStatuteCitation: opinionStatuteCitations ) {
-    		opinionStatuteCitationRepoistory.insert(opinionStatuteCitation);
-    	}
+		
+		for(OpinionBase opinion: citationStore.getAllOpinions() ) {
+			opinionStatuteCitationDao.insert(opinion);
+		}
+		System.out.println(OpinionStatuteCitationDao.good.get()+":"+OpinionStatuteCitationDao.bad.get());
    	
     }
 

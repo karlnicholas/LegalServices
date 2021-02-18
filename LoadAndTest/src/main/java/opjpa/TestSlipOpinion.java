@@ -1,7 +1,6 @@
 package opjpa;
 
 import java.time.LocalDate;
-import java.util.Calendar;
 import java.util.List;
 import java.util.logging.Logger;
 

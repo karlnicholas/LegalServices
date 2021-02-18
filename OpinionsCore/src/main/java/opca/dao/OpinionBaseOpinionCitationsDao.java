@@ -10,39 +10,38 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
 import opca.model.OpinionBase;
-import opca.model.OpinionStatuteCitation;
 
 @Service
-public class OpinionStatuteCitationDao {
+public class OpinionBaseOpinionCitationsDao {
 	private final JdbcTemplate jdbcTemplate;
 	public static final AtomicLong good = new AtomicLong();
 	public static final AtomicLong bad = new AtomicLong();
 
-	public OpinionStatuteCitationDao(JdbcTemplate jdbcTemplate) {
+	public OpinionBaseOpinionCitationsDao(JdbcTemplate jdbcTemplate) {
 		this.jdbcTemplate = jdbcTemplate;
 	}
 
 	public void insert(OpinionBase opinion) {
-		if ( opinion.getStatuteCitations() == null ) {
+		if ( opinion.getOpinionCitations() == null ) {
 			bad.getAndIncrement();
 			return;
 		}
 		good.getAndIncrement();
-		final Iterator<OpinionStatuteCitation> obIt = opinion.getStatuteCitations().iterator();
-		jdbcTemplate.batchUpdate("insert into opinionstatutecitation(countreferences, opinionbase_id, statutecitation_id) values(?,?,?)", 
+		final Iterator<OpinionBase> obIt = opinion.getOpinionCitations().iterator();
+		jdbcTemplate.batchUpdate("insert into opinionbase_opinioncitations(referringopinions_id, opinioncitations_id) values(?, ?)", 
 				new BatchPreparedStatementSetter() {
 					@Override
 					public void setValues(PreparedStatement ps, int i) throws SQLException {
-						OpinionStatuteCitation osc = obIt.next();
-						ps.setInt(1, osc.getCountReferences());
+						OpinionBase ob = obIt.next();
+						ps.setInt(1, ob.getId());
 						ps.setInt(2, opinion.getId());
-						ps.setInt(3, osc.getStatuteCitation().getId());
 					}
 					@Override
 					public int getBatchSize() {
-						return opinion.getStatuteCitations().size();
+						return opinion.getOpinionCitations().size();
 					}
 		    });
 
 	}
+
 }
