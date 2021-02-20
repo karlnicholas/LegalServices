@@ -15,12 +15,15 @@
 	</properties>
 	<modules>
 		<module>Statutes</module>
+		<module>StatutesService</module>
 		<module>StatutesServer</module>
 		<module>GuidedSearchCore</module>
 		<module>StatutesCa</module>
 		<module>StatutesRestCa</module>
 		<module>OpinionsCore</module>
+		<module>OpinionsCoreService</module>
 		<module>OpinionsWeb</module>
+		<module>LoadAndTest</module>
 	</modules>
 	<dependencyManagement>
 		<dependencies>
@@ -37,6 +40,13 @@
 			<dependency>
 				<groupId>com.github.karlnicholas.legalservices</groupId>
 				<artifactId>statutes</artifactId>
+				<version>${project.version}</version>
+				<type>jar</type>
+				<scope>compile</scope>
+			</dependency>
+			<dependency>
+				<groupId>com.github.karlnicholas.legalservices</groupId>
+				<artifactId>statutesservice</artifactId>
 				<version>${project.version}</version>
 				<type>jar</type>
 				<scope>compile</scope>
@@ -72,6 +82,13 @@
 			<dependency>
 				<groupId>com.github.karlnicholas.legalservices</groupId>
 				<artifactId>opinions-core</artifactId>
+				<version>${project.version}</version>
+				<type>jar</type>
+				<scope>compile</scope>
+			</dependency>
+			<dependency>
+				<groupId>com.github.karlnicholas.legalservices</groupId>
+				<artifactId>opinions-core-service</artifactId>
 				<version>${project.version}</version>
 				<type>jar</type>
 				<scope>compile</scope>

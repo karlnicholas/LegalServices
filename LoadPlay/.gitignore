@@ -1,0 +1,16 @@
+/target/
+/html/
+/cases/
+.classpath
+.settings/
+.project
+/xml/
+/not-titled.txt
+/opinionweights.txt
+/Dump20160725.rar
+/Dump20160904.rar
+/test/
+/bin/
+/log.txt
+localenv
+/.factorypath

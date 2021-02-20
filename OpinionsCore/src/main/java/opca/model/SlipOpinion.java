@@ -1,9 +1,8 @@
 package opca.model;
 
 import java.time.LocalDate;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.regex.Pattern;
-
-import io.netty.util.internal.ThreadLocalRandom;
 
 //@NamedQueries({
 //	@NamedQuery(name="SlipOpinion.findAll", 
