@@ -9,7 +9,6 @@
 		<version>2.0.0-SNAPSHOT</version>
 	</parent>
 	<artifactId>loadslipopinions</artifactId>
-	<version>2.0.0-SNAPSHOT</version>
 	<name>LoadSlipOpinions</name>
 	<description>Demo project for Spring Boot</description>
 	<properties>
@@ -38,19 +37,19 @@
 		<dependency>
 			<groupId>com.github.karlnicholas.legalservices</groupId>
 			<artifactId>guidedsearch-core</artifactId>
-			<version>2.0.0-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>com.github.karlnicholas.legalservices</groupId>
 			<artifactId>statutesca</artifactId>
-			<version>2.0.0-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>com.github.karlnicholas.legalservices</groupId>
-			<artifactId>opinions-core</artifactId>
-			<version>2.0.0-SNAPSHOT</version>
+			<artifactId>opinions-core-service</artifactId>
 		</dependency>
-
+		<dependency>
+			<groupId>com.github.karlnicholas.legalservices</groupId>
+			<artifactId>loadopinions</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
