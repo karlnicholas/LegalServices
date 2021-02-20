@@ -105,3 +105,13 @@ O:93535
 S:38822
 ai:76603
 
+----
+O:94268
+S:39559
+ai:78519
+
+O:94268
+S:39559
+ai:78519
+loadHistoricalOpinions.initializeDB(): DONE
+

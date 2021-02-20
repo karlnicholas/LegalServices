@@ -23,7 +23,8 @@
 		<module>OpinionsCore</module>
 		<module>OpinionsCoreService</module>
 		<module>OpinionsWeb</module>
-		<module>LoadAndTest</module>
+		<module>LoadOpinions</module>
+		<module>LoadSlipOpinions</module>
 	</modules>
 	<dependencyManagement>
 		<dependencies>
@@ -68,13 +69,6 @@
 			<dependency>
 				<groupId>com.github.karlnicholas.legalservices</groupId>
 				<artifactId>guidedsearch-core</artifactId>
-				<version>${project.version}</version>
-				<type>jar</type>
-				<scope>compile</scope>
-			</dependency>
-			<dependency>
-				<groupId>com.github.karlnicholas.legalservices</groupId>
-				<artifactId>guidedsearch-web</artifactId>
 				<version>${project.version}</version>
 				<type>jar</type>
 				<scope>compile</scope>
