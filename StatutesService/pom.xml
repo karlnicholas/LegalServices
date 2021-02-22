@@ -11,9 +11,6 @@
 	<artifactId>statutesservice</artifactId>
 	<name>Statutes Service</name>
 	<description>Statutes Services Legal Services</description>
-	<properties>
-		<java.version>1.8</java.version>
-	</properties>
 	<dependencies>
 		<dependency>
 			<groupId>org.projectlombok</groupId>

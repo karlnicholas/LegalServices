@@ -11,9 +11,6 @@
 	<artifactId>statutes</artifactId>
 	<name>Statutes</name>
 	<description>Statutes framework for Legal Services</description>
-	<properties>
-		<java.version>1.8</java.version>
-	</properties>
 	<dependencies>
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>

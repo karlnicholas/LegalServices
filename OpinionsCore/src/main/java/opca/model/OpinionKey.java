@@ -94,7 +94,9 @@ public class OpinionKey implements Serializable, Comparable<OpinionKey> {
 			return true;
 		if (obj == null)
 			return false;
-		if (getClass() != obj.getClass())
+//		if (getClass() != obj.getClass())
+//			return false;
+		if ( ! (obj instanceof OpinionKey) )
 			return false;
 		OpinionKey other = (OpinionKey) obj;
 		if (page != other.page)

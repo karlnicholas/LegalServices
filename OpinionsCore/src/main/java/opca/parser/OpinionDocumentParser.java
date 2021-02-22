@@ -80,11 +80,11 @@ if ( !statuteCitation.toString().equals("pen:245") ) {
     			goodStatutes.add(statuteCitation);
         	}
         }
-        
         opinionBase.addStatuteCitations(goodStatutes);
         //
         List<OpinionBase> opinions = new ArrayList<OpinionBase>(caseCitationTree);
         Set<OpinionBase> goodOpinions = new TreeSet<OpinionBase>();
+//        ail3.getAndIncrement();
         for ( OpinionBase opinionReferredTo: opinions) {
         	// forever get rid of statutes without a referenced code.
     		synchronized(citationStore) {
@@ -599,7 +599,7 @@ if ( !statuteCitation.toString().equals("pen:245") ) {
         int pos = sentence.indexOf("section", 0);
         while (pos != -1) {
             if ( posd != pos ) {
-                offsets.add( new Integer(pos) );
+                offsets.add( Integer.valueOf(pos) );
             } else {
                 posd = sentence.indexOf("sections", posd+1);
                 pos = pos + 1;
@@ -616,7 +616,7 @@ if ( !statuteCitation.toString().equals("pen:245") ) {
         int pos = sentence.indexOf("§", 0);
         while (pos != -1) {
             if ( posd != pos ) {
-                offsets.add( new Integer(pos) );
+                offsets.add( Integer.valueOf(pos) );
             } else {
                 posd = sentence.indexOf("§§", posd+1);
                 pos = pos + 1;
@@ -630,7 +630,7 @@ if ( !statuteCitation.toString().equals("pen:245") ) {
         ArrayList<Integer> offsets = new ArrayList<Integer>();
         int pos = sentence.indexOf("sections", 0);
         while (pos != -1) {
-            offsets.add( new Integer(pos) );
+            offsets.add( Integer.valueOf(pos) );
             pos = sentence.indexOf("sections", pos+1);
         }
         return offsets;
@@ -640,7 +640,7 @@ if ( !statuteCitation.toString().equals("pen:245") ) {
         ArrayList<Integer> offsets = new ArrayList<Integer>();
         int pos = sentence.indexOf("§§", 0);
         while (pos != -1) {
-            offsets.add( new Integer(pos) );
+            offsets.add( Integer.valueOf(pos) );
             pos = sentence.indexOf("§§", pos+1);
         }
         return offsets;
@@ -651,7 +651,7 @@ if ( !statuteCitation.toString().equals("pen:245") ) {
         ArrayList<Integer> offsets = new ArrayList<Integer>();
         int pos = sentence.indexOf(" cal.", 0);
         while (pos != -1) {
-            offsets.add( new Integer(pos) );
+            offsets.add( Integer.valueOf(pos) );
             pos = sentence.indexOf(" cal.", pos+1);
         }
         return offsets;

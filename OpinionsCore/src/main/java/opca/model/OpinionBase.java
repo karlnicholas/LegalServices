@@ -125,7 +125,7 @@ public class OpinionBase implements Comparable<OpinionBase>, Serializable {
     }
 	public void addStatuteCitations(Collection<StatuteCitation> goodStatutes) {
 		if ( statuteCitations == null ) {
-			setStatuteCitations(new TreeSet<>());
+			statuteCitations = new TreeSet<>();
 		}
 		for( StatuteCitation statuteCitation: goodStatutes) {
 			// add on both sides ...
@@ -140,7 +140,7 @@ public class OpinionBase implements Comparable<OpinionBase>, Serializable {
 	
 	public Collection<StatuteCitation> getOnlyStatuteCitations() {
 		if ( statuteCitations == null ) {
-			setStatuteCitations(new TreeSet<>());
+			statuteCitations = new TreeSet<>();
 		}
 		Set<StatuteCitation> onlyStatuteCitations = new TreeSet<>();
 		for(OpinionStatuteCitation opinionStatuteCitation: statuteCitations) {

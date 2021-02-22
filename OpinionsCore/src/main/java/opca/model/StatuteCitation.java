@@ -117,12 +117,11 @@ public class StatuteCitation implements Comparable<StatuteCitation>, Serializabl
 
     }
     public OpinionStatuteCitation getOpinionStatuteReference(OpinionBase opinionBase) {
-    	Iterator<OpinionStatuteCitation> refOpIt = referringOpinions.iterator();
-    	while (refOpIt.hasNext()) {
-    		OpinionStatuteCitation opinionStatuteReference = refOpIt.next();
-    		if ( opinionStatuteReference.getOpinionBase().equals(opinionBase) ) {
-    			return opinionStatuteReference;
-    		}
+    	for ( OpinionStatuteCitation opinionStatuteReference: referringOpinions) {
+    		boolean c = opinionStatuteReference.getOpinionBase().equals(opinionBase);
+    		if ( c ) {
+				return opinionStatuteReference;
+			}
     	}
     	return null;
     }
