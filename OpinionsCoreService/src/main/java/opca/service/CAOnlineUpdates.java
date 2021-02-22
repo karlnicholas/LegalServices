@@ -13,7 +13,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import opca.dao.OpinionBaseDao;
-import opca.dao.OpinionStatuteCitationDao;
 import opca.dao.SlipOpinionDao;
 import opca.dao.SlipPropertiesDao;
 import opca.dao.StatuteCitationDao;
@@ -26,8 +25,8 @@ import opca.model.SlipProperties;
 import opca.model.StatuteCitation;
 import opca.model.StatuteKey;
 import opca.parser.OpinionScraperInterface;
-import opca.parser.OpinionDocumentParser;
 import opca.parser.ScrapedOpinionDocument;
+import opca.parser.SlipOpinionDocumentParser;
 import opca.parser.ParsedOpinionCitationSet;
 import statutes.StatutesTitles;
 import statutes.service.StatutesService;
@@ -42,17 +41,14 @@ public class CAOnlineUpdates {
 	Logger logger = LoggerFactory.getLogger(CAOnlineUpdates.class);
 	private final OpinionBaseDao opinionBaseDao;
 	private final StatuteCitationDao statuteCitationDao;
-	private final OpinionStatuteCitationDao opinionStatuteCitationRepoistory;
 	private final SlipOpinionDao slipOpinionDao;
 	private final SlipPropertiesDao slipPropertiesDao;
 	
 	public CAOnlineUpdates(OpinionBaseDao opinionBaseDao,
 			StatuteCitationDao statuteCitationDao,
-			OpinionStatuteCitationDao opinionStatuteCitationRepoistory,
 			SlipOpinionDao slipOpinionDao, SlipPropertiesDao slipPropertiesDao) {
 		this.opinionBaseDao = opinionBaseDao;
 		this.statuteCitationDao = statuteCitationDao;
-		this.opinionStatuteCitationRepoistory = opinionStatuteCitationRepoistory;
 		this.slipOpinionDao = slipOpinionDao;
 		this.slipPropertiesDao = slipPropertiesDao;
 	}
@@ -152,7 +148,7 @@ public class CAOnlineUpdates {
 		StatutesTitles[] arrayStatutesTitles = statutesService.getStatutesTitles().getBody();
 //			codeTitles = statutesArray.getItem().toArray(codeTitles);
 
-		OpinionDocumentParser opinionDocumentParser = new OpinionDocumentParser(arrayStatutesTitles);
+		SlipOpinionDocumentParser opinionDocumentParser = new SlipOpinionDocumentParser(arrayStatutesTitles);
 		
 		// this is a holds things in memory
 		CitationStore citationStore = CitationStore.getInstance();

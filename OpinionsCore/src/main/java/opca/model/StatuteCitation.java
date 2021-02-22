@@ -133,17 +133,18 @@ public class StatuteCitation implements Comparable<StatuteCitation>, Serializabl
         	opinionStatuteCitation.setCountReferences(opinionStatuteCitation.getCountReferences() + amount);
         }
     }
-	public OpinionStatuteCitation removeOpinionStatuteReference(SlipOpinion deleteOpinion) {
-    	Iterator<OpinionStatuteCitation> refOpIt = referringOpinions.iterator();
-    	while (refOpIt.hasNext()) {
-    		OpinionStatuteCitation opinionStatuteReference = refOpIt.next();
-    		if ( opinionStatuteReference.getOpinionBase().equals(deleteOpinion) ) {
-    			refOpIt.remove();
-    			return opinionStatuteReference;
-    		}
-    	}
-    	return null;
-	}
+    
+//	public OpinionStatuteCitation removeOpinionStatuteReference(SlipOpinion deleteOpinion) {
+//    	Iterator<OpinionStatuteCitation> refOpIt = referringOpinions.iterator();
+//    	while (refOpIt.hasNext()) {
+//    		OpinionStatuteCitation opinionStatuteReference = refOpIt.next();
+//    		if ( opinionStatuteReference.getOpinionBase().equals(deleteOpinion) ) {
+//    			refOpIt.remove();
+//    			return opinionStatuteReference;
+//    		}
+//    	}
+//    	return null;
+//	}
 
     public boolean getDesignated() {
         return designated;

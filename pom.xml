@@ -16,6 +16,7 @@
 		<module>StatutesCa</module>
 		<module>StatutesRestCa</module>
 		<module>OpinionsCore</module>
+		<module>OpinionsCoreSlipOpinions</module>
 		<module>OpinionsCoreService</module>
 		<module>OpinionsWeb</module>
 		<module>LoadOpinions</module>
@@ -71,6 +72,13 @@
 			<dependency>
 				<groupId>com.github.karlnicholas.legalservices</groupId>
 				<artifactId>opinions-core</artifactId>
+				<version>${project.version}</version>
+				<type>jar</type>
+				<scope>compile</scope>
+			</dependency>
+			<dependency>
+				<groupId>com.github.karlnicholas.legalservices</groupId>
+				<artifactId>opinions-core-slipopinions</artifactId>
 				<version>${project.version}</version>
 				<type>jar</type>
 				<scope>compile</scope>
