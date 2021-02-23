@@ -29,6 +29,8 @@ public class OpinionBaseDao {
 	public OpinionBaseDao(JdbcTemplate jdbcTemplate) {
 		this.jdbcTemplate = jdbcTemplate;
 	}
+
+
 /*
 	public OpinionBase findOpinionByKeyFetchReferringOpinions(OpinionKey key) {
 		return jdbcTemplate.queryForStream((conn)->{
@@ -69,7 +71,6 @@ public class OpinionBaseDao {
 	 * @param opinionKeys
 	 * @return
 	 */
-	
 	public List<OpinionBase> opinionsWithReferringOpinions(List<OpinionKey> opinionKeys) {
 		return jdbcTemplate.queryForStream((conn)->{
 			StringBuilder sb = new StringBuilder( "select " + 
@@ -109,6 +110,7 @@ public class OpinionBaseDao {
 			return ob1;
 		}))).values().stream().map(Optional::get).collect(Collectors.toList());
 	}
+
 
 	/**
 	 *  

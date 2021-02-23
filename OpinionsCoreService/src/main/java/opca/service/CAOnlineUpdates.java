@@ -12,10 +12,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import opca.dao.OpinionBaseDao;
+import opca.crud.OpinionBaseDao;
+import opca.crud.StatuteCitationCrud;
 import opca.dao.SlipOpinionDao;
 import opca.dao.SlipPropertiesDao;
-import opca.dao.StatuteCitationDao;
 import opca.memorydb.CitationStore;
 import opca.model.OpinionBase;
 import opca.model.OpinionKey;
@@ -40,15 +40,15 @@ import statutes.service.StatutesService;
 public class CAOnlineUpdates {	
 	Logger logger = LoggerFactory.getLogger(CAOnlineUpdates.class);
 	private final OpinionBaseDao opinionBaseDao;
-	private final StatuteCitationDao statuteCitationDao;
+	private final StatuteCitationCrud statuteCitationCrud;
 	private final SlipOpinionDao slipOpinionDao;
 	private final SlipPropertiesDao slipPropertiesDao;
 	
 	public CAOnlineUpdates(OpinionBaseDao opinionBaseDao,
-			StatuteCitationDao statuteCitationDao,
+			StatuteCitationCrud statuteCitationCrud,
 			SlipOpinionDao slipOpinionDao, SlipPropertiesDao slipPropertiesDao) {
 		this.opinionBaseDao = opinionBaseDao;
-		this.statuteCitationDao = statuteCitationDao;
+		this.statuteCitationCrud = statuteCitationCrud;
 		this.slipOpinionDao = slipOpinionDao;
 		this.slipPropertiesDao = slipPropertiesDao;
 	}
@@ -225,7 +225,7 @@ public class CAOnlineUpdates {
 	    		referringOpinion.hashCode();
 	    	}
 			
-    		statuteCitationDao.insert(statute);
+    		statuteCitationCrud.insert(statute);
     	}
 		logger.info("Persisted "+persistStatutes.size()+" statutes in "+((new Date().getTime()-startTime.getTime())/1000) + " seconds");
 
@@ -308,12 +308,12 @@ public class CAOnlineUpdates {
 		for(StatuteCitation statuteCitation: statutes ) {
     		statuteKeys.add(statuteCitation.getStatuteKey());
     		if ( ++i % 100 == 0 ) {
-    			existingStatutes.addAll( statuteCitationDao.statutesWithReferringOpinions(statuteKeys));
+    			existingStatutes.addAll( statuteCitationCrud.statutesWithReferringOpinions(statuteKeys));
     			statuteKeys.clear();
     		}
     	}
     	if ( statuteKeys.size() != 0 ) {
-    		existingStatutes.addAll( statuteCitationDao.statutesWithReferringOpinions(statuteKeys));
+    		existingStatutes.addAll( statuteCitationCrud.statutesWithReferringOpinions(statuteKeys));
     	}
     	Collections.sort(existingStatutes);
     	StatuteCitation[] existingStatutesArray = existingStatutes.toArray(new StatuteCitation[existingStatutes.size()]);
