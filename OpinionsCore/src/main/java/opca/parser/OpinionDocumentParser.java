@@ -67,14 +67,12 @@ if ( !statuteCitation.toString().equals("pen:245") ) {
 	continue;
 }
 */
-        		synchronized(citationStore) {
-	                StatuteCitation existingCitation = citationStore.findStatuteByStatute(statuteCitation);
-	                if ( existingCitation != null ) {
-	                	OpinionStatuteCitation osr = statuteCitation.getOpinionStatuteReference(opinionBase);
-	                	existingCitation.incRefCount(opinionBase, osr.getCountReferences());
-	                	statuteCitation = existingCitation;
-	                }
-        		}
+                StatuteCitation existingCitation = citationStore.findStatuteByStatute(statuteCitation);
+                if ( existingCitation != null ) {
+                	OpinionStatuteCitation osr = statuteCitation.getOpinionStatuteReference(opinionBase);
+                	existingCitation.incRefCount(opinionBase, osr.getCountReferences());
+                	statuteCitation = existingCitation;
+                }
 
     			parserResults.putStatuteCitation(statuteCitation);
     			goodStatutes.add(statuteCitation);
@@ -87,13 +85,11 @@ if ( !statuteCitation.toString().equals("pen:245") ) {
 //        ail3.getAndIncrement();
         for ( OpinionBase opinionReferredTo: opinions) {
         	// forever get rid of statutes without a referenced code.
-    		synchronized(citationStore) {
-	        	OpinionBase existingOpinion = citationStore.findOpinionByOpinion(opinionReferredTo);
-	            if ( existingOpinion != null ) {
-	            	existingOpinion.addReferringOpinion(opinionBase);
-	            	opinionReferredTo = existingOpinion;
-	            }
-    		}
+        	OpinionBase existingOpinion = citationStore.findOpinionByOpinion(opinionReferredTo);
+            if ( existingOpinion != null ) {
+            	existingOpinion.addReferringOpinion(opinionBase);
+            	opinionReferredTo = existingOpinion;
+            }
         	
 			parserResults.putOpinionBase(opinionReferredTo);
 			goodOpinions.add(opinionReferredTo);

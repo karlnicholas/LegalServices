@@ -26,16 +26,18 @@ public class LoadCourtListenerFiles {
 	private final CourtListenerCallback courtListenerCallback;
 	private final Logger logger;
 	int total = 0;
+	public List<AtomicCount> acs;
+	private final ObjectMapper om;
 
 	public LoadCourtListenerFiles(CourtListenerCallback courtListenerCallback) {
+		this.acs = new ArrayList<>();
 		this.courtListenerCallback = courtListenerCallback;
 		pattern = Pattern.compile("/");
 		logger = Logger.getLogger(LoadCourtListenerFiles.class.getName());
+		om = new ObjectMapper();
 	}
 
 	public void loadFiles(String opinionsFileName, String clustersFileName, int loadOpinionsPerCallback) throws IOException {
-		//
-		ObjectMapper om = new ObjectMapper();
 		Map<Long, LoadOpinion> mapLoadOpinions = new TreeMap<Long, LoadOpinion>();
 		TarArchiveInputStream tarIn = new TarArchiveInputStream(new GzipCompressorInputStream(new BufferedInputStream(new FileInputStream(clustersFileName))));
 		TarArchiveEntry entry;
@@ -82,7 +84,9 @@ public class LoadCourtListenerFiles {
 					courtListenerCallback.shutdown();
 					break;
 				}
-				courtListenerCallback.callBack(clOps);
+				AtomicCount ac = new AtomicCount();
+				acs.add(ac);
+				courtListenerCallback.callBack(clOps, ac);
 // courtListenerCallback.shutdown();
 // break;
 			}

@@ -46,7 +46,7 @@ public class OpinionBaseCrud {
 		ps.executeUpdate();
         try (ResultSet resultSet = ps.getGeneratedKeys()) {
             if (resultSet.first()) {
-            	opinion.setId(resultSet.getInt(1));
+            	opinion.setId(Integer.valueOf(resultSet.getInt(1)));
             }
         }
 	}

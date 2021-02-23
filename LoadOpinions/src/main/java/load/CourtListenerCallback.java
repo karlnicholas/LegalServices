@@ -6,7 +6,7 @@ import loadmodel.LoadOpinion;
 
 public interface CourtListenerCallback {
 
-	void callBack(List<LoadOpinion> clOps);
+	void callBack(List<LoadOpinion> clOps, AtomicCount ac);
 	void shutdown();
 
 }

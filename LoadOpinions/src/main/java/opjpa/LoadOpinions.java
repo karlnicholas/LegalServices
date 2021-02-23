@@ -1,30 +1,38 @@
 package opjpa;
 
-import org.springframework.boot.ApplicationArguments;
-import org.springframework.boot.ApplicationRunner;
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 
 import load.LoadHistoricalOpinions;
+import opca.crud.OpinionBaseCrud;
+import opca.crud.OpinionBaseOpinionCitationsCrud;
+import opca.crud.OpinionStatuteCitationCrud;
+import opca.crud.StatuteCitationCrud;
 
-@SpringBootApplication(scanBasePackages = {"apimodel", "load", "loadmodel", "opca" })
-@ConditionalOnProperty(name = "LoadOpinions.active", havingValue = "true", matchIfMissing = false)
-//@EnableTransactionManagement
-public class LoadOpinions implements ApplicationRunner {
+public class LoadOpinions {
 
 	public static void main(String[] args) throws Exception {
-		SpringApplication.run(LoadOpinions.class, args);
+		Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/op", "op", "op");
+		OpinionBaseCrud opinionBaseCrud = new OpinionBaseCrud(conn);
+		OpinionBaseOpinionCitationsCrud opinionBaseOpinionCitationsCrud = new OpinionBaseOpinionCitationsCrud(conn);
+		StatuteCitationCrud statuteCitationCrud = new StatuteCitationCrud(conn);
+		OpinionStatuteCitationCrud opinionStatuteCitationCrud = new OpinionStatuteCitationCrud(conn);
+		try {
+			LoadHistoricalOpinions loadHistoricalOpinions = new LoadHistoricalOpinions(
+				opinionBaseCrud, 
+				opinionBaseOpinionCitationsCrud, 
+				statuteCitationCrud, 
+				opinionStatuteCitationCrud
+			);
+			conn.setAutoCommit(false);
+	    	loadHistoricalOpinions.initializeDB();
+	    	conn.commit();
+			System.out.println("loadHistoricalOpinions.initializeDB(): DONE");
+		} catch ( SQLException sqlException ) {
+	    	conn.rollback();
+			sqlException.printStackTrace();	
+		}
 	}
-	
-//	@Autowired
-//	private LoadHistoricalOpinions loadHistoricalOpinions;
-	
-	
-	@Override
-	public void run(ApplicationArguments args) throws Exception {
-		new LoadHistoricalOpinions().initializeDB();
-System.out.println("loadHistoricalOpinions.initializeDB(): DONE");
-	}
-        
+
 }

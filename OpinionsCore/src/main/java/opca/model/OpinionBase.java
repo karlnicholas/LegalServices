@@ -309,36 +309,37 @@ public class OpinionBase implements Comparable<OpinionBase>, Serializable {
 	        }
         }
 	}
-	public void mergeCourtRepublishedOpinion(OpinionBase opinionBase, ParsedOpinionCitationSet parserResults, CitationStore citationStore ) {
-        if ( title == null ) title = opinionBase.title;
-        if ( opinionDate == null ) opinionDate = opinionBase.opinionDate;
-		copyNewOpinions(opinionBase);
-        // do statutes .. 
-        if ( opinionBase.getStatuteCitations() != null ) {
-        	if ( statuteCitations == null ) 
-        		statuteCitations = new TreeSet<OpinionStatuteCitation>();
-	        for ( OpinionStatuteCitation addStatuteCitation: opinionBase.getStatuteCitations() ) {
-            	if ( addStatuteCitation.getStatuteCitation().getStatuteKey().getLawCode() == null ) 
-            		continue;
-	            if ( !statuteCitations.contains(addStatuteCitation) ) {
-	            	statuteCitations.add(addStatuteCitation);
-	            } else {
-	            	StatuteCitation newCitation = parserResults.findStatute(addStatuteCitation.getStatuteCitation().getStatuteKey());
-	            	StatuteCitation existingCitation = citationStore.statuteExists(addStatuteCitation.getStatuteCitation());
-	            	// because the opinionBase is actually an existing one so maybe not a citation reference in it.
-	            	if ( newCitation != null ) {
-		            	OpinionStatuteCitation osR = newCitation.getOpinionStatuteReference(opinionBase);
-		            	int countNew= osR == null ? 0 : osR.getCountReferences();
-		            	osR = existingCitation.getOpinionStatuteReference(opinionBase);
-		            	int countExisting = osR == null ? 0 : osR.getCountReferences();
-		            	if ( countExisting < countNew ) {
-		            		existingCitation.setRefCount(opinionBase, newCitation.getOpinionStatuteReference(opinionBase).getCountReferences());
-		            	}
-	            	}
-	            }
-	        }
-        }
-	}
+	
+//	public void mergeCourtRepublishedOpinion(OpinionBase opinionBase, ParsedOpinionCitationSet parserResults, CitationStore citationStore ) {
+//        if ( title == null ) title = opinionBase.title;
+//        if ( opinionDate == null ) opinionDate = opinionBase.opinionDate;
+//		copyNewOpinions(opinionBase);
+//        // do statutes .. 
+//        if ( opinionBase.getStatuteCitations() != null ) {
+//        	if ( statuteCitations == null ) 
+//        		statuteCitations = new TreeSet<OpinionStatuteCitation>();
+//	        for ( OpinionStatuteCitation addStatuteCitation: opinionBase.getStatuteCitations() ) {
+//            	if ( addStatuteCitation.getStatuteCitation().getStatuteKey().getLawCode() == null ) 
+//            		continue;
+//	            if ( !statuteCitations.contains(addStatuteCitation) ) {
+//	            	statuteCitations.add(addStatuteCitation);
+//	            } else {
+//	            	StatuteCitation newCitation = parserResults.findStatute(addStatuteCitation.getStatuteCitation().getStatuteKey());
+//	            	StatuteCitation existingCitation = citationStore.statuteExists(addStatuteCitation.getStatuteCitation());
+//	            	// because the opinionBase is actually an existing one so maybe not a citation reference in it.
+//	            	if ( newCitation != null ) {
+//		            	OpinionStatuteCitation osR = newCitation.getOpinionStatuteReference(opinionBase);
+//		            	int countNew= osR == null ? 0 : osR.getCountReferences();
+//		            	osR = existingCitation.getOpinionStatuteReference(opinionBase);
+//		            	int countExisting = osR == null ? 0 : osR.getCountReferences();
+//		            	if ( countExisting < countNew ) {
+//		            		existingCitation.setRefCount(opinionBase, newCitation.getOpinionStatuteReference(opinionBase).getCountReferences());
+//		            	}
+//	            	}
+//	            }
+//	        }
+//        }
+//	}
 	public boolean isNewlyLoadedOpinion() {
 		return newlyLoadedOpinion;
 	}

@@ -28,3 +28,19 @@ file2:15 : 457,403
 file2:16 : 459,390
 file2:17 : 439,60
 
+
+
+O:94098
+S:39427
+loadHistoricalOpinions.initializeDB(): DONE
+
+O:94268
+S:39559
+loadHistoricalOpinions.initializeDB(): DONE
+
+O:94268
+S:39559
+loadHistoricalOpinions.initializeDB(): DON
+
+O:94268
+S:39559

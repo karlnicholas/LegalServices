@@ -24,7 +24,7 @@ public class StatuteCitationCrud {
 		ps.executeUpdate();
         try (ResultSet resultSet = ps.getGeneratedKeys()) {
             if (resultSet.first()) {
-        		statute.setId(resultSet.getInt(1));
+        		statute.setId(Integer.valueOf(resultSet.getInt(1)));
             }
         }
 	}
