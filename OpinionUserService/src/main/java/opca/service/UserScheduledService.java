@@ -5,7 +5,6 @@ import java.lang.management.MemoryMXBean;
 import java.lang.management.MemoryUsage;
 import java.lang.management.OperatingSystemMXBean;
 import java.lang.management.ThreadMXBean;
-import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -14,47 +13,20 @@ import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import opca.ejb.util.StatutesServiceFactory;
-import opca.model.OpinionKey;
-import opca.scraper.TestCAParseSlipDetails;
-import statutes.service.StatutesService;
-
 //@TransactionManagement(TransactionManagementType.BEAN)
 //@Singleton
 @Service
-public class ScraperScheduledService {
-    private Logger logger = LoggerFactory.getLogger(ScraperScheduledService.class);
-    private final CAOnlineUpdates caOnlineUpdates;
+public class UserScheduledService {
+    private Logger logger = LoggerFactory.getLogger(UserScheduledService.class);
     private final SystemService systemService;
-    private final OpinionViewSingleton opinionViewSingleton;
 
 //    @Resource private EJBContext context;
 
-public ScraperScheduledService(CAOnlineUpdates caOnlineUpdates, SystemService systemService,
-			OpinionViewSingleton opinionViewSingleton
-	) {
+    public UserScheduledService(SystemService systemService) {
 		super();
-		this.caOnlineUpdates = caOnlineUpdates;
 		this.systemService = systemService;
-		this.opinionViewSingleton = opinionViewSingleton;
 	}
 
-    // timeout issue.
-    // @TransactionTimeout(value=1, unit = TimeUnit.HOURS)
-    // this is handled in wildfly standalone.xml configuration file
-    // though it is currently pretty fast, so maybe not needed.
-	//    @Scheduled(second="0", minute="00", hour="18", dayOfWeek="Mon-Fri", persistent=false)        // 03:30 am (12:30 am AZ ) every day
-//	@Scheduled(cron = "0 0 18 * * MON-FRI")
-    public void updateSlipOpinions() {
-        logger.info("STARTING updateSlipOpinions");
-        List<OpinionKey> opinionKeys = null;
-        StatutesService statutesService = StatutesServiceFactory.getStatutesServiceClient();
-        opinionKeys = caOnlineUpdates.updateDatabase(new TestCAParseSlipDetails(false), statutesService);
-        if ( opinionKeys != null ) {
-        	opinionViewSingleton.updateOpinionViews(opinionKeys, statutesService);
-        }
-        logger.info("DONE updateSlipOpinions");
-    }
 
 //    @Schedule(second="0", minute="10", hour="18", dayOfWeek="Mon-Fri", persistent=false)        // 12:00 am every day
 //    @Scheduled(cron = "0 10 18 * * MON-FRI")
