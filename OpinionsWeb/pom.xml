@@ -47,7 +47,7 @@
 		</dependency>
 		<dependency>
 			<groupId>com.github.karlnicholas.legalservices</groupId>
-			<artifactId>opinions-core-service</artifactId>
+			<artifactId>opinion-view-service</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>

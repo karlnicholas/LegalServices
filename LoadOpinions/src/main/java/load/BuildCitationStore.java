@@ -81,8 +81,8 @@ public class BuildCitationStore implements Runnable {
 				parserDocument.setParagraphs( paragraphs );
 
 				// not efficient, but it works for loading
-				// if you are going to change it then watch for not complete 
-				// 
+				// if you are going to change it then watch for lower than the correct number of 
+				// opinions and statutes loaded
 				synchronized ( citationStore ) {
 					ParsedOpinionCitationSet parserResults = parser.parseOpinionDocument(parserDocument, opinionBase, citationStore);
 					citationStore.mergeParsedDocumentCitations(opinionBase, parserResults);

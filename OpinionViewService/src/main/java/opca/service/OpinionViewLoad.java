@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
-import opca.crud.OpinionBaseDao;
+import opca.dao.OpinionBaseDao;
 import opca.dao.SlipOpinionDao;
 import opca.model.OpinionBase;
 import opca.model.OpinionKey;
