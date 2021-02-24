@@ -18,6 +18,7 @@
 		<module>OpinionsCore</module>
 		<module>OpinionsCoreSlipOpinions</module>
 		<module>OpinionViewService</module>
+		<module>OpinionUserService</module>
 		<module>OpinionsWeb</module>
 		<module>LoadOpinions</module>
 		<module>LoadSlipOpinions</module>

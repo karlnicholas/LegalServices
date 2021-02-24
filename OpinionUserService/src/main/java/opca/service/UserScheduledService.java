@@ -22,15 +22,15 @@ import statutes.service.StatutesService;
 //@TransactionManagement(TransactionManagementType.BEAN)
 //@Singleton
 @Service
-public class ScheduledService {
-    private Logger logger = LoggerFactory.getLogger(ScheduledService.class);
+public class ScraperScheduledService {
+    private Logger logger = LoggerFactory.getLogger(ScraperScheduledService.class);
     private final CAOnlineUpdates caOnlineUpdates;
     private final SystemService systemService;
     private final OpinionViewSingleton opinionViewSingleton;
 
 //    @Resource private EJBContext context;
 
-public ScheduledService(CAOnlineUpdates caOnlineUpdates, SystemService systemService,
+public ScraperScheduledService(CAOnlineUpdates caOnlineUpdates, SystemService systemService,
 			OpinionViewSingleton opinionViewSingleton
 	) {
 		super();

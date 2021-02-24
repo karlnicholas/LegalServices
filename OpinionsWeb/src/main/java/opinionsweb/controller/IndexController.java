@@ -8,21 +8,21 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import opca.service.OpinionViewSingleton;
-import opca.service.ScheduledService;
+import opca.service.ScraperScheduledService;
 
 @RestController
 @RequestMapping("api/home")
 public class IndexController {
 	Logger logger = LoggerFactory.getLogger(IndexController.class);
     private String userCountMessage;
-    private final ScheduledService scheduledService; 
+    private final ScraperScheduledService scraperScheduledService; 
 	private final OpinionViewSingleton opinionViewSingleton;
 
-    public IndexController(ScheduledService scheduledService, 
+    public IndexController(ScraperScheduledService scraperScheduledService, 
     		OpinionViewSingleton opinionViewSingleton
 	) {
 		super();
-		this.scheduledService = scheduledService;
+		this.scraperScheduledService = scraperScheduledService;
 		this.opinionViewSingleton = opinionViewSingleton;
 	}
 
@@ -37,20 +37,8 @@ public class IndexController {
     
     @GetMapping(value="testUpdate", produces = MediaType.APPLICATION_JSON_VALUE)
 	public boolean testUpdate() {
-    	scheduledService.updateSlipOpinions();
+    	scraperScheduledService.updateSlipOpinions();
     	return Boolean.TRUE;
-    }
-    
-    public void testWelcome() {
-    	scheduledService.welcomingService();;
-    }
-
-    public void testOpinionReport() {
-    	scheduledService.opinionReport();
-    }
-
-    public void testSystemReport() {
-    	scheduledService.systemReport();
     }
 
     public void testNothing() {
