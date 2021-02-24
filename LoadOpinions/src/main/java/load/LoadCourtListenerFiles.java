@@ -26,11 +26,9 @@ public class LoadCourtListenerFiles {
 	private final CourtListenerCallback courtListenerCallback;
 	private final Logger logger;
 	int total = 0;
-	public List<AtomicCount> acs;
 	private final ObjectMapper om;
 
 	public LoadCourtListenerFiles(CourtListenerCallback courtListenerCallback) {
-		this.acs = new ArrayList<>();
 		this.courtListenerCallback = courtListenerCallback;
 		pattern = Pattern.compile("/");
 		logger = Logger.getLogger(LoadCourtListenerFiles.class.getName());
@@ -84,9 +82,7 @@ public class LoadCourtListenerFiles {
 					courtListenerCallback.shutdown();
 					break;
 				}
-				AtomicCount ac = new AtomicCount();
-				acs.add(ac);
-				courtListenerCallback.callBack(clOps, ac);
+				courtListenerCallback.callBack(clOps);
 // courtListenerCallback.shutdown();
 // break;
 			}

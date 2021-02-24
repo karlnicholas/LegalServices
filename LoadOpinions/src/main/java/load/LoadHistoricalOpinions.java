@@ -70,32 +70,21 @@ public class LoadHistoricalOpinions {
 //	    	}
 //	    }
 	    
-//		for(OpinionBase opinion: citationStore.getAllOpinions() ) {
-//			opinionBaseCrud.insert(opinion);
-//    	}
-//
-//		for(OpinionBase opinion: citationStore.getAllOpinions() ) {
-//			
-//			if ( opinion.getId() == null ) {
-//				System.out.println("NULL: " + opinion);
-//			}
-//		}
+		for(OpinionBase opinion: citationStore.getAllOpinions() ) {
+			opinionBaseCrud.insert(opinion);
+    	}
 
-	    //		for(OpinionBase opinion: citationStore.getAllOpinions() ) {
-//			opinionBaseCrud.insert(opinion);
-//    	}
-//
-//		for(OpinionBase opinion: citationStore.getAllOpinions() ) {
-//			opinionBaseOpinionCitationsCrud.insert(opinion);
-//		}
-//
-//		for(StatuteCitation statute: citationStore.getAllStatutes() ) {
-//    		statuteCitationCrud.insert(statute);
-//    	}
-//		
-//		for(OpinionBase opinion: citationStore.getAllOpinions() ) {
-//			opinionStatuteCitationCrud.insert(opinion);
-//		}
+		for(StatuteCitation statute: citationStore.getAllStatutes() ) {
+    		statuteCitationCrud.insert(statute);
+    	}
+		
+		for(OpinionBase opinion: citationStore.getAllOpinions() ) {
+			opinionBaseOpinionCitationsCrud.insert(opinion);
+		}
+
+		for(OpinionBase opinion: citationStore.getAllOpinions() ) {
+			opinionStatuteCitationCrud.insert(opinion);
+		}
    	
     }
 

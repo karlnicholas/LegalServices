@@ -29,12 +29,8 @@ public class BuildCitationStore implements Runnable {
 	List<LoadOpinion> clOps;
 	CitationStore citationStore;
 	private final OpinionDocumentParser parser;
-	private final AtomicCount ac; 
 
-	public BuildCitationStore(List<LoadOpinion> clOps, CitationStore persistence, IStatutesApi iStatutesApi, 
-			AtomicCount ac
-	) {
-		this.ac = ac;
+	public BuildCitationStore(List<LoadOpinion> clOps, CitationStore persistence, IStatutesApi iStatutesApi) {
 		this.clOps = clOps;
 		this.citationStore = persistence;
 		parser = new OpinionDocumentParser(iStatutesApi.getStatutesTitles());
@@ -44,10 +40,8 @@ public class BuildCitationStore implements Runnable {
 	public void run() {
 //		for (LoadOpinion op : clOps) {
 		int l = clOps.size();
-		ac.ait.getAndAdd(clOps.size());
 		int i;
 		for (i=0; i < l; ++i) {
-			ac.ail.getAndIncrement();
 			LoadOpinion op = clOps.get(i);
 			Document lawBox = Parser.parse(op.getHtml_lawbox(), "");
 			Elements ps = lawBox.getElementsByTag("p");
@@ -86,15 +80,16 @@ public class BuildCitationStore implements Runnable {
 				parserDocument.setFootnotes( footnotes );
 				parserDocument.setParagraphs( paragraphs );
 
-				ac.ail2.getAndIncrement();
-				ParsedOpinionCitationSet parserResults = parser.parseOpinionDocument(parserDocument, opinionBase, citationStore);
+				// not efficient, but it works for loading
+				// if you are going to change it then watch for not complete 
+				// 
 				synchronized ( citationStore ) {
+					ParsedOpinionCitationSet parserResults = parser.parseOpinionDocument(parserDocument, opinionBase, citationStore);
 					citationStore.mergeParsedDocumentCitations(opinionBase, parserResults);
 					citationStore.persistOpinion(opinionBase);
 //					System.out.println( opinionSummary.fullPrint() );
 				}
 			}
-			ac.loopEnd = i;
 		}
 	}
 }

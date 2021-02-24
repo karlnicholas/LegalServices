@@ -35,8 +35,8 @@ public class LoadCourtListenerCallback implements CourtListenerCallback {
 	 * @see load.CourtListenerCallback#callBack(java.util.List)
 	 */
 	@Override
-	public void callBack(List<LoadOpinion> clOps, AtomicCount ac) {
-		tasks.add(Executors.callable(new BuildCitationStore(clOps, citationStore, iStatutesApi, ac)));
+	public void callBack(List<LoadOpinion> clOps) {
+		tasks.add(Executors.callable(new BuildCitationStore(clOps, citationStore, iStatutesApi)));
 		if ( tasks.size() >= processors ) {
 			try {
 				 List<Future<Object>> results = es.invokeAll(tasks);
