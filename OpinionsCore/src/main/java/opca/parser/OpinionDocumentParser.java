@@ -28,8 +28,7 @@ public class OpinionDocumentParser {
      */
     public ParsedOpinionCitationSet parseOpinionDocument(
     	ScrapedOpinionDocument parserDocument, 
-		OpinionBase opinionBase, 
-		CitationStore citationStore
+		OpinionBase opinionBase
 	) {
     	String defaultCodeSection;
     	ParsedOpinionCitationSet parserResults = new ParsedOpinionCitationSet();
@@ -62,18 +61,6 @@ public class OpinionDocumentParser {
         for ( StatuteCitation statuteCitation: statutes) {
         	// forever get rid of statutes without a referenced code.
         	if( statuteCitation.getStatuteKey().getLawCode() != null ) {
-/*        		
-if ( !statuteCitation.toString().equals("pen:245") ) {
-	continue;
-}
-*/
-                StatuteCitation existingCitation = citationStore.findStatuteByStatute(statuteCitation);
-                if ( existingCitation != null ) {
-                	OpinionStatuteCitation osr = statuteCitation.getOpinionStatuteReference(opinionBase);
-                	existingCitation.incRefCount(opinionBase, osr.getCountReferences());
-                	statuteCitation = existingCitation;
-                }
-
     			parserResults.putStatuteCitation(statuteCitation);
     			goodStatutes.add(statuteCitation);
         	}
@@ -85,12 +72,6 @@ if ( !statuteCitation.toString().equals("pen:245") ) {
 //        ail3.getAndIncrement();
         for ( OpinionBase opinionReferredTo: opinions) {
         	// forever get rid of statutes without a referenced code.
-        	OpinionBase existingOpinion = citationStore.findOpinionByOpinion(opinionReferredTo);
-            if ( existingOpinion != null ) {
-            	existingOpinion.addReferringOpinion(opinionBase);
-            	opinionReferredTo = existingOpinion;
-            }
-        	
 			parserResults.putOpinionBase(opinionReferredTo);
 			goodOpinions.add(opinionReferredTo);
         }
@@ -103,7 +84,7 @@ if ( !statuteCitation.toString().equals("pen:245") ) {
         return parserResults;
     }
 
-    private String analyzeDefaultCodes(
+    protected String analyzeDefaultCodes(
 		OpinionBase opinionBase, 
 		ScrapedOpinionDocument parserDocument
     ) {
@@ -154,7 +135,7 @@ if ( !statuteCitation.toString().equals("pen:245") ) {
     within the same sentence that the
     actual code section number was found.
      */
-    private void checkDesignatedCodeSections(TreeSet<StatuteCitation> citations, OpinionBase opinionBase) {
+    protected void checkDesignatedCodeSections(TreeSet<StatuteCitation> citations, OpinionBase opinionBase) {
     	StatuteCitation[] acitations = citations.toArray(new StatuteCitation[0]);
         for ( int idx = 0; idx < acitations.length; ++idx ) {
             if ( acitations[idx].getStatuteKey().getLawCode() != null ) {
@@ -195,7 +176,7 @@ if ( !statuteCitation.toString().equals("pen:245") ) {
     take out the dcs's that have null code parts and merge them into dcs's that have the same SectionNumbers
     merging means to add the two refCounts;
      */
-    private void collapseCodeSections(TreeSet<StatuteCitation> citations, OpinionBase opinionBase) {
+    protected void collapseCodeSections(TreeSet<StatuteCitation> citations, OpinionBase opinionBase) {
     	StatuteCitation[] acitations = citations.toArray(new StatuteCitation[0]);
         for ( int idx = 0; idx < acitations.length; ++idx ) {
             if ( acitations[idx].getStatuteKey().getLawCode() == null ) {
@@ -263,7 +244,7 @@ if ( !statuteCitation.toString().equals("pen:245") ) {
         return null;
     }
 
-    private void parseDoc(
+    protected void parseDoc(
     	OpinionBase opinionBase, 
     	ScrapedOpinionDocument parserDocument,
 		TreeSet<StatuteCitation> codeCitationTree, 

@@ -94,4 +94,55 @@ public class TestCAParseSlipDetails extends CACaseScraper {
 		return documents;
 		
 	}
+
+	@Override
+	public ScrapedOpinionDocument scrapeOpinionFile(SlipOpinion slipOpinion) {
+		CAParseScrapedDocument parseScrapedDocument = new CAParseScrapedDocument();
+		ScrapedOpinionDocument parsedDoc = null;
+		try ( InputStream inputStream = Files.newInputStream( Paths.get(casesDir + slipOpinion.getFileName() + slipOpinion.getFileExtension())) ) {
+			parsedDoc = parseScrapedDocument.parseScrapedDocument(slipOpinion, inputStream);
+        	if ( parsedDoc.isScrapedSuccess() ) {
+//					parseOpinionDetails(slipOpinion);
+			} else {
+				logger.warning("Opinion not parsed: " + slipOpinion.getFileName() + " " + slipOpinion.getFileExtension());
+			}
+			inputStream.close();
+		} catch (IOException e) {
+			logger.severe("Parse Scraped Document: " + e.getMessage());
+		}
+		boolean goodtogo = true;
+		try ( InputStream inputStream = Files.newInputStream( 
+				Paths.get(casesDir + slipPropertyFilename(slipOpinion.getFileName(), mainCaseScreen))) 
+		) {
+			goodtogo = parseMainCaseScreenDetail(inputStream, slipOpinion); 
+		} catch (IOException e) {
+			logger.warning("File error: " + e.getMessage());
+			goodtogo = false;
+		}
+		if ( goodtogo ) {
+			try ( InputStream inputStream = Files.newInputStream( 
+					Paths.get(casesDir + slipPropertyFilename(slipOpinion.getFileName(), disposition))) 
+			) {
+				parseDispositionDetail(inputStream, slipOpinion); 
+			} catch (IOException e) {
+				logger.warning("File error: " + e.getMessage());
+			}
+			try ( InputStream inputStream = Files.newInputStream( 
+					Paths.get(casesDir + slipPropertyFilename(slipOpinion.getFileName(), partiesAndAttorneys))) 
+			) {
+				parsePartiesAndAttorneysDetail(inputStream, slipOpinion); 
+			} catch (IOException e) {
+				logger.warning("File error: " + e.getMessage());
+			}
+			try ( InputStream inputStream = Files.newInputStream( 
+					Paths.get(casesDir + slipPropertyFilename(slipOpinion.getFileName(), trialCourt))) 
+			) {
+				parseTrialCourtDetail(inputStream, slipOpinion); 
+			} catch (IOException e) {
+				logger.warning("File error: " + e.getMessage());
+			}
+		}
+		return parsedDoc;
+	}
+
 }

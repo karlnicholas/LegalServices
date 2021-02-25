@@ -24,6 +24,7 @@ import opca.model.SlipOpinion;
 import opca.model.SlipProperties;
 import opca.model.StatuteCitation;
 import opca.model.StatuteKey;
+import opca.parser.OpinionDocumentParser;
 import opca.parser.OpinionScraperInterface;
 import opca.parser.ScrapedOpinionDocument;
 import opca.parser.SlipOpinionDocumentParser;
@@ -148,7 +149,7 @@ public class CAOnlineUpdates {
 		StatutesTitles[] arrayStatutesTitles = statutesService.getStatutesTitles().getBody();
 //			codeTitles = statutesArray.getItem().toArray(codeTitles);
 
-		SlipOpinionDocumentParser opinionDocumentParser = new SlipOpinionDocumentParser(arrayStatutesTitles);
+		SlipOpinionDocumentParser slipOpinionDocumentParser = new SlipOpinionDocumentParser(arrayStatutesTitles);
 		
 		// this is a holds things in memory
 		CitationStore citationStore = CitationStore.getInstance();
@@ -156,9 +157,9 @@ public class CAOnlineUpdates {
 
 		// all memory
 		for (ScrapedOpinionDocument scrapedOpinionDocument: scrapedOpinionDocuments ) {
-			ParsedOpinionCitationSet parsedOpinionResults = opinionDocumentParser.parseOpinionDocument(scrapedOpinionDocument, scrapedOpinionDocument.getOpinionBase(), citationStore );
+			ParsedOpinionCitationSet parsedOpinionResults = slipOpinionDocumentParser.parseOpinionDocuments(scrapedOpinionDocument, scrapedOpinionDocument.getOpinionBase(), citationStore );
 			// maybe someday deal with court issued modifications
-    		opinionDocumentParser.parseSlipOpinionDetails((SlipOpinion) scrapedOpinionDocument.getOpinionBase(), scrapedOpinionDocument);
+			slipOpinionDocumentParser.parseSlipOpinionDetails((SlipOpinion) scrapedOpinionDocument.getOpinionBase(), scrapedOpinionDocument);
     		OpinionBase opinionBase = scrapedOpinionDocument.getOpinionBase();
     		citationStore.mergeParsedDocumentCitations(scrapedOpinionDocument.getOpinionBase(), parsedOpinionResults);
     		if ( logger.isTraceEnabled() ) {

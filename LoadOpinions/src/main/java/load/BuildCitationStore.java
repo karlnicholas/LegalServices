@@ -14,6 +14,7 @@ import opca.model.DTYPES;
 import opca.model.OpinionBase;
 import opca.model.OpinionKey;
 import opca.parser.OpinionDocumentParser;
+import opca.parser.OpinionDocumentsParser;
 import opca.parser.ParsedOpinionCitationSet;
 import opca.parser.ScrapedOpinionDocument;
 import statutes.api.IStatutesApi;
@@ -28,12 +29,12 @@ import statutes.api.IStatutesApi;
 public class BuildCitationStore implements Runnable {
 	List<LoadOpinion> clOps;
 	CitationStore citationStore;
-	private final OpinionDocumentParser parser;
+	private final OpinionDocumentsParser parser;
 
 	public BuildCitationStore(List<LoadOpinion> clOps, CitationStore persistence, IStatutesApi iStatutesApi) {
 		this.clOps = clOps;
 		this.citationStore = persistence;
-		parser = new OpinionDocumentParser(iStatutesApi.getStatutesTitles());
+		parser = new OpinionDocumentsParser(iStatutesApi.getStatutesTitles());
 	}
 
 	@Override
@@ -84,7 +85,7 @@ public class BuildCitationStore implements Runnable {
 				// if you are going to change it then watch for lower than the correct number of 
 				// opinions and statutes loaded
 				synchronized ( citationStore ) {
-					ParsedOpinionCitationSet parserResults = parser.parseOpinionDocument(parserDocument, opinionBase, citationStore);
+					ParsedOpinionCitationSet parserResults = parser.parseOpinionDocuments(parserDocument, opinionBase, citationStore);
 					citationStore.mergeParsedDocumentCitations(opinionBase, parserResults);
 					citationStore.persistOpinion(opinionBase);
 //					System.out.println( opinionSummary.fullPrint() );

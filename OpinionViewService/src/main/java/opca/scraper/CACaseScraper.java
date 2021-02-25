@@ -130,6 +130,47 @@ public class CACaseScraper implements OpinionScraperInterface {
 		return documents;
 	}
 	
+	@Override
+	public ScrapedOpinionDocument scrapeOpinionFile(SlipOpinion slipOpinion) {
+		List<ScrapedOpinionDocument> documents = new ArrayList<ScrapedOpinionDocument>();
+		CAParseScrapedDocument parseScrapedDocument = new CAParseScrapedDocument();
+		ScrapedOpinionDocument parsedDoc = null;
+		try ( CloseableHttpClient httpclient = HttpClients.createDefault() ) {
+			logger.fine("Downloading: " + slipOpinion.getFileName()+ slipOpinion.getFileExtension());
+			HttpGet httpGet = new HttpGet(downloadURL + slipOpinion.getFileName() + slipOpinion.getFileExtension());
+			try ( CloseableHttpResponse response = httpclient.execute(httpGet) ) {
+				// uhmm .. I don't think the key is the same as the name.
+//					HttpGet httpGet = new HttpGet("http://www.courts.ca.gov/opinions/documents/" + slipOpinion.getName() + slipOpinion.getFileExtension());
+				InputStream is;
+	        	if ( debugFiles ) {
+					ByteArrayInputStream bais = convertInputStream(response.getEntity().getContent());
+	        		saveCopyOfCase(casesDir, slipOpinion.getFileName().toString()+slipOpinion.getFileExtension(), new BufferedInputStream(bais));
+	        		bais.reset();
+	        		is = bais;
+	        	} else {
+	        		is = response.getEntity().getContent();
+	        	}
+	        	parsedDoc = parseScrapedDocument.parseScrapedDocument(slipOpinion, is);
+	        	if ( parsedDoc.isScrapedSuccess() ) {
+	        		documents.add( parsedDoc );
+					parseOpinionDetails(slipOpinion);
+				} else {
+					logger.warning("Opinion not parsed: " + slipOpinion.getFileName() + " " + slipOpinion.getFileExtension());
+				}
+				response.close();
+			} catch (IOException ex) {
+				logger.log(Level.SEVERE, null, ex);
+				logger.log(Level.SEVERE, "Problem with file " + slipOpinion.getFileName()+slipOpinion.getFileExtension());
+				// retry three times
+			}
+			// we are going to shut down the connection manager before leaving
+			httpclient.close();
+		} catch (IOException ex) {
+	    	logger.log(Level.SEVERE, null, ex);
+		}
+		return parsedDoc;
+	}
+	
 	public void parseOpinionDetails(SlipOpinion slipOpinion) {
 		if ( slipOpinion.getSearchUrl() == null ) { 
 	    	logger.warning("slipOpinion.getSearchUrl() is null");
@@ -537,7 +578,7 @@ public class CACaseScraper implements OpinionScraperInterface {
 	public static String slipPropertyFilename(String slipOpinionName, String propertyName) {
 		return slipOpinionName+"-" + propertyName+ ".html";		
 	}
-	
+
 }
 
 /*			
