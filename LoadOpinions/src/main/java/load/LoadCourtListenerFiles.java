@@ -116,7 +116,7 @@ if ( ++total < 38 )
 				}
 				// System.out.println("Content:" + new String(content));
 				ApiOpinion op = om.readValue(content, ApiOpinion.class);
-				Long id = new Long(pattern.split(op.getResource_uri())[7]);
+				Long id = Long.valueOf(pattern.split(op.getResource_uri())[7]);
 				LoadOpinion loadOpinion = mapLoadOpinions.get(id);
 				if (loadOpinion != null) {
 					if (op.getHtml_lawbox() != null ) {

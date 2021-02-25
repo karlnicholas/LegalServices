@@ -4,7 +4,6 @@ import java.text.BreakIterator;
 import java.util.*;
 
 import statutes.StatutesTitles;
-import opca.memorydb.CitationStore;
 import opca.model.*;
 
 /**

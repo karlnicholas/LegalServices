@@ -7,9 +7,6 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeSet;
 
-import opca.memorydb.CitationStore;
-import opca.parser.ParsedOpinionCitationSet;
-
 @SuppressWarnings("serial")
 //@Entity
 //@NamedQueries({

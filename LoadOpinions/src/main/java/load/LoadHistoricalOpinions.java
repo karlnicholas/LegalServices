@@ -1,14 +1,11 @@
 package load;
 
-import java.sql.PreparedStatement;
-
 import opca.crud.OpinionBaseCrud;
 import opca.crud.OpinionBaseOpinionCitationsCrud;
 import opca.crud.OpinionStatuteCitationCrud;
 import opca.crud.StatuteCitationCrud;
 import opca.memorydb.CitationStore;
 import opca.model.OpinionBase;
-import opca.model.OpinionStatuteCitation;
 import opca.model.StatuteCitation;
 import statutes.api.IStatutesApi;
 import statutesca.statutesapi.CAStatutesApiImpl;

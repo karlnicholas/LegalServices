@@ -25,7 +25,7 @@ public class LoadOpinion {
     public LoadOpinion() {}
     public LoadOpinion(Cluster cluster) {
         // http://www.courtlistener.com/api/rest/v3/clusters/1361768/
-    	id = new Long(pattern.split(cluster.getResource_uri())[7]);
+    	id = Long.valueOf(pattern.split(cluster.getResource_uri())[7]);
     	clusterSource = cluster.getSource();
     	Calendar cal = Calendar.getInstance();
     	cal.setTime(cluster.getDate_filed());

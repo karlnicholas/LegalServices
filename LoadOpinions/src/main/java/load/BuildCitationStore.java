@@ -13,7 +13,6 @@ import opca.memorydb.CitationStore;
 import opca.model.DTYPES;
 import opca.model.OpinionBase;
 import opca.model.OpinionKey;
-import opca.parser.OpinionDocumentParser;
 import opca.parser.OpinionDocumentsParser;
 import opca.parser.ParsedOpinionCitationSet;
 import opca.parser.ScrapedOpinionDocument;
