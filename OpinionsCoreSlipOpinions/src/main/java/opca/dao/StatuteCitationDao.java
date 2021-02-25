@@ -104,7 +104,7 @@ public class StatuteCitationDao {
 				resultSet.getInt("obro_vset"));
 		opinionBaseReferring.setId(Integer.valueOf(resultSet.getString("obro_id")));
 		opinionBaseReferring.setCountReferringOpinions(resultSet.getInt("obro_countreferrringopinions"));
-		if ( resultSet.getRef("obro_opiniondate") != null ) opinionBaseReferring.setOpinionDate((LocalDate)resultSet.getObject("obro_opiniondate"));
+		if ( resultSet.getObject("obro_opiniondate") != null ) opinionBaseReferring.setOpinionDate((LocalDate)resultSet.getObject("obro_opiniondate"));
 		opinionBaseReferring.setTitle(resultSet.getString("obor_title"));
 		OpinionStatuteCitation opinionStatuteCitation = new OpinionStatuteCitation(statuteCitation, opinionBaseReferring, resultSet.getInt("osc_countreferences"));
 		statuteCitation.getReferringOpinions().add(opinionStatuteCitation);

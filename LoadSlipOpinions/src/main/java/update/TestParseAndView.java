@@ -1,5 +1,12 @@
 package update;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.TreeSet;
+import java.util.stream.Collectors;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
@@ -8,9 +15,15 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
+import opca.dao.OpinionBaseDao;
+import opca.model.OpinionBase;
+import opca.model.SlipOpinion;
 import opca.parser.OpinionScraperInterface;
+import opca.parser.ParsedOpinionCitationSet;
 import opca.scraper.TestCAParseSlipDetails;
 import opca.service.CAOnlineParseAndView;
+import opca.view.OpinionView;
+import opca.view.OpinionViewBuilder;
 import statutes.service.StatutesService;
 import statutes.service.client.StatutesServiceClientImpl;
 
@@ -18,12 +31,15 @@ import statutes.service.client.StatutesServiceClientImpl;
 @ConditionalOnProperty(name = "TestParseAndView.active", havingValue = "true", matchIfMissing = false)
 @EnableTransactionManagement
 public class TestParseAndView implements ApplicationRunner {
+	Logger logger = LoggerFactory.getLogger(TestParseAndView.class);
 	public static void main(String... args) {
 		new SpringApplicationBuilder(TestParseAndView.class).run(args);
 	}
 
 	@Autowired
 	private CAOnlineParseAndView parseAndView;
+	@Autowired
+	private OpinionBaseDao opinionBaseDao;
 	@Override
 	public void run(ApplicationArguments args) {
 
@@ -31,7 +47,16 @@ public class TestParseAndView implements ApplicationRunner {
 //				OpinionScraperInterface caseScraper = new CACaseScraper(true);
 //				OpinionScraperInterface caseScraper = new TestCACaseScraper(false);
 		OpinionScraperInterface caseScraper = new TestCAParseSlipDetails(false);
-		parseAndView.updateDatabase(caseScraper, statutesService);
+		SlipOpinion slipOpinion = parseAndView.getSlipOpinion(caseScraper, statutesService);
+
+		OpinionViewBuilder opinionViewBuilder = new OpinionViewBuilder(statutesService);
+
+		List<OpinionBase> opinionCitations = opinionBaseDao.opinionsWithReferringOpinions(slipOpinion.getOpinionCitations().stream().map(OpinionBase::getOpinionKey).collect(Collectors.toList()));
+		slipOpinion.setOpinionCitations(new TreeSet<>(opinionCitations));
+
+		ParsedOpinionCitationSet parserResults = new ParsedOpinionCitationSet(slipOpinion);
+		OpinionView opinionView = opinionViewBuilder.buildOpinionView(slipOpinion, parserResults);
+		System.out.println("OpinionView" + opinionView);
 		System.out.println("Completed");
 
 //			List<ScrapedOpinionDocument> scrapedCases = caseScraper.scrapeOpinionFiles(caseScraper.getCaseList());

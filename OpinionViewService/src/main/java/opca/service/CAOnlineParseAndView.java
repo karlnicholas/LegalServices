@@ -31,7 +31,7 @@ public class CAOnlineParseAndView {
 //	}
 
 	// @Transactional very important, won't work without it.
-	public List<OpinionKey> updateDatabase(OpinionScraperInterface caseScraper, StatutesService statutesService) {
+	public SlipOpinion getSlipOpinion(OpinionScraperInterface caseScraper, StatutesService statutesService) {
 		
  		List<SlipOpinion> onlineOpinions = caseScraper.getCaseList();
  		// save OpinionKeys for cache handling 
@@ -58,7 +58,7 @@ public class CAOnlineParseAndView {
 		// no retries
 		processCase(slipOpinion, caseScraper, statutesService);
 //			processAndPersistCases(onlineOpinions, caseScraper);
-		return opinionKeys; 
+		return slipOpinion; 
 	}
 	
 	private void processCase(SlipOpinion slipOpinion, OpinionScraperInterface opinionScraper, StatutesService statutesService) {

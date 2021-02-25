@@ -73,25 +73,24 @@ public class OpinionBaseDao {
 	 */
 	public List<OpinionBase> opinionsWithReferringOpinions(List<OpinionKey> opinionKeys) {
 		return jdbcTemplate.queryForStream((conn)->{
-			StringBuilder sb = new StringBuilder( "select " + 
-					"oboc.id as oboc_id, " + 
+			StringBuilder sb = new StringBuilder( "select oboc.id as oboc_id, " + 
 					"oboc.countreferringopinions as oboc_countreferringopinions, " + 
 					"oboc.opiniondate as oboc_opiniondate, " + 
-					"oboc.page oboc_page, " + 
 					"oboc.volume oboc_volume, " + 
 					"oboc.vset oboc_vset, " + 
-					"oboc.title oboc_title, " +
+					"oboc.page oboc_page, " + 
+					"oboc.title oboc_title, " + 
 					"obro.id as obro_id, " + 
 					"obro.countreferringopinions as obro_countreferringopinions, " + 
 					"obro.opiniondate as obro_opiniondate, " + 
-					"obro.page obro_page, " + 
 					"obro.volume obro_volume, " + 
 					"obro.vset obro_vset, " + 
-					"obro.title obro_title" + 
+					"obro.page obro_page, " + 
+					"obro.title obro_title " + 
 					"from opinionbase oboc " + 
 					"left outer join opinionbase_opinioncitations obroj on oboc.id = obroj.referringopinions_id  " + 
 					"left outer join opinionbase obro on obroj.opinioncitations_id = obro.id " + 
-					"where (oboc.page, oboc.volume, oboc.vset) in " );
+					"where (oboc.volume, oboc.vset, oboc.page) in " );
 			sb.append("(");
 			for ( int i=0; i < opinionKeys.size(); ++i ) {
 				sb.append("(?,?,?),");
@@ -100,9 +99,9 @@ public class OpinionBaseDao {
 			sb.append(")");
 			PreparedStatement ps = conn.prepareStatement(sb.toString());
 			for ( int i=0; i < opinionKeys.size(); ++i ) {
-				ps.setInt((i+1)*3, opinionKeys.get(i).getPage());
-				ps.setInt((i+1)*3+1, opinionKeys.get(i).getVolume());
-				ps.setInt((i+1)*3+2, opinionKeys.get(i).getVset());
+				ps.setInt(i*3+1, opinionKeys.get(i).getVolume());
+				ps.setInt(i*3+2, opinionKeys.get(i).getVset());
+				ps.setInt(i*3+3, opinionKeys.get(i).getPage());
 			}
 			return ps;
 		}, this::mapOpinionsWithReferringOpinions).collect(Collectors.groupingBy(OpinionBase::getId, Collectors.reducing((ob1, ob2)->{
@@ -170,22 +169,22 @@ public class OpinionBaseDao {
 	private OpinionBase mapFetchOpinionCitationsForOpinions(ResultSet resultSet, int rowNum) throws SQLException {
 		OpinionBase opinionBase = new OpinionBase(
 				DTYPES.OPINIONBASE, 
-				resultSet.getInt("o_page"), 
 				resultSet.getInt("o_volume"), 
-				resultSet.getInt("o_vset"));
+				resultSet.getInt("o_vset"), 
+				resultSet.getInt("o_page"));
 		opinionBase.setId(resultSet.getInt("o_id"));
 		opinionBase.setCountReferringOpinions(resultSet.getInt("o_countreferrringopinions"));
-		if ( resultSet.getRef("o_opiniondate") != null ) opinionBase.setOpinionDate((LocalDate)resultSet.getObject("o_opiniondate"));
+		if ( resultSet.getObject("o_opiniondate") != null ) opinionBase.setOpinionDate((LocalDate)resultSet.getObject("o_opiniondate"));
 		opinionBase.setTitle(resultSet.getString("o_title"));
 		opinionBase.setOpinionCitations(new HashSet<>());
 		OpinionBase opinionBaseCitation = new OpinionBase(
-				DTYPES.OPINIONBASE, 
-				resultSet.getInt("ooc_page"), 
+				DTYPES.OPINIONBASE,  
 				resultSet.getInt("ooc_volume"), 
-				resultSet.getInt("ooc_vset"));
+				resultSet.getInt("ooc_vset"), 
+				resultSet.getInt("ooc_page"));
 		opinionBaseCitation.setId(Integer.valueOf(resultSet.getString("ooc_id")));
 		opinionBaseCitation.setCountReferringOpinions(resultSet.getInt("ooc_countreferrringopinions"));
-		if ( resultSet.getRef("ooc_opiniondate") != null ) opinionBaseCitation.setOpinionDate((LocalDate)resultSet.getObject("ooc_opiniondate"));
+		if ( resultSet.getObject("ooc_opiniondate") != null ) opinionBaseCitation.setOpinionDate((LocalDate)resultSet.getObject("ooc_opiniondate"));
 		opinionBaseCitation.setTitle(resultSet.getString("ooc_title"));
 		opinionBase.getOpinionCitations().add(opinionBaseCitation);
 		StatuteCitation sc = new StatuteCitation(new StatuteKey(resultSet.getString("sc_lawcode"), resultSet.getString("sc_lsectionnumber")));
@@ -246,23 +245,27 @@ public class OpinionBaseDao {
 	private OpinionBase mapOpinionsWithReferringOpinions(ResultSet resultSet, int rowNum) throws SQLException {
 		OpinionBase opinionBase = new OpinionBase(
 				DTYPES.OPINIONBASE, 
-				resultSet.getInt("oboc_page"), 
 				resultSet.getInt("oboc_volume"), 
-				resultSet.getInt("oboc_vset"));
+				resultSet.getInt("oboc_vset"), 
+				resultSet.getInt("oboc_page"));
 		opinionBase.setId(resultSet.getInt("oboc_id"));
-		opinionBase.setCountReferringOpinions(resultSet.getInt("oboc_countreferrringopinions"));
-		if ( resultSet.getRef("oboc_opiniondate") != null ) opinionBase.setOpinionDate((LocalDate)resultSet.getObject("oboc_opiniondate"));
+		opinionBase.setCountReferringOpinions(resultSet.getInt("oboc_countreferringopinions"));
+		if ( resultSet.getObject("oboc_opiniondate") != null ) {
+			opinionBase.setOpinionDate(((java.sql.Date)resultSet.getObject("oboc_opiniondate")).toLocalDate());
+		}
 		opinionBase.setTitle(resultSet.getString("oboc_title"));
 		opinionBase.setReferringOpinions(new HashSet<>());
 		OpinionBase opinionBaseReferring = new OpinionBase(
 				DTYPES.OPINIONBASE, 
-				resultSet.getInt("obro_page"), 
 				resultSet.getInt("obro_volume"), 
-				resultSet.getInt("obro_vset"));
-		opinionBaseReferring.setId(Integer.valueOf(resultSet.getString("obro_id")));
-		opinionBaseReferring.setCountReferringOpinions(resultSet.getInt("obro_countreferrringopinions"));
-		if ( resultSet.getRef("obro_opiniondate") != null ) opinionBaseReferring.setOpinionDate((LocalDate)resultSet.getObject("obro_opiniondate"));
-		opinionBaseReferring.setTitle(resultSet.getString("obor_title"));
+				resultSet.getInt("obro_vset"),
+				resultSet.getInt("obro_page"));
+		opinionBaseReferring.setId(resultSet.getInt("obro_id"));
+		opinionBaseReferring.setCountReferringOpinions(resultSet.getInt("obro_countreferringopinions"));
+		if ( resultSet.getObject("obro_opiniondate") != null ) {
+			opinionBaseReferring.setOpinionDate(((java.sql.Date)resultSet.getObject("obro_opiniondate")).toLocalDate());
+		}
+		opinionBaseReferring.setTitle(resultSet.getString("obro_title"));
 		opinionBase.getReferringOpinions().add(opinionBaseReferring);
 		return opinionBase;
 	}

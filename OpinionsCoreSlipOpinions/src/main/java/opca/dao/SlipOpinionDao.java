@@ -211,7 +211,7 @@ public class SlipOpinionDao {
 				slipOpinion.getStatuteCitations().add(opinionStatuteCitation); 
 			}
 		}
-		if ( resultSet.getRef("oc_page") != null && resultSet.getRef("oc_volume") != null && resultSet.getRef("oc_vset") != null ) {
+		if ( resultSet.getObject("oc_page") != null && resultSet.getObject("oc_volume") != null && resultSet.getObject("oc_vset") != null ) {
 			// do OpinionCitation
 			OpinionKey opinionKey = new OpinionKey(
 					resultSet.getInt("oc_page"), 
@@ -223,7 +223,7 @@ public class SlipOpinionDao {
 				()->{
 					try {
 					opinionCitation.setCountReferringOpinions(resultSet.getInt("oc_countreferringopinions"));
-					if ( resultSet.getRef("oc_opiniondate") != null ) {
+					if ( resultSet.getObject("oc_opiniondate") != null ) {
 						opinionCitation.setOpinionDate((LocalDate)resultSet.getObject("oc_opiniondate"));
 					}
 					opinionCitation.setStatuteCitations(new HashSet<>());
@@ -232,7 +232,7 @@ public class SlipOpinionDao {
 					} catch ( Exception e ) {throw new RuntimeException(e);}
 				});
 			// do OpinionCitation->StatuteCitation
-			if ( resultSet.getRef("ocsc_lawcode") != null && resultSet.getRef("ocsc_sectionnumber") != null ) {
+			if ( resultSet.getObject("ocsc_lawcode") != null && resultSet.getObject("ocsc_sectionnumber") != null ) {
 				StatuteCitation statuteCitation = new StatuteCitation(slipOpinion, 
 						resultSet.getString("ocsc_lawcode"), 
 						resultSet.getString("ocsc_sectionnumber"));
