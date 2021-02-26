@@ -1,5 +1,6 @@
 package opca.service;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -12,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import opca.crud.StatuteCitationCrud;
 import opca.dao.OpinionBaseDao;
 import opca.dao.StatuteCitationDao;
 import opca.dao.SlipOpinionDao;
@@ -24,7 +26,6 @@ import opca.model.SlipOpinion;
 import opca.model.SlipProperties;
 import opca.model.StatuteCitation;
 import opca.model.StatuteKey;
-import opca.parser.OpinionDocumentParser;
 import opca.parser.OpinionScraperInterface;
 import opca.parser.ScrapedOpinionDocument;
 import opca.parser.SlipOpinionDocumentParser;
@@ -59,7 +60,7 @@ public class CAOnlineUpdates {
 //	}
 
 	// @Transactional very important, won't work without it.
-	public List<OpinionKey> updateDatabase(OpinionScraperInterface caseScraper, StatutesService statutesService) {
+	public List<OpinionKey> updateDatabase(OpinionScraperInterface caseScraper, StatutesService statutesService) throws SQLException {
 		
  		List<SlipOpinion> onlineOpinions = caseScraper.getCaseList();
  		// save OpinionKeys for cache handling 
@@ -136,7 +137,7 @@ public class CAOnlineUpdates {
 		return opinionKeys; 
 	}
 	
-	private void processAndPersistCases(List<SlipOpinion> slipOpinions, OpinionScraperInterface opinionScraper, StatutesService statutesService) {
+	private void processAndPersistCases(List<SlipOpinion> slipOpinions, OpinionScraperInterface opinionScraper, StatutesService statutesService) throws SQLException {
 
 		// Create the CACodes list
 		logger.info("There are " + slipOpinions.size() + " SlipOpinions to process");

@@ -28,33 +28,34 @@ public class StatuteCitationDao {
 	public StatuteCitationDao(JdbcTemplate jdbcTemplate) {
 		this.jdbcTemplate = jdbcTemplate;
 	}
-	public List<StatuteCitation> findStatutesForKeys(List<Integer> keys) {
-		return jdbcTemplate.queryForStream((conn)->{
-			StringBuilder sb = new StringBuilder( "select " + 
-					"s.designated as s_designated, " + 
-					"s.lawcode as s_lawcode, " + 
-					"s.sectionnumber as s_sectionnumber " + 
-					"from statutecitation s " + 
-					"where (s.id) in " );
-			sb.append("(");
-			for ( int i=0; i < keys.size(); ++i ) {
-				sb.append("?,");
-			}
-			sb.deleteCharAt(sb.length()-1);
-			sb.append(")");
-			PreparedStatement ps = conn.prepareStatement(sb.toString());
-			for ( int i=0; i < keys.size(); ++i ) {
-				ps.setInt(i+1, keys.get(i));
-			}
-			return ps;
-		}, this::mapStatuteCitation).collect(Collectors.toList());
-	}
-
-	private StatuteCitation mapStatuteCitation( ResultSet resultSet, int rowNum) throws SQLException {
-		StatuteCitation statuteCitation = new StatuteCitation(new StatuteKey(resultSet.getString("s_lawcode"), resultSet.getString("s_sectionnumber")));
-		statuteCitation.setDesignated(resultSet.getBoolean("s_designated"));
-		return statuteCitation;
-	}
+//	public List<StatuteCitation> findStatutesForKeys(List<StatuteKey> keys) {
+//		return jdbcTemplate.queryForStream((conn)->{
+//			StringBuilder sb = new StringBuilder( "select " + 
+//					"s.designated as s_designated, " + 
+//					"s.lawcode as s_lawcode, " + 
+//					"s.sectionnumber as s_sectionnumber " + 
+//					"from statutecitation s " + 
+//					"where (s.lawcode, s.sectionnumber) in " );
+//			sb.append("(");
+//			for ( int i=0; i < keys.size(); ++i ) {
+//				sb.append("(?,?),");
+//			}
+//			sb.deleteCharAt(sb.length()-1);
+//			sb.append(")");
+//			PreparedStatement ps = conn.prepareStatement(sb.toString());
+//			for ( int i=0; i < keys.size(); ++i) {
+//				ps.setString(i*2+1, keys.get(i).getLawCode());
+//				ps.setString(i*2+2, keys.get(i).getSectionNumber());
+//			}
+//			return ps;
+//		}, this::mapStatuteCitation).collect(Collectors.toList());
+//	}
+//
+//	private StatuteCitation mapStatuteCitation( ResultSet resultSet, int rowNum) throws SQLException {
+//		StatuteCitation statuteCitation = new StatuteCitation(new StatuteKey(resultSet.getString("s_lawcode"), resultSet.getString("s_sectionnumber")));
+//		statuteCitation.setDesignated(resultSet.getBoolean("s_designated"));
+//		return statuteCitation;
+//	}
 
 	public List<StatuteCitation> statutesWithReferringOpinions(List<StatuteKey> statuteKeys) {
 		return jdbcTemplate.queryForStream((conn)->{
@@ -110,6 +111,7 @@ public class StatuteCitationDao {
 		statuteCitation.getReferringOpinions().add(opinionStatuteCitation);
 		return statuteCitation;
 	}
+
 	public void insert(StatuteCitation statute) {
 		KeyHolder keyHolder = new GeneratedKeyHolder();
 		jdbcTemplate.update((conn)->{

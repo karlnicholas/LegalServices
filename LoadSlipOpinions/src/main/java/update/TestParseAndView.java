@@ -1,8 +1,6 @@
 package update;
 
-import java.util.Iterator;
 import java.util.List;
-import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -17,6 +15,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import opca.dao.OpinionBaseDao;
 import opca.model.OpinionBase;
+import opca.model.OpinionStatuteCitation;
 import opca.model.SlipOpinion;
 import opca.parser.OpinionScraperInterface;
 import opca.parser.ParsedOpinionCitationSet;
@@ -52,28 +51,42 @@ public class TestParseAndView implements ApplicationRunner {
 	
 		OpinionViewBuilder opinionViewBuilder = new OpinionViewBuilder(statutesService);
 	
-		List<OpinionBase> opinionsWithReferringOpinions = opinionBaseDao.opinionsWithReferringOpinions(slipOpinion.getOpinionCitations()
-				.stream()
-				.map(OpinionBase::getOpinionKey)
-				.collect(Collectors.toList()));
-		
+//		List<OpinionBase> opinionsWithReferringOpinions = opinionBaseDao.opinionsWithReferringOpinions(slipOpinion.getOpinionCitations()
+//				.stream()
+//				.map(OpinionBase::getOpinionKey)
+//				.collect(Collectors.toList()));
+//		
+//		slipOpinion.getOpinionCitations().clear();
+//		slipOpinion.getOpinionCitations().addAll(opinionsWithReferringOpinions);
+
+		List<OpinionBase> opinionsWithReferringOpinions = opinionBaseDao.getOpinionsWithStatuteCitations(slipOpinion.getOpinionCitations()
+		.stream()
+		.map(OpinionBase::getOpinionKey)
+		.collect(Collectors.toList()));
+
 		slipOpinion.getOpinionCitations().clear();
 		slipOpinion.getOpinionCitations().addAll(opinionsWithReferringOpinions);
 
-		System.out.println("slipOpinion:= " 
-				+ slipOpinion.getTitle() 
-				+ "\n	:OpinionKey= " + slipOpinion.getOpinionKey()
-				+ "\n	:OpinionCitations().size()= " + (slipOpinion.getOpinionCitations()== null?"xx":slipOpinion.getOpinionCitations().size())
-				+ "\n	:StatuteCitations().size()= " + (slipOpinion.getStatuteCitations()== null?"xx":slipOpinion.getStatuteCitations().size())
-				+ "\n	:CountReferringOpinions= " + slipOpinion.getCountReferringOpinions()
-			);
-		for ( OpinionBase opinionCitation: slipOpinion.getOpinionCitations()) {
-			System.out.println("\nopinionCitation:= " 
-					+ opinionCitation.getTitle() 
-					+ "\n		:OpinionKey= " + opinionCitation.getOpinionKey()
-					+ "\n		:CountReferringOpinions= " + opinionCitation.getCountReferringOpinions()
-				);
-		}
+//		System.out.println("slipOpinion:= " 
+//				+ slipOpinion.getTitle() 
+//				+ "\n	:OpinionKey= " + slipOpinion.getOpinionKey()
+//				+ "\n	:OpinionCitations().size()= " + (slipOpinion.getOpinionCitations()== null?"xx":slipOpinion.getOpinionCitations().size())
+//				+ "\n	:StatuteCitations().size()= " + (slipOpinion.getStatuteCitations()== null?"xx":slipOpinion.getStatuteCitations().size())
+//				+ "\n	:CountReferringOpinions= " + slipOpinion.getCountReferringOpinions()
+//			);
+//		for ( OpinionBase opinionCitation: slipOpinion.getOpinionCitations()) {
+//			System.out.println("    opinionCitation:= " 
+//					+ opinionCitation.getTitle() 
+//					+ "\n		:OpinionKey= " + opinionCitation.getOpinionKey()
+//					+ "\n		:CountReferringOpinions= " + opinionCitation.getCountReferringOpinions()
+//				);
+//			for ( OpinionStatuteCitation opinionStatuteCitation: opinionCitation.getStatuteCitations()) {
+//				System.out.println("        opinionStatuteCitation:= " 
+//						+ opinionStatuteCitation.getCountReferences() 
+//						+ "\n		    :OpinionKey= " + opinionStatuteCitation.getStatuteCitation()
+//					);
+//			}
+//		}
 
 		ParsedOpinionCitationSet parserResults = new ParsedOpinionCitationSet(slipOpinion);
 		OpinionView opinionView = opinionViewBuilder.buildOpinionView(slipOpinion, parserResults);

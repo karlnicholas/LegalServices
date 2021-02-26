@@ -125,10 +125,10 @@ public class SlipOpinionDao {
 			"o.volume as o_volume," + 
 			"o.vset as o_vset," + 
 			"o.title as o_title," + 
-			"osc.countreferences as osc_countreferences," + 
 			"sc.designated as sc_designated," + 
 			"sc.lawcode as sc_lawcode," + 
 			"sc.sectionnumber as sc_sectionnumber," + 
+			"osc.countreferences as osc_countreferences," + 
 			"oc.countreferringopinions as oc_countreferringopinions," + 
 			"oc.opiniondate as oc_opiniondate," + 
 			"oc.page as oc_page," + 

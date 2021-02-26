@@ -1,5 +1,7 @@
 package update;
 
+import java.sql.SQLException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
@@ -25,7 +27,7 @@ public class TestOnlineUpdates implements ApplicationRunner {
 	@Autowired
 	private CAOnlineUpdates caOnlineUpdates;
 	@Override
-	public void run(ApplicationArguments args) {
+	public void run(ApplicationArguments args) throws SQLException {
 
 		StatutesService statutesService = new StatutesServiceClientImpl("http://localhost:8090/");
 //				OpinionScraperInterface caseScraper = new CACaseScraper(true);

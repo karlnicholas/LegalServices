@@ -1,5 +1,6 @@
 package opca.dao;
 
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -171,6 +172,69 @@ public class OpinionBaseDao {
 		}))).values().stream().map(Optional::get).collect(Collectors.toList());
 	}
 
+
+	/**
+	 *  
+	 * @param opinionKeys
+	 * @return
+	 */
+	public List<OpinionBase> getOpinionsWithStatuteCitations(List<OpinionKey> opinionKeys) {
+		return jdbcTemplate.queryForStream((conn)->{
+			StringBuilder sb = new StringBuilder("select ooc.id as ooc_id, " + 
+					"ooc.countreferringopinions as ooc_countreferringopinions, " + 
+					"ooc.opiniondate as ooc_opiniondate, " + 
+					"ooc.volume as ooc_volume, " + 
+					"ooc.vset as ooc_vset, " + 
+					"ooc.page as ooc_page, " + 
+					"ooc.title as ooc_title, " + 
+					"osc.countreferences as osc_countreferences,  " + 
+					"sc.designated as sc_designated, " + 
+					"sc.lawcode as sc_lawcode, " + 
+					"sc.sectionnumber  as sc_sectionnumber " + 
+					"from opinionbase ooc " + 
+					"left outer join opinionstatutecitation osc on ooc.id = osc.opinionbase_id  " + 
+					"left outer join statutecitation sc on osc.statutecitation_id = sc.id " + 
+					"where (ooc.volume, ooc.vset, ooc.page) in ");
+			sb.append("(");
+			for ( int i=0; i < opinionKeys.size(); ++i ) {
+				sb.append("(?,?,?),");
+			}
+			sb.deleteCharAt(sb.length()-1);
+			sb.append(")");
+			PreparedStatement ps = conn.prepareStatement(sb.toString());
+			logger.debug("OpinionBaseDao::opinionsWithReferringOpinions {}", sb.toString());
+			logger.debug("OpinionBaseDao::opinionsWithReferringOpinions {}", opinionKeys.toString());
+			for ( int i=0; i < opinionKeys.size(); ++i ) {
+				ps.setInt(i*3+1, opinionKeys.get(i).getVolume());
+				ps.setInt(i*3+2, opinionKeys.get(i).getVset());
+				ps.setInt(i*3+3, opinionKeys.get(i).getPage());
+			}
+			return ps;
+		}, this::mapOpinionsWithStatuteCitations).collect(Collectors.groupingBy(OpinionBase::getId, Collectors.reducing((ob1, ob2)->{
+			ob1.getStatuteCitations().addAll(ob2.getStatuteCitations());
+			return ob1;
+		}))).values().stream().map(Optional::get).collect(Collectors.toList());
+	}
+
+	private OpinionBase mapOpinionsWithStatuteCitations(ResultSet resultSet, int rowNum) throws SQLException {
+		OpinionBase opinionBase = new OpinionBase(
+				DTYPES.OPINIONBASE, 
+				resultSet.getInt("ooc_volume"), 
+				resultSet.getInt("ooc_vset"), 
+				resultSet.getInt("ooc_page"));
+		opinionBase.setId(resultSet.getInt("ooc_id"));
+		if ( resultSet.getObject("ooc_opiniondate") != null ) opinionBase.setOpinionDate(((Date)resultSet.getObject("ooc_opiniondate")).toLocalDate());
+		opinionBase.setTitle(resultSet.getString("ooc_title"));
+		opinionBase.setStatuteCitations(new HashSet<>());
+		if ( resultSet.getString("sc_lawcode") != null &&  resultSet.getString("sc_sectionnumber") != null ) {
+			StatuteCitation sc = new StatuteCitation(new StatuteKey(resultSet.getString("sc_lawcode"), resultSet.getString("sc_sectionnumber")));
+			sc.setDesignated(resultSet.getBoolean("sc_designated"));
+			OpinionStatuteCitation osc = new OpinionStatuteCitation(sc, opinionBase, resultSet.getInt("osc_countreferences"));
+			opinionBase.getStatuteCitations().add(osc);
+		}
+		return opinionBase;
+	}
+
 	private OpinionBase mapFetchOpinionCitationsForOpinions(ResultSet resultSet, int rowNum) throws SQLException {
 		OpinionBase opinionBase = new OpinionBase(
 				DTYPES.OPINIONBASE, 
@@ -178,7 +242,7 @@ public class OpinionBaseDao {
 				resultSet.getInt("o_vset"), 
 				resultSet.getInt("o_page"));
 		opinionBase.setId(resultSet.getInt("o_id"));
-		if ( resultSet.getObject("o_opiniondate") != null ) opinionBase.setOpinionDate((LocalDate)resultSet.getObject("o_opiniondate"));
+		if ( resultSet.getObject("o_opiniondate") != null ) opinionBase.setOpinionDate(((Date)resultSet.getObject("o_opiniondate")).toLocalDate());
 		opinionBase.setTitle(resultSet.getString("o_title"));
 		opinionBase.setOpinionCitations(new HashSet<>());
 		opinionBase.setCountReferringOpinions(resultSet.getInt("o_countreferrringopinions"));
@@ -189,10 +253,10 @@ public class OpinionBaseDao {
 				resultSet.getInt("ooc_page"));
 		opinionBaseCitation.setId(Integer.valueOf(resultSet.getString("ooc_id")));
 		opinionBaseCitation.setCountReferringOpinions(resultSet.getInt("ooc_countreferrringopinions"));
-		if ( resultSet.getObject("ooc_opiniondate") != null ) opinionBaseCitation.setOpinionDate((LocalDate)resultSet.getObject("ooc_opiniondate"));
+		if ( resultSet.getObject("ooc_opiniondate") != null ) opinionBaseCitation.setOpinionDate(((Date)resultSet.getObject("ooc_opiniondate")).toLocalDate());
 		opinionBaseCitation.setTitle(resultSet.getString("ooc_title"));
 		opinionBase.getOpinionCitations().add(opinionBaseCitation);
-		StatuteCitation sc = new StatuteCitation(new StatuteKey(resultSet.getString("sc_lawcode"), resultSet.getString("sc_lsectionnumber")));
+		StatuteCitation sc = new StatuteCitation(new StatuteKey(resultSet.getString("sc_lawcode"), resultSet.getString("sc_sectionnumber")));
 		OpinionStatuteCitation osc = new OpinionStatuteCitation(sc, opinionBaseCitation, resultSet.getInt("osc_countreferences"));
 		opinionBaseCitation.setStatuteCitations(new HashSet<>());
 		opinionBaseCitation.getStatuteCitations().add(osc);

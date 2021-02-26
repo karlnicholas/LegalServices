@@ -1,5 +1,6 @@
 package opca.service;
 
+import java.sql.SQLException;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -35,7 +36,7 @@ public ScraperScheduledService(CAOnlineUpdates caOnlineUpdates,
     // though it is currently pretty fast, so maybe not needed.
 	//    @Scheduled(second="0", minute="00", hour="18", dayOfWeek="Mon-Fri", persistent=false)        // 03:30 am (12:30 am AZ ) every day
 //	@Scheduled(cron = "0 0 18 * * MON-FRI")
-    public void updateSlipOpinions() {
+    public void updateSlipOpinions() throws SQLException {
         logger.info("STARTING updateSlipOpinions");
         List<OpinionKey> opinionKeys = null;
         StatutesService statutesService = StatutesServiceFactory.getStatutesServiceClient();
