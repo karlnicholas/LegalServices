@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
@@ -24,6 +26,7 @@ import opca.model.StatuteKey;
 
 @Service
 public class OpinionBaseDao {
+	Logger logger = LoggerFactory.getLogger(OpinionBaseDao.class);
 	private final JdbcTemplate jdbcTemplate;
 
 	public OpinionBaseDao(JdbcTemplate jdbcTemplate) {
@@ -98,6 +101,8 @@ public class OpinionBaseDao {
 			sb.deleteCharAt(sb.length()-1);
 			sb.append(")");
 			PreparedStatement ps = conn.prepareStatement(sb.toString());
+			logger.debug("OpinionBaseDao::opinionsWithReferringOpinions {}", sb.toString());
+			logger.debug("OpinionBaseDao::opinionsWithReferringOpinions {}", opinionKeys.toString());
 			for ( int i=0; i < opinionKeys.size(); ++i ) {
 				ps.setInt(i*3+1, opinionKeys.get(i).getVolume());
 				ps.setInt(i*3+2, opinionKeys.get(i).getVset());
@@ -173,10 +178,10 @@ public class OpinionBaseDao {
 				resultSet.getInt("o_vset"), 
 				resultSet.getInt("o_page"));
 		opinionBase.setId(resultSet.getInt("o_id"));
-		opinionBase.setCountReferringOpinions(resultSet.getInt("o_countreferrringopinions"));
 		if ( resultSet.getObject("o_opiniondate") != null ) opinionBase.setOpinionDate((LocalDate)resultSet.getObject("o_opiniondate"));
 		opinionBase.setTitle(resultSet.getString("o_title"));
 		opinionBase.setOpinionCitations(new HashSet<>());
+		opinionBase.setCountReferringOpinions(resultSet.getInt("o_countreferrringopinions"));
 		OpinionBase opinionBaseCitation = new OpinionBase(
 				DTYPES.OPINIONBASE,  
 				resultSet.getInt("ooc_volume"), 
@@ -249,12 +254,12 @@ public class OpinionBaseDao {
 				resultSet.getInt("oboc_vset"), 
 				resultSet.getInt("oboc_page"));
 		opinionBase.setId(resultSet.getInt("oboc_id"));
-		opinionBase.setCountReferringOpinions(resultSet.getInt("oboc_countreferringopinions"));
 		if ( resultSet.getObject("oboc_opiniondate") != null ) {
 			opinionBase.setOpinionDate(((java.sql.Date)resultSet.getObject("oboc_opiniondate")).toLocalDate());
 		}
 		opinionBase.setTitle(resultSet.getString("oboc_title"));
 		opinionBase.setReferringOpinions(new HashSet<>());
+		opinionBase.setCountReferringOpinions(resultSet.getInt("oboc_countreferringopinions"));
 		OpinionBase opinionBaseReferring = new OpinionBase(
 				DTYPES.OPINIONBASE, 
 				resultSet.getInt("obro_volume"), 

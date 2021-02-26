@@ -1,5 +1,9 @@
 package load;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import opca.crud.OpinionBaseCrud;
 import opca.crud.OpinionBaseOpinionCitationsCrud;
 import opca.crud.OpinionStatuteCitationCrud;
@@ -66,14 +70,34 @@ public class LoadHistoricalOpinions {
 //	    	    System.out.println("file2 le:" + file2.acs.get(i).loopEnd);
 //	    	}
 //	    }
-	    
-		for(OpinionBase opinion: citationStore.getAllOpinions() ) {
-			opinionBaseCrud.insert(opinion);
-    	}
+	    int BATCH_SIZE = 1000;
+	    List<OpinionBase> opinionBatch = new ArrayList<>(BATCH_SIZE);
+	    int i=0;
+	    for ( OpinionBase opinionBase: citationStore.getAllOpinions()) {
+	    	opinionBatch.add(opinionBase);
+	    	if ( ++i % BATCH_SIZE == 0 ) {
+				opinionBaseCrud.insertBatch(opinionBatch);
+				opinionBatch.clear();
+	    	}
+	    }
+	    if ( opinionBatch.size() > 0 ) {
+			opinionBaseCrud.insertBatch(opinionBatch);
+			opinionBatch.clear();
+	    }
 
+	    List<StatuteCitation> statuteBatch = new ArrayList<>(BATCH_SIZE);
+	    i = 0;
 		for(StatuteCitation statute: citationStore.getAllStatutes() ) {
-    		statuteCitationCrud.insert(statute);
+    		statuteBatch.add(statute);
+	    	if ( ++i % BATCH_SIZE == 0 ) {
+	    		statuteCitationCrud.insertBatch(statuteBatch);
+	    		statuteBatch.clear();
+	    	}
     	}
+	    if ( statuteBatch.size() > 0 ) {
+	    	statuteCitationCrud.insertBatch(statuteBatch);
+	    	statuteBatch.clear();
+	    }
 		
 		for(OpinionBase opinion: citationStore.getAllOpinions() ) {
 			opinionBaseOpinionCitationsCrud.insert(opinion);

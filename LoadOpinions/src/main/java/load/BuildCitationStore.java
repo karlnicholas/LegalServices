@@ -71,10 +71,12 @@ public class BuildCitationStore implements Runnable {
 				// "Cal.").replace("supp.", "Supp.");
 				OpinionBase opinionBase = new OpinionBase(DTYPES.OPINIONBASE, new OpinionKey(name), op.getCaseName(), op.getDateFiled(), "");
 				//
-	        	OpinionBase existingOpinion = citationStore.findOpinionByOpinion(opinionBase);
-	            if ( existingOpinion != null ) {
-	            	opinionBase = existingOpinion;
-	            }
+				synchronized ( citationStore ) {
+		        	OpinionBase existingOpinion = citationStore.findOpinionByOpinion(opinionBase);
+		            if ( existingOpinion != null ) {
+		            	opinionBase = existingOpinion;
+		            }
+				}
 				//
 				ScrapedOpinionDocument parserDocument = new ScrapedOpinionDocument(opinionBase);
 				parserDocument.setFootnotes( footnotes );

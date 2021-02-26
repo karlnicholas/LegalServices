@@ -1,46 +1,5 @@
 
-O:94268
-S:39559
-loadHistoricalOpinions.initializeDB(): DONE
-
-O:93987
-S:39243
-file1:87 : 564,328
-file2:11 : 450,137
-file2:21 : 446,110
-loadHistoricalOpinions.initializeDB(): DONE
-
-O:93513
-S:38954
-file1:41 : 606,388
-file1:81 : 600,372
-file1:91 : 590,109
-file1:97 : 597,559
-file1:108 : 603,339
-file2:2 : 457,74
-file2:10 : 491,78
-loadHistoricalOpinions.initializeDB(): DONE
-
-
-O:94148
-S:39414
-file2:15 : 457,403
-file2:16 : 459,390
-file2:17 : 439,60
-
-
-
-O:94098
-S:39427
-loadHistoricalOpinions.initializeDB(): DONE
-
-O:94268
-S:39559
-loadHistoricalOpinions.initializeDB(): DONE
-
-O:94268
-S:39559
-loadHistoricalOpinions.initializeDB(): DON
-
-O:94268
-S:39559
+select oboc.id as oboc_id, oboc.countreferringopinions as oboc_countreferringopinions, oboc.opiniondate as oboc_opiniondate, oboc.volume oboc_volume, oboc.vset oboc_vset, oboc.page oboc_page, oboc.title oboc_title, obro.id as obro_id, obro.countreferringopinions as obro_countreferringopinions, obro.opiniondate as obro_opiniondate, obro.volume obro_volume, obro.vset obro_vset, obro.page obro_page, obro.title obro_title from opinionbase oboc left outer join opinionbase_opinioncitations obroj on oboc.id = obroj.referringopinions_id  left outer join opinionbase obro on obroj.opinioncitations_id = obro.id where (oboc.volume, oboc.vset, oboc.page) in 
+()
+2021-02-26 09:45:44.213 DEBUG 17360 --- [           main] opca.dao.OpinionBaseDao                  : OpinionBaseDao::opinionsWithReferringOpinions 
+[3 Cal.4th 1, 81 Cal.App.4th 17, 42 Cal.App.4th 83, 212 Cal.App.3d 96, 130 Cal.App.4th 171, 205 Cal.App.4th 182, 50 Cal.4th 372, 24 Cal.4th 415, 235 Cal.App.3d 428, 244 Cal.App.4th 504, 163 Cal.App.4th 510, 31 Cal.3d 637, 30 Cal.App.4th 747, 166 Cal.App.4th 831, 174 Cal.App.4th 883, 199 Cal.App.3d 976, 68 Cal.App.4th 1071, 196 Cal.App.4th 1283, 76 Cal.App.4th 1287, 219 Cal.App.4th 1299]

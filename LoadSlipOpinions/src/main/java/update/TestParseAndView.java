@@ -1,6 +1,6 @@
 package update;
 
-import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
@@ -48,11 +48,32 @@ public class TestParseAndView implements ApplicationRunner {
 //				OpinionScraperInterface caseScraper = new TestCACaseScraper(false);
 		OpinionScraperInterface caseScraper = new TestCAParseSlipDetails(false);
 		SlipOpinion slipOpinion = parseAndView.getSlipOpinion(caseScraper, statutesService);
-
+		
+	
 		OpinionViewBuilder opinionViewBuilder = new OpinionViewBuilder(statutesService);
+	
+		List<OpinionBase> opinionsWithReferringOpinions = opinionBaseDao.opinionsWithReferringOpinions(slipOpinion.getOpinionCitations()
+				.stream()
+				.map(OpinionBase::getOpinionKey)
+				.collect(Collectors.toList()));
+		
+		slipOpinion.getOpinionCitations().clear();
+		slipOpinion.getOpinionCitations().addAll(opinionsWithReferringOpinions);
 
-		List<OpinionBase> opinionCitations = opinionBaseDao.opinionsWithReferringOpinions(slipOpinion.getOpinionCitations().stream().map(OpinionBase::getOpinionKey).collect(Collectors.toList()));
-		slipOpinion.setOpinionCitations(new TreeSet<>(opinionCitations));
+		System.out.println("slipOpinion:= " 
+				+ slipOpinion.getTitle() 
+				+ "\n	:OpinionKey= " + slipOpinion.getOpinionKey()
+				+ "\n	:OpinionCitations().size()= " + (slipOpinion.getOpinionCitations()== null?"xx":slipOpinion.getOpinionCitations().size())
+				+ "\n	:StatuteCitations().size()= " + (slipOpinion.getStatuteCitations()== null?"xx":slipOpinion.getStatuteCitations().size())
+				+ "\n	:CountReferringOpinions= " + slipOpinion.getCountReferringOpinions()
+			);
+		for ( OpinionBase opinionCitation: slipOpinion.getOpinionCitations()) {
+			System.out.println("\nopinionCitation:= " 
+					+ opinionCitation.getTitle() 
+					+ "\n		:OpinionKey= " + opinionCitation.getOpinionKey()
+					+ "\n		:CountReferringOpinions= " + opinionCitation.getCountReferringOpinions()
+				);
+		}
 
 		ParsedOpinionCitationSet parserResults = new ParsedOpinionCitationSet(slipOpinion);
 		OpinionView opinionView = opinionViewBuilder.buildOpinionView(slipOpinion, parserResults);

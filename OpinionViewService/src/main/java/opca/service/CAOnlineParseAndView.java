@@ -50,9 +50,10 @@ public class CAOnlineParseAndView {
 //			onlineOpinions = onlineOpinions.subList(0, 0);
 //			onlineOpinions = onlineOpinions.subList(0, 1);
 //		onlineOpinions = onlineOpinions.subList(0,1);
-		int c = (int)(Math.random() * onlineOpinions.size());
-		System.out.println("C=" + c);
-		SlipOpinion slipOpinion = onlineOpinions.get(c);
+//		int c = (int)(Math.random() * onlineOpinions.size());
+//		System.out.println("C=" + c);
+//		SlipOpinion slipOpinion = onlineOpinions.get(c);
+		SlipOpinion slipOpinion = onlineOpinions.get(0);
 
 	//
 		// no retries
