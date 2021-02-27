@@ -15,14 +15,15 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import opca.dao.OpinionBaseDao;
 import opca.model.OpinionBase;
-import opca.model.OpinionStatuteCitation;
 import opca.model.SlipOpinion;
 import opca.parser.OpinionScraperInterface;
-import opca.parser.ParsedOpinionCitationSet;
 import opca.scraper.TestCAParseSlipDetails;
 import opca.service.CAOnlineParseAndView;
+import opca.view.CaseView;
 import opca.view.OpinionView;
 import opca.view.OpinionViewBuilder;
+import opca.view.SectionView;
+import opca.view.StatuteView;
 import statutes.service.StatutesService;
 import statutes.service.client.StatutesServiceClientImpl;
 
@@ -88,10 +89,30 @@ public class TestParseAndView implements ApplicationRunner {
 //			}
 //		}
 
-		ParsedOpinionCitationSet parserResults = new ParsedOpinionCitationSet(slipOpinion);
-		OpinionView opinionView = opinionViewBuilder.buildOpinionView(slipOpinion, parserResults);
+		OpinionView opinionView = opinionViewBuilder.buildOpinionView(slipOpinion);
 		System.out.println("OpinionView" + opinionView);
 		System.out.println("Completed");
+		System.out.println("opinionView:= " 
+			+ opinionView.getTitle() 
+			+ "\n	:OpinionKey= " + opinionView.getOpinionKey()
+			+ "\n	:opinionView.getCases().size() = " + (opinionView.getCases()== null?"xx":opinionView.getCases().size())
+			+ "\n	:opinionView.getSectionViews().size() = " + (opinionView.getStatutes()== null?"xx":opinionView.getSectionViews().size())
+			+ "\n	:getCondensedCaseInfo = " + opinionView.getCondensedCaseInfo()
+			+ "\n	:getCondensedStatuteInfo = " + opinionView.getCondensedStatuteInfo()
+		);
+		for ( CaseView caseView: opinionView.getCases().subList(0, opinionView.getCases().size() > 10 ? 10 : opinionView.getCases().size())) {
+			System.out.println("	caseView:= " 
+					+ caseView.getTitle() 
+					+ "\n		:getCitation= " + caseView.getCitation()
+					+ "\n		:getImportance= " + caseView.getImportance()
+				);
+		}
+		for ( SectionView sectionView: opinionView.getSectionViews()) {
+			System.out.println("	sectionView:= " 
+					+ sectionView.getShortTitle() 
+					+ "\n		:getImportance= " + sectionView.getImportance()
+				);
+		}
 
 //			List<ScrapedOpinionDocument> scrapedCases = caseScraper.scrapeOpinionFiles(caseScraper.getCaseList());
 //			scrapedCases.stream().forEach(sc->{

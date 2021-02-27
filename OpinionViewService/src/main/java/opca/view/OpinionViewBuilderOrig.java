@@ -11,29 +11,32 @@ import statutes.StatutesNode;
 import statutes.StatutesRoot;
 import statutes.service.StatutesService;
 import opca.model.*;
+import opca.parser.ParsedOpinionCitationSet;
 
-public class OpinionViewBuilder {
+public class OpinionViewBuilderOrig {
 	private static final int LEVEL_OF_INTEREST = 3; 
 	private final StatutesService statutesService;
 //	private List<SectionView> sectionViews;
 	
-	public OpinionViewBuilder(StatutesService statutesService) {
+	public OpinionViewBuilderOrig(StatutesService statutesService) {
 		this.statutesService = statutesService;
 	}
 	
     public OpinionView buildOpinionView(
-    	SlipOpinion slipOpinion  
+    	SlipOpinion slipOpinion,
+		ParsedOpinionCitationSet parserResults  
 	) {
     	List<StatuteView> statuteViews = createStatuteViews(slipOpinion);
 //            this.parserResults = parserResults;
         // create a CaseView list.
         List<CaseView> cases = new ArrayList<CaseView>();
     	for ( OpinionBase opinionBase: slipOpinion.getOpinionCitations() ) {
-			CaseView caseView = new CaseView(opinionBase.getTitle(), opinionBase.getOpinionKey().toString(), opinionBase.getOpinionDate(), opinionBase.getCountReferringOpinions());
+    		OpinionBase opcase = parserResults.findOpinion(opinionBase.getOpinionKey());
+			CaseView caseView = new CaseView(opcase.getTitle(), opinionBase.getOpinionKey().toString(), opcase.getOpinionDate(), opcase.getCountReferringOpinions());
     		cases.add(caseView);
     	}
     	OpinionView opinionView = new OpinionView(slipOpinion, slipOpinion.getFileName(), statuteViews, cases);
-        scoreCitations(opinionView, slipOpinion.getOpinionCitations(), cases, opinionView.getSectionViews(), statuteViews);
+        scoreCitations(opinionView, parserResults, cases, opinionView.getSectionViews(), statuteViews);
         return opinionView;
     }
 
@@ -254,7 +257,7 @@ public class OpinionViewBuilder {
 	
 	private OpinionView scoreCitations(
 			OpinionView opinionView, 
-			Set<OpinionBase> opinionsCited, 
+			ParsedOpinionCitationSet parserResults, 
 			List<CaseView> cases, 
 			List<SectionView> sectionViews, 
 			List<StatuteView> statuteViews
@@ -265,7 +268,7 @@ public class OpinionViewBuilder {
 		List<OpinionView> tempOpinionViewList = new ArrayList<>();
 		// need a collection StatutueCitations.
 		
-		for ( OpinionBase opinionCited: opinionsCited ) {
+		for ( OpinionBase opinionCited: parserResults.getOpinionTable() ) {
 			List<StatuteView> localStatuteViews = createStatuteViews(opinionCited);
         	List<SectionView> sectionViewsLocal = new ArrayList<>();
             OpinionView tempOpinionView = new OpinionView();
@@ -334,6 +337,82 @@ public class OpinionViewBuilder {
 		});
 		return opinionView;
 	}
+
+//	// end: supporting methods for JSF pages 
+//	private void scoreCitations() {
+//		scoreSlipOpinionStatutes();
+//		// create a union of all statutes from the slipOpinion and the cited cases
+//		List<SectionView> sectionUnion = new ArrayList<>(sectionViews);		
+//		List<OpinionView> tempOpinionViewList = new ArrayList<>();
+//		// need a collection StatutueCitations.
+//		for ( OpinionBase opinionCited: getParserResults().getOpinionTable() ) {
+//			List<StatuteView> statuteViews = createStatuteViews(opinionCited);
+//        	List<SectionView> sectionViews = new ArrayList<>();
+//            for( StatuteView statuteView: statuteViews ) {
+//            	sectionViews.addAll(statuteView.getSectionViews());
+//            }
+//            rankSectionViews(sectionViews);
+//            // create a temporary OpinionView to use its functions
+//            // store the opinionView in the Cases list.
+//            List<CaseView> tempCaseViews = new ArrayList<>();
+//            CaseView caseView = findCaseView(opinionCited);
+//            tempCaseViews.add( caseView );
+//            OpinionView tempOpinionView = new OpinionView();
+//            tempOpinionView.setStatutes(statuteViews);
+//            tempOpinionView.setCases(tempCaseViews); 
+//            if ( tempOpinionView.getStatutes().size() == 0 ) {
+//            	caseView.setScore(-1);
+//            	// well, just remove cases with no interesting citations
+//            	cases.remove(caseView);
+//            	continue;
+//            }
+//            // save this for next loop
+//            tempOpinionViewList.add(tempOpinionView);
+//            for ( SectionView sectionView: sectionViews ) {
+//            	if ( !sectionUnion.contains(sectionView) ) {
+//            		sectionUnion.add(sectionView);
+//            	}
+//            }
+//        }
+//sectionViews = opinionView.getSectionViews()
+//        // create a ranked slipAdjacencyMatrix
+//        int[] slipAdjacencyMatrix = createAdjacencyMatrix(sectionUnion, sectionViews);
+//        for ( OpinionView tempOpinionView: tempOpinionViewList ) {
+//
+//            int[] opinionAdjacencyMatrix = createAdjacencyMatrix(sectionUnion, tempOpinionView.getSectionViews());
+//            // find the distance between the matrices
+//            int sum = 0;
+//            for ( int i=slipAdjacencyMatrix.length-1; i >= 0; --i ) {
+//            	sum = sum + Math.abs( slipAdjacencyMatrix[i] - opinionAdjacencyMatrix[i] ); 
+//            }
+//            tempOpinionView.getCases().get(0).setScore(sum);
+//        }
+//        // rank "scores"
+//        // note that scores is actually a distance computation
+//        // and lower is better
+//        // so the final result is subtracted from 4
+//        // because importance is higher is better.
+//    	long maxScore = 0;
+//		for ( CaseView c: cases ) {
+//			if ( c.getScore() > maxScore )
+//				maxScore = c.getScore();
+//		}	
+//		double d = ((maxScore+1) / 4.0);
+//		for ( CaseView c: cases ) {
+//			if ( c.getScore() == -1 ) {
+//				c.setImportance(0);
+//			} else {
+//				int imp = (int)(((double)c.getScore())/d)+1;
+//				c.setImportance(5-imp);
+//			}
+//		}	
+//		Collections.sort(cases, new Comparator<CaseView>() {
+//			@Override
+//			public int compare(CaseView o1, CaseView o2) {
+//				return o2.getImportance() - o1.getImportance();
+//			}
+//		});
+//	}
 
 	/**
 	 * This is only a single row adjacency matrix because all of the rows

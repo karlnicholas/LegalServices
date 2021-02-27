@@ -223,6 +223,7 @@ public class OpinionBaseDao {
 				resultSet.getInt("ooc_vset"), 
 				resultSet.getInt("ooc_page"));
 		opinionBase.setId(resultSet.getInt("ooc_id"));
+		opinionBase.setCountReferringOpinions(resultSet.getInt("ooc_countreferringopinions"));
 		if ( resultSet.getObject("ooc_opiniondate") != null ) opinionBase.setOpinionDate(((Date)resultSet.getObject("ooc_opiniondate")).toLocalDate());
 		opinionBase.setTitle(resultSet.getString("ooc_title"));
 		opinionBase.setStatuteCitations(new HashSet<>());

@@ -128,7 +128,7 @@ public class OpinionViewLoad {
 	private void buildOpinionViews(OpinionViewData opinionViewData, StatutesService statutesService) {
 		opinionViewData.setOpinionViews(new ArrayList<>());
 		List<SlipOpinion> opinions = slipOpinionDao.selectAllForView();
-		buildListedOpinionViews(opinionViewData, opinions, statutesService);
+//		buildListedOpinionViews(opinionViewData, opinions, statutesService);
 	}
 
 	private void buildNewOpinionViews(OpinionViewData opinionViewData, List<OpinionKey> opinionKeys, StatutesService statutesService) {
@@ -165,64 +165,65 @@ public class OpinionViewLoad {
 		if ( opinionKeys.size() > 0 ) {
 			List<SlipOpinion> opinions = slipOpinionDao.selectFromKeysForView(opinionKeys);
 			logger.info("opinions size " + opinions.size());
-			buildListedOpinionViews(opinionViewData, opinions, statutesService);
+//			buildListedOpinionViews(opinionViewData, opinions, statutesService);
 		} else {
 			logger.info("Rebuilding entire cache");
 			buildOpinionViews(opinionViewData, statutesService);
 		}
 	}
-	private void buildListedOpinionViews(OpinionViewData opinionViewData, List<SlipOpinion> opinions, StatutesService statutesService) {
-		List<OpinionBase> opinionOpinionCitations = new ArrayList<>();
-		List<Integer> opinionIds = new ArrayList<>();
-//		TypedQuery<OpinionBase> fetchOpinionCitationsForOpinions = em.createNamedQuery("OpinionBase.fetchOpinionCitationsForOpinions", OpinionBase.class);
-//		EntityGraph<?> fetchGraphForSlipOpinions = em.getEntityGraph("fetchGraphForSlipOpinions");
-//		fetchOpinionCitationsForOpinions.setHint("javax.persistence.fetchgraph", fetchGraphForSlipOpinions);
-		int i = 0;
-		for ( SlipOpinion slipOpinion: opinions ) {
-			opinionIds.add(slipOpinion.getId());
-			if ( ++i % 100 == 0 ) {
-				opinionOpinionCitations.addAll( 
-					opinionBaseDao.fetchOpinionCitationsForOpinions(opinionIds)
-				);
-				opinionIds.clear();
-			}
-		}
-		if ( opinionIds.size() != 0 ) {
-			opinionOpinionCitations.addAll( 
-				opinionBaseDao.fetchOpinionCitationsForOpinions(opinionIds)
-			);
-		}
-		OpinionViewBuilder opinionViewBuilder = new OpinionViewBuilder(statutesService);
-		for ( SlipOpinion slipOpinion: opinions ) {
-			slipOpinion.setOpinionCitations( opinionOpinionCitations.get( opinionOpinionCitations.indexOf(slipOpinion)).getOpinionCitations() );
-			ParsedOpinionCitationSet parserResults = new ParsedOpinionCitationSet(slipOpinion);
-			OpinionView opinionView = opinionViewBuilder.buildOpinionView(slipOpinion, parserResults);
-			opinionViewData.getOpinionViews().add(opinionView);
-		}
-		// sort results in descending date order
-		Collections.sort(
-			opinionViewData.getOpinionViews(), 
-			(view1, view2) -> {
-				int dc = view2.getOpinionDate().compareTo(view1.getOpinionDate());
-				if ( dc != 0 ) return dc;
-				return view1.getName().compareTo(view2.getName());
-			}
-		);
-		// build report dates
-		List<LocalDate> dates = new ArrayList<>();
-		for ( OpinionView opinionView: opinionViewData.getOpinionViews() ) {
-			LocalDate date = opinionView.getOpinionDate();
-//			Calendar utcDate = Calendar.getInstance();
-//			utcDate.setTime(date);
-//			utcDate.set(Calendar.HOUR_OF_DAY, 0); // ! clear would not reset the hour of day !
-//			utcDate.clear(Calendar.MINUTE);
-//			utcDate.clear(Calendar.SECOND);
-//			utcDate.clear(Calendar.MILLISECOND);
-			if ( !dates.contains(date)) {
-				dates.add(date);
-			}
-		}
-		initReportDates(opinionViewData, dates);
-	}
+	
+//	private void buildListedOpinionViews(OpinionViewData opinionViewData, List<SlipOpinion> opinions, StatutesService statutesService) {
+//		List<OpinionBase> opinionOpinionCitations = new ArrayList<>();
+//		List<Integer> opinionIds = new ArrayList<>();
+////		TypedQuery<OpinionBase> fetchOpinionCitationsForOpinions = em.createNamedQuery("OpinionBase.fetchOpinionCitationsForOpinions", OpinionBase.class);
+////		EntityGraph<?> fetchGraphForSlipOpinions = em.getEntityGraph("fetchGraphForSlipOpinions");
+////		fetchOpinionCitationsForOpinions.setHint("javax.persistence.fetchgraph", fetchGraphForSlipOpinions);
+//		int i = 0;
+//		for ( SlipOpinion slipOpinion: opinions ) {
+//			opinionIds.add(slipOpinion.getId());
+//			if ( ++i % 100 == 0 ) {
+//				opinionOpinionCitations.addAll( 
+//					opinionBaseDao.fetchOpinionCitationsForOpinions(opinionIds)
+//				);
+//				opinionIds.clear();
+//			}
+//		}
+//		if ( opinionIds.size() != 0 ) {
+//			opinionOpinionCitations.addAll( 
+//				opinionBaseDao.fetchOpinionCitationsForOpinions(opinionIds)
+//			);
+//		}
+//		OpinionViewBuilder opinionViewBuilder = new OpinionViewBuilder(statutesService);
+//		for ( SlipOpinion slipOpinion: opinions ) {
+//			slipOpinion.setOpinionCitations( opinionOpinionCitations.get( opinionOpinionCitations.indexOf(slipOpinion)).getOpinionCitations() );
+//			ParsedOpinionCitationSet parserResults = new ParsedOpinionCitationSet(slipOpinion);
+//			OpinionView opinionView = opinionViewBuilder.buildOpinionView(slipOpinion, parserResults);
+//			opinionViewData.getOpinionViews().add(opinionView);
+//		}
+//		// sort results in descending date order
+//		Collections.sort(
+//			opinionViewData.getOpinionViews(), 
+//			(view1, view2) -> {
+//				int dc = view2.getOpinionDate().compareTo(view1.getOpinionDate());
+//				if ( dc != 0 ) return dc;
+//				return view1.getName().compareTo(view2.getName());
+//			}
+//		);
+//		// build report dates
+//		List<LocalDate> dates = new ArrayList<>();
+//		for ( OpinionView opinionView: opinionViewData.getOpinionViews() ) {
+//			LocalDate date = opinionView.getOpinionDate();
+////			Calendar utcDate = Calendar.getInstance();
+////			utcDate.setTime(date);
+////			utcDate.set(Calendar.HOUR_OF_DAY, 0); // ! clear would not reset the hour of day !
+////			utcDate.clear(Calendar.MINUTE);
+////			utcDate.clear(Calendar.SECOND);
+////			utcDate.clear(Calendar.MILLISECOND);
+//			if ( !dates.contains(date)) {
+//				dates.add(date);
+//			}
+//		}
+//		initReportDates(opinionViewData, dates);
+//	}
 
 }
