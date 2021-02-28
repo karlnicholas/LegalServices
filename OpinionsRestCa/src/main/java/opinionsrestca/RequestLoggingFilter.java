@@ -1,14 +1,5 @@
 package opinionsrestca;
 
-import org.springframework.context.annotation.Configuration;
-import org.springframework.http.server.reactive.ServerHttpRequest;
-import org.springframework.web.server.ServerWebExchange;
-import org.springframework.web.server.ServerWebExchangeDecorator;
-import org.springframework.web.server.WebFilter;
-import org.springframework.web.server.WebFilterChain;
-
-import reactor.core.publisher.Mono;
-
 public class RequestLoggingFilter {}
 
 //@Configuration

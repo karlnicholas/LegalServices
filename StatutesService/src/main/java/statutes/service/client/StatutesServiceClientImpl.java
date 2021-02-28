@@ -14,8 +14,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.BufferingClientHttpRequestFactory;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
-import org.springframework.http.converter.StringHttpMessageConverter;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -44,7 +42,6 @@ public class StatutesServiceClientImpl implements StatutesService {
 		statuesTitlesURI = URI.create(baseUrl + ReactiveStatutesService.STATUTESTITLES);
 		statuteHierarchyURI = URI.create(baseUrl + ReactiveStatutesService.STATUTEHIERARCHY);
 		statutesAndHierarchiesURI = URI.create(baseUrl + ReactiveStatutesService.STATUTESANDHIERARCHIES);
-		
 	}
 	
 	@Override
@@ -61,32 +58,21 @@ public class StatutesServiceClientImpl implements StatutesService {
 	public ResponseEntity<StatutesRoot> getStatuteHierarchy(String fullFacet) {
 		HttpHeaders headers = new HttpHeaders();
 		headers.set("Accept", MediaType.APPLICATION_JSON_VALUE);
-
 		UriComponentsBuilder builder = UriComponentsBuilder.fromUri(statuteHierarchyURI).queryParam("fullFacet", fullFacet);
-
 		HttpEntity<?> entity = new HttpEntity<>(headers);
-
 		return restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity, StatutesRoot.class);	
-
 	}
 
 
 	@Override
 	public ResponseEntity<List<StatutesRoot>> getStatutesAndHierarchies(List<StatuteKey> statuteKeys) {
-
 		// Set the Content-Type header
 		HttpHeaders requestHeaders = new HttpHeaders();
 		requestHeaders.setContentType(MediaType.APPLICATION_JSON);
 		requestHeaders.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
 		HttpEntity<List<StatuteKey>> requestEntity = new HttpEntity<>(statuteKeys, requestHeaders);
 
-		// Add the Jackson and String message converters
-//		restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
-//		restTemplate.getMessageConverters().add(new StringHttpMessageConverter());
-
 		return restTemplate.exchange(statutesAndHierarchiesURI, HttpMethod.POST, requestEntity, new ParameterizedTypeReference<List<StatutesRoot>>() {});
-//		ResponseEntity<String> x = restTemplate.exchange(statutesAndHierarchiesURI, HttpMethod.GET, requestEntity, String.class);
-//		return null;
 	}
 
 }

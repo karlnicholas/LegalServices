@@ -1,21 +1,6 @@
 package opca.service;
 
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-
 import org.springframework.stereotype.Component;
-
-import opca.ejb.util.StatutesServiceFactory;
-import opca.model.OpinionKey;
-import opca.model.User;
-import opca.view.OpinionView;
-import opca.view.SectionView;
-import opca.view.ViewReference;
-import statutes.service.StatutesService;
 
 @Component
 public class OpinionViewSingleton {
