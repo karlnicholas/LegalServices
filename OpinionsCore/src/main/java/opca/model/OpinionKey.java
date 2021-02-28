@@ -2,8 +2,12 @@ package opca.model;
 
 import java.io.Serializable;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 @SuppressWarnings("serial")
 //@Embeddable
+@JsonInclude
 public class OpinionKey implements Serializable, Comparable<OpinionKey> { 
     public static final String[] appellateSets = {
     	"Slip.Op",		// 0
@@ -126,18 +130,23 @@ public class OpinionKey implements Serializable, Comparable<OpinionKey> {
         sb.append(opinionKey.page);
         return sb.toString();
     }
+	@JsonIgnore
 	public boolean isSlipOpinion() {
 		return vset == 0; 
 	}
+	@JsonIgnore
 	public String getVSetAsString() {
 		return appellateSets[vset];
 	}
+	@JsonInclude
 	public int getPage() {
 		return page;
 	}
+	@JsonInclude
 	public int getVolume() {
 		return volume;
 	}
+	@JsonInclude
 	public int getVset() {
 		return vset;
 	}

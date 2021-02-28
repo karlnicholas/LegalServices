@@ -11,10 +11,12 @@
 	<modules>
 		<module>Statutes</module>
 		<module>StatutesService</module>
+		<module>OpinionsService</module>
 		<module>StatutesServer</module>
 		<module>GuidedSearchCore</module>
 		<module>StatutesCa</module>
 		<module>StatutesRestCa</module>
+		<module>OpinionsRestCa</module>
 		<module>OpinionsCore</module>
 		<module>OpinionsCoreSlipOpinions</module>
 		<module>OpinionViewService</module>
@@ -45,6 +47,13 @@
 			<dependency>
 				<groupId>com.github.karlnicholas.legalservices</groupId>
 				<artifactId>statutesservice</artifactId>
+				<version>${project.version}</version>
+				<type>jar</type>
+				<scope>compile</scope>
+			</dependency>
+			<dependency>
+				<groupId>com.github.karlnicholas.legalservices</groupId>
+				<artifactId>opinionsservice</artifactId>
 				<version>${project.version}</version>
 				<type>jar</type>
 				<scope>compile</scope>

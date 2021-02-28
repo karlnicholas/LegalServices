@@ -7,6 +7,8 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeSet;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @SuppressWarnings("serial")
 //@Entity
 //@NamedQueries({
@@ -135,6 +137,7 @@ public class OpinionBase implements Comparable<OpinionBase>, Serializable {
 		}
 	}
 	
+	@JsonIgnore
 	public Collection<StatuteCitation> getOnlyStatuteCitations() {
 		if ( statuteCitations == null ) {
 			statuteCitations = new TreeSet<>();
@@ -170,12 +173,14 @@ public class OpinionBase implements Comparable<OpinionBase>, Serializable {
 	public void setStatuteCitations(Set<OpinionStatuteCitation> statuteCitations) {
 		this.statuteCitations = statuteCitations;
 	}
+	@JsonIgnore
 	public Set<OpinionBase> getOpinionCitations() {
 		return opinionCitations;
 	}
 	public void setOpinionCitations(Set<OpinionBase> opinionCitations) {
 		this.opinionCitations = opinionCitations;
 	}
+	@JsonIgnore
 	public Set<OpinionBase> getReferringOpinions() {
         return referringOpinions;
     }
@@ -337,12 +342,14 @@ public class OpinionBase implements Comparable<OpinionBase>, Serializable {
 //	        }
 //        }
 //	}
+	@JsonIgnore
 	public boolean isNewlyLoadedOpinion() {
 		return newlyLoadedOpinion;
 	}
 	public void setNewlyLoadedOpinion(boolean newlyLoadedOpinion) {
 		this.newlyLoadedOpinion = newlyLoadedOpinion;
 	}
+	@JsonIgnore
 	public DTYPES getDtype() {
 		return dtype;
 	}

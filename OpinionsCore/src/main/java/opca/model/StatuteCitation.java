@@ -5,6 +5,8 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeSet;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
  * Created with IntelliJ IDEA.
  * User: karl
@@ -101,6 +103,7 @@ public class StatuteCitation implements Comparable<StatuteCitation>, Serializabl
     public void setStatuteKey(StatuteKey statuteKey) {
         this.statuteKey = statuteKey;
     }
+	@JsonIgnore
     public Set<OpinionStatuteCitation> getReferringOpinions() {
         return referringOpinions;
     }
@@ -146,6 +149,7 @@ public class StatuteCitation implements Comparable<StatuteCitation>, Serializabl
 //    	return null;
 //	}
 
+	@JsonIgnore
     public boolean getDesignated() {
         return designated;
     }    
@@ -156,6 +160,7 @@ public class StatuteCitation implements Comparable<StatuteCitation>, Serializabl
 	public int compareTo(StatuteCitation o) {
         return statuteKey.compareTo(o.statuteKey);
 	}
+	@JsonIgnore
     public Integer getId() {
     	return id;
     }

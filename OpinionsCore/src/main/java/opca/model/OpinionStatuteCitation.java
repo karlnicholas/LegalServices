@@ -1,5 +1,7 @@
 package opca.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 //@NamedQueries( {
 //	@NamedQuery(name="OpinionStatuteCitation.deleteOpinionStatuteCitations", 
 //		query="delete from OpinionStatuteCitation c where c.opinionBase.id in :opinionIds"), 
@@ -22,12 +24,14 @@ public class OpinionStatuteCitation implements Comparable<OpinionStatuteCitation
 		this.opinionBase = opinionBase;
 		this.countReferences = countReferences;
 	}
+	@JsonIgnore
 	public OpinionStatuteCitationId getId() {
 		return id;
 	}
 	public void setId(OpinionStatuteCitationId opinionStatuteReferenceId) {
 		this.id = opinionStatuteReferenceId;
 	}
+	@JsonIgnore
 	public OpinionBase getOpinionBase() {
 		return opinionBase;
 	}
