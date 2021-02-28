@@ -47,7 +47,7 @@
 		</dependency>
 		<dependency>
 			<groupId>com.github.karlnicholas.legalservices</groupId>
-			<artifactId>opinion-view-service</artifactId>
+			<artifactId>opinion-view-daoservice</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>

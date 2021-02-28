@@ -22,14 +22,14 @@ public class IndexController {
 		this.opinionViewSingleton = opinionViewSingleton;
 	}
 
-    @GetMapping(value="ready", produces = MediaType.APPLICATION_JSON_VALUE)
-	public boolean isCacheReady() {
-		return opinionViewSingleton.isReady();
-	}
-    @GetMapping(value="load", produces = MediaType.APPLICATION_JSON_VALUE)
-	public boolean loadCache() {
-		return opinionViewSingleton.checkStatus();
-	}
+//    @GetMapping(value="ready", produces = MediaType.APPLICATION_JSON_VALUE)
+//	public boolean isCacheReady() {
+//		return opinionViewSingleton.isReady();
+//	}
+//    @GetMapping(value="load", produces = MediaType.APPLICATION_JSON_VALUE)
+//	public boolean loadCache() {
+//		return opinionViewSingleton.checkStatus();
+//	}
     
 //    @GetMapping(value="testUpdate", produces = MediaType.APPLICATION_JSON_VALUE)
 //	public boolean testUpdate() {

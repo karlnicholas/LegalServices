@@ -14,7 +14,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>com.github.karlnicholas.legalservices</groupId>
-			<artifactId>opinions-core-slipopinions</artifactId>
+			<artifactId>slipopiniondao</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.github.karlnicholas.legalservices</groupId>

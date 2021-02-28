@@ -13,27 +13,9 @@
 	<description>Demo project for Spring Boot</description>
 	<dependencies>
 		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-web</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-math3</artifactId>
 			<version>3.6.1</version>
-		</dependency>
-		<dependency>
-			<groupId>commons-dbutils</groupId>
-			<artifactId>commons-dbutils</artifactId>
-			<version>1.7</version>
-		</dependency>
-		<dependency>
-			<groupId>mysql</groupId>
-			<artifactId>mysql-connector-java</artifactId>
-			<scope>runtime</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.github.karlnicholas.legalservices</groupId>
-			<artifactId>guidedsearch-core</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.github.karlnicholas.legalservices</groupId>
@@ -42,10 +24,6 @@
 		<dependency>
 			<groupId>com.github.karlnicholas.legalservices</groupId>
 			<artifactId>opinion-view-service</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.github.karlnicholas.legalservices</groupId>
-			<artifactId>loadopinions</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.projectlombok</groupId>
@@ -60,6 +38,10 @@
 		<dependency>
 			<groupId>javax.xml.bind</groupId>
 			<artifactId>jaxb-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.github.karlnicholas.legalservices</groupId>
+			<artifactId>opinionsservice</artifactId>
 		</dependency>
 	</dependencies>
 

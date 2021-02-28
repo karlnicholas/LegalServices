@@ -17,9 +17,14 @@
 		<module>StatutesCa</module>
 		<module>StatutesRestCa</module>
 		<module>OpinionsRestCa</module>
-		<module>OpinionsCore</module>
-		<module>OpinionsCoreSlipOpinions</module>
+		<module>OpinionsModel</module>
+		<module>OpinionsParser</module>
+		<module>OpinionsCrud</module>
+		<module>SlipOpinionModel</module>
+		<module>SlipOpinionParser</module>
+		<module>SlipOpinionDao</module>
 		<module>OpinionViewService</module>
+		<module>OpinionViewDaoService</module>
 		<module>OpinionUserService</module>
 		<module>OpinionsWeb</module>
 		<module>LoadOpinions</module>
@@ -81,14 +86,42 @@
 			</dependency>
 			<dependency>
 				<groupId>com.github.karlnicholas.legalservices</groupId>
-				<artifactId>opinions-core</artifactId>
+				<artifactId>opinions-model</artifactId>
 				<version>${project.version}</version>
 				<type>jar</type>
 				<scope>compile</scope>
 			</dependency>
 			<dependency>
 				<groupId>com.github.karlnicholas.legalservices</groupId>
-				<artifactId>opinions-core-slipopinions</artifactId>
+				<artifactId>opinions-parser</artifactId>
+				<version>${project.version}</version>
+				<type>jar</type>
+				<scope>compile</scope>
+			</dependency>
+			<dependency>
+				<groupId>com.github.karlnicholas.legalservices</groupId>
+				<artifactId>opinions-crud</artifactId>
+				<version>${project.version}</version>
+				<type>jar</type>
+				<scope>compile</scope>
+			</dependency>
+			<dependency>
+				<groupId>com.github.karlnicholas.legalservices</groupId>
+				<artifactId>slipopinionmodel</artifactId>
+				<version>${project.version}</version>
+				<type>jar</type>
+				<scope>compile</scope>
+			</dependency>
+			<dependency>
+				<groupId>com.github.karlnicholas.legalservices</groupId>
+				<artifactId>slipopinionparser</artifactId>
+				<version>${project.version}</version>
+				<type>jar</type>
+				<scope>compile</scope>
+			</dependency>
+			<dependency>
+				<groupId>com.github.karlnicholas.legalservices</groupId>
+				<artifactId>slipopiniondao</artifactId>
 				<version>${project.version}</version>
 				<type>jar</type>
 				<scope>compile</scope>
@@ -96,6 +129,13 @@
 			<dependency>
 				<groupId>com.github.karlnicholas.legalservices</groupId>
 				<artifactId>opinion-view-service</artifactId>
+				<version>${project.version}</version>
+				<type>jar</type>
+				<scope>compile</scope>
+			</dependency>
+			<dependency>
+				<groupId>com.github.karlnicholas.legalservices</groupId>
+				<artifactId>opinion-view-daoservice</artifactId>
 				<version>${project.version}</version>
 				<type>jar</type>
 				<scope>compile</scope>

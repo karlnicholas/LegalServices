@@ -39,7 +39,7 @@
 		</dependency>
 		<dependency>
 			<groupId>com.github.karlnicholas.legalservices</groupId>
-			<artifactId>opinions-core</artifactId>
+			<artifactId>slipopinionmodel</artifactId>
 		</dependency>
 	</dependencies>
 </project>

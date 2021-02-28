@@ -21,12 +21,16 @@
 		</dependency>
 		<dependency>
 			<groupId>com.github.karlnicholas.legalservices</groupId>
-			<artifactId>opinions-core</artifactId>
+			<artifactId>opinions-crud</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
 			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>com.github.karlnicholas.legalservices</groupId>
+			<artifactId>guidedsearch-core</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.jsoup</groupId>
@@ -37,6 +41,15 @@
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-compress</artifactId>
 			<version>1.20</version>
+		</dependency>
+		<dependency>
+			<groupId>javax.xml.bind</groupId>
+			<artifactId>jaxb-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>commons-dbutils</groupId>
+			<artifactId>commons-dbutils</artifactId>
+			<version>1.7</version>
 		</dependency>
 	</dependencies>
 

@@ -11,10 +11,9 @@ import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.builder.SpringApplicationBuilder;
-import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-import opca.dao.OpinionBaseDao;
 import opca.model.OpinionBase;
+import opca.model.OpinionKey;
 import opca.model.SlipOpinion;
 import opca.parser.OpinionScraperInterface;
 import opca.scraper.TestCAParseSlipDetails;
@@ -23,13 +22,13 @@ import opca.view.CaseView;
 import opca.view.OpinionView;
 import opca.view.OpinionViewBuilder;
 import opca.view.SectionView;
-import opca.view.StatuteView;
+import opinions.service.OpinionsService;
+import opinions.service.client.OpinionsServiceClientImpl;
 import statutes.service.StatutesService;
 import statutes.service.client.StatutesServiceClientImpl;
 
 @SpringBootApplication(scanBasePackages = {"opca", "update"})
 @ConditionalOnProperty(name = "TestParseAndView.active", havingValue = "true", matchIfMissing = false)
-@EnableTransactionManagement
 public class TestParseAndView implements ApplicationRunner {
 	Logger logger = LoggerFactory.getLogger(TestParseAndView.class);
 	public static void main(String... args) {
@@ -38,12 +37,11 @@ public class TestParseAndView implements ApplicationRunner {
 
 	@Autowired
 	private CAOnlineParseAndView parseAndView;
-	@Autowired
-	private OpinionBaseDao opinionBaseDao;
 	@Override
 	public void run(ApplicationArguments args) {
 
 		StatutesService statutesService = new StatutesServiceClientImpl("http://localhost:8090/");
+		OpinionsService opinionsService = new OpinionsServiceClientImpl("http://localhost:8091/");
 //				OpinionScraperInterface caseScraper = new CACaseScraper(true);
 //				OpinionScraperInterface caseScraper = new TestCACaseScraper(false);
 		OpinionScraperInterface caseScraper = new TestCAParseSlipDetails(false);
@@ -60,10 +58,17 @@ public class TestParseAndView implements ApplicationRunner {
 //		slipOpinion.getOpinionCitations().clear();
 //		slipOpinion.getOpinionCitations().addAll(opinionsWithReferringOpinions);
 
-		List<OpinionBase> opinionsWithReferringOpinions = opinionBaseDao.getOpinionsWithStatuteCitations(slipOpinion.getOpinionCitations()
-		.stream()
-		.map(OpinionBase::getOpinionKey)
-		.collect(Collectors.toList()));
+//		List<OpinionBase> opinionsWithReferringOpinions = opinionBaseDao.getOpinionsWithStatuteCitations(slipOpinion.getOpinionCitations()
+//		.stream()
+//		.map(OpinionBase::getOpinionKey)
+//		.collect(Collectors.toList()));
+		
+		List<OpinionKey> opinionKeys = slipOpinion.getOpinionCitations()
+				.stream()
+				.map(OpinionBase::getOpinionKey)
+				.collect(Collectors.toList());
+		
+		List<OpinionBase> opinionsWithReferringOpinions = opinionsService.getOpinionsWithStatuteCitations(opinionKeys).getBody();
 
 		slipOpinion.getOpinionCitations().clear();
 		slipOpinion.getOpinionCitations().addAll(opinionsWithReferringOpinions);

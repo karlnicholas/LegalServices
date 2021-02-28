@@ -24,33 +24,33 @@ public class OpinionsController {
 		this.opinionViewSingleton = opinionViewSingleton;
 	}
 
-	@GetMapping(value = "opinions", produces = MediaType.APPLICATION_JSON_VALUE)
-	public List<OpinionView> getOpinionViewList(@RequestParam(name = "startDate", required = false) String startDate) {
-		if ( opinionViewSingleton.getReportDates() != null ) {
-			// done this way so that this information is not serialized in the viewScope
-			// Is this something left over from JSF?
-			if (opinionViewSingleton.getReportDates().size() == 0) {
-				return null;
-			}
-			int currentIndex = 0;
-	    	if ( startDate != null ) {
-	        	currentIndex = opinionViewSingleton.currentDateIndex(startDate);
-	    	}
-	    	LocalDate[] dates = opinionViewSingleton.getReportDates().get(currentIndex);
-			ViewParameters viewInfo = new ViewParameters(dates[0], dates[1]);
-			return opinionViewSingleton.getOpinionCases(viewInfo);
-		} else {
-			return Collections.emptyList();
-		}
-	}
-
-	@GetMapping(value = "dates", produces = MediaType.APPLICATION_JSON_VALUE)
-	public List<String[]> getDateList() {
-		return opinionViewSingleton.getStringDateList();
-	}
-
-	@GetMapping(value = "status", produces = MediaType.APPLICATION_JSON_VALUE)
-	public boolean checkStatus() {
-		return opinionViewSingleton.checkStatus();
-	}
+//	@GetMapping(value = "opinions", produces = MediaType.APPLICATION_JSON_VALUE)
+//	public List<OpinionView> getOpinionViewList(@RequestParam(name = "startDate", required = false) String startDate) {
+//		if ( opinionViewSingleton.getReportDates() != null ) {
+//			// done this way so that this information is not serialized in the viewScope
+//			// Is this something left over from JSF?
+//			if (opinionViewSingleton.getReportDates().size() == 0) {
+//				return null;
+//			}
+//			int currentIndex = 0;
+//	    	if ( startDate != null ) {
+//	        	currentIndex = opinionViewSingleton.currentDateIndex(startDate);
+//	    	}
+//	    	LocalDate[] dates = opinionViewSingleton.getReportDates().get(currentIndex);
+//			ViewParameters viewInfo = new ViewParameters(dates[0], dates[1]);
+//			return opinionViewSingleton.getOpinionCases(viewInfo);
+//		} else {
+//			return Collections.emptyList();
+//		}
+//	}
+//
+//	@GetMapping(value = "dates", produces = MediaType.APPLICATION_JSON_VALUE)
+//	public List<String[]> getDateList() {
+//		return opinionViewSingleton.getStringDateList();
+//	}
+//
+//	@GetMapping(value = "status", produces = MediaType.APPLICATION_JSON_VALUE)
+//	public boolean checkStatus() {
+//		return opinionViewSingleton.checkStatus();
+//	}
 }

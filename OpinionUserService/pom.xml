@@ -65,7 +65,11 @@
 		</dependency>
 		<dependency>
 			<groupId>com.github.karlnicholas.legalservices</groupId>
-			<artifactId>opinion-view-service</artifactId>
+			<artifactId>slipopinionmodel</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.github.karlnicholas.legalservices</groupId>
+			<artifactId>opinion-view-daoservice</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.github.karlnicholas.legalservices</groupId>
