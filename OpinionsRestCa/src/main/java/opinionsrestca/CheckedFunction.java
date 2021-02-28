@@ -1,4 +1,4 @@
-package opca.crud;
+package opinionsrestca;
 
 import java.util.function.Function;
 

@@ -1,5 +1,6 @@
 package load;
 
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -36,7 +37,7 @@ public class LoadHistoricalOpinions {
 	}
 
 
-    public void initializeDB() throws Exception {
+    public void initializeDB(Connection con) throws Exception {
     	//
 	    IStatutesApi iStatutesApi = new CAStatutesApiImpl();
 	    iStatutesApi.loadStatutes();
@@ -76,12 +77,12 @@ public class LoadHistoricalOpinions {
 	    for ( OpinionBase opinionBase: citationStore.getAllOpinions()) {
 	    	opinionBatch.add(opinionBase);
 	    	if ( ++i % BATCH_SIZE == 0 ) {
-				opinionBaseCrud.insertBatch(opinionBatch);
+				opinionBaseCrud.insertBatch(opinionBatch, con);
 				opinionBatch.clear();
 	    	}
 	    }
 	    if ( opinionBatch.size() > 0 ) {
-			opinionBaseCrud.insertBatch(opinionBatch);
+			opinionBaseCrud.insertBatch(opinionBatch, con);
 			opinionBatch.clear();
 	    }
 
@@ -90,21 +91,21 @@ public class LoadHistoricalOpinions {
 		for(StatuteCitation statute: citationStore.getAllStatutes() ) {
     		statuteBatch.add(statute);
 	    	if ( ++i % BATCH_SIZE == 0 ) {
-	    		statuteCitationCrud.insertBatch(statuteBatch);
+	    		statuteCitationCrud.insertBatch(statuteBatch, con);
 	    		statuteBatch.clear();
 	    	}
     	}
 	    if ( statuteBatch.size() > 0 ) {
-	    	statuteCitationCrud.insertBatch(statuteBatch);
+	    	statuteCitationCrud.insertBatch(statuteBatch, con);
 	    	statuteBatch.clear();
 	    }
 		
 		for(OpinionBase opinion: citationStore.getAllOpinions() ) {
-			opinionBaseOpinionCitationsCrud.insert(opinion);
+			opinionBaseOpinionCitationsCrud.insertBatch(opinion, con);
 		}
 
 		for(OpinionBase opinion: citationStore.getAllOpinions() ) {
-			opinionStatuteCitationCrud.insert(opinion);
+			opinionStatuteCitationCrud.insertBatch(opinion, con);
 		}
    	
     }

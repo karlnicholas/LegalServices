@@ -1,5 +1,6 @@
 package opinionsrestca;
 
+import java.sql.SQLException;
 import java.util.Collections;
 import java.util.List;
 
@@ -9,7 +10,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
 
-import opca.dao.OpinionBaseDao;
 import opca.model.OpinionBase;
 import opca.model.OpinionKey;
 import reactor.core.publisher.Mono;
@@ -20,8 +20,8 @@ public class OpinionsServiceHandler {
 	private ParameterizedTypeReference<List<OpinionKey>> opinionKeysType;
 	private OpinionBaseDao opinionBaseDao;
 
-	public OpinionsServiceHandler(OpinionBaseDao opinionBaseDao) {
-		this.opinionBaseDao = opinionBaseDao;
+	public OpinionsServiceHandler(OpinionBaseDao opinionBaseCrud) {
+		this.opinionBaseDao = opinionBaseCrud;
 		this.opinionKeysType = new ParameterizedTypeReference<List<OpinionKey>>() {};
 		this.opinionBaseType = new ParameterizedTypeReference<List<OpinionBase>>() {};
 	}
@@ -29,7 +29,11 @@ public class OpinionsServiceHandler {
 	public Mono<ServerResponse> getOpinionsWithStatuteCitations(ServerRequest request) {
 		return ServerResponse.ok().contentType(MediaType.APPLICATION_JSON)
 				.body(request.bodyToMono(opinionKeysType).map(opinionKeys -> {
-					return opinionBaseDao.getOpinionsWithStatuteCitations(opinionKeys);
+					try {
+						return opinionBaseDao.getOpinionsWithStatuteCitations(opinionKeys);
+					} catch (SQLException e) {
+						throw new RuntimeException(e);
+					}
 				}), opinionBaseType);
 	}
 

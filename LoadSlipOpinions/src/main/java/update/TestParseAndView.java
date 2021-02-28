@@ -24,6 +24,7 @@ import opca.view.OpinionViewBuilder;
 import opca.view.SectionView;
 import opinions.service.OpinionsService;
 import opinions.service.client.OpinionsServiceClientImpl;
+import statutes.StatutesTitles;
 import statutes.service.StatutesService;
 import statutes.service.client.StatutesServiceClientImpl;
 
@@ -42,26 +43,28 @@ public class TestParseAndView implements ApplicationRunner {
 
 		StatutesService statutesService = new StatutesServiceClientImpl("http://localhost:8090/");
 		OpinionsService opinionsService = new OpinionsServiceClientImpl("http://localhost:8091/");
-//				OpinionScraperInterface caseScraper = new CACaseScraper(true);
+		OpinionViewBuilder opinionViewBuilder = new OpinionViewBuilder(statutesService);
+		StatutesTitles[] arrayStatutesTitles = statutesService.getStatutesTitles().getBody();
+
+
+		//				OpinionScraperInterface caseScraper = new CACaseScraper(true);
 //				OpinionScraperInterface caseScraper = new TestCACaseScraper(false);
 		OpinionScraperInterface caseScraper = new TestCAParseSlipDetails(false);
-		SlipOpinion slipOpinion = parseAndView.getSlipOpinion(caseScraper, statutesService);
-		
-	
-		OpinionViewBuilder opinionViewBuilder = new OpinionViewBuilder(statutesService);
-	
-//		List<OpinionBase> opinionsWithReferringOpinions = opinionBaseDao.opinionsWithReferringOpinions(slipOpinion.getOpinionCitations()
-//				.stream()
-//				.map(OpinionBase::getOpinionKey)
-//				.collect(Collectors.toList()));
-//		
-//		slipOpinion.getOpinionCitations().clear();
-//		slipOpinion.getOpinionCitations().addAll(opinionsWithReferringOpinions);
 
-//		List<OpinionBase> opinionsWithReferringOpinions = opinionBaseDao.getOpinionsWithStatuteCitations(slipOpinion.getOpinionCitations()
-//		.stream()
-//		.map(OpinionBase::getOpinionKey)
-//		.collect(Collectors.toList()));
+ 		List<SlipOpinion> onlineOpinions = caseScraper.getCaseList();
+// 		for ( SlipOpinion slipOpinion: onlineOpinions) {
+// 			parseAndPrintOpinion(opinionsService, opinionViewBuilder, arrayStatutesTitles, caseScraper, slipOpinion);
+// 		}
+//		parseAndPrintOpinion(opinionsService, opinionViewBuilder, arrayStatutesTitles, caseScraper, onlineOpinions.get(209));
+ 		onlineOpinions.parallelStream().forEach(slipOpinion->parseAndPrintOpinion(opinionsService, opinionViewBuilder, arrayStatutesTitles, caseScraper, slipOpinion));
+
+	//
+			
+	}
+	private void parseAndPrintOpinion(OpinionsService opinionsService, OpinionViewBuilder opinionViewBuilder,
+			StatutesTitles[] arrayStatutesTitles, OpinionScraperInterface caseScraper, SlipOpinion slipOpinion) {
+		// no retries
+		parseAndView.processCase(slipOpinion, caseScraper, arrayStatutesTitles);
 		
 		List<OpinionKey> opinionKeys = slipOpinion.getOpinionCitations()
 				.stream()
@@ -73,56 +76,20 @@ public class TestParseAndView implements ApplicationRunner {
 		slipOpinion.getOpinionCitations().clear();
 		slipOpinion.getOpinionCitations().addAll(opinionsWithReferringOpinions);
 
-//		System.out.println("slipOpinion:= " 
-//				+ slipOpinion.getTitle() 
-//				+ "\n	:OpinionKey= " + slipOpinion.getOpinionKey()
-//				+ "\n	:OpinionCitations().size()= " + (slipOpinion.getOpinionCitations()== null?"xx":slipOpinion.getOpinionCitations().size())
-//				+ "\n	:StatuteCitations().size()= " + (slipOpinion.getStatuteCitations()== null?"xx":slipOpinion.getStatuteCitations().size())
-//				+ "\n	:CountReferringOpinions= " + slipOpinion.getCountReferringOpinions()
-//			);
-//		for ( OpinionBase opinionCitation: slipOpinion.getOpinionCitations()) {
-//			System.out.println("    opinionCitation:= " 
-//					+ opinionCitation.getTitle() 
-//					+ "\n		:OpinionKey= " + opinionCitation.getOpinionKey()
-//					+ "\n		:CountReferringOpinions= " + opinionCitation.getCountReferringOpinions()
-//				);
-//			for ( OpinionStatuteCitation opinionStatuteCitation: opinionCitation.getStatuteCitations()) {
-//				System.out.println("        opinionStatuteCitation:= " 
-//						+ opinionStatuteCitation.getCountReferences() 
-//						+ "\n		    :OpinionKey= " + opinionStatuteCitation.getStatuteCitation()
-//					);
-//			}
-//		}
-
 		OpinionView opinionView = opinionViewBuilder.buildOpinionView(slipOpinion);
-		System.out.println("OpinionView" + opinionView);
-		System.out.println("Completed");
-		System.out.println("opinionView:= " 
-			+ opinionView.getTitle() 
-			+ "\n	:OpinionKey= " + opinionView.getOpinionKey()
-			+ "\n	:opinionView.getCases().size() = " + (opinionView.getCases()== null?"xx":opinionView.getCases().size())
-			+ "\n	:opinionView.getSectionViews().size() = " + (opinionView.getStatutes()== null?"xx":opinionView.getSectionViews().size())
-			+ "\n	:getCondensedCaseInfo = " + opinionView.getCondensedCaseInfo()
-			+ "\n	:getCondensedStatuteInfo = " + opinionView.getCondensedStatuteInfo()
+//		System.out.print(".");
+//		System.out.println("Completed");
+		System.out.println("opinionView:= " + opinionView.getTitle() 
+			+ " : " + (opinionView.getCases()== null?"0":opinionView.getCases().size())
+			+ " : " + (opinionView.getStatutes()== null?"0":opinionView.getSectionViews().size())
+// 				+ " : " + opinionView.getCondensedCaseInfo()
+			+ " : " + opinionView.getCondensedStatuteInfo()
 		);
-		for ( CaseView caseView: opinionView.getCases().subList(0, opinionView.getCases().size() > 10 ? 10 : opinionView.getCases().size())) {
-			System.out.println("	caseView:= " 
-					+ caseView.getTitle() 
-					+ "\n		:getCitation= " + caseView.getCitation()
-					+ "\n		:getImportance= " + caseView.getImportance()
-				);
-		}
-		for ( SectionView sectionView: opinionView.getSectionViews()) {
-			System.out.println("	sectionView:= " 
-					+ sectionView.getShortTitle() 
-					+ "\n		:getImportance= " + sectionView.getImportance()
-				);
-		}
-
-//			List<ScrapedOpinionDocument> scrapedCases = caseScraper.scrapeOpinionFiles(caseScraper.getCaseList());
-//			scrapedCases.stream().forEach(sc->{
-//				System.out.println(sc.getOpinionBase());	
-//			});
-			
+//		for ( CaseView caseView: opinionView.getCases().subList(0, opinionView.getCases().size() > 10 ? 10 : opinionView.getCases().size())) {
+//			System.out.println("	caseView(" + caseView.getImportance() + ") : " + caseView.getTitle() + " (" + caseView.getCitation() +")" );
+//		}
+//		for ( SectionView sectionView: opinionView.getSectionViews()) {
+//			System.out.println("	sectionView(" + sectionView.getImportance() + ") : " + sectionView.getShortTitle());
+//		}
 	}
 }

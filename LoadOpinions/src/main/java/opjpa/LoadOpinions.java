@@ -13,26 +13,30 @@ import opca.crud.StatuteCitationCrud;
 public class LoadOpinions {
 
 	public static void main(String[] args) throws Exception {
-		Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/op", "op", "op");
-		OpinionBaseCrud opinionBaseCrud = new OpinionBaseCrud(conn);
-		OpinionBaseOpinionCitationsCrud opinionBaseOpinionCitationsCrud = new OpinionBaseOpinionCitationsCrud(conn);
-		StatuteCitationCrud statuteCitationCrud = new StatuteCitationCrud(conn);
-		OpinionStatuteCitationCrud opinionStatuteCitationCrud = new OpinionStatuteCitationCrud(conn);
-		try {
-			LoadHistoricalOpinions loadHistoricalOpinions = new LoadHistoricalOpinions(
-				opinionBaseCrud, 
-				opinionBaseOpinionCitationsCrud, 
-				statuteCitationCrud, 
-				opinionStatuteCitationCrud
-			);
-			conn.setAutoCommit(false);
-	    	loadHistoricalOpinions.initializeDB();
-	    	conn.commit();
-			System.out.println("loadHistoricalOpinions.initializeDB(): DONE");
-		} catch ( SQLException sqlException ) {
-	    	conn.rollback();
-			sqlException.printStackTrace();	
-		}
+		Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/op", "op", "op");
+		OpinionBaseCrud opinionBaseCrud = new OpinionBaseCrud();
+		OpinionBaseOpinionCitationsCrud opinionBaseOpinionCitationsCrud = new OpinionBaseOpinionCitationsCrud();
+		StatuteCitationCrud statuteCitationCrud = new StatuteCitationCrud();
+		OpinionStatuteCitationCrud opinionStatuteCitationCrud = new OpinionStatuteCitationCrud();
+		LoadHistoricalOpinions loadHistoricalOpinions = new LoadHistoricalOpinions(
+			opinionBaseCrud, 
+			opinionBaseOpinionCitationsCrud, 
+			statuteCitationCrud, 
+			opinionStatuteCitationCrud
+		);
+		con.setAutoCommit(false);
+	    try {
+	    	loadHistoricalOpinions.initializeDB(con);
+	    }
+	    catch(SQLException ex)
+	    {
+	        con.rollback();
+	        con.setAutoCommit(true);
+	        throw ex;
+	    }
+    	con.commit();
+        con.setAutoCommit(true);
+        System.out.println("loadHistoricalOpinions.initializeDB(): DONE");
 	}
 
 }
