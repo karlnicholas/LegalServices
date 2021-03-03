@@ -39,10 +39,10 @@ public class TestParseAndView implements ApplicationRunner {
 	@Override
 	public void run(ApplicationArguments args) {
 
-		StatutesService statutesService = new StatutesServiceClientImpl("http://localhost:8090/");
-		OpinionsService opinionsService = new OpinionsServiceClientImpl("http://localhost:8091/");
-		OpinionViewBuilder opinionViewBuilder = new OpinionViewBuilder(statutesService);
-		StatutesTitles[] arrayStatutesTitles = statutesService.getStatutesTitles().getBody();
+//		StatutesService statutesService = new StatutesServiceClientImpl("http://localhost:8090/");
+//		OpinionsService opinionsService = new OpinionsServiceClientImpl("http://localhost:8091/");
+//		OpinionViewBuilder opinionViewBuilder = new OpinionViewBuilder(statutesService);
+//		StatutesTitles[] arrayStatutesTitles = statutesService.getStatutesTitles().getBody();
 
 
 		//				OpinionScraperInterface caseScraper = new CACaseScraper(true);
@@ -54,8 +54,13 @@ public class TestParseAndView implements ApplicationRunner {
 // 			parseAndPrintOpinion(opinionsService, opinionViewBuilder, arrayStatutesTitles, caseScraper, slipOpinion);
 // 		}
 //		parseAndPrintOpinion(opinionsService, opinionViewBuilder, arrayStatutesTitles, caseScraper, onlineOpinions.get(209));
- 		onlineOpinions.parallelStream().forEach(slipOpinion->parseAndPrintOpinion(opinionsService, opinionViewBuilder, arrayStatutesTitles, caseScraper, slipOpinion));
+// 		onlineOpinions.parallelStream().forEach(slipOpinion->parseAndPrintOpinion(opinionsService, opinionViewBuilder, arrayStatutesTitles, caseScraper, slipOpinion));
 
+		List<OpinionKey> opinionKeys = onlineOpinions
+				.stream()
+				.map(OpinionBase::getOpinionKey)
+				.collect(Collectors.toList());
+		System.out.println(opinionKeys);
 	//
 			
 	}

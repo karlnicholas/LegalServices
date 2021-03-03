@@ -1,12 +1,12 @@
 package opinionsrestca;
 
 import java.sql.SQLException;
-import java.util.Collections;
 import java.util.List;
 
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
+import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
 
@@ -37,10 +37,24 @@ public class OpinionsServiceHandler {
 				}), opinionBaseType);
 	}
 
-	public Mono<ServerResponse> exampleOpinionKeys(ServerRequest request) {
-		return ServerResponse.ok().contentType(MediaType.APPLICATION_JSON)
-				.body(request.bodyToMono(opinionKeysType).map(opinionKeys -> {
-					return Collections.singletonList(new OpinionKey(3,4,1));
-				}), opinionKeysType);
+	public Mono<ServerResponse> getSlipOpinionList(ServerRequest request) {
+		try {
+			return ServerResponse.ok().contentType(MediaType.TEXT_PLAIN)
+					.body(BodyInserters.fromValue(opinionBaseDao.getSlipOpinionList()));
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	public Mono<ServerResponse> updateSlipOpinionList(ServerRequest request) {
+		return request.bodyToMono(String.class).flatMap(string->{
+			try {
+				opinionBaseDao.updateSlipOpinionList(string);
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			return ServerResponse.accepted().build();
+		});
 	}
 }

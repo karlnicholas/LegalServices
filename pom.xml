@@ -22,6 +22,7 @@
 		<module>OpinionsCrud</module>
 		<module>SlipOpinionModel</module>
 		<module>SlipOpinionParser</module>
+		<module>SlipOpinionProducer</module>
 		<module>SlipOpinionDao</module>
 		<module>OpinionViewService</module>
 		<module>OpinionViewDaoService</module>

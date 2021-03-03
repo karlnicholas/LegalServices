@@ -9,5 +9,9 @@ import opca.model.OpinionKey;
 
 public interface OpinionsService {
 	String OPINIONCITATIONS = "opinioncitations";
+	String GETSLIPOPINIONS = "getslipopinions";
+	String UPDATESLIPOPINIONS = "updateslipopinions";
 	ResponseEntity<List<OpinionBase>> getOpinionsWithStatuteCitations(List<OpinionKey> opinionKeys);
+	ResponseEntity<String> getSlipOpinionsList();
+	void updateSlipOpinionsList(String string);
 }
