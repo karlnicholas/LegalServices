@@ -547,7 +547,7 @@ public class CACaseScraper implements OpinionScraperInterface {
 				SlipOpinion slipOpinion = new SlipOpinion(fileName, fileExtension, tempa[0].trim(), opDate, court, searchUrl);
 				// test for duplicates
 				if ( cases.contains(slipOpinion)) {
-			    	logger.warning("Duplicate Detected:" + slipOpinion);
+			    	logger.fine("Duplicate Detected:" + slipOpinion);
 				} else {
 					cases.add(slipOpinion);
 				}

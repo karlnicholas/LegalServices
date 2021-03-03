@@ -1,11 +1,14 @@
 package opca.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 //@Entity
 public class PartyAttorneyPair {
 //	@Id @GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Integer id;
 
 //	@ManyToOne
+	@JsonIgnore
 	private SlipProperties slipProperties;	
 //    @Column(columnDefinition="varchar(1022)")
 	private String party;

@@ -8,6 +8,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 @SuppressWarnings("serial")
 //@Entity
@@ -173,7 +174,7 @@ public class OpinionBase implements Comparable<OpinionBase>, Serializable {
 	public void setStatuteCitations(Set<OpinionStatuteCitation> statuteCitations) {
 		this.statuteCitations = statuteCitations;
 	}
-	@JsonIgnore
+	@JsonInclude
 	public Set<OpinionBase> getOpinionCitations() {
 		return opinionCitations;
 	}

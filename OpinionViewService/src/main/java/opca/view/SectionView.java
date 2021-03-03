@@ -3,7 +3,7 @@ package opca.view;
 import java.util.*;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 
 import statutes.StatuteRange;
@@ -113,7 +113,7 @@ public class SectionView extends ViewReference {
 	public void setScore(int score) {
 		this.score = score;
 	}
-    @JsonProperty
+    @JsonInclude
 	public int getImportance() {
 		return importance;
 	}
@@ -121,17 +121,17 @@ public class SectionView extends ViewReference {
 		this.importance = importance;
 	}
 
-    @JsonProperty
+    @JsonInclude
 	public String getFullFacet() {
 		return fullFacet;
 	}
 
-    @JsonProperty
+    @JsonInclude
 	public String getDisplayTitlePath() {
     	List<String> shortTitles = getShortTitles();
     	return shortTitles.toString().replace("[", "").replace("]", "") + ", " + title;
 	}
-    @JsonProperty
+    @JsonInclude
 	public String getDisplaySections() {
 		if ( statuteRange.geteNumber().getSectionNumber() == null ) {
 	    	return ("§ " + statuteRange.getsNumber().toString());

@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 //@NamedQueries({
 //	@NamedQuery(name="SlipProperties.findAll", 
 //		query="select p from SlipProperties p join fetch p.slipOpinion"), 
@@ -15,6 +17,7 @@ public class SlipProperties implements Serializable {
 //	@Id
 	private Integer opinionId;
 //    @OneToOne(fetch=FetchType.LAZY) @MapsId
+	@JsonIgnore
 	private SlipOpinion slipOpinion; 
 //	@Column(columnDefinition="varchar(15)")
 	private String court;

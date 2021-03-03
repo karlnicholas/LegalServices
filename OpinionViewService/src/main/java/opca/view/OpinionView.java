@@ -4,7 +4,7 @@ import java.time.LocalDate;
 import java.util.*;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 
 import opca.model.OpinionKey;
@@ -47,7 +47,7 @@ public class OpinionView {
 		this.setSummary(slipOpinion.getSlipProperties().getSummary());
 	}
 	
-    @JsonProperty
+    @JsonInclude
     public List<SectionView> getSectionViews() {
     	List<SectionView> sectionViews = new ArrayList<>();
     	for ( StatuteView statueView: statutes ) {
@@ -56,7 +56,7 @@ public class OpinionView {
     	return sectionViews;
     }
 	// supporting methods for JSF pages
-    @JsonProperty
+    @JsonInclude
 	public String getCondensedStatuteInfo() {
 		StringBuilder sb = new StringBuilder();
 		boolean shortened = false;
@@ -78,7 +78,7 @@ public class OpinionView {
 		return sb.toString();
 	}
 	
-    @JsonProperty
+    @JsonInclude
 	public String getCondensedCaseInfo() {
 		StringBuilder sb = new StringBuilder();
 		boolean shortened = false;
@@ -108,21 +108,21 @@ public class OpinionView {
     public void setStatutes(List<StatuteView> statutes) {
         this.statutes = statutes;
     }
-    @JsonProperty
+    @JsonInclude
     public String getName() {
 		return name;
 	}
 	public void setName(String name) {
 		this.name = name;
 	}
-    @JsonProperty
+    @JsonInclude
     public String getTitle() {
 		return title;
 	}
 	public void setTitle(String title) {
 		this.title = title;
 	}
-    @JsonProperty
+    @JsonInclude
 	public List<CaseView> getCases() {
 		return cases;
 	}
@@ -133,21 +133,21 @@ public class OpinionView {
     public String toString() {
     	return name + " " + this.getTitle();
     }
-    @JsonProperty
+    @JsonInclude
 	public LocalDate getOpinionDate() {
 		return opinionDate;
 	}
 	public void setOpinionDate(LocalDate opinionDate) {
 		this.opinionDate = opinionDate;
 	}
-    @JsonProperty
+    @JsonInclude
 	public String getFileName() {
 		return fileName;
 	}
 	public void setFileName(String fileName) {
 		this.fileName = fileName;
 	}
-    @JsonProperty
+    @JsonInclude
 	public String getDisposition() {
 		return disposition;
 	}
@@ -161,14 +161,14 @@ public class OpinionView {
 	public void setOpinionKey(OpinionKey opinionKey) {
 		this.opinionKey = opinionKey;
 	}
-    @JsonProperty
+    @JsonInclude
 	public String getPublicationStatus() {
 		return publicationStatus;
 	}
 	public void setPublicationStatus(String publicationStatus) {
 		this.publicationStatus = publicationStatus;
 	}
-    @JsonProperty
+    @JsonInclude
 	public String getSummary() {
 		return summary;
 	}

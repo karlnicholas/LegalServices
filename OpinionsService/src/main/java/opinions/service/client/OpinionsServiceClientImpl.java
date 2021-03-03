@@ -65,7 +65,7 @@ public class OpinionsServiceClientImpl implements OpinionsService {
 	public void updateSlipOpinionsList(String string) {
 		// Set the Content-Type header
 		HttpHeaders requestHeaders = new HttpHeaders();
-		requestHeaders.setContentType(MediaType.APPLICATION_JSON);
+		requestHeaders.setContentType(MediaType.TEXT_PLAIN);
 		HttpEntity<String> requestEntity = new HttpEntity<>(string, requestHeaders);
 		restTemplate.exchange(updateSlipOpinionsURI, HttpMethod.POST, requestEntity, Void.class);
 	}
