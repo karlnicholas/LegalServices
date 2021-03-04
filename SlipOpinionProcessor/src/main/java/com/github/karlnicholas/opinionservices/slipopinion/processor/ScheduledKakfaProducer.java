@@ -1,4 +1,4 @@
-package com.github.karlnicholas.opinionservices.slipopinion.producer;
+package com.github.karlnicholas.opinionservices.slipopinion.processor;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -32,9 +32,9 @@ import statutes.service.StatutesService;
 import statutes.service.client.StatutesServiceClientImpl;
 
 @Component
-public class ScheduledTasks {
+public class ScheduledKakfaProducer {
 
-	private static final Logger log = LoggerFactory.getLogger(ScheduledTasks.class);
+	private static final Logger log = LoggerFactory.getLogger(ScheduledKakfaProducer.class);
 
 	private static final SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
 	private final OpinionScraperInterface caseScraper;
@@ -43,7 +43,7 @@ public class ScheduledTasks {
 	private final OpinionsService opinionsService;
 	private final SlipOpinionDocumentParser opinionDocumentParser;
 
-	public ScheduledTasks(ObjectMapper objectMapper) {
+	public ScheduledKakfaProducer(ObjectMapper objectMapper) {
 		caseScraper = new TestCAParseSlipDetails(false);
 	    this.objectMapper = objectMapper;
 
@@ -54,7 +54,7 @@ public class ScheduledTasks {
 		
         //Configure the Producer
         Properties configProperties = new Properties();
-        configProperties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG,"192.168.202.109:32369");
+        configProperties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG,"192.168.202.101:32369");
         configProperties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG,"org.apache.kafka.common.serialization.ByteArraySerializer");
         configProperties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG,"org.apache.kafka.connect.json.JsonSerializer");
         

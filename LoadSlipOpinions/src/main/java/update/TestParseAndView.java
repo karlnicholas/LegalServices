@@ -2,7 +2,6 @@ package update;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -45,15 +44,13 @@ public class TestParseAndView implements ApplicationRunner {
 	}
 
 	@Autowired
-	private CAOnlineParseAndView parseAndView;
-	@Autowired
 	private ObjectMapper objectMapper;
 	@Override
 	public void run(ApplicationArguments args) throws JsonProcessingException {
 
 		StatutesService statutesService = new StatutesServiceClientImpl("http://localhost:8090/");
 		OpinionsService opinionsService = new OpinionsServiceClientImpl("http://localhost:8091/");
-//		OpinionViewBuilder opinionViewBuilder = new OpinionViewBuilder(statutesService);
+		OpinionViewBuilder opinionViewBuilder = new OpinionViewBuilder(statutesService);
 		StatutesTitles[] arrayStatutesTitles = statutesService.getStatutesTitles().getBody();
 
 
@@ -101,6 +98,14 @@ public class TestParseAndView implements ApplicationRunner {
 				System.out.println(slipOpinion);
 		        JsonNode  jsonNode = objectMapper.valueToTree(slipOpinion);
 		        System.out.println(jsonNode);
+		        
+		        try {
+					SlipOpinion slipOpinionFromJson = objectMapper.treeToValue(jsonNode, SlipOpinion.class);
+					parseAndPrintOpinion(opinionsService, opinionViewBuilder, arrayStatutesTitles, caseScraper, slipOpinionFromJson);
+				} catch (JsonProcessingException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				
 			});
 		}
@@ -128,7 +133,15 @@ public class TestParseAndView implements ApplicationRunner {
 	private void parseAndPrintOpinion(OpinionsService opinionsService, OpinionViewBuilder opinionViewBuilder,
 			StatutesTitles[] arrayStatutesTitles, OpinionScraperInterface caseScraper, SlipOpinion slipOpinion) {
 		// no retries
-		parseAndView.processCase(slipOpinion, caseScraper, arrayStatutesTitles);
+//		parseAndView.processCase(slipOpinion, caseScraper, arrayStatutesTitles);
+		// Create the CACodes list
+		ScrapedOpinionDocument scrapedOpinionDocument = caseScraper.scrapeOpinionFile(slipOpinion);
+
+		SlipOpinionDocumentParser opinionDocumentParser = new SlipOpinionDocumentParser(arrayStatutesTitles);
+		
+		opinionDocumentParser.parseOpinionDocument(scrapedOpinionDocument, scrapedOpinionDocument.getOpinionBase());
+		// maybe someday deal with court issued modifications
+		opinionDocumentParser.parseSlipOpinionDetails((SlipOpinion) scrapedOpinionDocument.getOpinionBase(), scrapedOpinionDocument);
 		
 		List<OpinionKey> opinionKeys = slipOpinion.getOpinionCitations()
 				.stream()

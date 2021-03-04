@@ -8,9 +8,9 @@
 		<artifactId>parent</artifactId>
 		<version>2.0.0-SNAPSHOT</version>
 	</parent>
-	<artifactId>slipopinionproducer</artifactId>
-	<name>Slip Opinion Producer</name>
-	<description>Slip Opinion Producer</description>
+	<artifactId>slipopinionprocessor</artifactId>
+	<name>Slip Opinion Processor</name>
+	<description>Slip Opinion Processor</description>
 	<dependencies>
 		<dependency>
 			<groupId>org.apache.kafka</groupId>
@@ -41,6 +41,10 @@
 		<dependency>
 			<groupId>com.github.karlnicholas.legalservices</groupId>
 			<artifactId>opinionsservice</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.github.karlnicholas.legalservices</groupId>
+			<artifactId>opinion-view-service</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.github.karlnicholas.legalservices</groupId>
