@@ -3,7 +3,6 @@ package opca.service;
 import java.time.LocalDate;
 import java.time.temporal.WeekFields;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -13,14 +12,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
-import opca.dao.OpinionBaseDao;
 import opca.dao.SlipOpinionDao;
-import opca.model.OpinionBase;
 import opca.model.OpinionKey;
 import opca.model.SlipOpinion;
-import opca.parser.ParsedOpinionCitationSet;
 import opca.view.OpinionView;
-import opca.view.OpinionViewBuilder;
 import statutes.service.StatutesService;
 
 @Component

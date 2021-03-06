@@ -20,7 +20,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 import statutes.StatutesRoot;
 import statutes.StatutesTitles;
 import statutes.service.StatutesService;
-import statutes.service.ReactiveStatutesService;
 import statutes.service.dto.StatuteKey;
 
 public class StatutesServiceClientImpl implements StatutesService {
@@ -38,10 +37,10 @@ public class StatutesServiceClientImpl implements StatutesService {
 		ris.add(ri);
 		restTemplate.setInterceptors(ris);
 		restTemplate.setRequestFactory(new BufferingClientHttpRequestFactory(new SimpleClientHttpRequestFactory()));
-		statutesURI = URI.create(baseUrl + ReactiveStatutesService.STATUTES);
-		statuesTitlesURI = URI.create(baseUrl + ReactiveStatutesService.STATUTESTITLES);
-		statuteHierarchyURI = URI.create(baseUrl + ReactiveStatutesService.STATUTEHIERARCHY);
-		statutesAndHierarchiesURI = URI.create(baseUrl + ReactiveStatutesService.STATUTESANDHIERARCHIES);
+		statutesURI = URI.create(baseUrl + StatutesService.STATUTES);
+		statuesTitlesURI = URI.create(baseUrl + StatutesService.STATUTESTITLES);
+		statuteHierarchyURI = URI.create(baseUrl + StatutesService.STATUTEHIERARCHY);
+		statutesAndHierarchiesURI = URI.create(baseUrl + StatutesService.STATUTESANDHIERARCHIES);
 	}
 	
 	@Override

@@ -16,6 +16,10 @@ import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.consumer.OffsetAndMetadata;
+import org.apache.kafka.clients.producer.KafkaProducer;
+import org.apache.kafka.clients.producer.Producer;
+import org.apache.kafka.clients.producer.ProducerConfig;
+import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.errors.WakeupException;
 
@@ -39,15 +43,47 @@ import statutes.service.StatutesService;
 import statutes.service.client.StatutesServiceClientImpl;
 
 @Slf4j
-public class KafkaConsumerTask implements Runnable {
+public class OpinionViewBuild implements Runnable {
 
 //	private volatile boolean someCondition = true;
-	private Map<TopicPartition, OffsetAndMetadata> currentOffsets = new HashMap<>();
-	private Consumer<String, JsonNode> consumer;
+	private final Map<TopicPartition, OffsetAndMetadata> currentOffsets;
+	private final Consumer<String, JsonNode> consumer;
+	private final Producer<String, JsonNode> producer;
 	private final ObjectMapper objectMapper;
-	
-	public KafkaConsumerTask(ObjectMapper objectMapper) {
+	private final StatutesService statutesService;
+	private final OpinionsService opinionsService;
+	private final OpinionViewBuilder opinionViewBuilder;
+	private final StatutesTitles[] arrayStatutesTitles;
+	private final OpinionScraperInterface caseScraper;
+	private final KakfaProperties kafkaProperties;
+
+	public OpinionViewBuild(ObjectMapper objectMapper, KakfaProperties kafkaProperties) {
 		this.objectMapper = objectMapper;
+		this.kafkaProperties = kafkaProperties; 
+		currentOffsets = new HashMap<>();
+		statutesService = new StatutesServiceClientImpl("http://localhost:8090/");
+		opinionsService = new OpinionsServiceClientImpl("http://localhost:8091/");
+		opinionViewBuilder = new OpinionViewBuilder(statutesService);
+		arrayStatutesTitles = statutesService.getStatutesTitles().getBody();
+		caseScraper = new TestCAParseSlipDetails(false);
+        //Configure the Producer
+        Properties configProperties = new Properties();
+        configProperties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG,kafkaProperties.getIpAddress()+';'+kafkaProperties.getPort());
+        configProperties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG,kafkaProperties.getKeySerializer());
+        configProperties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG,kafkaProperties.getValueSerializer());
+        
+        producer = new KafkaProducer<>(configProperties);
+
+        //Configure the Consumer
+		Properties consumerProperties = new Properties();
+		consumerProperties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG,kafkaProperties.getIpAddress()+';'+kafkaProperties.getPort());
+		consumerProperties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, kafkaProperties.getKeyDeserializer());
+		consumerProperties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, kafkaProperties.getValueDeserializer());
+
+		consumerProperties.put(ConsumerConfig.GROUP_ID_CONFIG, kafkaProperties.getSlipOpinionsConsumerGroup());
+
+		// Create the consumer using props.
+		 consumer = new KafkaConsumer<>(consumerProperties);
 	}
 
 	private class HandleRebalance implements ConsumerRebalanceListener {
@@ -61,24 +97,10 @@ public class KafkaConsumerTask implements Runnable {
 	}
 	@Override
     public void run(){
-		StatutesService statutesService = new StatutesServiceClientImpl("http://localhost:8090/");
-		OpinionsService opinionsService = new OpinionsServiceClientImpl("http://localhost:8091/");
-		OpinionViewBuilder opinionViewBuilder = new OpinionViewBuilder(statutesService);
-		StatutesTitles[] arrayStatutesTitles = statutesService.getStatutesTitles().getBody();
-		OpinionScraperInterface caseScraper = new TestCAParseSlipDetails(false);
-
-		final Properties configProperties = new Properties();
-		configProperties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG,"192.168.202.101:32369");
-		configProperties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.ByteArrayDeserializer");
-		configProperties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, "org.apache.kafka.connect.json.JsonDeserializer");
-
-		configProperties.put(ConsumerConfig.GROUP_ID_CONFIG, "KafkaSlipOpinionConsumer");
-
-		// Create the consumer using props.
-		 consumer = new KafkaConsumer<>(configProperties);
-		// Subscribe to the topic.
+		
 		try {
-		    consumer.subscribe(Collections.singletonList("slipopinions"), new HandleRebalance());
+			// Subscribe to the topic.
+		    consumer.subscribe(Collections.singletonList(kafkaProperties.getSlipOpinionsTopic()), new HandleRebalance());
 		    while (true) {
 		        ConsumerRecords<String, JsonNode> records = consumer.poll(Duration.ofMillis(100));
 		        for (ConsumerRecord<String, JsonNode> record : records) {
@@ -87,6 +109,8 @@ public class KafkaConsumerTask implements Runnable {
 		                 record.key(), record.value().toString().length());
 		        	SlipOpinion slipOpinion = objectMapper.treeToValue( record.value(), SlipOpinion.class);
 		        	OpinionView opinionView = parseAndPrintOpinion(opinionsService, opinionViewBuilder, arrayStatutesTitles, caseScraper, slipOpinion);
+		        	JsonNode opinionViewJson = objectMapper.valueToTree(opinionView);
+		        	producer.send(new ProducerRecord<String, JsonNode>(kafkaProperties.getOpinionViewsTopic(), opinionViewJson));
 		        	log.info("opinionView = {}", opinionView);
 		            currentOffsets.put(
 		                 new TopicPartition(record.topic(), record.partition()),

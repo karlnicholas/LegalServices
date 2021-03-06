@@ -18,12 +18,20 @@
 			<version>3.6.1</version>
 		</dependency>
 		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>com.github.karlnicholas.legalservices</groupId>
 			<artifactId>statutesca</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.github.karlnicholas.legalservices</groupId>
-			<artifactId>opinion-view-service</artifactId>
+			<artifactId>statutesservice</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.github.karlnicholas.legalservices</groupId>
+			<artifactId>opinionviewdao</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.projectlombok</groupId>
@@ -43,8 +51,15 @@
 			<groupId>com.github.karlnicholas.legalservices</groupId>
 			<artifactId>opinionsservice</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>com.github.karlnicholas.legalservices</groupId>
+			<artifactId>opinionviewmodel</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.github.karlnicholas.legalservices</groupId>
+			<artifactId>slipopinionparser</artifactId>
+		</dependency>
 	</dependencies>
-
 	<build>
 		<plugins>
 			<plugin>
@@ -53,5 +68,4 @@
 			</plugin>
 		</plugins>
 	</build>
-
 </project>

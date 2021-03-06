@@ -61,7 +61,7 @@
 		</dependency>
 		<dependency>
 			<groupId>com.github.karlnicholas.legalservices</groupId>
-			<artifactId>statutesservice</artifactId>
+			<artifactId>statutesservicereactive</artifactId>
 		</dependency>
 	</dependencies>
 </project>

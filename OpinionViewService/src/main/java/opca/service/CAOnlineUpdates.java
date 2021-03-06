@@ -13,7 +13,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import opca.crud.StatuteCitationCrud;
 import opca.dao.OpinionBaseDao;
 import opca.dao.StatuteCitationDao;
 import opca.dao.SlipOpinionDao;

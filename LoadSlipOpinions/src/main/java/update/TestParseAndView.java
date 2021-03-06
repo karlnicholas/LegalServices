@@ -1,5 +1,6 @@
 package update;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -18,6 +19,8 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.karlnicholas.opinionservices.slipopinion.dao.OpinionViewDao;
+import com.mysql.cj.jdbc.MysqlDataSource;
 
 import opca.model.OpinionBase;
 import opca.model.OpinionKey;
@@ -26,7 +29,6 @@ import opca.parser.OpinionScraperInterface;
 import opca.parser.ScrapedOpinionDocument;
 import opca.parser.SlipOpinionDocumentParser;
 import opca.scraper.TestCAParseSlipDetails;
-import opca.service.CAOnlineParseAndView;
 import opca.view.OpinionView;
 import opca.view.OpinionViewBuilder;
 import opinions.service.OpinionsService;
@@ -46,14 +48,18 @@ public class TestParseAndView implements ApplicationRunner {
 	@Autowired
 	private ObjectMapper objectMapper;
 	@Override
-	public void run(ApplicationArguments args) throws JsonProcessingException {
+	public void run(ApplicationArguments args) throws JsonProcessingException, SQLException {
 
 		StatutesService statutesService = new StatutesServiceClientImpl("http://localhost:8090/");
 		OpinionsService opinionsService = new OpinionsServiceClientImpl("http://localhost:8091/");
 		OpinionViewBuilder opinionViewBuilder = new OpinionViewBuilder(statutesService);
 		StatutesTitles[] arrayStatutesTitles = statutesService.getStatutesTitles().getBody();
-
-
+		MysqlDataSource dataSource = new MysqlDataSource();
+		dataSource.setUrl("jdbc:mysql://localhost:3306/op");
+		dataSource.setUser("op");
+		dataSource.setPassword("op");
+		OpinionViewDao opinionViewDao = new OpinionViewDao(dataSource);
+		 
 		//				OpinionScraperInterface caseScraper = new CACaseScraper(true);
 //				OpinionScraperInterface caseScraper = new TestCACaseScraper(false);
 		OpinionScraperInterface caseScraper = new TestCAParseSlipDetails(false);
@@ -75,13 +81,17 @@ public class TestParseAndView implements ApplicationRunner {
 			sb.append(f);
 			sb.append(',');
 		});
-		List<String> savedOpinions = StreamSupport.stream(Arrays.spliterator(opinionsService.getSlipOpinionsList().getBody().split(",")), false)
+		String slipOpinionsList = opinionViewDao.getSlipOpinionList();
+		if (slipOpinionsList == null || slipOpinionsList.isEmpty() )
+			slipOpinionsList= "";
+		List<String> savedOpinions = StreamSupport.stream(Arrays.spliterator(
+				slipOpinionsList.split(",")), false)
 		.collect(Collectors.toList());
 		
 		List<String> newOpinions = new ArrayList<>(foundOpinions);
 		newOpinions.removeAll(savedOpinions);
 		if ( newOpinions.size() > 0 ) {
-			opinionsService.updateSlipOpinionsList(sb.toString());
+			opinionViewDao.updateSlipOpinionList(sb.toString());
 			List<SlipOpinion> lt = onlineOpinions
 					.stream()
 					.filter(slipOpinion->newOpinions.contains(slipOpinion.getFileName()))
@@ -109,27 +119,28 @@ public class TestParseAndView implements ApplicationRunner {
 				
 			});
 		}
-	//
-//        SlipOpinion slipOpinion = onlineOpinions.get(0);
-//
-//        ScrapedOpinionDocument scrapedOpinionDocument = caseScraper.scrapeOpinionFile(slipOpinion);
-//
-//		SlipOpinionDocumentParser opinionDocumentParser = new SlipOpinionDocumentParser(arrayStatutesTitles);
-//		
-//		opinionDocumentParser.parseOpinionDocument(scrapedOpinionDocument, scrapedOpinionDocument.getOpinionBase());
-//		// maybe someday deal with court issued modifications
-//		opinionDocumentParser.parseSlipOpinionDetails((SlipOpinion) scrapedOpinionDocument.getOpinionBase(), scrapedOpinionDocument);
-//		System.out.println(slipOpinion);
-//		
-//        JsonNode  jsonNode = objectMapper.valueToTree(slipOpinion);
-//        
-//        System.out.println(jsonNode);
-//        
-//        SlipOpinion aCase = objectMapper.treeToValue(jsonNode, SlipOpinion.class);
-//        JsonNode  jsonNode2 = objectMapper.valueToTree(aCase);
-//        System.out.println(jsonNode2);
-			
 	}
+
+	//
+//  SlipOpinion slipOpinion = onlineOpinions.get(0);
+//
+//  ScrapedOpinionDocument scrapedOpinionDocument = caseScraper.scrapeOpinionFile(slipOpinion);
+//
+//	SlipOpinionDocumentParser opinionDocumentParser = new SlipOpinionDocumentParser(arrayStatutesTitles);
+//	
+//	opinionDocumentParser.parseOpinionDocument(scrapedOpinionDocument, scrapedOpinionDocument.getOpinionBase());
+//	// maybe someday deal with court issued modifications
+//	opinionDocumentParser.parseSlipOpinionDetails((SlipOpinion) scrapedOpinionDocument.getOpinionBase(), scrapedOpinionDocument);
+//	System.out.println(slipOpinion);
+//	
+//  JsonNode  jsonNode = objectMapper.valueToTree(slipOpinion);
+//  
+//  System.out.println(jsonNode);
+//  
+//  SlipOpinion aCase = objectMapper.treeToValue(jsonNode, SlipOpinion.class);
+//  JsonNode  jsonNode2 = objectMapper.valueToTree(aCase);
+//  System.out.println(jsonNode2);
+		
 	private void parseAndPrintOpinion(OpinionsService opinionsService, OpinionViewBuilder opinionViewBuilder,
 			StatutesTitles[] arrayStatutesTitles, OpinionScraperInterface caseScraper, SlipOpinion slipOpinion) {
 		// no retries
