@@ -35,11 +35,19 @@
 		</dependency>
 		<dependency>
 			<groupId>com.github.karlnicholas.legalservices</groupId>
+			<artifactId>statutesservice</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.github.karlnicholas.legalservices</groupId>
 			<artifactId>opinionsservice</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.github.karlnicholas.legalservices</groupId>
-			<artifactId>opinionviewservice</artifactId>
+			<artifactId>slipopinionparser</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.github.karlnicholas.legalservices</groupId>
+			<artifactId>opinionviewmodel</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.github.karlnicholas.legalservices</groupId>

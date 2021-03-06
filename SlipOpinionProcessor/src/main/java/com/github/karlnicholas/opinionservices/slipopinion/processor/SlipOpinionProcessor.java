@@ -36,6 +36,10 @@ public class SlipOpinionProcessor {
 	
 	@EventListener(ApplicationReadyEvent.class)
 	public void doSomethingAfterStartup() {
+		taskExecutor.execute(new OpinionViewPersist(objectMapper, kakfaProperties));
+		taskExecutor.execute(new OpinionViewPersist(objectMapper, kakfaProperties));
+		taskExecutor.execute(new OpinionViewPersist(objectMapper, kakfaProperties));
+
 		taskExecutor.execute(new OpinionViewBuild(objectMapper, kakfaProperties));
 		taskExecutor.execute(new OpinionViewBuild(objectMapper, kakfaProperties));
 		taskExecutor.execute(new OpinionViewBuild(objectMapper, kakfaProperties));
