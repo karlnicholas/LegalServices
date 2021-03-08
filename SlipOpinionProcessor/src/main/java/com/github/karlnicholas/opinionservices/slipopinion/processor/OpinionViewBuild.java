@@ -116,7 +116,6 @@ public class OpinionViewBuild implements Runnable {
 		        	SlipOpinion slipOpinion = objectMapper.treeToValue( record.value(), SlipOpinion.class);
 		        	OpinionView opinionView = buildOpinionView(slipOpinion);
 		        	Integer id = opinionViewDao.insertOpinionView(opinionViewSerializer.serialize(opinionView), opinionView.getOpinionDate());
-		        	
 		        	producer.send(new ProducerRecord<String, Integer>(kafkaProperties.getOpinionViewCacheTopic(), id));
 		        	log.info("opinionView = {}", opinionView);
 		            currentOffsets.put(

@@ -75,7 +75,7 @@ public class OpinionViewCache implements Runnable {
 		        	Integer id = record.value();
 		        	byte[] opinionViewBytes = opinionViewDao.getOpinionViewBytesForId(id);
 		        	OpinionView opinionView = opinionViewDeserializer.deserialize(opinionViewBytes);
-System.out.println(opinionView);		        	
+		        	log.info("opinionView = {}", opinionView);
 		        	// ... 
 		            currentOffsets.put(
 		                 new TopicPartition(record.topic(), record.partition()),

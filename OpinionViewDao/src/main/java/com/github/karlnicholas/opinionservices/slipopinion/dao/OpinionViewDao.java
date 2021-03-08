@@ -57,7 +57,7 @@ public class OpinionViewDao {
 
 	public List<ByteBuffer> getOpinionViews() throws SQLException {
 		try (Connection con = dataSource.getConnection();
-			 PreparedStatement ps = con.prepareStatement("select * from opinionview" );
+			 PreparedStatement ps = con.prepareStatement("select opinionview from opinionview" );
 		) {
 			List<ByteBuffer> opinionViews = new ArrayList<>();
 			ResultSet rs = ps.executeQuery();
@@ -71,7 +71,7 @@ public class OpinionViewDao {
 
 	public byte[] getOpinionViewBytesForId(Integer id) throws SQLException {
 		try (Connection con = dataSource.getConnection();
-			 PreparedStatement ps = con.prepareStatement("select * from opinionview where id = ?" );
+			 PreparedStatement ps = con.prepareStatement("select opinionview from opinionview where id = ?" );
 		) {
 			ps.setInt(1, id);
 			ResultSet rs = ps.executeQuery();
