@@ -17,7 +17,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.karlnicholas.opinionservices.slipopinion.dao.OpinionViewDao;
 import com.mysql.cj.jdbc.MysqlDataSource;
@@ -45,8 +44,6 @@ public class TestParseAndView implements ApplicationRunner {
 		new SpringApplicationBuilder(TestParseAndView.class).run(args);
 	}
 
-	@Autowired
-	private ObjectMapper objectMapper;
 	@Override
 	public void run(ApplicationArguments args) throws JsonProcessingException, SQLException {
 
@@ -106,16 +103,37 @@ public class TestParseAndView implements ApplicationRunner {
 				// maybe someday deal with court issued modifications
 				opinionDocumentParser.parseSlipOpinionDetails((SlipOpinion) scrapedOpinionDocument.getOpinionBase(), scrapedOpinionDocument);
 				System.out.println(slipOpinion);
-		        JsonNode  jsonNode = objectMapper.valueToTree(slipOpinion);
-		        System.out.println(jsonNode);
+//		        JsonNode  jsonNode = objectMapper.valueToTree(slipOpinion);
+//		        System.out.println(jsonNode);
 		        
-		        try {
-					SlipOpinion slipOpinionFromJson = objectMapper.treeToValue(jsonNode, SlipOpinion.class);
-					parseAndPrintOpinion(opinionsService, opinionViewBuilder, arrayStatutesTitles, caseScraper, slipOpinionFromJson);
-				} catch (JsonProcessingException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+//				OpinionView opinionView = parseAndPrintOpinion(opinionsService, opinionViewBuilder, arrayStatutesTitles, caseScraper, slipOpinion);
+//				OpinionViewSerializer opinionViewSerializer = new OpinionViewSerializer();
+//				byte[] opinionViewBytes = opinionViewSerializer.serialize("", opinionView);
+//				opinionViewSerializer.close();
+//System.out.println(opinionViewBytes.length);
+//				OpinionViewDeserializer opinionViewDeserializer = new OpinionViewDeserializer();
+//				OpinionView opinionViewDes = opinionViewDeserializer.deserialize("", opinionViewBytes);
+//				opinionViewDeserializer.close();
+//		        try {
+////					SlipOpinion slipOpinionFromJson = objectMapper.treeToValue(jsonNode, SlipOpinion.class);
+//					OpinionView opinionView = parseAndPrintOpinion(opinionsService, opinionViewBuilder, arrayStatutesTitles, caseScraper, slipOpinion);
+//					OpinionViewKafkaDto opinionViewKafkaDto = new OpinionViewKafkaDto(opinionView); 
+////					System.out.print(".");
+////					System.out.println("Completed");
+//			        JsonNode opinionViewKafkaDtoNode = objectMapper.valueToTree(opinionViewKafkaDto);
+//					System.out.println(opinionViewKafkaDtoNode);
+//					OpinionViewKafkaDto opinionViewKafkaDtoNodeFromJson = objectMapper.treeToValue(opinionViewKafkaDtoNode, OpinionViewKafkaDto.class);
+//					System.out.println(opinionViewKafkaDtoNodeFromJson);
+////					System.out.println("opinionView:= " + opinionViewFromJson.getTitle() 
+////						+ " : " + (opinionView.getCases()== null?"0":opinionViewFromJson.getCases().size())
+////						+ " : " + (opinionView.getStatutes()== null?"0":opinionViewFromJson.getSectionViews().size())
+//////			 				+ " : " + opinionView.getCondensedCaseInfo()
+////						+ " : " + opinionViewFromJson.getCondensedStatuteInfo()
+////					);
+//				} catch (JsonProcessingException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				}
 				
 			});
 		}
@@ -141,7 +159,7 @@ public class TestParseAndView implements ApplicationRunner {
 //  JsonNode  jsonNode2 = objectMapper.valueToTree(aCase);
 //  System.out.println(jsonNode2);
 		
-	private void parseAndPrintOpinion(OpinionsService opinionsService, OpinionViewBuilder opinionViewBuilder,
+	private OpinionView parseAndPrintOpinion(OpinionsService opinionsService, OpinionViewBuilder opinionViewBuilder,
 			StatutesTitles[] arrayStatutesTitles, OpinionScraperInterface caseScraper, SlipOpinion slipOpinion) {
 		// no retries
 //		parseAndView.processCase(slipOpinion, caseScraper, arrayStatutesTitles);
@@ -165,19 +183,6 @@ public class TestParseAndView implements ApplicationRunner {
 		slipOpinion.getOpinionCitations().addAll(opinionsWithReferringOpinions);
 
 		OpinionView opinionView = opinionViewBuilder.buildOpinionView(slipOpinion);
-//		System.out.print(".");
-//		System.out.println("Completed");
-		System.out.println("opinionView:= " + opinionView.getTitle() 
-			+ " : " + (opinionView.getCases()== null?"0":opinionView.getCases().size())
-			+ " : " + (opinionView.getStatutes()== null?"0":opinionView.getSectionViews().size())
-// 				+ " : " + opinionView.getCondensedCaseInfo()
-			+ " : " + opinionView.getCondensedStatuteInfo()
-		);
-//		for ( CaseView caseView: opinionView.getCases().subList(0, opinionView.getCases().size() > 10 ? 10 : opinionView.getCases().size())) {
-//			System.out.println("	caseView(" + caseView.getImportance() + ") : " + caseView.getTitle() + " (" + caseView.getCitation() +")" );
-//		}
-//		for ( SectionView sectionView: opinionView.getSectionViews()) {
-//			System.out.println("	sectionView(" + sectionView.getImportance() + ") : " + sectionView.getShortTitle());
-//		}
+		return opinionView;
 	}
 }

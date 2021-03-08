@@ -1,5 +1,6 @@
 package opca.view;
 
+import java.io.Serializable;
 import java.util.*;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -15,7 +16,8 @@ import statutes.StatutesBaseClass;
  * To change this template use File | Settings | File Templates.
  */
 @JsonTypeName("statuteView")
-public class StatuteView extends ViewReference implements Comparable<StatuteView> {
+public class StatuteView extends ViewReference implements Comparable<StatuteView>, Serializable {
+	private static final long serialVersionUID = 1L;
 
     private String fullFacet; 
     private String title; 

@@ -25,6 +25,8 @@ import org.apache.kafka.common.errors.WakeupException;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.karlnicholas.opinionservices.slipopinion.dao.OpinionViewDao;
+import com.github.karlnicholas.opinionservices.slipopinion.dao.OpinionViewSerializer;
 
 import lombok.extern.slf4j.Slf4j;
 import opca.model.OpinionBase;
@@ -48,7 +50,7 @@ public class OpinionViewBuild implements Runnable {
 //	private volatile boolean someCondition = true;
 	private final Map<TopicPartition, OffsetAndMetadata> currentOffsets;
 	private final Consumer<String, JsonNode> consumer;
-	private final Producer<String, JsonNode> producer;
+	private final Producer<String, Integer> producer;
 	private final ObjectMapper objectMapper;
 	private final StatutesService statutesService;
 	private final OpinionsService opinionsService;
@@ -56,11 +58,15 @@ public class OpinionViewBuild implements Runnable {
 	private final StatutesTitles[] arrayStatutesTitles;
 	private final OpinionScraperInterface caseScraper;
 	private final KakfaProperties kafkaProperties;
+	private final OpinionViewDao opinionViewDao;
+	private final OpinionViewSerializer opinionViewSerializer;
 
-	public OpinionViewBuild(ObjectMapper objectMapper, KakfaProperties kafkaProperties) {
+	public OpinionViewBuild(ObjectMapper objectMapper, KakfaProperties kafkaProperties, OpinionViewDao opinionViewDao) {
 		this.objectMapper = objectMapper;
 		this.kafkaProperties = kafkaProperties; 
+		this.opinionViewDao = opinionViewDao;
 		currentOffsets = new HashMap<>();
+		opinionViewSerializer = new OpinionViewSerializer();
 		statutesService = new StatutesServiceClientImpl("http://localhost:8090/");
 		opinionsService = new OpinionsServiceClientImpl("http://localhost:8091/");
 		opinionViewBuilder = new OpinionViewBuilder(statutesService);
@@ -69,16 +75,16 @@ public class OpinionViewBuild implements Runnable {
         //Configure the Producer
         Properties configProperties = new Properties();
         configProperties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG,kafkaProperties.getIpAddress()+':'+kafkaProperties.getPort());
-        configProperties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG,kafkaProperties.getKeySerializer());
-        configProperties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG,kafkaProperties.getValueSerializer());
+        configProperties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG,kafkaProperties.getByteArrayKeySerializer());
+        configProperties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG,kafkaProperties.getIntegerValueSerializer());
         
         producer = new KafkaProducer<>(configProperties);
 
         //Configure the Consumer
 		Properties consumerProperties = new Properties();
 		consumerProperties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG,kafkaProperties.getIpAddress()+':'+kafkaProperties.getPort());
-		consumerProperties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, kafkaProperties.getKeyDeserializer());
-		consumerProperties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, kafkaProperties.getValueDeserializer());
+		consumerProperties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, kafkaProperties.getByteArrayKeyDeserializer());
+		consumerProperties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, kafkaProperties.getJsonValueDeserializer());
 
 		consumerProperties.put(ConsumerConfig.GROUP_ID_CONFIG, kafkaProperties.getSlipOpinionsConsumerGroup());
 
@@ -108,9 +114,10 @@ public class OpinionViewBuild implements Runnable {
 		                 record.topic(), record.partition(), record.offset(),
 		                 record.key(), record.value().toString().length());
 		        	SlipOpinion slipOpinion = objectMapper.treeToValue( record.value(), SlipOpinion.class);
-		        	OpinionView opinionView = parseAndPrintOpinion(opinionsService, opinionViewBuilder, arrayStatutesTitles, caseScraper, slipOpinion);
-		        	JsonNode opinionViewJson = objectMapper.valueToTree(opinionView);
-		        	producer.send(new ProducerRecord<String, JsonNode>(kafkaProperties.getOpinionViewsTopic(), opinionViewJson));
+		        	OpinionView opinionView = buildOpinionView(slipOpinion);
+		        	Integer id = opinionViewDao.insertOpinionView(opinionViewSerializer.serialize(opinionView), opinionView.getOpinionDate());
+		        	
+		        	producer.send(new ProducerRecord<String, Integer>(kafkaProperties.getOpinionViewCacheTopic(), id));
 		        	log.info("opinionView = {}", opinionView);
 		            currentOffsets.put(
 		                 new TopicPartition(record.topic(), record.partition()),
@@ -131,8 +138,7 @@ public class OpinionViewBuild implements Runnable {
 		    }
 		}
 	}
-	private OpinionView parseAndPrintOpinion(OpinionsService opinionsService, OpinionViewBuilder opinionViewBuilder,
-			StatutesTitles[] arrayStatutesTitles, OpinionScraperInterface caseScraper, SlipOpinion slipOpinion) {
+	private OpinionView buildOpinionView(SlipOpinion slipOpinion) {
 		// no retries
 		ScrapedOpinionDocument scrapedOpinionDocument = caseScraper.scrapeOpinionFile(slipOpinion);
 

@@ -1,5 +1,6 @@
 package opca.view;
 
+import java.io.Serializable;
 import java.util.*;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -17,7 +18,8 @@ import statutes.StatutesBaseClass;
  * To change this template use File | Settings | File Templates.
  */
 @JsonTypeName("sectionView")
-public class SectionView extends ViewReference { 
+public class SectionView extends ViewReference implements Serializable {
+	private static final long serialVersionUID = 1L; 
 	//	private static final Logger logger = Logger.getLogger(OpinionSection.class.getName());
 	// This stuff holds the reference .. 
 	// Which "code" it is and which section within that code is referenced

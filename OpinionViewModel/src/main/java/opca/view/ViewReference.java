@@ -1,10 +1,12 @@
 package opca.view;
 
+import java.io.Serializable;
 import java.util.List;
 
 import statutes.StatutesBaseClass;
 
-public abstract class ViewReference {
+public abstract class ViewReference implements Serializable {
+	private static final long serialVersionUID = 1L;
 
 	public abstract void trimToLevelOfInterest( int levelOfInterest );
 

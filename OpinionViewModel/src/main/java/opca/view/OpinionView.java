@@ -1,5 +1,6 @@
 package opca.view;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.*;
 
@@ -11,7 +12,8 @@ import opca.model.OpinionKey;
 import opca.model.SlipOpinion;
 
 @JsonTypeName("opinionView")
-public class OpinionView {
+public class OpinionView implements Serializable {
+	private static final long serialVersionUID = 1L;
 	private static final int MAX_INFO_LENGTH = 75;
 	// reverse sorted by the constructor.
 	private List<StatuteView> statutes;

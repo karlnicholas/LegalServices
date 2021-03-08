@@ -9,7 +9,7 @@ create table user (id bigint not null auto_increment, createdate datetime, email
 create table user_roles (user_id bigint not null, roles_id bigint not null) engine=InnoDB;
 create table slipopinionlist(id bigint not null, slipopinionlist TEXT, primary key (id)) engine=InnoDB;
 insert into slipopinionlist(id, slipopinionlist) values( 1, '');
-create table opinionviews(id bigint not null auto_increment, opiniondate date, slipopinionlist TEXT, primary key (id)) engine=InnoDB;
+create table opinionviews(id bigint not null auto_increment, opiniondate date, opinionview BLOB, primary key (id)) engine=InnoDB;
 create index IDXd587qslmmirn7juop20is6gwt on opinionbase (vset, volume, page);
 alter table role add constraint UK_bjxn5ii7v7ygwx39et0wawu0q unique (role);
 create index IDX13npyxqldj3ydwfdy3o7x2vit on statutecitation (lawcode, sectionnumber);

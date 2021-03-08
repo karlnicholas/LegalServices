@@ -35,6 +35,10 @@
 			<artifactId>spring-boot-configuration-processor</artifactId>
 			<optional>true</optional>
 		</dependency>
+		<dependency>
+			<groupId>com.github.karlnicholas.legalservices</groupId>
+			<artifactId>opinionviewmodel</artifactId>
+		</dependency>
 	</dependencies>
 	<build>
 		<plugins>

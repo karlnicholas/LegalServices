@@ -17,32 +17,35 @@ import org.apache.kafka.clients.consumer.OffsetAndMetadata;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.errors.WakeupException;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.karlnicholas.opinionservices.slipopinion.dao.OpinionViewDao;
+import com.github.karlnicholas.opinionservices.slipopinion.dao.OpinionViewDeserializer;
 
 import lombok.extern.slf4j.Slf4j;
 import opca.view.OpinionView;
 
 @Slf4j
-public class OpinionViewPersist implements Runnable {
+public class OpinionViewCache implements Runnable {
 
 //	private volatile boolean someCondition = true;
-	private Map<TopicPartition, OffsetAndMetadata> currentOffsets = new HashMap<>();
-	private Consumer<String, JsonNode> consumer;
-	private final ObjectMapper objectMapper;
+	private final Map<TopicPartition, OffsetAndMetadata> currentOffsets;
+	private final Consumer<String, Integer> consumer;
 	private final KakfaProperties kafkaProperties;
-	
-	public OpinionViewPersist(ObjectMapper objectMapper, KakfaProperties kafkaProperties) {
-		this.objectMapper = objectMapper;
-		this.kafkaProperties = kafkaProperties;
+	private final OpinionViewDao opinionViewDao;
+	private final OpinionViewDeserializer opinionViewDeserializer;
+
+	public OpinionViewCache(KakfaProperties kafkaProperties, OpinionViewDao opinionViewDao) {
+		this.kafkaProperties = kafkaProperties; 
+		this.opinionViewDao = opinionViewDao;
+		opinionViewDeserializer = new OpinionViewDeserializer();
+		currentOffsets = new HashMap<>();
 
         //Configure the Consumer
 		Properties consumerProperties = new Properties();
 		consumerProperties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG,kafkaProperties.getIpAddress()+':'+kafkaProperties.getPort());
-		consumerProperties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, kafkaProperties.getKeyDeserializer());
-		consumerProperties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, kafkaProperties.getValueDeserializer());
+		consumerProperties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, kafkaProperties.getByteArrayKeyDeserializer());
+		consumerProperties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, kafkaProperties.getIntegerValueDeserializer());
 
-		consumerProperties.put(ConsumerConfig.GROUP_ID_CONFIG, kafkaProperties.getSlipOpinionsConsumerGroup());
+		consumerProperties.put(ConsumerConfig.GROUP_ID_CONFIG, kafkaProperties.getOpinionViewCacheConsumerGroup());
 
 		// Create the consumer using props.
 		 consumer = new KafkaConsumer<>(consumerProperties);
@@ -59,17 +62,21 @@ public class OpinionViewPersist implements Runnable {
 	}
 	@Override
     public void run(){
-		// Subscribe to the topic.
+		
 		try {
-		    consumer.subscribe(Collections.singletonList(kafkaProperties.getOpinionViewsTopic()), new HandleRebalance());
+			// Subscribe to the topic.
+		    consumer.subscribe(Collections.singletonList(kafkaProperties.getOpinionViewCacheTopic()), new HandleRebalance());
 		    while (true) {
-		        ConsumerRecords<String, JsonNode> records = consumer.poll(Duration.ofMillis(100));
-		        for (ConsumerRecord<String, JsonNode> record : records) {
+		        ConsumerRecords<String, Integer> records = consumer.poll(Duration.ofMillis(100));
+		        for (ConsumerRecord<String, Integer> record : records) {
 		        	log.info("topic = {}, partition = {}, offset = {}, record key = {}, record value length = {}",
 		                 record.topic(), record.partition(), record.offset(),
-		                 record.key(), record.value().toString().length());
-		        	OpinionView opinionView = objectMapper.treeToValue( record.value(), OpinionView.class);
-		        	log.info("opinionView = {}", opinionView);
+		                 record.key(), record.value());
+		        	Integer id = record.value();
+		        	byte[] opinionViewBytes = opinionViewDao.getOpinionViewBytesForId(id);
+		        	OpinionView opinionView = opinionViewDeserializer.deserialize(opinionViewBytes);
+System.out.println(opinionView);		        	
+		        	// ... 
 		            currentOffsets.put(
 		                 new TopicPartition(record.topic(), record.partition()),
 		                 new OffsetAndMetadata(record.offset()+1, null));

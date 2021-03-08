@@ -1,12 +1,14 @@
 package opca.view;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 
 @JsonTypeName("caseView")
-public class CaseView implements Comparable<CaseView> {
+public class CaseView implements Comparable<CaseView>, Serializable {
+	private static final long serialVersionUID = 1L;
 	private String title;
 	private String citation;
 	private LocalDate opinionDate;

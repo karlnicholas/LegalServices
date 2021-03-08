@@ -1,7 +1,6 @@
 package com.github.karlnicholas.opinionservices.slipopinion.processor;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.Configuration;
 
 import lombok.Data;
 
@@ -13,11 +12,15 @@ public class KakfaProperties {
     private int port;
     private String slipOpinionsTopic;
     private String opinionViewsTopic;
-    private String keySerializer;
-    private String valueSerializer;
-    private String keyDeserializer;
-    private String valueDeserializer;
+    private String opinionViewCacheTopic;
+    private String byteArrayKeySerializer;
+    private String jsonValueSerializer;
+    private String integerValueSerializer;
+    private String byteArrayKeyDeserializer;
+    private String jsonValueDeserializer;
+    private String integerValueDeserializer;
     private String slipOpinionsConsumerGroup;
     private String opinionViewsConsumerGroup;
+    private String opinionViewCacheConsumerGroup;
     // standard getters and setters
 }

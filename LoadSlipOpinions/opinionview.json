@@ -1,0 +1,105 @@
+{
+	"cases": [
+		{
+			"title": null,
+			"citation": "50 Cal.4th 372",
+			"opinionDate": null,
+			"importance": 2
+		},
+		{
+			"title": "Dornbirer v. Kaiser Foundation Health Plan, Inc.",
+			"citation": "166 Cal.App.4th 831",
+			"opinionDate": "2008-09-08",
+			"importance": 2
+		},
+		{
+			"title": null,
+			"citation": "3 Cal.4th 1",
+			"opinionDate": null,
+			"importance": 1
+		},
+		{
+			"title": null,
+			"citation": "81 Cal.App.4th 17",
+			"opinionDate": null,
+			"importance": 1
+		},
+		{
+			"title": null,
+			"citation": "42 Cal.App.4th 83",
+			"opinionDate": null,
+			"importance": 1
+		},
+		{
+			"title": null,
+			"citation": "212 Cal.App.3d 96",
+			"opinionDate": null,
+			"importance": 1
+		},
+		{
+			"title": "Computer Prepared Accounts, Inc. v. Katz",
+			"citation": "235 Cal.App.3d 428",
+			"opinionDate": "1991-10-17",
+			"importance": 1
+		},
+		{
+			"title": null,
+			"citation": "31 Cal.3d 637",
+			"opinionDate": null,
+			"importance": 1
+		},
+		{
+			"title": null,
+			"citation": "30 Cal.App.4th 747",
+			"opinionDate": null,
+			"importance": 1
+		},
+		{
+			"title": "Unlimited Adjusting Group, Inc. v. Wells Fargo Bank, NA",
+			"citation": "174 Cal.App.4th 883",
+			"opinionDate": "2009-06-03",
+			"importance": 1
+		}
+	],
+	"name": "B299743",
+	"title": "Malek Media Group LLC v. AXQG Corp.",
+	"opinionDate": "2021-03-06",
+	"fileName": "B299743",
+	"disposition": "Affirmed in full",
+	"summary": null,
+	"publicationStatus": "Signed Published",
+	"sectionViews": [
+		{
+			"fullFacet": "CCP-0/CCP-1-6/CCP-2-8/CCP-3-2",
+			"importance": 4,
+			"displaySections": "§§ 1281 - 1281.99",
+			"displayTitlePath": "Civ. Procedure, Part 3, Title 9, Enforcement Of Arbitration Agreements"
+		},
+		{
+			"fullFacet": "CCP-0/CCP-1-6/CCP-2-8/CCP-3-4/CCP-4-1",
+			"importance": 2,
+			"displaySections": "§§ 1285 - 1287.6",
+			"displayTitlePath": "Civ. Procedure, Part 3, Title 9, Chapter 4, Confirmation, Correction Or Vacation Of The Award"
+		},
+		{
+			"fullFacet": "CCP-0/CCP-1-5/CCP-2-18/CCP-3-1",
+			"importance": 2,
+			"displaySections": "§§ 901 - 914",
+			"displayTitlePath": "Civ. Procedure, Part 2, Title 13, Appeals In General"
+		},
+		{
+			"fullFacet": "CCP-0/CCP-1-4/CCP-2-2/CCP-3-2",
+			"importance": 1,
+			"displaySections": "§§ 170 - 170.9",
+			"displayTitlePath": "Civ. Procedure, Part 1, Title 2, Disqualifications Of Judges"
+		},
+		{
+			"fullFacet": "EVID-0/EVID-1-5",
+			"importance": 2,
+			"displaySections": "§§ 450 - 460",
+			"displayTitlePath": "Evidence, Judicial Notice"
+		}
+	],
+	"condensedStatuteInfo": "Civ. Procedure  [34], Evidence  [8] ",
+	"condensedCaseInfo": "50 Cal.4th 372, Dornbirer v. Kaiser Foundation Health Plan, Inc., 3 Cal.4th 1 ..."
+}
