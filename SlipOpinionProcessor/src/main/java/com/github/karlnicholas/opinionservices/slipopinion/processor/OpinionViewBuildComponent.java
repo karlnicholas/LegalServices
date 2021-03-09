@@ -25,8 +25,6 @@ import org.apache.kafka.common.errors.WakeupException;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.karlnicholas.opinionservices.slipopinion.dao.OpinionViewDao;
-import com.github.karlnicholas.opinionservices.slipopinion.dao.OpinionViewSerializer;
 
 import lombok.extern.slf4j.Slf4j;
 import opca.model.OpinionBase;
@@ -45,12 +43,12 @@ import statutes.service.StatutesService;
 import statutes.service.client.StatutesServiceClientImpl;
 
 @Slf4j
-public class OpinionViewBuild implements Runnable {
+public class OpinionViewBuildComponent implements Runnable {
 
 //	private volatile boolean someCondition = true;
 	private final Map<TopicPartition, OffsetAndMetadata> currentOffsets;
 	private final Consumer<String, JsonNode> consumer;
-	private final Producer<String, Integer> producer;
+	private final Producer<String, OpinionView> producer;
 	private final ObjectMapper objectMapper;
 	private final StatutesService statutesService;
 	private final OpinionsService opinionsService;
@@ -58,15 +56,11 @@ public class OpinionViewBuild implements Runnable {
 	private final StatutesTitles[] arrayStatutesTitles;
 	private final OpinionScraperInterface caseScraper;
 	private final KakfaProperties kafkaProperties;
-	private final OpinionViewDao opinionViewDao;
-	private final OpinionViewSerializer opinionViewSerializer;
 
-	public OpinionViewBuild(ObjectMapper objectMapper, KakfaProperties kafkaProperties, OpinionViewDao opinionViewDao) {
+	public OpinionViewBuildComponent(ObjectMapper objectMapper, KakfaProperties kafkaProperties) {
 		this.objectMapper = objectMapper;
 		this.kafkaProperties = kafkaProperties; 
-		this.opinionViewDao = opinionViewDao;
 		currentOffsets = new HashMap<>();
-		opinionViewSerializer = new OpinionViewSerializer();
 		statutesService = new StatutesServiceClientImpl("http://localhost:8090/");
 		opinionsService = new OpinionsServiceClientImpl("http://localhost:8091/");
 		opinionViewBuilder = new OpinionViewBuilder(statutesService);
@@ -76,7 +70,7 @@ public class OpinionViewBuild implements Runnable {
         Properties configProperties = new Properties();
         configProperties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG,kafkaProperties.getIpAddress()+':'+kafkaProperties.getPort());
         configProperties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG,kafkaProperties.getByteArrayKeySerializer());
-        configProperties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG,kafkaProperties.getIntegerValueSerializer());
+        configProperties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG,kafkaProperties.getOpinionViewValueSerializer());
         
         producer = new KafkaProducer<>(configProperties);
 
@@ -115,8 +109,7 @@ public class OpinionViewBuild implements Runnable {
 		                 record.key(), record.value().toString().length());
 		        	SlipOpinion slipOpinion = objectMapper.treeToValue( record.value(), SlipOpinion.class);
 		        	OpinionView opinionView = buildOpinionView(slipOpinion);
-		        	Integer id = opinionViewDao.insertOpinionView(opinionViewSerializer.serialize(opinionView), opinionView.getOpinionDate());
-		        	producer.send(new ProducerRecord<String, Integer>(kafkaProperties.getOpinionViewCacheTopic(), id));
+		        	producer.send(new ProducerRecord<String, OpinionView>(kafkaProperties.getOpinionViewCacheTopic(), opinionView));
 		        	log.info("opinionView = {}", opinionView);
 		            currentOffsets.put(
 		                 new TopicPartition(record.topic(), record.partition()),

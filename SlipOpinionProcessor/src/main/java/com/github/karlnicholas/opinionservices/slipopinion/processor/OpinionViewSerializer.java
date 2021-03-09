@@ -1,18 +1,21 @@
-package com.github.karlnicholas.opinionservices.slipopinion.dao;
+package com.github.karlnicholas.opinionservices.slipopinion.processor;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 
+import org.apache.kafka.common.serialization.Serializer;
+
 import opca.view.OpinionView;
 
-public class OpinionViewSerializer {
-	public byte[] serialize(OpinionView opinionView) {
+public class OpinionViewSerializer implements Serializer<OpinionView> {
+	@Override
+	public byte[] serialize(String topic, OpinionView data) {
 		byte[] retVal = null;
 		try {
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			ObjectOutputStream oos = new ObjectOutputStream(baos);
-			oos.writeObject(opinionView);
+			oos.writeObject(data);
 			retVal = baos.toByteArray();
 			oos.close();
 		} catch (IOException e) {
@@ -20,5 +23,4 @@ public class OpinionViewSerializer {
 		}
 		return retVal;
 	}
-
 }

@@ -32,9 +32,9 @@ import statutes.service.StatutesService;
 import statutes.service.client.StatutesServiceClientImpl;
 
 @Component
-public class SlipOpinionScraper {
+public class SlipOpinionScraperComponent {
 
-	private static final Logger log = LoggerFactory.getLogger(SlipOpinionScraper.class);
+	private static final Logger log = LoggerFactory.getLogger(SlipOpinionScraperComponent.class);
 
 	private static final SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
 	private final OpinionScraperInterface caseScraper;
@@ -44,7 +44,7 @@ public class SlipOpinionScraper {
 	private final KakfaProperties kafkaProperties;
 	private final OpinionViewDao opinionViewDao;
 
-	public SlipOpinionScraper(ObjectMapper objectMapper, KakfaProperties kafkaProperties, OpinionViewDao opinionViewDao) {
+	public SlipOpinionScraperComponent(ObjectMapper objectMapper, KakfaProperties kafkaProperties, OpinionViewDao opinionViewDao) {
 	    this.objectMapper = objectMapper;
 	    this.kafkaProperties = kafkaProperties;
 	    this.opinionViewDao = opinionViewDao;

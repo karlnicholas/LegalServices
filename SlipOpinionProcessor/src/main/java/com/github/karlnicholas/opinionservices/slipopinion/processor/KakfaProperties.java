@@ -11,16 +11,14 @@ public class KakfaProperties {
     private String ipAddress;
     private int port;
     private String slipOpinionsTopic;
-    private String opinionViewsTopic;
     private String opinionViewCacheTopic;
     private String byteArrayKeySerializer;
     private String jsonValueSerializer;
-    private String integerValueSerializer;
+    private String opinionViewValueSerializer;
     private String byteArrayKeyDeserializer;
     private String jsonValueDeserializer;
-    private String integerValueDeserializer;
+    private String opinionViewValueDeserializer;
     private String slipOpinionsConsumerGroup;
-    private String opinionViewsConsumerGroup;
     private String opinionViewCacheConsumerGroup;
     // standard getters and setters
 }

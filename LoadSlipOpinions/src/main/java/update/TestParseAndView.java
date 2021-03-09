@@ -9,7 +9,6 @@ import java.util.stream.StreamSupport;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -17,10 +16,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.karlnicholas.opinionservices.slipopinion.dao.OpinionViewDao;
-import com.github.karlnicholas.opinionservices.slipopinion.dao.OpinionViewDeserializer;
-import com.github.karlnicholas.opinionservices.slipopinion.dao.OpinionViewSerializer;
 import com.mysql.cj.jdbc.MysqlDataSource;
 
 import opca.model.OpinionBase;
@@ -108,12 +104,12 @@ public class TestParseAndView implements ApplicationRunner {
 //		        JsonNode  jsonNode = objectMapper.valueToTree(slipOpinion);
 //		        System.out.println(jsonNode);
 		        
-				OpinionView opinionView = parseAndPrintOpinion(opinionsService, opinionViewBuilder, arrayStatutesTitles, caseScraper, slipOpinion);
-				OpinionViewSerializer opinionViewSerializer = new OpinionViewSerializer();
-				byte[] opinionViewBytes = opinionViewSerializer.serialize(opinionView);
-System.out.println(opinionViewBytes.length);
-				OpinionViewDeserializer opinionViewDeserializer = new OpinionViewDeserializer();
-				OpinionView opinionViewDes = opinionViewDeserializer.deserialize(opinionViewBytes);
+//				OpinionView opinionView = parseAndPrintOpinion(opinionsService, opinionViewBuilder, arrayStatutesTitles, caseScraper, slipOpinion);
+//				OpinionViewSerializer opinionViewSerializer = new OpinionViewSerializer();
+//				byte[] opinionViewBytes = opinionViewSerializer.serialize(opinionView);
+//System.out.println(opinionViewBytes.length);
+//				OpinionViewDeserializer opinionViewDeserializer = new OpinionViewDeserializer();
+//				OpinionView opinionViewDes = opinionViewDeserializer.deserialize(opinionViewBytes);
 //		        try {
 ////					SlipOpinion slipOpinionFromJson = objectMapper.treeToValue(jsonNode, SlipOpinion.class);
 //					OpinionView opinionView = parseAndPrintOpinion(opinionsService, opinionViewBuilder, arrayStatutesTitles, caseScraper, slipOpinion);

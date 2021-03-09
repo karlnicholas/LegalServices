@@ -33,16 +33,16 @@ public class SlipOpinionProcessor {
 	@Autowired TaskExecutor taskExecutor;
 	@Autowired ObjectMapper objectMapper;
 	@Autowired KakfaProperties kakfaProperties;
+	@Autowired OpinionViewCache opinionViewCache;
 	
 	@EventListener(ApplicationReadyEvent.class)
 	public void doSomethingAfterStartup() throws SQLException {
-		taskExecutor.execute(new OpinionViewCache(kakfaProperties, getOpinionViewDao()));
-		taskExecutor.execute(new OpinionViewCache(kakfaProperties, getOpinionViewDao()));
-		taskExecutor.execute(new OpinionViewCache(kakfaProperties, getOpinionViewDao()));
 
-		taskExecutor.execute(new OpinionViewBuild(objectMapper, kakfaProperties, getOpinionViewDao()));
-		taskExecutor.execute(new OpinionViewBuild(objectMapper, kakfaProperties, getOpinionViewDao()));
-		taskExecutor.execute(new OpinionViewBuild(objectMapper, kakfaProperties, getOpinionViewDao()));
+		taskExecutor.execute(new OpinionViewCacheComponent(kakfaProperties, opinionViewCache));
+
+		taskExecutor.execute(new OpinionViewBuildComponent(objectMapper, kakfaProperties));
+		taskExecutor.execute(new OpinionViewBuildComponent(objectMapper, kakfaProperties));
+		taskExecutor.execute(new OpinionViewBuildComponent(objectMapper, kakfaProperties));
 	}
     private static HikariConfig config = new HikariConfig();
     private static HikariDataSource ds;

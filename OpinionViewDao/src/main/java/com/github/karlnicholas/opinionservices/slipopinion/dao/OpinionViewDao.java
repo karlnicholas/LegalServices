@@ -1,12 +1,11 @@
 package com.github.karlnicholas.opinionservices.slipopinion.dao;
 
-import java.nio.ByteBuffer;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,42 +40,41 @@ public class OpinionViewDao {
 			ps.executeUpdate();
 		}
 	}
-
-	public Integer insertOpinionView(byte[] opinionViewBytes, LocalDate date) throws SQLException {
-		try (Connection con = dataSource.getConnection();
-			 PreparedStatement ps = con.prepareStatement("insert into opinionview(opiniondate, opinionview) values(?,?)", Statement.RETURN_GENERATED_KEYS);
-		) {
-			ps.setObject(1, date);
-			ps.setBytes(2, opinionViewBytes);
-			ps.executeUpdate();
-			ResultSet rs = ps.getGeneratedKeys();
-			rs.next();
-			return rs.getInt(1);
-		}
-	}
-
-	public List<ByteBuffer> getOpinionViews() throws SQLException {
-		try (Connection con = dataSource.getConnection();
-			 PreparedStatement ps = con.prepareStatement("select opinionview from opinionview" );
-		) {
-			List<ByteBuffer> opinionViews = new ArrayList<>();
-			ResultSet rs = ps.executeQuery();
-			while ( rs.next() ) {
-				byte[] bytes = rs.getBytes(1);
-				opinionViews.add(ByteBuffer.wrap(bytes));
-			}
-			return opinionViews; 
-		}
-	}
-
-	public byte[] getOpinionViewBytesForId(Integer id) throws SQLException {
-		try (Connection con = dataSource.getConnection();
-			 PreparedStatement ps = con.prepareStatement("select opinionview from opinionview where id = ?" );
-		) {
-			ps.setInt(1, id);
-			ResultSet rs = ps.executeQuery();
-			rs.next();
-			return rs.getBytes(1);
-		}
-	}
+//
+//	public Integer insertOpinionViewRecord(OpinionViewRecord opinionViewRecord) throws SQLException {
+//		try (Connection con = dataSource.getConnection();
+//			 PreparedStatement ps = con.prepareStatement("insert into opinionview(opiniondate, opinionview) values(?,?)", Statement.RETURN_GENERATED_KEYS);
+//		) {
+//			ps.setObject(1, opinionViewRecord.getOpinionDate());
+//			ps.setBytes(2, opinionViewRecord.getOpinionViewBytes());
+//			ps.executeUpdate();
+//			ResultSet rs = ps.getGeneratedKeys();
+//			rs.next();
+//			return rs.getInt(1);
+//		}
+//	}
+//
+//	public List<OpinionViewRecord> getOpinionViewRecords() throws SQLException {
+//		try (Connection con = dataSource.getConnection();
+//			 PreparedStatement ps = con.prepareStatement("select opiniondate, opinionview from opinionview" );
+//		) {
+//			List<OpinionViewRecord> opinionViewRecords = new ArrayList<>();
+//			ResultSet rs = ps.executeQuery();
+//			while ( rs.next() ) {
+//				opinionViewRecords.add(OpinionViewRecord.builder().opinionDate(((Date)rs.getObject(1)).toLocalDate()).opinionViewBytes(rs.getBytes(2)).build());
+//			}
+//			return opinionViewRecords; 
+//		}
+//	}
+//
+//	public OpinionViewRecord getOpinionViewRecordForId(Integer id) throws SQLException {
+//		try (Connection con = dataSource.getConnection();
+//			 PreparedStatement ps = con.prepareStatement("select opiniondate, opinionview from opinionview where id = ?" );
+//		) {
+//			ps.setInt(1, id);
+//			ResultSet rs = ps.executeQuery();
+//			rs.next();
+//			return OpinionViewRecord.builder().opinionDate(((Date)rs.getObject(1)).toLocalDate()).opinionViewBytes(rs.getBytes(2)).build();
+//		}
+//	}
 }

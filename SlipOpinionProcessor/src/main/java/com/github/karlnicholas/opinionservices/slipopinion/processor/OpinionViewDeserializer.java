@@ -1,14 +1,17 @@
-package com.github.karlnicholas.opinionservices.slipopinion.dao;
+package com.github.karlnicholas.opinionservices.slipopinion.processor;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 
+import org.apache.kafka.common.serialization.Deserializer;
+
 import opca.view.OpinionView;
 
-public class OpinionViewDeserializer {
+public class OpinionViewDeserializer implements Deserializer<OpinionView> {
 
-	public OpinionView deserialize(byte[] data) {
+	@Override
+	public OpinionView deserialize(String topic, byte[] data) {
 		try {
 		    ObjectInputStream objIn = new ObjectInputStream(new ByteArrayInputStream(data));
 			OpinionView obj = (OpinionView) objIn.readObject();
@@ -17,5 +20,5 @@ public class OpinionViewDeserializer {
 		} catch (IOException | ClassNotFoundException e) {
 			throw new RuntimeException(e);
 		}
-    }
+	}
 }
