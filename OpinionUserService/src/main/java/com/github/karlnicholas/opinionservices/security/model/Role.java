@@ -1,4 +1,4 @@
-package opca.model;
+package com.github.karlnicholas.opinionservices.security.model;
 
 import java.io.Serializable;
 

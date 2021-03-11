@@ -1,10 +1,10 @@
-package opca.dao;
+package com.github.karlnicholas.opinionservices.security.dao;
 
 import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import opca.model.Role;
+import com.github.karlnicholas.opinionservices.security.model.Role;
 
 @Service
 public class RoleDao {

@@ -10,7 +10,8 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import opca.model.User;
+import com.github.karlnicholas.opinionservices.security.model.User;
+
 import opca.view.OpinionView;
 
 @SuppressWarnings("serial")

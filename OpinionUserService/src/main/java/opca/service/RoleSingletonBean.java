@@ -7,10 +7,10 @@ import javax.annotation.PostConstruct;
 
 import org.springframework.stereotype.Component;
 
-import opca.dao.RoleDao;
-import opca.dao.UserDao;
-import opca.model.Role;
-import opca.model.User;
+import com.github.karlnicholas.opinionservices.security.dao.RoleDao;
+import com.github.karlnicholas.opinionservices.security.dao.UserDao;
+import com.github.karlnicholas.opinionservices.security.model.Role;
+import com.github.karlnicholas.opinionservices.security.model.User;
 
 /**
  * This class is a singleton that loads and holds all Role definitions from 

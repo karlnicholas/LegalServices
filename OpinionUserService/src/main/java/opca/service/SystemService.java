@@ -9,8 +9,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
+import com.github.karlnicholas.opinionservices.security.model.User;
+
 import opca.mailer.SendGridMailer;
-import opca.model.User;
 
 //@Stateless
 @Service

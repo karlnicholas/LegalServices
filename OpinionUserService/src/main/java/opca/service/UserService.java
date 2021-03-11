@@ -9,10 +9,10 @@ import javax.xml.bind.DatatypeConverter;
 
 import org.springframework.stereotype.Service;
 
-import opca.dao.RoleDao;
-import opca.dao.UserDao;
-import opca.model.Role;
-import opca.model.User;
+import com.github.karlnicholas.opinionservices.security.dao.RoleDao;
+import com.github.karlnicholas.opinionservices.security.dao.UserDao;
+import com.github.karlnicholas.opinionservices.security.model.Role;
+import com.github.karlnicholas.opinionservices.security.model.User;
 
 import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;

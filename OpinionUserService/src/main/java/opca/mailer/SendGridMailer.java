@@ -27,7 +27,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
-import opca.model.User;
+import com.github.karlnicholas.opinionservices.security.model.User;
+
 import opca.view.OpinionView;
 
 @Service
