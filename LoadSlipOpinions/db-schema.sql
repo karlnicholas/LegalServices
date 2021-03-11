@@ -7,8 +7,8 @@ create table slipproperties (author varchar(63), casecaption varchar(255), casec
 create table statutecitation (id integer not null auto_increment, designated bit not null, lawcode char(4), sectionnumber char(32), primary key (id)) engine=InnoDB;
 create table user (id bigint not null auto_increment, createdate datetime, email varchar(255), emailupdates bit not null, firstname varchar(255), lastname varchar(255), locale varchar(255), optout bit not null, optoutkey varchar(255), password varchar(255), startverify bit not null, titles tinyblob, updatedate datetime, verified bit not null, verifycount integer not null, verifyerrors integer not null, verifykey varchar(255), welcomeerrors integer not null, welcomed bit not null, primary key (id)) engine=InnoDB;
 create table user_roles (user_id bigint not null, roles_id bigint not null) engine=InnoDB;
-create table slipopinionlist(id bigint not null, slipopinionlist TEXT, primary key (id)) engine=InnoDB;
-insert into slipopinionlist(id, slipopinionlist) values( 1, '');
+create table slipopinionlist(id bigint not null, updatetime timestamp, slipopinionlist TEXT, primary key (id)) engine=InnoDB;
+insert into slipopinionlist(id, updatetime, slipopinionlist) values( 1, current_timestamp(), '');
 create table opinionview(id bigint not null auto_increment, opiniondate date, opinionview BLOB, primary key (id)) engine=InnoDB;
 create index IDXd587qslmmirn7juop20is6gwt on opinionbase (vset, volume, page);
 alter table role add constraint UK_bjxn5ii7v7ygwx39et0wawu0q unique (role);
@@ -22,3 +22,19 @@ alter table partyattorneypair add constraint FK8la3eiphk0wnmel0ail3winl4 foreign
 alter table slipproperties add constraint FK97edwcyxhia5mmhb1qqgury8o foreign key (slipopinion_id) references opinionbase (id);
 alter table user_roles add constraint FKj9553ass9uctjrmh0gkqsmv0d foreign key (roles_id) references role (id);
 alter table user_roles add constraint FK55itppkw3i07do3h7qoclqd4k foreign key (user_id) references user (id);
+DELIMITER $$
+CREATE PROCEDURE `checkSlipOpinionUpdate` ()
+BEGIN
+	DECLARE result TEXT;
+    DECLARE updateNeeded INT;
+    SELECT 'NOUPDATE' into result;
+	START TRANSACTION;
+	SELECT TIMESTAMPDIFF(MINUTE, (select updatetime from slipopinionlist where id=1), current_timestamp()) into updateNeeded;
+	IF updateNeeded >= 3 THEN
+		select slipopinionlist into result from slipopinionlist where id=1;
+        update slipopinionlist set updatetime = current_timestamp() where id = 1;
+    END IF;
+    COMMIT;
+    SELECT RESULT;
+END$$
+DELIMITER ;

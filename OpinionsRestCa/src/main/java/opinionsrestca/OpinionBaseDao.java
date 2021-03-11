@@ -96,4 +96,22 @@ public class OpinionBaseDao {
 		return opinionBase;
 	}
 
+	public String callSlipOpinionUpdateNeeded() throws SQLException {
+		try (Connection con = dataSource.getConnection();
+			PreparedStatement ps = con.prepareCall("{call checkSlipOpinionUpdate()}");
+		) {
+			try (ResultSet rs = ps.executeQuery()) {
+				rs.next();
+				return rs.getString(1);
+			}
+		}
+	}
+	public void updateSlipOpinionList(String string) throws SQLException {
+		try (Connection con = dataSource.getConnection();
+			 PreparedStatement ps = con.prepareStatement("update slipopinionlist set slipopinionlist=? where id = 1" );
+		) {
+			ps.setString(1, string);
+			ps.executeUpdate();
+		}
+	}
 }

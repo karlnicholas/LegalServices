@@ -17,6 +17,10 @@ public class OpinionsServiceRouter {
 		return RouterFunctions
 			.route(RequestPredicates.POST(OpinionsService.OPINIONCITATIONS)
 				.and(RequestPredicates.contentType(MediaType.APPLICATION_JSON)).and(RequestPredicates.accept(MediaType.APPLICATION_JSON)), opinionsServiceHandler::getOpinionsWithStatuteCitations)
+			.andRoute(RequestPredicates.POST(OpinionsService.SLIPOPINIONUPDATENEEDED)
+					.and(RequestPredicates.accept(MediaType.TEXT_PLAIN)), opinionsServiceHandler::getSlipOpinionUpdateNeeded)
+			.andRoute(RequestPredicates.POST(OpinionsService.UPDATESLIPOPINIONLIST)
+					.and(RequestPredicates.contentType(MediaType.TEXT_PLAIN)).and(RequestPredicates.accept(MediaType.TEXT_PLAIN)), opinionsServiceHandler::updateSlipOpinionList)
 			;
 	}
 

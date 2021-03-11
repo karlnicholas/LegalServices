@@ -14,9 +14,9 @@ import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.http.ResponseEntity;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.github.karlnicholas.opinionservices.slipopinion.dao.OpinionViewDao;
 import com.mysql.cj.jdbc.MysqlDataSource;
 
 import opca.model.OpinionBase;
@@ -53,7 +53,6 @@ public class TestParseAndView implements ApplicationRunner {
 		dataSource.setUrl("jdbc:mysql://localhost:3306/op");
 		dataSource.setUser("op");
 		dataSource.setPassword("op");
-		OpinionViewDao opinionViewDao = new OpinionViewDao(dataSource);
 		 
 		//				OpinionScraperInterface caseScraper = new CACaseScraper(true);
 //				OpinionScraperInterface caseScraper = new TestCACaseScraper(false);
@@ -76,9 +75,16 @@ public class TestParseAndView implements ApplicationRunner {
 			sb.append(f);
 			sb.append(',');
 		});
-		String slipOpinionsList = opinionViewDao.getSlipOpinionList();
-		if (slipOpinionsList == null || slipOpinionsList.isEmpty() )
-			slipOpinionsList= "";
+		// use the transaction manager in the database for a cheap job manager
+		ResponseEntity<String> response = opinionsService.callSlipOpinionUpdateNeeded();
+		if ( response.getStatusCodeValue() != 200 ) {
+			logger.error("opinionsService.callSlipOpinionUpdateNeeded() {}", response.getStatusCode());
+			return;
+		}
+		String slipOpinionsList = response.getBody();
+		if ( slipOpinionsList.equalsIgnoreCase("NOUPDATE")) {
+			return;
+		}
 		List<String> savedOpinions = StreamSupport.stream(Arrays.spliterator(
 				slipOpinionsList.split(",")), false)
 		.collect(Collectors.toList());
@@ -86,7 +92,7 @@ public class TestParseAndView implements ApplicationRunner {
 		List<String> newOpinions = new ArrayList<>(foundOpinions);
 		newOpinions.removeAll(savedOpinions);
 		if ( newOpinions.size() > 0 ) {
-			opinionViewDao.updateSlipOpinionList(sb.toString());
+			opinionsService.updateSlipOpinionList(sb.toString());
 			List<SlipOpinion> lt = onlineOpinions
 					.stream()
 					.filter(slipOpinion->newOpinions.contains(slipOpinion.getFileName()))

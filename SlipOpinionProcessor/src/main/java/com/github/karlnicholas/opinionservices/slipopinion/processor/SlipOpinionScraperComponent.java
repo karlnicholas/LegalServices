@@ -16,18 +16,20 @@ import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.karlnicholas.opinionservices.slipopinion.dao.OpinionViewDao;
 
 import opca.model.SlipOpinion;
 import opca.parser.OpinionScraperInterface;
 import opca.parser.ScrapedOpinionDocument;
 import opca.parser.SlipOpinionDocumentParser;
 import opca.scraper.TestCAParseSlipDetails;
+import opinions.service.OpinionsService;
+import opinions.service.client.OpinionsServiceClientImpl;
 import statutes.service.StatutesService;
 import statutes.service.client.StatutesServiceClientImpl;
 
@@ -42,15 +44,15 @@ public class SlipOpinionScraperComponent {
 	private final Producer<String, JsonNode> producer;
 	private final SlipOpinionDocumentParser opinionDocumentParser;
 	private final KakfaProperties kafkaProperties;
-	private final OpinionViewDao opinionViewDao;
+	private final OpinionsService opinionsService;
 
-	public SlipOpinionScraperComponent(ObjectMapper objectMapper, KakfaProperties kafkaProperties, OpinionViewDao opinionViewDao) {
+	public SlipOpinionScraperComponent(ObjectMapper objectMapper, KakfaProperties kafkaProperties) {
 	    this.objectMapper = objectMapper;
 	    this.kafkaProperties = kafkaProperties;
-	    this.opinionViewDao = opinionViewDao;
 
 		caseScraper = new TestCAParseSlipDetails(false);
 	    StatutesService statutesService = new StatutesServiceClientImpl("http://localhost:8090/");
+	    opinionsService = new OpinionsServiceClientImpl("http://localhost:8091/");
 		opinionDocumentParser = new SlipOpinionDocumentParser(statutesService.getStatutesTitles().getBody());
 		
         //Configure the Producer
@@ -80,14 +82,24 @@ public class SlipOpinionScraperComponent {
 			sb.append(f);
 			sb.append(',');
 		});
+		// use the transaction manager in the database for a cheap job manager
+		ResponseEntity<String> response = opinionsService.callSlipOpinionUpdateNeeded();
+		if ( response.getStatusCodeValue() != 200 ) {
+			log.error("opinionsService.callSlipOpinionUpdateNeeded() {}", response.getStatusCode());
+			return;
+		}
+		String slipOpinionUpdateNeeded = response.getBody();
+		if ( slipOpinionUpdateNeeded.equalsIgnoreCase("NOUPDATE")) {
+			return;
+		}
 		List<String> savedOpinions = 
-				StreamSupport.stream(Arrays.spliterator(opinionViewDao.getSlipOpinionList().split(",")), false)
+				StreamSupport.stream(Arrays.spliterator(slipOpinionUpdateNeeded.split(",")), false)
 				.collect(Collectors.toList());
 		
 		List<String> newOpinions = new ArrayList<>(foundOpinions);
 		newOpinions.removeAll(savedOpinions);
 		if ( newOpinions.size() > 0 ) {
-			opinionViewDao.updateSlipOpinionList(sb.toString());
+			opinionsService.updateSlipOpinionList(sb.toString());
 
 			List<SlipOpinion> lt = onlineOpinions
 					.stream()

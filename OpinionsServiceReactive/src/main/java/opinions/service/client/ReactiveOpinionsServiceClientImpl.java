@@ -36,15 +36,60 @@ public class ReactiveOpinionsServiceClientImpl implements ReactiveOpinionsServic
 		
 		WebClient.ResponseSpec response1 = uri1
 				  .body(inserter3)
-				    .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
 				    .accept(MediaType.APPLICATION_JSON)
 				    .acceptCharset(Charset.forName("UTF-8"))
 				    .ifNoneMatch("*")
 				    .ifModifiedSince(ZonedDateTime.now())
 				  .retrieve();
-
-		return response1.toEntityList(OpinionBase.class);
 		
+		return response1.toEntityList(OpinionBase.class);
+	}
+
+	@Override
+	public Mono<ResponseEntity<Void>> updateSlipOpinionList(String string) {
+		WebClient client3 = WebClient
+				  .builder()
+				    .baseUrl("http://localhost:8090")
+				    .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE) 
+				  .build();
+		
+		WebClient.RequestBodySpec uri1 = client3
+				  .method(HttpMethod.GET)
+				  .uri("/");
+		
+		BodyInserter<String, ReactiveHttpOutputMessage> inserter3 = BodyInserters.fromValue(string);
+		
+		WebClient.ResponseSpec response1 = uri1
+				  .body(inserter3)
+				    .accept(MediaType.APPLICATION_JSON)
+				    .acceptCharset(Charset.forName("UTF-8"))
+				    .ifNoneMatch("*")
+				    .ifModifiedSince(ZonedDateTime.now())
+				  .retrieve();
+		
+		return response1.toEntity(Void.class);
+	}
+
+	@Override
+	public Mono<ResponseEntity<String>> callSlipOpinionUpdateNeeded() {
+		WebClient client3 = WebClient
+				  .builder()
+				    .baseUrl("http://localhost:8090")
+				    .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_PLAIN_VALUE) 
+				  .build();
+		
+		WebClient.RequestBodySpec uri1 = client3
+				  .method(HttpMethod.GET)
+				  .uri("/");
+		
+		WebClient.ResponseSpec response1 = uri1
+				    .accept(MediaType.TEXT_PLAIN)
+				    .acceptCharset(Charset.forName("UTF-8"))
+				    .ifNoneMatch("*")
+				    .ifModifiedSince(ZonedDateTime.now())
+				  .retrieve();
+		
+		return response1.toEntity(String.class);
 	}
 
 }
