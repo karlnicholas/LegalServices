@@ -29,10 +29,10 @@ public class OpinionsServiceClientImpl implements OpinionsService {
 	public OpinionsServiceClientImpl(String baseUrl) {
 		restTemplate = new RestTemplate();
 		//set interceptors/requestFactory
-		ClientHttpRequestInterceptor ri = new LoggingRequestInterceptor();
-		List<ClientHttpRequestInterceptor> ris = new ArrayList<ClientHttpRequestInterceptor>();
-		ris.add(ri);
-		restTemplate.setInterceptors(ris);
+//		ClientHttpRequestInterceptor ri = new LoggingRequestInterceptor();
+//		List<ClientHttpRequestInterceptor> ris = new ArrayList<ClientHttpRequestInterceptor>();
+//		ris.add(ri);
+//		restTemplate.setInterceptors(ris);
 		restTemplate.setRequestFactory(new BufferingClientHttpRequestFactory(new SimpleClientHttpRequestFactory()));
 		opinionCitationsURI = URI.create(baseUrl + OpinionsService.OPINIONCITATIONS);
 		slipOpinionUpdateNeededURI = URI.create(baseUrl + OpinionsService.SLIPOPINIONUPDATENEEDED);

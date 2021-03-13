@@ -89,12 +89,16 @@ public class SlipOpinionScraperComponent {
 			return;
 		}
 		String slipOpinionUpdateNeeded = response.getBody();
-		if ( slipOpinionUpdateNeeded.equalsIgnoreCase("NOUPDATE")) {
+		if ( slipOpinionUpdateNeeded != null && slipOpinionUpdateNeeded.equalsIgnoreCase("NOUPDATE")) {
 			return;
 		}
-		List<String> savedOpinions = 
-				StreamSupport.stream(Arrays.spliterator(slipOpinionUpdateNeeded.split(",")), false)
-				.collect(Collectors.toList());
+		List<String> savedOpinions;
+		if ( slipOpinionUpdateNeeded != null ) {
+			savedOpinions = StreamSupport.stream(Arrays.spliterator(slipOpinionUpdateNeeded.split(",")), false)
+			.collect(Collectors.toList());
+		} else {
+			savedOpinions = new ArrayList<>();
+		}
 		
 		List<String> newOpinions = new ArrayList<>(foundOpinions);
 		newOpinions.removeAll(savedOpinions);

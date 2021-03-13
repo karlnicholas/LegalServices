@@ -1,7 +1,6 @@
 package com.github.karlnicholas.opinionservices.slipopinion.processor;
 
 import java.time.Duration;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -11,7 +10,6 @@ import java.util.stream.Collectors;
 
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
-import org.apache.kafka.clients.consumer.ConsumerRebalanceListener;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
@@ -86,21 +84,11 @@ public class OpinionViewBuildComponent implements Runnable {
 		 consumer = new KafkaConsumer<>(consumerProperties);
 	}
 
-	private class HandleRebalance implements ConsumerRebalanceListener {
-	    public void onPartitionsAssigned(Collection<TopicPartition> partitions) {
-	    }
-
-	    public void onPartitionsRevoked(Collection<TopicPartition> partitions) {
-	    	log.warn("Lost partitions in rebalance. " + "Committing current offsets:" + currentOffsets);
-	        consumer.commitSync(currentOffsets);
-	    }
-	}
 	@Override
     public void run(){
-		
 		try {
 			// Subscribe to the topic.
-		    consumer.subscribe(Collections.singletonList(kafkaProperties.getSlipOpinionsTopic()), new HandleRebalance());
+		    consumer.subscribe(Collections.singletonList(kafkaProperties.getSlipOpinionsTopic()));
 		    while (true) {
 		        ConsumerRecords<String, JsonNode> records = consumer.poll(Duration.ofMillis(100));
 		        for (ConsumerRecord<String, JsonNode> record : records) {
@@ -115,19 +103,14 @@ public class OpinionViewBuildComponent implements Runnable {
 		                 new TopicPartition(record.topic(), record.partition()),
 		                 new OffsetAndMetadata(record.offset()+1, null));
 		        }
-		        consumer.commitAsync(currentOffsets, null);
 		    }
 		} catch (WakeupException e) {
 		} catch (Exception e) {
 //			if ( ! (e instanceof InterruptedException) )
 				log.error("Unexpected error", e);
 		} finally {
-		    try {
-		        consumer.commitSync(currentOffsets);
-		    } finally {
-		        consumer.close();
-		        System.out.println("Closed consumer and we are done");
-		    }
+	        consumer.close();
+	        System.out.println("Closed consumer and we are done");
 		}
 	}
 	private OpinionView buildOpinionView(SlipOpinion slipOpinion) {
