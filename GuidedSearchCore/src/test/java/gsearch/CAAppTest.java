@@ -8,9 +8,9 @@ import java.util.logging.Logger;
 
 import org.junit.Test;
 
-import gsearch.GSearch;
-import gsearch.viewmodel.SectionText;
-import gsearch.viewmodel.ViewModel;
+import com.github.karlnicholas.legalservices.gsearch.GSearch;
+import com.github.karlnicholas.legalservices.gsearch.viewmodel.SectionText;
+import com.github.karlnicholas.legalservices.gsearch.viewmodel.ViewModel;
 
 public class CAAppTest {
 

@@ -17,22 +17,21 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.http.ResponseEntity;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.github.karlnicholas.legalservices.opinion.model.OpinionBase;
+import com.github.karlnicholas.legalservices.opinion.model.OpinionKey;
+import com.github.karlnicholas.legalservices.opinion.parser.ScrapedOpinionDocument;
+import com.github.karlnicholas.legalservices.opinion.service.OpinionsService;
+import com.github.karlnicholas.legalservices.opinion.service.client.OpinionServiceClientImpl;
+import com.github.karlnicholas.legalservices.opinionview.view.OpinionView;
+import com.github.karlnicholas.legalservices.opinionview.view.OpinionViewBuilder;
+import com.github.karlnicholas.legalservices.slipopinion.model.SlipOpinion;
+import com.github.karlnicholas.legalservices.slipopinion.parser.OpinionScraperInterface;
+import com.github.karlnicholas.legalservices.slipopinion.parser.SlipOpinionDocumentParser;
+import com.github.karlnicholas.legalservices.slipopinion.scraper.TestCAParseSlipDetails;
+import com.github.karlnicholas.legalservices.statute.StatutesTitles;
+import com.github.karlnicholas.legalservices.statute.service.StatuteService;
+import com.github.karlnicholas.legalservices.statute.service.client.StatuteServiceClientImpl;
 import com.mysql.cj.jdbc.MysqlDataSource;
-
-import opca.model.OpinionBase;
-import opca.model.OpinionKey;
-import opca.model.SlipOpinion;
-import opca.parser.OpinionScraperInterface;
-import opca.parser.ScrapedOpinionDocument;
-import opca.parser.SlipOpinionDocumentParser;
-import opca.scraper.TestCAParseSlipDetails;
-import opca.view.OpinionView;
-import opca.view.OpinionViewBuilder;
-import opinions.service.OpinionsService;
-import opinions.service.client.OpinionsServiceClientImpl;
-import statutes.StatutesTitles;
-import statutes.service.StatutesService;
-import statutes.service.client.StatutesServiceClientImpl;
 
 @SpringBootApplication(scanBasePackages = {"opca", "update"})
 @ConditionalOnProperty(name = "TestParseAndView.active", havingValue = "true", matchIfMissing = false)
@@ -45,8 +44,8 @@ public class TestParseAndView implements ApplicationRunner {
 	@Override
 	public void run(ApplicationArguments args) throws JsonProcessingException, SQLException {
 
-		StatutesService statutesService = new StatutesServiceClientImpl("http://localhost:8090/");
-		OpinionsService opinionsService = new OpinionsServiceClientImpl("http://localhost:8091/");
+		StatuteService statutesService = new StatuteServiceClientImpl("http://localhost:8090/");
+		OpinionsService opinionsService = new OpinionServiceClientImpl("http://localhost:8091/");
 		OpinionViewBuilder opinionViewBuilder = new OpinionViewBuilder(statutesService);
 		StatutesTitles[] arrayStatutesTitles = statutesService.getStatutesTitles().getBody();
 		MysqlDataSource dataSource = new MysqlDataSource();

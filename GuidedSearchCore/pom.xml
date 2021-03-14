@@ -3,7 +3,7 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>guidedsearch-core</artifactId>
+	<artifactId>guided-search-core</artifactId>
 	<parent>
 		<groupId>com.github.karlnicholas.legalservices</groupId>
 		<artifactId>parent</artifactId>
@@ -13,9 +13,6 @@
 	<name>Guided Search Core</name>
 	<description>Guided Search Core</description>
 	<properties>
-		<!-- maven-compiler-plugin -->
-		<maven.compiler.target>1.8</maven.compiler.target>
-		<maven.compiler.source>1.8</maven.compiler.source>
 		<version.lucene>8.6.0</version.lucene>
 	</properties>
 	<dependencies>
@@ -61,7 +58,7 @@
 		</dependency>
 		<dependency>
 			<groupId>com.github.karlnicholas.legalservices</groupId>
-			<artifactId>statutesservicereactive</artifactId>
+			<artifactId>statute-service-reactive</artifactId>
 		</dependency>
 	</dependencies>
 </project>

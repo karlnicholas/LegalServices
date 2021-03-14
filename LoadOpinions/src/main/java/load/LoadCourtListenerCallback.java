@@ -9,20 +9,21 @@ import java.util.concurrent.Future;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.github.karlnicholas.legalservices.opinion.memorydb.CitationStore;
+import com.github.karlnicholas.legalservices.statute.api.IStatuteApi;
+
 import loadmodel.LoadOpinion;
-import opca.memorydb.CitationStore;
-import statutes.api.IStatutesApi;
 
 public class LoadCourtListenerCallback implements CourtListenerCallback {
 	private final Logger logger;
 	private final CitationStore citationStore;
-	private final IStatutesApi iStatutesApi;
+	private final IStatuteApi iStatutesApi;
 	private final int processors;
 	private final List<Callable<Object>> tasks;
 	private final ExecutorService es;
 	
 
-	public LoadCourtListenerCallback(CitationStore citationStore, IStatutesApi iStatutesApi) {
+	public LoadCourtListenerCallback(CitationStore citationStore, IStatuteApi iStatutesApi) {
 		this.citationStore = citationStore;
 		this.iStatutesApi = iStatutesApi;
 		logger = Logger.getLogger(LoadCourtListenerCallback.class.getName());

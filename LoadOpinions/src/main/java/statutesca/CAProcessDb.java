@@ -18,13 +18,13 @@ import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.ResultSetHandler;
 import org.apache.commons.dbutils.handlers.BeanListHandler;
 
-import statutes.StatuteRange;
-import statutes.StatutesBaseClass;
-import statutes.StatutesLeaf;
-import statutes.StatutesNode;
-import statutes.StatutesRoot;
-import statutes.api.IStatutesApi;
-import statutesca.statutesapi.CAStatutesApiImpl;
+import com.github.karlnicholas.legalservices.statute.StatuteRange;
+import com.github.karlnicholas.legalservices.statute.StatutesBaseClass;
+import com.github.karlnicholas.legalservices.statute.StatutesLeaf;
+import com.github.karlnicholas.legalservices.statute.StatutesNode;
+import com.github.karlnicholas.legalservices.statute.StatutesRoot;
+import com.github.karlnicholas.legalservices.statute.api.IStatuteApi;
+import com.github.karlnicholas.legalservices.statuteca.statuteapi.CAStatuteApiImpl;
 
 
 public class CAProcessDb {
@@ -95,7 +95,7 @@ public class CAProcessDb {
 		List<LawForCodeSections> lawForCodes = retrieveLawForCode(lawCode);
 		// purposely don't call loadStatutes because we are getting them from the raw
 		// files
-		IStatutesApi iStatutesApi = new CAStatutesApiImpl();
+		IStatuteApi iStatutesApi = new CAStatuteApiImpl();
 	
 		Stack<StatutesBaseClass> secStack = new Stack<>();
 		StatutesRoot statutesRoot = null;

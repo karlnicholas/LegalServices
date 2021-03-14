@@ -4,7 +4,7 @@
 <%@ taglib tagdir="/WEB-INF/tags" prefix="myTags" %>
 <!DOCTYPE html>
 <jsp:useBean id="highlighter" class="gsearch.util.Highlighter" scope="request"/>
-<jsp:useBean id="urlBuilder" class="guidedsearchweb.controller.UrlBuilder" scope="request"/>
+<jsp:useBean id="urlBuilder" class="com.github.karlnicholas.legalservices.gsearch.web.controller.UrlBuilder" scope="request"/>
 <html lang="en">
   <head>
     <meta charset="utf-8">

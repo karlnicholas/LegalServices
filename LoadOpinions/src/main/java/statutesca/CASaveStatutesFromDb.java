@@ -13,11 +13,10 @@ import java.util.*;
 import javax.xml.bind.JAXBException;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-
-import statutes.SectionNumber;
-import statutes.StatuteRange;
-import statutes.StatutesLeaf;
-import statutes.StatutesRoot;
+import com.github.karlnicholas.legalservices.statute.SectionNumber;
+import com.github.karlnicholas.legalservices.statute.StatuteRange;
+import com.github.karlnicholas.legalservices.statute.StatutesLeaf;
+import com.github.karlnicholas.legalservices.statute.StatutesRoot;
 
 public class CASaveStatutesFromDb extends CAProcessDb {
 	private final Path lawCodesPath;

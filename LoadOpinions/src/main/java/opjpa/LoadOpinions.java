@@ -4,11 +4,12 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
+import com.github.karlnicholas.legalservices.opinion.crud.OpinionBaseCrud;
+import com.github.karlnicholas.legalservices.opinion.crud.OpinionBaseOpinionCitationsCrud;
+import com.github.karlnicholas.legalservices.opinion.crud.OpinionStatuteCitationCrud;
+import com.github.karlnicholas.legalservices.opinion.crud.StatuteCitationCrud;
+
 import load.LoadHistoricalOpinions;
-import opca.crud.OpinionBaseCrud;
-import opca.crud.OpinionBaseOpinionCitationsCrud;
-import opca.crud.OpinionStatuteCitationCrud;
-import opca.crud.StatuteCitationCrud;
 
 public class LoadOpinions {
 

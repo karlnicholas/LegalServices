@@ -3,7 +3,7 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>opinionviewmodel</artifactId>
+	<artifactId>opinion-view-model</artifactId>
 	<parent>
 		<groupId>com.github.karlnicholas.legalservices</groupId>
 		<artifactId>parent</artifactId>
@@ -29,15 +29,15 @@
 		</dependency>
 		<dependency>
 			<groupId>com.github.karlnicholas.legalservices</groupId>
-			<artifactId>opinions-parser</artifactId>
+			<artifactId>opinion-parser</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.github.karlnicholas.legalservices</groupId>
-			<artifactId>slipopinionparser</artifactId>
+			<artifactId>slipopinion-parser</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.github.karlnicholas.legalservices</groupId>
-			<artifactId>statutesservice</artifactId>
+			<artifactId>statute-service</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>javax.xml.bind</groupId>

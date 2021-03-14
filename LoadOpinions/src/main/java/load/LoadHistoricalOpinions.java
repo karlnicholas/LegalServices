@@ -4,15 +4,15 @@ import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 
-import opca.crud.OpinionBaseCrud;
-import opca.crud.OpinionBaseOpinionCitationsCrud;
-import opca.crud.OpinionStatuteCitationCrud;
-import opca.crud.StatuteCitationCrud;
-import opca.memorydb.CitationStore;
-import opca.model.OpinionBase;
-import opca.model.StatuteCitation;
-import statutes.api.IStatutesApi;
-import statutesca.statutesapi.CAStatutesApiImpl;
+import com.github.karlnicholas.legalservices.opinion.crud.OpinionBaseCrud;
+import com.github.karlnicholas.legalservices.opinion.crud.OpinionBaseOpinionCitationsCrud;
+import com.github.karlnicholas.legalservices.opinion.crud.OpinionStatuteCitationCrud;
+import com.github.karlnicholas.legalservices.opinion.crud.StatuteCitationCrud;
+import com.github.karlnicholas.legalservices.opinion.memorydb.CitationStore;
+import com.github.karlnicholas.legalservices.opinion.model.OpinionBase;
+import com.github.karlnicholas.legalservices.opinion.model.StatuteCitation;
+import com.github.karlnicholas.legalservices.statute.api.IStatuteApi;
+import com.github.karlnicholas.legalservices.statuteca.statuteapi.CAStatuteApiImpl;
 
 public class LoadHistoricalOpinions {
 //	private static Logger logger = Logger.getLogger(LoadHistoricalOpinions.class.getName());
@@ -38,7 +38,7 @@ public class LoadHistoricalOpinions {
 
     public void initializeDB(Connection con) throws Exception {
     	//
-	    IStatutesApi iStatutesApi = new CAStatutesApiImpl();
+	    IStatuteApi iStatutesApi = new CAStatuteApiImpl();
 	    iStatutesApi.loadStatutes();
 
 	    LoadCourtListenerCallback cb1 = new LoadCourtListenerCallback(citationStore, iStatutesApi);

@@ -46,11 +46,11 @@
 		</dependency>
 		<dependency>
 			<groupId>com.github.karlnicholas.legalservices</groupId>
-			<artifactId>statutes</artifactId>
+			<artifactId>statute</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.github.karlnicholas.legalservices</groupId>
-			<artifactId>guidedsearch-core</artifactId>
+			<artifactId>guided-search-core</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>

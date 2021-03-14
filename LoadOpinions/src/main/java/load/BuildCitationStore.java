@@ -8,15 +8,16 @@ import org.jsoup.nodes.Element;
 import org.jsoup.parser.Parser;
 import org.jsoup.select.Elements;
 
+import com.github.karlnicholas.legalservices.opinion.memorydb.CitationStore;
+import com.github.karlnicholas.legalservices.opinion.model.DTYPES;
+import com.github.karlnicholas.legalservices.opinion.model.OpinionBase;
+import com.github.karlnicholas.legalservices.opinion.model.OpinionKey;
+import com.github.karlnicholas.legalservices.opinion.parser.OpinionDocumentsParser;
+import com.github.karlnicholas.legalservices.opinion.parser.ParsedOpinionCitationSet;
+import com.github.karlnicholas.legalservices.opinion.parser.ScrapedOpinionDocument;
+import com.github.karlnicholas.legalservices.statute.api.IStatuteApi;
+
 import loadmodel.LoadOpinion;
-import opca.memorydb.CitationStore;
-import opca.model.DTYPES;
-import opca.model.OpinionBase;
-import opca.model.OpinionKey;
-import opca.parser.OpinionDocumentsParser;
-import opca.parser.ParsedOpinionCitationSet;
-import opca.parser.ScrapedOpinionDocument;
-import statutes.api.IStatutesApi;
 
 /**
  * Create new OpinionSummaries from LoadOpinion types, add to citationStore.
@@ -30,7 +31,7 @@ public class BuildCitationStore implements Runnable {
 	CitationStore citationStore;
 	private final OpinionDocumentsParser parser;
 
-	public BuildCitationStore(List<LoadOpinion> clOps, CitationStore persistence, IStatutesApi iStatutesApi) {
+	public BuildCitationStore(List<LoadOpinion> clOps, CitationStore persistence, IStatuteApi iStatutesApi) {
 		this.clOps = clOps;
 		this.citationStore = persistence;
 		parser = new OpinionDocumentsParser(iStatutesApi.getStatutesTitles());

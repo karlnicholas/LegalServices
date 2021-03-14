@@ -22,11 +22,11 @@
 		</dependency>
 		<dependency>
 			<groupId>com.github.karlnicholas.legalservices</groupId>
-			<artifactId>statutesca</artifactId>
+			<artifactId>statute-ca</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.github.karlnicholas.legalservices</groupId>
-			<artifactId>opinions-crud</artifactId>
+			<artifactId>opinion-crud</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.projectlombok</groupId>
@@ -35,7 +35,7 @@
 		</dependency>
 		<dependency>
 			<groupId>com.github.karlnicholas.legalservices</groupId>
-			<artifactId>guidedsearch-core</artifactId>
+			<artifactId>guided-search-core</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.jsoup</groupId>

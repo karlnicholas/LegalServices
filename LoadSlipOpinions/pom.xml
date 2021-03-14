@@ -27,15 +27,15 @@
 		</dependency>
 		<dependency>
 			<groupId>com.github.karlnicholas.legalservices</groupId>
-			<artifactId>statutesca</artifactId>
+			<artifactId>statute-ca</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.github.karlnicholas.legalservices</groupId>
-			<artifactId>statutesservice</artifactId>
+			<artifactId>statute-service</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.github.karlnicholas.legalservices</groupId>
-			<artifactId>opinionviewdao</artifactId>
+			<artifactId>opinion-view-dao</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.projectlombok</groupId>
@@ -53,15 +53,15 @@
 		</dependency>
 		<dependency>
 			<groupId>com.github.karlnicholas.legalservices</groupId>
-			<artifactId>opinionsservice</artifactId>
+			<artifactId>opinion-service</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.github.karlnicholas.legalservices</groupId>
-			<artifactId>opinionviewmodel</artifactId>
+			<artifactId>opinion-view-model</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.github.karlnicholas.legalservices</groupId>
-			<artifactId>slipopinionparser</artifactId>
+			<artifactId>slipopinion-parser</artifactId>
 		</dependency>
 	</dependencies>
 </project>

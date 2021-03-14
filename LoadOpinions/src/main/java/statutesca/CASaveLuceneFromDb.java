@@ -23,8 +23,8 @@ import org.apache.lucene.index.IndexWriterConfig.OpenMode;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 
-import gsearch.util.FacetUtils;
-import statutes.StatutesLeaf;
+import com.github.karlnicholas.legalservices.statute.StatutesLeaf;
+import com.github.karlnicholas.legalservices.statuteca.code.FacetUtils;
 
 public class CASaveLuceneFromDb extends CAProcessDb {
 	private static final Logger logger = Logger.getLogger(CASaveLuceneFromDb.class.getName());
