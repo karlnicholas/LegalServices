@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -92,8 +93,11 @@ public class OpinionViewData {
 		return (firstDay.compareTo(date) <= 0 && lastDay.compareTo(date) > 0);
 	}
 
-	public List<OpinionView> getOpinionViews() {
-		return opinionViews;
+	public List<OpinionView> getOpinionViews(LocalDate startDate, LocalDate endDate) {
+		return opinionViews.stream()
+				.filter(ov->ov.getOpinionDate().compareTo(startDate) >= 0 && ov.getOpinionDate().compareTo(endDate) <= 0)
+				.sorted((ov1, ov2)->ov2.getOpinionDate().compareTo(ov1.getOpinionDate()))
+				.collect(Collectors.toList());
 	}
 	
 //	public void setStringDateList() {
