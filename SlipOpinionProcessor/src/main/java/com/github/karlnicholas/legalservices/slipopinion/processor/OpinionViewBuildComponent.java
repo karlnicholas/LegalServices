@@ -108,9 +108,9 @@ public class OpinionViewBuildComponent implements Runnable {
 		} catch (Exception e) {
 //			if ( ! (e instanceof InterruptedException) )
 				log.error("Unexpected error", e);
+				throw new RuntimeException(e.getCause());
 		} finally {
 	        consumer.close();
-	        System.out.println("Closed consumer and we are done");
 		}
 	}
 	private OpinionView buildOpinionView(SlipOpinion slipOpinion) {

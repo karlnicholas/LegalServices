@@ -19,7 +19,6 @@ public class OpinionViewControllerHandler {
 	}
 
 	public Mono<ServerResponse> getOpinionViews(ServerRequest request) {
-System.out.println("opinionViewData: " + opinionViewData);
 		return ServerResponse.ok().contentType(MediaType.APPLICATION_JSON)
 				.bodyValue(opinionViewData.getOpinionViews());
 	}
