@@ -6,7 +6,7 @@ import java.io.ObjectOutputStream;
 
 import org.apache.kafka.common.serialization.Serializer;
 
-import com.github.karlnicholas.legalservices.opinionview.view.OpinionView;
+import com.github.karlnicholas.legalservices.opinionview.model.OpinionView;
 
 public class OpinionViewSerializer implements Serializer<OpinionView> {
 	@Override

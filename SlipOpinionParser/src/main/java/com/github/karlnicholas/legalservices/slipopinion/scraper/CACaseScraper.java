@@ -478,7 +478,8 @@ public class CACaseScraper implements OpinionScraperInterface {
 	protected List<SlipOpinion> parseCaseList(InputStream inputStream) {
 		ArrayList<SlipOpinion> cases = new ArrayList<SlipOpinion>();
 //		DateFormat dfs = DateFormat.getDateInstance(DateFormat.SHORT);
-		DateTimeFormatter dfs = DateTimeFormatter.ofPattern("YY/mm/DD");
+//		DateTimeFormatter dfs = DateTimeFormatter.ofPattern("YY/mm/DD");
+//		DateTimeFormatter dfs = DateTimeFormatter.ofPattern("MM/dd/yy");
 //		Date sopDate;
 //		Date opDate = null;
 		LocalDate sopDate;
@@ -506,16 +507,16 @@ public class CACaseScraper implements OpinionScraperInterface {
 				}
 				// store all this in a class
 				sopDate = opDate;
-		        try {
-		        	opDate = LocalDate.parse(opinionDate, dfs);
-		        } catch (DateTimeParseException e ) {
-		        	if ( sopDate == null ) {
-			        	// Default to current date.
-						opDate = LocalDate.now();
-		        	} else {
-		        		opDate = sopDate;
-		        	}
-		        }
+	        	String[] ds = opinionDate.trim().split("/");
+	        	if ( ds.length == 3) {
+	        		opDate = LocalDate.of(Integer.parseInt(ds[2])+2000, Integer.parseInt(ds[0]), Integer.parseInt(ds[1]));
+	        	} else if ( sopDate == null ) {
+		        	// Default to current date.
+					opDate = LocalDate.now();
+	        	} else {
+	        		opDate = sopDate;
+	        	}
+	        	
 //	    		Calendar parsedDate = Calendar.getInstance();
 //	    		parsedDate.setTime(opDate);
 	    		// test to see if year out of whack.

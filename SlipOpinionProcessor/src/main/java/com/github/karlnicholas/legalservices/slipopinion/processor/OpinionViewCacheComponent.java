@@ -12,7 +12,7 @@ import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.errors.WakeupException;
 
-import com.github.karlnicholas.legalservices.opinionview.view.OpinionView;
+import com.github.karlnicholas.legalservices.opinionview.model.OpinionView;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -22,11 +22,11 @@ public class OpinionViewCacheComponent implements Runnable {
 //	private volatile boolean someCondition = true;
 	private final Consumer<String, OpinionView> consumer;
 	private final KakfaProperties kafkaProperties;
-	private final OpinionViewCache opinionViewCache;
+	private final OpinionViewData opinionViewData;
 
-	public OpinionViewCacheComponent(KakfaProperties kafkaProperties, OpinionViewCache opinionViewCache) {
+	public OpinionViewCacheComponent(KakfaProperties kafkaProperties, OpinionViewData opinionViewData) {
 		this.kafkaProperties = kafkaProperties;
-		this.opinionViewCache = opinionViewCache;
+		this.opinionViewData = opinionViewData;
 
         //Configure the Consumer
 		Properties consumerProperties = new Properties();
@@ -52,7 +52,7 @@ public class OpinionViewCacheComponent implements Runnable {
 		                 record.topic(), record.partition(), record.offset(),
 		                 record.key(), record.value());
 		        	OpinionView opinionView = record.value();
-		        	opinionViewCache.addCache(opinionView);
+		        	opinionViewData.addOpinionView(opinionView);
 		        }
 		    }
 		} catch (WakeupException e) {

@@ -6,7 +6,7 @@ import java.io.ObjectInputStream;
 
 import org.apache.kafka.common.serialization.Deserializer;
 
-import com.github.karlnicholas.legalservices.opinionview.view.OpinionView;
+import com.github.karlnicholas.legalservices.opinionview.model.OpinionView;
 
 public class OpinionViewDeserializer implements Deserializer<OpinionView> {
 

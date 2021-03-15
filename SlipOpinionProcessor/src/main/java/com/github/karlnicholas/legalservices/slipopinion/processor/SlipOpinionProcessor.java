@@ -19,7 +19,11 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-@SpringBootApplication(scanBasePackages = {"opca", "com.github.karlnicholas.opinionservices.slipopinion.processor", "com.github.karlnicholas.opinionservices.opinionview.controller"})
+@SpringBootApplication(scanBasePackages = {
+	"com.github.karlnicholas.legalservices.opinionview.service", 
+	"com.github.karlnicholas.legalservices.slipopinion.processor", 
+	"com.github.karlnicholas.legalservices.opinionview.controller"
+})
 @EnableScheduling
 @EnableAsync
 @EnableConfigurationProperties(KakfaProperties.class)
@@ -32,12 +36,12 @@ public class SlipOpinionProcessor {
 	@Autowired TaskExecutor taskExecutor;
 	@Autowired ObjectMapper objectMapper;
 	@Autowired KakfaProperties kakfaProperties;
-	@Autowired OpinionViewCache opinionViewCache;
+	@Autowired OpinionViewData opinionViewData;
 	
 	@EventListener(ApplicationReadyEvent.class)
 	public void doSomethingAfterStartup() throws SQLException {
 
-		taskExecutor.execute(new OpinionViewCacheComponent(kakfaProperties, opinionViewCache));
+		taskExecutor.execute(new OpinionViewCacheComponent(kakfaProperties, opinionViewData));
 
 		taskExecutor.execute(new OpinionViewBuildComponent(objectMapper, kakfaProperties));
 		taskExecutor.execute(new OpinionViewBuildComponent(objectMapper, kakfaProperties));

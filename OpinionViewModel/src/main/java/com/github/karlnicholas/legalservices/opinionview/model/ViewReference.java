@@ -1,4 +1,4 @@
-package com.github.karlnicholas.legalservices.opinionview.view;
+package com.github.karlnicholas.legalservices.opinionview.model;
 
 import java.io.Serializable;
 import java.util.List;

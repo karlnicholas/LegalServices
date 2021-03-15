@@ -22,8 +22,8 @@ import com.github.karlnicholas.legalservices.opinion.model.OpinionKey;
 import com.github.karlnicholas.legalservices.opinion.parser.ScrapedOpinionDocument;
 import com.github.karlnicholas.legalservices.opinion.service.OpinionsService;
 import com.github.karlnicholas.legalservices.opinion.service.client.OpinionServiceClientImpl;
-import com.github.karlnicholas.legalservices.opinionview.view.OpinionView;
-import com.github.karlnicholas.legalservices.opinionview.view.OpinionViewBuilder;
+import com.github.karlnicholas.legalservices.opinionview.model.OpinionView;
+import com.github.karlnicholas.legalservices.opinionview.model.OpinionViewBuilder;
 import com.github.karlnicholas.legalservices.slipopinion.model.SlipOpinion;
 import com.github.karlnicholas.legalservices.slipopinion.parser.OpinionScraperInterface;
 import com.github.karlnicholas.legalservices.slipopinion.parser.SlipOpinionDocumentParser;
@@ -58,6 +58,9 @@ public class TestParseAndView implements ApplicationRunner {
 		OpinionScraperInterface caseScraper = new TestCAParseSlipDetails(false);
 
  		List<SlipOpinion> onlineOpinions = caseScraper.getCaseList();
+// 		onlineOpinions.forEach(so->System.out.println(so.getOpinionDate()+","));
+ 		SlipOpinion slipOpinionP = onlineOpinions.get(0);
+		parseAndPrintOpinion(opinionsService, opinionViewBuilder, arrayStatutesTitles, caseScraper, slipOpinionP);
 // 		for ( SlipOpinion slipOpinion: onlineOpinions) {
 // 			parseAndPrintOpinion(opinionsService, opinionViewBuilder, arrayStatutesTitles, caseScraper, slipOpinion);
 // 		}

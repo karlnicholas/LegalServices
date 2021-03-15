@@ -1,6 +1,5 @@
-package com.github.karlnicholas.legalservices.opinionview.ejb.util;
+package com.github.karlnicholas.legalservices.statute.service;
 
-import com.github.karlnicholas.legalservices.statute.service.StatuteService;
 import com.github.karlnicholas.legalservices.statute.service.client.StatuteServiceClientImpl;
 
 public class StatutesServiceFactory {

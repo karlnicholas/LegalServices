@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Bean;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
-@SpringBootApplication(scanBasePackages = {"opinionsrestca", "opca"})
+@SpringBootApplication(scanBasePackages = {"com.github.karlnicholas.legalservices.opinionrestca", "opca"})
 public class OpinionsRestCaApplication {
 
 	public static void main(String[] args) {
