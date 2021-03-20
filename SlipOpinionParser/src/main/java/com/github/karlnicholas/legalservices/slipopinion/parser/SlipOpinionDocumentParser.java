@@ -68,7 +68,7 @@ if ( !statuteCitation.toString().equals("pen:245") ) {
 	continue;
 }
 */
-                StatuteCitation existingCitation = citationStore.findStatuteByStatute(statuteCitation);
+                StatuteCitation existingCitation = citationStore.statuteExists(statuteCitation);
                 if ( existingCitation != null ) {
                 	OpinionStatuteCitation osr = statuteCitation.getOpinionStatuteReference(opinionBase);
                 	existingCitation.incRefCount(opinionBase, osr.getCountReferences());
@@ -86,7 +86,7 @@ if ( !statuteCitation.toString().equals("pen:245") ) {
 //        ail3.getAndIncrement();
         for ( OpinionBase opinionReferredTo: opinions) {
         	// forever get rid of statutes without a referenced code.
-        	OpinionBase existingOpinion = citationStore.findOpinionByOpinion(opinionReferredTo);
+        	OpinionBase existingOpinion = citationStore.opinionCitationExists(opinionReferredTo);
             if ( existingOpinion != null ) {
             	existingOpinion.addReferringOpinion(opinionBase);
             	opinionReferredTo = existingOpinion;

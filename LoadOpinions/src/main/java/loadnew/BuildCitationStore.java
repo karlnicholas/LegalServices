@@ -1,11 +1,9 @@
-package load;
+package loadnew;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
-import org.jsoup.parser.Parser;
 import org.jsoup.select.Elements;
 
 import com.github.karlnicholas.legalservices.opinion.memorydb.CitationStore;
@@ -17,7 +15,7 @@ import com.github.karlnicholas.legalservices.opinion.parser.ParsedOpinionCitatio
 import com.github.karlnicholas.legalservices.opinion.parser.ScrapedOpinionDocument;
 import com.github.karlnicholas.legalservices.statute.api.IStatuteApi;
 
-import loadmodel.LoadOpinion;
+import loadmodelnew.LoadOpinionNew;
 
 /**
  * Create new OpinionSummaries from LoadOpinion types, add to citationStore.
@@ -27,11 +25,11 @@ import loadmodel.LoadOpinion;
  *
  */
 public class BuildCitationStore implements Runnable {
-	List<LoadOpinion> clOps;
+	List<LoadOpinionNew> clOps;
 	CitationStore citationStore;
 	private final OpinionDocumentsParser parser;
 
-	public BuildCitationStore(List<LoadOpinion> clOps, CitationStore persistence, IStatuteApi iStatutesApi) {
+	public BuildCitationStore(List<LoadOpinionNew> clOps, CitationStore persistence, IStatuteApi iStatutesApi) {
 		this.clOps = clOps;
 		this.citationStore = persistence;
 		parser = new OpinionDocumentsParser(iStatutesApi.getStatutesTitles());
@@ -43,9 +41,9 @@ public class BuildCitationStore implements Runnable {
 		int l = clOps.size();
 		int i;
 		for (i=0; i < l; ++i) {
-			LoadOpinion op = clOps.get(i);
-			Document lawBox = Parser.parse(op.getHtml_lawbox(), "");
-			Elements ps = lawBox.getElementsByTag("p");
+			LoadOpinionNew op = clOps.get(i);
+			Element opinionElement = op.getOpinionElement();
+			Elements ps = opinionElement.getElementsByTag("p");
 			List<String> paragraphs = new ArrayList<String>();
 			List<String> footnotes = new ArrayList<String>();
 
@@ -63,17 +61,33 @@ public class BuildCitationStore implements Runnable {
 					paragraphs.add(p.text());
 				}
 			}
-			String name = op.getCitation();
+			String citation = op.getCitation();
 			// if ( name != null && name.contains("Rptr.") ) name =
 			// op.getCitation();
-			if (name != null) {
+			if (citation != null) {
 				// name = name.toLowerCase().replace(". ",
 				// ".").replace("app.", "App.").replace("cal.",
 				// "Cal.").replace("supp.", "Supp.");
-				OpinionBase opinionBase = new OpinionBase(DTYPES.OPINIONBASE, new OpinionKey(name), op.getCaseName(), op.getDateFiled(), "");
+				
+				String[] citations = citation.split(",");
+				String finalCitation = citations[0];
+				if ( !OpinionKey.testValidOpinionKey(finalCitation)) { 
+					for ( int c = 1; c < citations.length; ++c) {
+						if ( OpinionKey.testValidOpinionKey(citations[c].trim())) {
+							finalCitation = citations[c].trim();
+							break;
+						}
+					}
+				}
+				if ( !OpinionKey.testValidOpinionKey(finalCitation)) {
+					System.out.println("Invalid citation " + citation);
+					continue;
+				}				
+				// deal with citation here
+				OpinionBase opinionBase = new OpinionBase(DTYPES.OPINIONBASE, new OpinionKey(finalCitation), op.getCaseName(), op.getDateFiled(), "");
 				//
 //				synchronized ( citationStore ) {
-//		        	OpinionBase existingOpinion = citationStore.findOpinionByOpinion(opinionBase);
+//		        	OpinionBase existingOpinion = citationStore.opinionExists(opinionBase);
 //		            if ( existingOpinion != null ) {
 //		            	opinionBase = existingOpinion;
 //		            }
@@ -86,13 +100,18 @@ public class BuildCitationStore implements Runnable {
 				// not efficient, but it works for loading
 				// if you are going to change it then watch for lower than the correct number of 
 				// opinions and statutes loaded
-				synchronized ( citationStore ) {
+//				synchronized ( citationStore ) {
 					ParsedOpinionCitationSet parserResults = parser.parseOpinionDocuments(parserDocument, opinionBase, citationStore);
-					// changes parserResults 
-					citationStore.mergeParsedDocumentCitations(opinionBase, parserResults);
-					citationStore.persistOpinion(opinionBase);
+		        	OpinionBase existingOpinion = citationStore.opinionExists(opinionBase);
+		            if ( existingOpinion != null ) {
+		            	System.out.println("Existing opinion: " + opinionBase);
+		            	System.out.println("                : " + existingOpinion);
+		            } else {
+						citationStore.persistOpinion(opinionBase);
+						citationStore.mergeParsedDocumentCitations(opinionBase, parserResults);
+		            }
 //					System.out.println( opinionSummary.fullPrint() );
-				}
+//				}
 			}
 		}
 	}

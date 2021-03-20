@@ -1,4 +1,4 @@
-package load;
+package loadnew;
 
 import java.sql.Connection;
 import java.util.ArrayList;
@@ -44,11 +44,7 @@ public class LoadHistoricalOpinions {}
 //
 //	    LoadCourtListenerCallback cb1 = new LoadCourtListenerCallback(citationStore, iStatutesApi);
 //	    LoadCourtListenerFiles file1 = new LoadCourtListenerFiles(cb1);
-//	    file1.loadFiles("c:/users/karln/downloads/calctapp-opinions.tar.gz", "c:/users/karln/downloads/calctapp-clusters.tar.gz", 1000);
-//
-//	    LoadCourtListenerCallback cb2 = new LoadCourtListenerCallback(citationStore, iStatutesApi);
-//	    LoadCourtListenerFiles file2 = new LoadCourtListenerFiles(cb2);
-//	    file2.loadFiles("c:/users/karln/downloads/cal-opinions.tar.gz", "c:/users/karln/downloads/cal-clusters.tar.gz", 1000);
+//	    file1.loadFiles("c:/users/karln/downloads/calctapp-opinions.tar.gz", 1000);
 //
 //	    System.out.println("O:" + citationStore.getAllOpinions().size());
 //	    System.out.println("S:" + citationStore.getAllStatutes().size());

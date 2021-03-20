@@ -50,9 +50,9 @@ public class OpinionKey implements Serializable, Comparable<OpinionKey> {
     	this.vset= vset;
     	this.page = page;
     }
-	public OpinionKey(String caseName) {
-        String[] parts = caseName.split("[ ]");
-        if ( parts.length != 3 ) throw new RuntimeException("Error parsing CaseCitationKey: " + caseName);
+	public OpinionKey(String citation) {
+        String[] parts = citation.split("[ ]");
+        if ( parts.length != 3 ) throw new IllegalArgumentException("Error parsing CaseCitationKey: " + citation);
         buildKey(parts[0], parts[1], parts[2]);
     }
     private void buildKey(String volume, String vset, String page) {
@@ -62,7 +62,27 @@ public class OpinionKey implements Serializable, Comparable<OpinionKey> {
         for ( int i=0; i<appellateSets.length; ++i ) {
             if ( appellateSets[i].equalsIgnoreCase(set)) return i;
         }
-        throw new RuntimeException("Error parsing CaseCitationKey: No set found: " + set);
+        throw new IllegalArgumentException("Error parsing CaseCitationKey: No set found: " + set);
+    }
+    public static boolean testValidOpinionKey(String citation) {
+        String[] parts = citation.split("[ ]");
+        if ( parts.length != 3 ) return false;
+        return testBuildKey(parts[0], parts[1], parts[2]);
+    }
+    private static boolean testBuildKey(String volume, String vset, String page) {
+    	for ( int i=0 ; i < volume.length(); ++i ) {
+    		if ( !Character.isDigit(volume.charAt(i))) return false;
+    	}
+    	for ( int i=0 ; i < page.length(); ++i ) {
+    		if ( !Character.isDigit(page.charAt(i))) return false;
+    	}
+    	return testSetPosition(vset);
+    }
+    private static boolean testSetPosition(String set) {
+        for ( int i=0; i<appellateSets.length; ++i ) {
+            if ( appellateSets[i].equalsIgnoreCase(set)) return true;
+        }
+        return false;
     }
 /*    
     public int getVolume() {
@@ -78,9 +98,12 @@ public class OpinionKey implements Serializable, Comparable<OpinionKey> {
 
     @Override
     public int compareTo(OpinionKey o) {
-    	if ( page != o.page ) return page - o.page;
+//    	if ( page != o.page ) return page - o.page;
+//    	if ( volume != o.volume ) return volume - o.volume;
+//    	return vset - o.vset;
+    	if ( vset != o.vset ) return vset - o.vset;
     	if ( volume != o.volume ) return volume - o.volume;
-    	return vset - o.vset;
+    	return page - o.page;
     }
 
     @Override

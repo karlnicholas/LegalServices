@@ -336,11 +336,33 @@ public class OpinionDocumentParser {
             }
         }
 
-        offsets = searchForCases(sentence);
+        String caseSentence = sentence
+        		.replace("cal. 2d", "cal.2d")
+        		.replace("cal. 3d", "cal.3d")
+        		.replace("cal. 4th", "cal.4th")
+        		.replace("cal.app. 2d", "cal.app.2d")
+        		.replace("cal.app. 3d", "cal.app.3d")
+        		.replace("cal.app. 4th", "cal.app.4th")
+        		.replace("cal.app. 5th", "cal.app.5th")
+        		.replace("cal.app. 6th", "cal.app.6th")
+        		.replace("cal.app. 7th", "cal.app.7th")
+        		.replace("cal. app. 2d", "cal.app.2d")
+        		.replace("cal. app. 3d", "cal.app.3d")
+        		.replace("cal. app. 4th", "cal.app.4th")
+        		.replace("cal. app. 5th", "cal.app.5th")
+        		.replace("cal. app. 6th", "cal.app.6th")
+        		.replace("cal. app. 7th", "cal.app.7th")
+				.replace("cal.app.2d supp.", "cal.app.supp.2d")
+				.replace("cal.app.3d supp.", "cal.app.supp.3d")
+				.replace("cal.app.4th supp.", "cal.app.supp.4th")
+				.replace("cal.app.5th supp.", "cal.app.supp.5th")
+				.replace("cal.app.6th supp.", "cal.app.supp.6th")
+				.replace("cal.app.7th supp.", "cal.app.supp.7th");
+        offsets = searchForCases(caseSentence);
 		oi = offsets.iterator();
 		while ( oi.hasNext() ) {
 			int offset = oi.next().intValue();
-			OpinionBase opinion = parseCase(opinionBase, offset, sentence);
+			OpinionBase opinion = parseCase(opinionBase, offset, caseSentence);
 			if ( opinion != null ) {
 //if ( sentWrit != null ) sentWrit.println("---"+citation);
 				// add a referring OpinionBaseKey
@@ -411,12 +433,29 @@ public class OpinionDocumentParser {
     	if ( parts.length != 3 ) return null;
     	if ( parts[0].length() == 0 ) return null;
     	if ( parts[2].length() == 0 ) return null;
+    	// see if citation is to same opinionBase case
+    	OpinionBase citatedOpinion = null;
     	for ( String appellateSet: OpinionKey.appellateSets ) {
         	if ( parts[1].equalsIgnoreCase(appellateSet) ) {
-        		return new OpinionBase(DTYPES.OPINIONBASE, opinionBase, parts[0], parts[1], parts[2]);
+        		citatedOpinion = new OpinionBase(DTYPES.OPINIONBASE, opinionBase, parts[0], parts[1], parts[2]);
         	}
     	}
-        return null;
+    	if ( citatedOpinion != null ) {
+    		OpinionKey obok = opinionBase.getOpinionKey();
+    		OpinionKey cook = citatedOpinion.getOpinionKey();
+    		if ( obok.getVolume() < cook.getVolume() 
+    				&& obok.getVset() == cook.getVset()
+			) {
+    			citatedOpinion = null;
+    		}
+    		if ( obok.getVolume() == cook.getVolume() 
+    				&& obok.getVset() == cook.getVset() 
+    				&& obok.getPage() <= cook.getPage()
+			) {
+    			citatedOpinion = null;
+    		}
+    	}
+        return citatedOpinion;
     }
 
     // section or sections <-- plural
