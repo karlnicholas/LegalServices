@@ -65,6 +65,7 @@ public class LoadHistoricalOpinions {
 		System.out.println("OC:" + citationStore.getOpinionCitationTable().size());
 		System.out.println("S:" + citationStore.getStatuteTable().size());
 		System.out.println("SR:" + citationStore.getStatuteTable().stream().mapToInt(oc->oc.getReferringOpinions().size()).sum());
+		System.out.println("SC:" + citationStore.getOpinionTable().stream().mapToInt(ob->ob.getStatuteCitations().size()).sum());
 		
 		Set<OpinionBase> goodReferences = new TreeSet<>();
 		for ( OpinionBase o: citationStore.getOpinionTable() ) {
@@ -169,6 +170,7 @@ public class LoadHistoricalOpinions {
 		System.out.println("OC:" + citationStore.getOpinionCitationTable().size());
 		System.out.println("S:" + citationStore.getStatuteTable().size());
 		System.out.println("SR:" + citationStore.getStatuteTable().stream().mapToInt(oc->oc.getReferringOpinions().size()).sum());
+		System.out.println("SC:" + citationStore.getOpinionTable().stream().mapToInt(ob->ob.getStatuteCitations().size()).sum());
 		
 		try ( BufferedWriter bw = Files.newBufferedWriter(Paths.get("c:/users/karln/downloads/opcitations.txt"), StandardOpenOption.CREATE)) {
 			citationStore.getOpinionTable().forEach(op->{
