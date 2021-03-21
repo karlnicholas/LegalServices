@@ -82,21 +82,22 @@ public class StatuteCitation implements Comparable<StatuteCitation>, Serializabl
      * the referring opinions in ..
      * @param statute citation
      */
-	public void mergeStatuteCitationFromSlipLoad(StatuteCitation statute) {
-    	Iterator<OpinionStatuteCitation> refOpIt = statute.referringOpinions.iterator();
-    	while (refOpIt.hasNext()) {
-    		OpinionStatuteCitation opinionStatuteReference = refOpIt.next();
-    		// test for error condition
-    		if ( referringOpinions.contains(opinionStatuteReference) ) {
-				throw new RuntimeException("Cannot merge: key exists " + opinionStatuteReference);
-    		}
-    		// replace existing statuteCitation with the this one b/c it was loaded from the database
-    		// and is being used to replace the statute one found in a new SlipOpinion
-    		opinionStatuteReference.setStatuteCitation(this);
-    		referringOpinions.add(opinionStatuteReference);
-    	}
-	}
+//	public void mergeStatuteCitationFromSlipLoad(StatuteCitation statute) {
+//    	Iterator<OpinionStatuteCitation> refOpIt = statute.referringOpinions.iterator();
+//    	while (refOpIt.hasNext()) {
+//    		OpinionStatuteCitation opinionStatuteReference = refOpIt.next();
+//    		// test for error condition
+//    		if ( referringOpinions.contains(opinionStatuteReference) ) {
+//				throw new RuntimeException("Cannot merge: key exists " + opinionStatuteReference);
+//    		}
+//    		// replace existing statuteCitation with the this one b/c it was loaded from the database
+//    		// and is being used to replace the statute one found in a new SlipOpinion
+//    		opinionStatuteReference.setStatuteCitation(this);
+//    		referringOpinions.add(opinionStatuteReference);
+//    	}
+//	}
 	public void addOpinionCitation(OpinionStatuteCitation opinionStatuteCitation) {
+		referringOpinions.add(opinionStatuteCitation);
 	}
 	public StatuteKey getStatuteKey() {
         return statuteKey;

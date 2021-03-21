@@ -324,8 +324,8 @@ public class OpinionBase implements Comparable<OpinionBase>, Serializable {
 //	        }
 //        }
 //	}
-	
-//	public void mergeCourtRepublishedOpinion(OpinionBase opinionBase, ParsedOpinionCitationSet parserResults, CitationStore citationStore ) {
+//	
+//	public void mergeCourtRepublishedOpinion(OpinionBase opinionBase) {
 //        if ( title == null ) title = opinionBase.title;
 //        if ( opinionDate == null ) opinionDate = opinionBase.opinionDate;
 //		copyNewOpinions(opinionBase);
@@ -334,8 +334,6 @@ public class OpinionBase implements Comparable<OpinionBase>, Serializable {
 //        	if ( statuteCitations == null ) 
 //        		statuteCitations = new TreeSet<OpinionStatuteCitation>();
 //	        for ( OpinionStatuteCitation addStatuteCitation: opinionBase.getStatuteCitations() ) {
-//            	if ( addStatuteCitation.getStatuteCitation().getStatuteKey().getLawCode() == null ) 
-//            		continue;
 //	            if ( !statuteCitations.contains(addStatuteCitation) ) {
 //	            	statuteCitations.add(addStatuteCitation);
 //	            } else {

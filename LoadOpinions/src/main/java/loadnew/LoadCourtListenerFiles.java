@@ -44,9 +44,6 @@ public class LoadCourtListenerFiles {
 						.replace("Cal.App.5th Supp.", "Cal.App.Supp.5th")
 						.replace("Cal.App.6th Supp.", "Cal.App.Supp.6th")
 						.replace("Cal.App.7th Supp.", "Cal.App.Supp.7th");
-				if ( citation.equals("26 Cal.4th 236")) {
-					System.out.println("n = " + n);
-				}
 				LoadOpinionNew loadOpinionNew = new LoadOpinionNew(Long.valueOf(total++), caseName, citation, o);
 				loadOpinions.add(loadOpinionNew);
 				if ( loadOpinions.size() >= loadOpinionNewsPerCallback) {

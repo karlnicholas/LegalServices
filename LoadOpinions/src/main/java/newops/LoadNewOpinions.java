@@ -3,7 +3,6 @@ package newops;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
@@ -23,7 +22,8 @@ import org.jsoup.nodes.Element;
 
 import com.github.karlnicholas.legalservices.opinion.memorydb.CitationStore;
 import com.github.karlnicholas.legalservices.opinion.model.OpinionBase;
-import com.github.karlnicholas.legalservices.statute.api.IStatuteApi;
+import com.github.karlnicholas.legalservices.opinion.model.OpinionStatuteCitation;
+import com.github.karlnicholas.legalservices.opinion.model.StatuteCitation;
 import com.github.karlnicholas.legalservices.statuteca.statuteapi.CAStatuteApiImpl;
 
 import loadnew.LoadCourtListenerCallback;
@@ -33,28 +33,38 @@ public class LoadNewOpinions {
 
 	public static void main(String[] args) throws Exception {
 		CitationStore citationStore = CitationStore.getInstance(); 
-	    IStatuteApi iStatutesApi = new CAStatuteApiImpl();
-	    iStatutesApi.loadStatutes();
+//	    IStatuteApi iStatutesApi = new CAStatuteApiImpl();
+//	    iStatutesApi.loadStatutes();
 
-	    LoadCourtListenerCallback cb1 = new LoadCourtListenerCallback(citationStore, iStatutesApi);
+	    LoadCourtListenerCallback cb1 = new LoadCourtListenerCallback(citationStore, new CAStatuteApiImpl().getStatutesTitles());
 	    LoadCourtListenerFiles file1 = new LoadCourtListenerFiles(cb1);
 
-//	    file1.loadFiles("c:/users/karln/downloads/justia/casesCal.2d.zip", 1000);
-//	    file1.loadFiles("c:/users/karln/downloads/justia/casesCal.3d.zip", 1000);
+	    file1.loadFiles("c:/users/karln/downloads/justia/casesCal.2d.zip", 1000);
+	    file1.loadFiles("c:/users/karln/downloads/justia/casesCal.3d.zip", 1000);
 	    file1.loadFiles("c:/users/karln/downloads/justia/casesCal.4th.zip", 1000);
-//	    file1.loadFiles("c:/users/karln/downloads/justia/casesCal.App.2d.zip", 1000);
-//	    file1.loadFiles("c:/users/karln/downloads/justia/casesCal.App.3d.zip", 1000);
-//	    file1.loadFiles("c:/users/karln/downloads/justia/casesCal.App.4th.zip", 1000);
+	    file1.loadFiles("c:/users/karln/downloads/justia/casesCal.App.2d.zip", 1000);
+	    file1.loadFiles("c:/users/karln/downloads/justia/casesCal.App.3d.zip", 1000);
+	    file1.loadFiles("c:/users/karln/downloads/justia/casesCal.App.4th.zip", 1000);
 		
 	    System.out.println("O:" + citationStore.getOpinionTable().size());
 	    System.out.println("OC:" + citationStore.getOpinionCitationTable().size());
 	    System.out.println("S:" + citationStore.getStatuteTable().size());
-
+	    System.out.println("SR:" + citationStore.getStatuteTable().stream().mapToInt(oc->oc.getReferringOpinions().size()).sum());
+	    
+		Set<OpinionBase> goodReferences = new TreeSet<>();
 		for ( OpinionBase o: citationStore.getOpinionTable() ) {
-			if ( o.getOpinionKey().toString().equals("79 Cal.App.4th 719")) {
-				System.out.println(o);
+			if ( o.getReferringOpinions() != null )
+				goodReferences.addAll(o.getReferringOpinions());
+	    }
+		System.out.println("Unique referringOpinions count: " + goodReferences.size());
+
+		Set<OpinionBase> totalCitations = new TreeSet<>();
+		for ( OpinionBase o: citationStore.getOpinionTable() ) {
+			if ( o.getOpinionCitations() != null ) {
+				totalCitations.addAll(o.getOpinionCitations());
 			}
-		}
+	    }
+		System.out.println("Unique Citations count        : " + totalCitations.size());
 	    
 		Iterator<OpinionBase> pOpinionIterator = citationStore.getOpinionCitationTable().iterator();
     	while ( pOpinionIterator.hasNext() ) {
@@ -65,6 +75,9 @@ public class LoadNewOpinions {
             	// add citations where they don't already exist.
             	pOpinionIterator.remove();
             	existingOpinion.addAllReferringOpinions(opinionCitation.getReferringOpinions());
+            	if ( opinionCitation.getOpinionCitations() != null && opinionCitation.getOpinionCitations().size() > 0 ) {
+            		System.out.print('*');
+            	}
             }
     	}
 
@@ -81,11 +94,11 @@ public class LoadNewOpinions {
 				}
 			}
 	    }
-
 	    
-	    System.out.println("O:" + citationStore.getOpinionTable().size());
+	    System.out.println("\rO:" + citationStore.getOpinionTable().size());
 	    System.out.println("OC:" + citationStore.getOpinionCitationTable().size());
 	    System.out.println("S:" + citationStore.getStatuteTable().size());
+	    System.out.println("SR:" + citationStore.getStatuteTable().stream().mapToInt(oc->oc.getReferringOpinions().size()).sum());
 	    
 		try ( BufferedWriter bw = Files.newBufferedWriter(Paths.get("c:/users/karln/downloads/opcitations.txt"), StandardOpenOption.CREATE)) {
 	    	citationStore.getOpinionTable().forEach(op->{
@@ -99,29 +112,12 @@ public class LoadNewOpinions {
 	    	});
 	    }
 	     
-		Set<OpinionBase> goodReferences = new TreeSet<>();
+		goodReferences.clear();
 		for ( OpinionBase o: citationStore.getOpinionTable() ) {
 			if ( o.getReferringOpinions() != null )
 				goodReferences.addAll(o.getReferringOpinions());
 	    }
-		System.out.println("Good referringOpinion count: " + goodReferences.size());
-
-		Set<OpinionBase> badReferences = new TreeSet<>();
-		for ( OpinionBase o: citationStore.getOpinionCitationTable() ) {
-    		if ( Math.random() > .999 ) {
-    			System.out.println(o.getOpinionKey() + " : " + o.getReferringOpinions());
-    		}
-    		badReferences.addAll(o.getReferringOpinions());
-	    }
-		System.out.println("Bad referringOpinion count: " + badReferences.size());
-
-		Set<OpinionBase> totalCitations = new TreeSet<>();
-		for ( OpinionBase o: citationStore.getOpinionTable() ) {
-			if ( o.getOpinionCitations() != null ) {
-				totalCitations.addAll(o.getOpinionCitations());
-			}
-	    }
-		System.out.println("Unique Citations count: " + totalCitations.size());
+		System.out.println("Unique referringOpinions count: " + goodReferences.size());
 
 		totalCitations.clear();
 		for ( OpinionBase o: citationStore.getOpinionTable() ) {
@@ -129,17 +125,15 @@ public class LoadNewOpinions {
 				totalCitations.addAll(o.getOpinionCitations());
 			}
 	    }
-		System.out.println("Unique Citations count: " + totalCitations.size());
-
-		badReferences.clear();
+		System.out.println("Unique Citations count        : " + totalCitations.size());
+		
+		Set<OpinionBase> badCitations = new TreeSet<>();
 		for ( OpinionBase o: citationStore.getOpinionCitationTable() ) {
-    		if ( o.getReferringOpinions().size() > 0 ) {
-    			System.out.println(o.getOpinionKey() + " : " + o.getReferringOpinions());
-    			System.out.println("            :" + o.getReferringOpinions().iterator().next().getOpinionCitations());
-    		}
-    		badReferences.addAll(o.getReferringOpinions());
+			if ( o.getReferringOpinions() != null ) {
+				badCitations.addAll(o.getReferringOpinions());
+			}
 	    }
-		System.out.println("Bad referringOpinion count: " + badReferences.size());
+		System.out.println("Bad Citations count: " + badCitations.size());
 
 	}
 	

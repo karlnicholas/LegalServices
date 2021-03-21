@@ -7,6 +7,7 @@ import java.util.TreeSet;
 
 import com.github.karlnicholas.legalservices.opinion.parser.ParsedOpinionCitationSet;
 import com.github.karlnicholas.legalservices.opinion.model.OpinionBase;
+import com.github.karlnicholas.legalservices.opinion.model.OpinionStatuteCitation;
 import com.github.karlnicholas.legalservices.opinion.model.StatuteCitation;
 
 public class CitationStore {
@@ -127,8 +128,8 @@ public class CitationStore {
 //		}
 //		return list;
 //	}
-    public void mergeParsedDocumentCitations(OpinionBase opinionBase, ParsedOpinionCitationSet parsedOpinionResults) {
-    	Iterator<OpinionBase> pOpinionIterator = parsedOpinionResults.getOpinionTable().iterator();
+    public void mergeParsedDocumentCitations(OpinionBase opinionBase) {
+    	Iterator<OpinionBase> pOpinionIterator = opinionBase.getOpinionCitations().iterator();
     	while ( pOpinionIterator.hasNext() ) {
     		OpinionBase opinionCitation = pOpinionIterator.next(); 
         	// first look and see if the citation is a known "real" citation
@@ -147,15 +148,12 @@ public class CitationStore {
             }
     	}
 //TODO: WTF is all this about?    
-    	for ( StatuteCitation statute: parsedOpinionResults.getStatuteTable() ) {
-			StatuteCitation existingStatute = statuteExists(statute);
-    		if ( existingStatute == null ) {
-//    			OpinionStatuteCitation otherRef = statuteCitation.getOpinionStatuteReference(opinionBase);
-//    			if( otherRef != null ) {
-//        			existingStatute.incRefCount(opinionBase, otherRef.getCountReferences());
-//    			}
-//    		} else {
-    			statuteTable.add(statute);
+    	for ( OpinionStatuteCitation opinionStatuteCitation: opinionBase.getStatuteCitations() ) {
+			StatuteCitation existingStatuteCitation = statuteExists(opinionStatuteCitation.getStatuteCitation());
+    		if ( existingStatuteCitation != null ) {
+    			existingStatuteCitation.addOpinionCitation(opinionStatuteCitation);
+    		} else {
+    			statuteTable.add(opinionStatuteCitation.getStatuteCitation());
     		}
     	}
     }

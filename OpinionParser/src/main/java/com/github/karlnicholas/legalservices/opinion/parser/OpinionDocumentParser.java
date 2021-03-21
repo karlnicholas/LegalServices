@@ -25,12 +25,11 @@ public class OpinionDocumentParser {
     /*
      * Should be thread safe
      */
-    public ParsedOpinionCitationSet parseOpinionDocument(
+    public void parseOpinionDocument(
     	ScrapedOpinionDocument parserDocument, 
 		OpinionBase opinionBase
 	) {
     	String defaultCodeSection;
-    	ParsedOpinionCitationSet parserResults = new ParsedOpinionCitationSet();
         // this breaks it into sentences and paragraphs
     	// and stores them in singletons
 //        readOpinion( inputStream, paragraphs, footnotes );
@@ -60,7 +59,6 @@ public class OpinionDocumentParser {
         for ( StatuteCitation statuteCitation: statutes) {
         	// forever get rid of statutes without a referenced code.
         	if( statuteCitation.getStatuteKey().getLawCode() != null ) {
-    			parserResults.putStatuteCitation(statuteCitation);
     			goodStatutes.add(statuteCitation);
         	}
         }
@@ -71,16 +69,14 @@ public class OpinionDocumentParser {
 //        ail3.getAndIncrement();
         for ( OpinionBase opinionReferredTo: opinions) {
         	// forever get rid of statutes without a referenced code.
-			parserResults.putOpinionBase(opinionReferredTo);
+//			parserResults.putOpinionBase(opinionReferredTo);
 			goodOpinions.add(opinionReferredTo);
         }
         opinionBase.setOpinionCitations(goodOpinions);
-//        parserResults.putOpinionBase(opinionBase);
         
         // Sort according to sectionReferenced
 //        Collections.sort(sectionReferences);
         
-        return parserResults;
     }
 
     protected String analyzeDefaultCodes(

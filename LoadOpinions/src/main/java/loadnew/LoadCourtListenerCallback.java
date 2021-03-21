@@ -3,18 +3,18 @@ package loadnew;
 import java.util.List;
 
 import com.github.karlnicholas.legalservices.opinion.memorydb.CitationStore;
-import com.github.karlnicholas.legalservices.statute.api.IStatuteApi;
+import com.github.karlnicholas.legalservices.statute.StatutesTitles;
 
 import loadmodelnew.LoadOpinionNew;
 
 public class LoadCourtListenerCallback implements CourtListenerCallback {
 	private final CitationStore citationStore;
-	private final IStatuteApi iStatutesApi;
+	private final StatutesTitles[] statutesTitles;
 	
 
-	public LoadCourtListenerCallback(CitationStore citationStore, IStatuteApi iStatutesApi) {
+	public LoadCourtListenerCallback(CitationStore citationStore, StatutesTitles[] statutesTitles) {
 		this.citationStore = citationStore;
-		this.iStatutesApi = iStatutesApi;
+		this.statutesTitles = statutesTitles;
 	}
 
 	/* (non-Javadoc)
@@ -22,7 +22,7 @@ public class LoadCourtListenerCallback implements CourtListenerCallback {
 	 */
 	@Override
 	public void callBack(List<LoadOpinionNew> clOps) {
-		new BuildCitationStore(clOps, citationStore, iStatutesApi).run();
+		new BuildCitationStore(clOps, citationStore, statutesTitles).run();
 	}
 
 	@Override
