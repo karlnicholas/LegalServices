@@ -12,9 +12,10 @@ public class LoadOpinionNew {
 	private Element opinionElement;
 	//
     private String[] opinions_cited;
-    public LoadOpinionNew(Long id, String caseName, String citation, Element opinionElement) {
+    public LoadOpinionNew(Long id, String caseName, LocalDate dateFiled, String citation, Element opinionElement) {
     	this.id = id;
     	this.caseName = caseName;
+    	this.dateFiled = dateFiled;
     	this.citation = citation;
     	this.setOpinionElement(opinionElement);
 	}

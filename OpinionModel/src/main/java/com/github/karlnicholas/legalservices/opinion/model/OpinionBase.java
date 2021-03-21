@@ -135,6 +135,13 @@ public class OpinionBase implements Comparable<OpinionBase>, Serializable {
 	    	}
     	}
     }
+    public void removeOpinionStatuteCitation(OpinionStatuteCitation osc) {
+		if ( statuteCitations == null ) {
+			return;
+		}
+		statuteCitations.remove(osc);
+		osc.setCountReferences(osc.getCountReferences()-1);
+    }
 	public void addStatuteCitations(Collection<StatuteCitation> goodStatutes) {
 		if ( statuteCitations == null ) {
 			statuteCitations = new TreeSet<>();
@@ -369,11 +376,11 @@ public class OpinionBase implements Comparable<OpinionBase>, Serializable {
 	}
 	@Override
 	public String toString() {
-        return String.format("%1$s : %2$tm/%2$td/%2$ty : %3$S", getOpinionKey().toString(), getOpinionDate(), getTitle() );
+        return String.format("%1$s : %2$tm/%2$td/%2$ty : %3$s", getOpinionKey().toString(), getOpinionDate(), getTitle() );
     }
 	public String fullPrint() {
 		StringBuilder sb = new StringBuilder();
-		sb.append(String.format("%1$S : %2$tm/%2$td/%2$ty : %3$S", getOpinionKey().toString(), getOpinionDate(), getTitle() ));
+		sb.append(String.format("%1$s : %2$tm/%2$td/%2$ty : %3$s", getOpinionKey().toString(), getOpinionDate(), getTitle() ));
 		sb.append('\n');
 		sb.append("statuteCitations");
 		sb.append('\n');

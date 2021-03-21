@@ -20,6 +20,9 @@ import com.github.karlnicholas.legalservices.opinion.memorydb.CitationStore;
 import com.github.karlnicholas.legalservices.opinion.model.OpinionBase;
 import com.github.karlnicholas.legalservices.opinion.model.OpinionStatuteCitation;
 import com.github.karlnicholas.legalservices.opinion.model.StatuteCitation;
+import com.github.karlnicholas.legalservices.statute.SectionNumber;
+import com.github.karlnicholas.legalservices.statute.StatutesBaseClass;
+import com.github.karlnicholas.legalservices.statute.api.IStatuteApi;
 import com.github.karlnicholas.legalservices.statuteca.statuteapi.CAStatuteApiImpl;
 
 public class LoadHistoricalOpinions {
@@ -46,7 +49,9 @@ public class LoadHistoricalOpinions {
 
     public void initializeDB(Connection con) throws Exception {
 
-		LoadCourtListenerCallback cb1 = new LoadCourtListenerCallback(citationStore, new CAStatuteApiImpl().getStatutesTitles());
+    	IStatuteApi iStatuteApi = new CAStatuteApiImpl();
+		iStatuteApi.loadStatutes();
+		LoadCourtListenerCallback cb1 = new LoadCourtListenerCallback(citationStore, iStatuteApi.getStatutesTitles());
 		LoadCourtListenerFiles file1 = new LoadCourtListenerFiles(cb1);
 		
 		file1.loadFiles("c:/users/karln/downloads/justia/casesCal.2d.zip", 1000);
@@ -76,6 +81,22 @@ public class LoadHistoricalOpinions {
 		}
 		System.out.println("Unique Citations count        : " + totalCitations.size());
 		
+		
+		Iterator<StatuteCitation> pStatuteIterator = citationStore.getStatuteTable().iterator();
+		while ( pStatuteIterator.hasNext() ) {
+			StatuteCitation statuteCitation = pStatuteIterator.next();
+			StatutesBaseClass statuteRef = iStatuteApi.findReference(statuteCitation.getStatuteKey().getLawCode(), new SectionNumber(-1, statuteCitation.getStatuteKey().getSectionNumber()));
+			if ( statuteRef == null ) {
+				Iterator<OpinionStatuteCitation> scIter = statuteCitation.getReferringOpinions().iterator();
+				while ( scIter.hasNext() ) {
+					OpinionStatuteCitation osc = scIter.next();
+					osc.getOpinionBase().removeOpinionStatuteCitation(osc);
+					scIter.remove();
+				}
+				pStatuteIterator.remove();
+			}
+		}
+
 		Iterator<OpinionBase> pOpinionIterator = citationStore.getOpinionCitationTable().iterator();
 		while ( pOpinionIterator.hasNext() ) {
 			OpinionBase opinionCitation = pOpinionIterator.next(); 
@@ -130,6 +151,17 @@ public class LoadHistoricalOpinions {
 						osc.setStatuteCitation(bsc);
 					}
 				}
+			}
+		}
+
+		Iterator<OpinionBase> obIt = citationStore.getOpinionTable().iterator();
+		while (obIt.hasNext()) {
+			OpinionBase o = obIt.next();
+			if ( (o.getOpinionCitations() == null || o.getOpinionCitations().size() == 0)
+					&& (o.getStatuteCitations() == null || o.getStatuteCitations().size() == 0)
+					&& (o.getReferringOpinions()== null || o.getReferringOpinions().size() == 0)
+			) {
+				obIt.remove();
 			}
 		}
 
