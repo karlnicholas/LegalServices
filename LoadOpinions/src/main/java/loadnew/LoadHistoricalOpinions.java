@@ -1,8 +1,16 @@
 package loadnew;
 
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.sql.Connection;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 import com.github.karlnicholas.legalservices.opinion.crud.OpinionBaseCrud;
 import com.github.karlnicholas.legalservices.opinion.crud.OpinionBaseOpinionCitationsCrud;
@@ -10,100 +18,197 @@ import com.github.karlnicholas.legalservices.opinion.crud.OpinionStatuteCitation
 import com.github.karlnicholas.legalservices.opinion.crud.StatuteCitationCrud;
 import com.github.karlnicholas.legalservices.opinion.memorydb.CitationStore;
 import com.github.karlnicholas.legalservices.opinion.model.OpinionBase;
+import com.github.karlnicholas.legalservices.opinion.model.OpinionStatuteCitation;
 import com.github.karlnicholas.legalservices.opinion.model.StatuteCitation;
-import com.github.karlnicholas.legalservices.statute.api.IStatuteApi;
 import com.github.karlnicholas.legalservices.statuteca.statuteapi.CAStatuteApiImpl;
 
-public class LoadHistoricalOpinions {}
-//public class LoadHistoricalOpinions {
-////	private static Logger logger = Logger.getLogger(LoadHistoricalOpinions.class.getName());
-//	private final CitationStore citationStore;
-//	private final OpinionBaseCrud opinionBaseCrud;
-//	private final OpinionBaseOpinionCitationsCrud opinionBaseOpinionCitationsCrud;
-//	private final StatuteCitationCrud statuteCitationCrud;
-//	private final OpinionStatuteCitationCrud opinionStatuteCitationCrud;
-//
-//	public LoadHistoricalOpinions(
-//			OpinionBaseCrud opinionBaseCrud, 
-//    		OpinionBaseOpinionCitationsCrud opinionBaseOpinionCitationsCrud,
-//    		StatuteCitationCrud statuteCitationCrud,
-//    		OpinionStatuteCitationCrud opinionStatuteCitationCrud
-//	) {
-//		this.citationStore = CitationStore.getInstance(); 
-//		this.opinionBaseCrud = opinionBaseCrud; 
-//		this.opinionBaseOpinionCitationsCrud = opinionBaseOpinionCitationsCrud;
-//		this.statuteCitationCrud = statuteCitationCrud;
-//		this.opinionStatuteCitationCrud = opinionStatuteCitationCrud;
-//	}
-//
-//
-//    public void initializeDB(Connection con) throws Exception {
-//    	//
-//	    IStatuteApi iStatutesApi = new CAStatuteApiImpl();
-//	    iStatutesApi.loadStatutes();
-//
-//	    LoadCourtListenerCallback cb1 = new LoadCourtListenerCallback(citationStore, iStatutesApi);
-//	    LoadCourtListenerFiles file1 = new LoadCourtListenerFiles(cb1);
-//	    file1.loadFiles("c:/users/karln/downloads/calctapp-opinions.tar.gz", 1000);
-//
-//	    System.out.println("O:" + citationStore.getAllOpinions().size());
-//	    System.out.println("S:" + citationStore.getAllStatutes().size());
-//	     
-////	    for ( int i=0; i < file1.acs.size(); ++i) {
-////	    	if ( file1.acs.get(i).ait.get() - file1.acs.get(i).ail.get() != 0 ) {
-////	    	    System.out.println("file1:" + i + " : " + file1.acs.get(i).ait.get() + " : "+ file1.acs.get(i).ail.get() );
-////	    	    System.out.println("file1: ail2-3 " + file1.acs.get(i).ail2.get() + " " + + file1.acs.get(i).ail3.get());
-////	    	}
-////	    	if ( file1.acs.get(i).loopEnd+1 !=  file1.acs.get(i).ait.get() ) {
-////	    	    System.out.println("file1 le:" + file1.acs.get(i).loopEnd);
-////	    	}
-////	    }
-////	    for ( int i=0; i < file2.acs.size(); ++i) {
-////	    	if ( file2.acs.get(i).ait.get() - file2.acs.get(i).ail.get() != 0 ) {
-////	    	    System.out.println("file2:" + i + " : " + file2.acs.get(i).ait.get() + " : "+ file2.acs.get(i).ail.get() );
-////	    	    System.out.println("file2: ail2-3 " + file2.acs.get(i).ail2.get() + " " + + file2.acs.get(i).ail3.get());
-////	    	}
-////	    	if ( file2.acs.get(i).loopEnd+1 !=  file2.acs.get(i).ait.get() ) {
-////	    	    System.out.println("file2 le:" + file2.acs.get(i).loopEnd);
-////	    	}
-////	    }
-//	    int BATCH_SIZE = 1000;
-//	    List<OpinionBase> opinionBatch = new ArrayList<>(BATCH_SIZE);
-//	    int i=0;
-//	    for ( OpinionBase opinionBase: citationStore.getAllOpinions()) {
-//	    	opinionBatch.add(opinionBase);
-//	    	if ( ++i % BATCH_SIZE == 0 ) {
-//				opinionBaseCrud.insertBatch(opinionBatch, con);
-//				opinionBatch.clear();
-//	    	}
-//	    }
-//	    if ( opinionBatch.size() > 0 ) {
-//			opinionBaseCrud.insertBatch(opinionBatch, con);
-//			opinionBatch.clear();
-//	    }
-//
-//	    List<StatuteCitation> statuteBatch = new ArrayList<>(BATCH_SIZE);
-//	    i = 0;
-//		for(StatuteCitation statute: citationStore.getAllStatutes() ) {
-//    		statuteBatch.add(statute);
-//	    	if ( ++i % BATCH_SIZE == 0 ) {
-//	    		statuteCitationCrud.insertBatch(statuteBatch, con);
-//	    		statuteBatch.clear();
-//	    	}
-//    	}
-//	    if ( statuteBatch.size() > 0 ) {
-//	    	statuteCitationCrud.insertBatch(statuteBatch, con);
-//	    	statuteBatch.clear();
-//	    }
-//		
-//		for(OpinionBase opinion: citationStore.getAllOpinions() ) {
-//			opinionBaseOpinionCitationsCrud.insertBatch(opinion, con);
-//		}
-//
-//		for(OpinionBase opinion: citationStore.getAllOpinions() ) {
-//			opinionStatuteCitationCrud.insertBatch(opinion, con);
-//		}
-//   	
-//    }
-//
-//}
+public class LoadHistoricalOpinions {
+//	private static Logger logger = Logger.getLogger(LoadHistoricalOpinions.class.getName());
+	private final CitationStore citationStore;
+	private final OpinionBaseCrud opinionBaseCrud;
+	private final OpinionBaseOpinionCitationsCrud opinionBaseOpinionCitationsCrud;
+	private final StatuteCitationCrud statuteCitationCrud;
+	private final OpinionStatuteCitationCrud opinionStatuteCitationCrud;
+
+	public LoadHistoricalOpinions(
+			OpinionBaseCrud opinionBaseCrud, 
+    		OpinionBaseOpinionCitationsCrud opinionBaseOpinionCitationsCrud,
+    		StatuteCitationCrud statuteCitationCrud,
+    		OpinionStatuteCitationCrud opinionStatuteCitationCrud
+	) {
+		this.citationStore = CitationStore.getInstance(); 
+		this.opinionBaseCrud = opinionBaseCrud; 
+		this.opinionBaseOpinionCitationsCrud = opinionBaseOpinionCitationsCrud;
+		this.statuteCitationCrud = statuteCitationCrud;
+		this.opinionStatuteCitationCrud = opinionStatuteCitationCrud;
+	}
+
+
+    public void initializeDB(Connection con) throws Exception {
+
+		LoadCourtListenerCallback cb1 = new LoadCourtListenerCallback(citationStore, new CAStatuteApiImpl().getStatutesTitles());
+		LoadCourtListenerFiles file1 = new LoadCourtListenerFiles(cb1);
+		
+		file1.loadFiles("c:/users/karln/downloads/justia/casesCal.2d.zip", 1000);
+		file1.loadFiles("c:/users/karln/downloads/justia/casesCal.3d.zip", 1000);
+		file1.loadFiles("c:/users/karln/downloads/justia/casesCal.4th.zip", 1000);
+		file1.loadFiles("c:/users/karln/downloads/justia/casesCal.App.2d.zip", 1000);
+		file1.loadFiles("c:/users/karln/downloads/justia/casesCal.App.3d.zip", 1000);
+		file1.loadFiles("c:/users/karln/downloads/justia/casesCal.App.4th.zip", 1000);
+		
+		System.out.println("O:" + citationStore.getOpinionTable().size());
+		System.out.println("OC:" + citationStore.getOpinionCitationTable().size());
+		System.out.println("S:" + citationStore.getStatuteTable().size());
+		System.out.println("SR:" + citationStore.getStatuteTable().stream().mapToInt(oc->oc.getReferringOpinions().size()).sum());
+		
+		Set<OpinionBase> goodReferences = new TreeSet<>();
+		for ( OpinionBase o: citationStore.getOpinionTable() ) {
+			if ( o.getReferringOpinions() != null )
+				goodReferences.addAll(o.getReferringOpinions());
+		}
+		System.out.println("Unique referringOpinions count: " + goodReferences.size());
+		
+		Set<OpinionBase> totalCitations = new TreeSet<>();
+		for ( OpinionBase o: citationStore.getOpinionTable() ) {
+			if ( o.getOpinionCitations() != null ) {
+				totalCitations.addAll(o.getOpinionCitations());
+			}
+		}
+		System.out.println("Unique Citations count        : " + totalCitations.size());
+		
+		Iterator<OpinionBase> pOpinionIterator = citationStore.getOpinionCitationTable().iterator();
+		while ( pOpinionIterator.hasNext() ) {
+			OpinionBase opinionCitation = pOpinionIterator.next(); 
+			// first look and see if the citation is a known "real" citation
+			OpinionBase existingOpinion = citationStore.opinionExists(opinionCitation);
+		    if (  existingOpinion != null ) {
+		    	// add citations where they don't already exist.
+		    	pOpinionIterator.remove();
+		    	existingOpinion.addAllReferringOpinions(opinionCitation.getReferringOpinions());
+		    }
+		}
+		
+		for ( OpinionBase o: citationStore.getOpinionTable() ) {
+			if ( o.getOpinionCitations() != null ) {
+				Iterator<OpinionBase> ocIt = o.getOpinionCitations().iterator();
+				while ( ocIt.hasNext() ) {
+					OpinionBase oc = ocIt.next();
+					OpinionBase boc = citationStore.opinionCitationExists(oc);
+					if ( boc != null ) {
+						ocIt.remove();
+						boc.getReferringOpinions().remove(o);
+					}
+				}
+			}
+		}
+		
+		List<OpinionBase> opinionCitations = new ArrayList<>();
+		for ( OpinionBase o: citationStore.getOpinionTable() ) {
+			if ( o.getOpinionCitations() != null ) {
+				opinionCitations.clear();
+				Iterator<OpinionBase> ocIt = o.getOpinionCitations().iterator();
+				while ( ocIt.hasNext() ) {
+					OpinionBase oc = ocIt.next();
+					OpinionBase boc = citationStore.opinionExists(oc);
+					if ( boc == null ) {
+						System.out.println("Oh shit");
+					} else {
+						ocIt.remove();
+						opinionCitations.add(boc);
+					}
+				}
+				o.getOpinionCitations().addAll(opinionCitations);
+			}
+			if ( o.getStatuteCitations() != null ) {
+				Iterator<OpinionStatuteCitation> oscIt = o.getStatuteCitations().iterator();
+				while ( oscIt.hasNext() ) {
+					OpinionStatuteCitation osc = oscIt.next();
+					StatuteCitation bsc = citationStore.statuteExists(osc.getStatuteCitation());
+					if ( bsc == null ) {
+						System.out.println("Oh shit");
+					} else {
+						osc.setStatuteCitation(bsc);
+					}
+				}
+			}
+		}
+
+		System.out.println("\rO:" + citationStore.getOpinionTable().size());
+		System.out.println("OC:" + citationStore.getOpinionCitationTable().size());
+		System.out.println("S:" + citationStore.getStatuteTable().size());
+		System.out.println("SR:" + citationStore.getStatuteTable().stream().mapToInt(oc->oc.getReferringOpinions().size()).sum());
+		
+		try ( BufferedWriter bw = Files.newBufferedWriter(Paths.get("c:/users/karln/downloads/opcitations.txt"), StandardOpenOption.CREATE)) {
+			citationStore.getOpinionTable().forEach(op->{
+				try {
+					bw.write(op.getOpinionKey().toString());
+					bw.newLine();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}	
+			});
+		}
+		 
+		goodReferences.clear();
+		for ( OpinionBase o: citationStore.getOpinionTable() ) {
+			if ( o.getReferringOpinions() != null )
+				goodReferences.addAll(o.getReferringOpinions());
+		}
+		System.out.println("Unique referringOpinions count: " + goodReferences.size());
+		
+		totalCitations.clear();
+		for ( OpinionBase o: citationStore.getOpinionTable() ) {
+			if ( o.getOpinionCitations() != null ) {
+				totalCitations.addAll(o.getOpinionCitations());
+			}
+		}
+		System.out.println("Unique Citations count        : " + totalCitations.size());
+		
+		Set<OpinionBase> badCitations = new TreeSet<>();
+		for ( OpinionBase o: citationStore.getOpinionCitationTable() ) {
+			if ( o.getReferringOpinions() != null ) {
+				badCitations.addAll(o.getReferringOpinions());
+			}
+		}
+		System.out.println("Bad Citations count: " + badCitations.size());
+
+	    int BATCH_SIZE = 1000;
+	    List<OpinionBase> opinionBatch = new ArrayList<>(BATCH_SIZE);
+	    int i=0;
+	    for ( OpinionBase opinionBase: citationStore.getOpinionTable()) {
+	    	opinionBatch.add(opinionBase);
+	    	if ( ++i % BATCH_SIZE == 0 ) {
+				opinionBaseCrud.insertBatch(opinionBatch, con);
+				opinionBatch.clear();
+	    	}
+	    }
+	    if ( opinionBatch.size() > 0 ) {
+			opinionBaseCrud.insertBatch(opinionBatch, con);
+			opinionBatch.clear();
+	    }
+
+	    List<StatuteCitation> statuteBatch = new ArrayList<>(BATCH_SIZE);
+	    i = 0;
+		for(StatuteCitation statute: citationStore.getStatuteTable() ) {
+    		statuteBatch.add(statute);
+	    	if ( ++i % BATCH_SIZE == 0 ) {
+	    		statuteCitationCrud.insertBatch(statuteBatch, con);
+	    		statuteBatch.clear();
+	    	}
+    	}
+	    if ( statuteBatch.size() > 0 ) {
+	    	statuteCitationCrud.insertBatch(statuteBatch, con);
+	    	statuteBatch.clear();
+	    }
+		
+		for(OpinionBase opinion: citationStore.getOpinionTable() ) {
+			opinionBaseOpinionCitationsCrud.insertBatch(opinion, con);
+		}
+
+		for(OpinionBase opinion: citationStore.getOpinionTable() ) {
+			opinionStatuteCitationCrud.insertBatch(opinion, con);
+		}
+   	
+    }
+}
