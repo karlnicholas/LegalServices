@@ -31,7 +31,6 @@
 		<module>SlipOpinionDao</module>
 		<module>OpinionViewModel</module>
 		<module>OpinionViewDao</module>
-		<module>OpinionViewService</module>
 		<module>OpinionUserService</module>
 		<module>LoadOpinions</module>
 		<module>LoadSlipOpinions</module>
@@ -149,13 +148,6 @@
 			<dependency>
 				<groupId>com.github.karlnicholas.legalservices</groupId>
 				<artifactId>opinion-view-dao</artifactId>
-				<version>${project.version}</version>
-				<type>jar</type>
-				<scope>compile</scope>
-			</dependency>
-			<dependency>
-				<groupId>com.github.karlnicholas.legalservices</groupId>
-				<artifactId>opinion-view-service</artifactId>
 				<version>${project.version}</version>
 				<type>jar</type>
 				<scope>compile</scope>

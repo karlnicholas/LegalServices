@@ -28,7 +28,7 @@ export default class OpinionView extends React.Component {
 	}
 	citationDate(c) {
 		if ( c.opinionDate != null ) {
-			return ' (' + new Date(c.opinionDate).toLocaleDateString('en-US', { year: 'numeric'}) + ')';
+			return ' (' + new Date(c.opinionDate).toLocaleDateString('en-US', { year: 'numeric', timeZone: 'UTC'}) + ')';
 		}
 	}
 	opinionCases(cases){
@@ -71,7 +71,7 @@ export default class OpinionView extends React.Component {
 		return (
 	        <div className="opinion">
 		        <div className="ophead">
-		        <span className="ophead date">{new Date(this.props.opinion.opinionDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>
+		        <span className="ophead date">{new Date(this.props.opinion.opinionDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: 'UTC' })}</span>
 		        <span className="ophead title">{this.props.opinion.title}</span>
 		        <a className="ophead right" href={'http://www.courts.ca.gov/opinions/documents/' + this.props.opinion.fileName + '.PDF'}>{this.props.opinion.fileName}</a>
 		        </div>

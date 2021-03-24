@@ -6,7 +6,7 @@ export default class OpinionsDatesDropdown extends React.Component {
 	getDropdown() {
 		if ( this.props.dates.length > 0 ) {
 	  		return this.props.dates.map((date, index) => (
-  		          <Link key={index} className="dropdown-item" to={`/opinions/${date[1]}`}>{date[0]}</Link>
+  		          <Link key={index} className="dropdown-item" to={`/opinions/${date[0]}`}>{date[0]} - {date[1]}</Link>
 	  		      ))
 		} else {
 			return ( <a key={1} className="dropdown-item" href='/opinions'>Loading ...</a>); 

@@ -10,33 +10,16 @@ import OpinionsDatesDropdown from "./OpinionsDatesDropdown";
 
 export default class App extends React.Component {
 	state = {
-		status: false, 
 		dates: []
 	}
-	intervalID;
 	componentDidMount() {
 		this.getData();
 	}
-    componentWillUnmount() {
-    	clearTimeout(this.intervalID);
-    }
     getData = () => {
-		http.get('/opinions/status').then(response => {
-			var status = Boolean(response.data);
-			if ( this.state.status !== status ) {
-				this.setState({
-					status: status
-				})
-			};
-			if (status) {
-				http.get('/opinions/dates').then(response => {
-					this.setState({
-						dates: response.data
-					});
-				});
-			} else {
-				this.intervalID = setTimeout(this.getData.bind(this), 1000);
-			}
+		http.get('/opinionviews/dates').then(response => {
+			this.setState({
+				dates: response.data
+			});
 		});
 	}
 	render() {
@@ -53,11 +36,11 @@ export default class App extends React.Component {
 		          <li className="nav-item active">
 		          <Link to="/" className="nav-link">Home<span className="sr-only">(current)</span></Link>
 		          </li>
-		          <OpinionsDatesDropdown status={this.state.status} dates={this.state.dates}/>
+		          <OpinionsDatesDropdown dates={this.state.dates}/>
 		          </ul>
 		      </div>
 		    </nav>
-	        <Route exact path="/" render={() => <Home status={this.state.status}/>}/>
+	        <Route exact path="/" render={() => <Home />}/>
 	        <Route exact path="/opinions/:startDate" component={Opinions} />
 	      </Router>
 	    </section>

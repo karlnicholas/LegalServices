@@ -9,7 +9,7 @@ export default class Opinions extends React.Component {
 	}
 	fetchOpinions(startDate) {
 		// Typical usage (don't forget to compare props):
-		return http.get('/opinions/opinions?startDate='+startDate)
+		return http.get('/opinionviews/cases/'+startDate)
 		.then(response => {
 			this.setState({opinions: response.data, startDate: startDate});
 		});

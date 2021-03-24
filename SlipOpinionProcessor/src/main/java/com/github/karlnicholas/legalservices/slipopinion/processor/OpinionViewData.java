@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -93,11 +94,21 @@ public class OpinionViewData {
 		return (firstDay.compareTo(date) <= 0 && lastDay.compareTo(date) > 0);
 	}
 
-	public List<OpinionView> getOpinionViews(LocalDate startDate, LocalDate endDate) {
-		return opinionViews.stream()
-				.filter(ov->ov.getOpinionDate().compareTo(startDate) >= 0 && ov.getOpinionDate().compareTo(endDate) <= 0)
-				.sorted((ov1, ov2)->ov2.getOpinionDate().compareTo(ov1.getOpinionDate()))
-				.collect(Collectors.toList());
+	private Optional<LocalDate[]> findDateBracket(LocalDate startDate) {
+		if (dateBrackets == null || dateBrackets.isEmpty() ) 
+			return Optional.empty();
+		else {
+			return dateBrackets.stream().filter(db->db[0].compareTo(startDate) <= 0 && db[1].compareTo(startDate) >= 0).findAny();
+		}
+					
+	}
+	public List<OpinionView> getOpinionViews(LocalDate startDate) {
+		return findDateBracket(startDate).map(dates->{
+			return opinionViews.stream()
+			.filter(ov->ov.getOpinionDate().compareTo(dates[0]) >= 0 && ov.getOpinionDate().compareTo(dates[1]) <= 0)
+			.sorted((ov1, ov2)->ov2.getOpinionDate().compareTo(ov1.getOpinionDate()))
+			.collect(Collectors.toList());			
+		}).orElseGet(()->Collections.emptyList());
 	}
 	
 //	public void setStringDateList() {

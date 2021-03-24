@@ -23,11 +23,9 @@ public class OpinionViewControllerHandler {
 
 	public Mono<ServerResponse> getOpinionViews(ServerRequest request) {
 		try {
-			LocalDate startDate = request.queryParam("startDate").map(LocalDate::parse).orElseThrow(()->new IllegalArgumentException("startDate invalid or missing"));
-			LocalDate endDate = request.queryParam("endDate").map(LocalDate::parse).orElseThrow(()->new IllegalArgumentException("endDate invalid or missing"));
-//			String endDate = request.queryParam("endDate");
+			LocalDate startDate = LocalDate.parse(request.pathVariable("startDate"));
 			return ServerResponse.ok().contentType(MediaType.APPLICATION_JSON)
-					.bodyValue(opinionViewData.getOpinionViews(startDate, endDate));
+					.bodyValue(opinionViewData.getOpinionViews(startDate));
 		} catch ( IllegalArgumentException e) {
 			return ServerResponse.badRequest().bodyValue(e.getMessage());
 		} catch ( Exception e) {
