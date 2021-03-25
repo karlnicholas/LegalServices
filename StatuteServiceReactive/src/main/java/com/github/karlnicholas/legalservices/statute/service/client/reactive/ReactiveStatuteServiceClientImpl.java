@@ -14,6 +14,7 @@ import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import com.github.karlnicholas.legalservices.statute.service.reactive.ReactiveStatuteService;
+import com.gitub.karlnicholas.legalservices.statute.service.dto.StatutesRoots;
 import com.github.karlnicholas.legalservices.statute.StatuteKey;
 
 import reactor.core.publisher.Mono;
@@ -28,13 +29,13 @@ public class ReactiveStatuteServiceClientImpl implements ReactiveStatuteService 
 	}
 	
 	@Override
-	public Mono<ResponseEntity<List<StatutesRoot>>> getStatutesRoots() {
+	public Mono<ResponseEntity<StatutesRoots>> getStatutesRoots() {
 		return webClient
 				.get()
 				.uri(ReactiveStatuteService.STATUTES)
 				.accept(MediaType.APPLICATION_JSON)
 				.retrieve()
-				.toEntityList(StatutesRoot.class);
+				.toEntity(StatutesRoots.class);
 	}
 	
 	@Override
@@ -62,7 +63,7 @@ public class ReactiveStatuteServiceClientImpl implements ReactiveStatuteService 
 	}
 
 	@Override
-	public Mono<ResponseEntity<List<StatutesRoot>>> getStatutesAndHierarchies(List<StatuteKey> statuteKeys) {
+	public Mono<ResponseEntity<StatutesRoots>> getStatutesAndHierarchies(List<StatuteKey> statuteKeys) {
 		WebClient client3 = WebClient
 				  .builder()
 				    .baseUrl("http://localhost:8090")
@@ -84,7 +85,7 @@ public class ReactiveStatuteServiceClientImpl implements ReactiveStatuteService 
 				    .ifModifiedSince(ZonedDateTime.now())
 				  .retrieve();
 
-		return response1.toEntityList(StatutesRoot.class);
+		return response1.toEntity(StatutesRoots.class);
 		
 	}
 

@@ -173,6 +173,7 @@ public class StatutesRoot implements StatutesBaseClass, Serializable, Comparable
 	public int compareTo(StatutesRoot o) {
 		return this.title.compareTo(o.getTitle(false));
 	}
+	@JsonInclude
 	@Override
 	public String getPart() {
 		return null;
@@ -183,6 +184,7 @@ public class StatutesRoot implements StatutesBaseClass, Serializable, Comparable
 		// do nothing
 		
 	}
+	@JsonInclude
 	@Override
 	public String getPartNumber() {
 		return null;

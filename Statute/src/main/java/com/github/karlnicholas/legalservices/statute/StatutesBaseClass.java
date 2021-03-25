@@ -7,7 +7,7 @@ import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonTypeInfo.As;
 
-@JsonTypeInfo(use=JsonTypeInfo.Id.NAME, include=As.PROPERTY, property="@class" )
+@JsonTypeInfo(use=JsonTypeInfo.Id.NAME, include=As.PROPERTY, property="@class")
 @JsonSubTypes({
       @JsonSubTypes.Type(value=StatutesRoot.class, name="statutesRoot"),
       @JsonSubTypes.Type(value=StatutesNode.class, name="statutesNode"),

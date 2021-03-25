@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import reactor.core.publisher.Mono;
 import com.github.karlnicholas.legalservices.statute.StatutesRoot;
 import com.github.karlnicholas.legalservices.statute.StatutesTitles;
+import com.gitub.karlnicholas.legalservices.statute.service.dto.StatutesRoots;
 import com.github.karlnicholas.legalservices.statute.StatuteKey;
 
 public interface ReactiveStatuteService {
@@ -16,12 +17,12 @@ public interface ReactiveStatuteService {
 	String STATUTEHIERARCHY = "statutehierarchy";
 	String STATUTESANDHIERARCHIES = "statutesandhierarchies";
 
-	Mono<ResponseEntity<List<StatutesRoot>>> getStatutesRoots();
+	Mono<ResponseEntity<StatutesRoots>> getStatutesRoots();
 
 	Mono<ResponseEntity<StatutesTitles[]>> getStatutesTitles();
 
 	Mono<ResponseEntity<StatutesRoot>> getStatuteHierarchy(String fullFacet);
 
-	Mono<ResponseEntity<List<StatutesRoot>>> getStatutesAndHierarchies(List<StatuteKey> statuteKeys);
+	Mono<ResponseEntity<StatutesRoots>> getStatutesAndHierarchies(List<StatuteKey> statuteKeys);
 
 }

@@ -110,7 +110,7 @@ public class GSearch {
 			monoViewModel = reactiveStatutesService.getStatutesRoots()
 					.map(ResponseEntity::getBody)
 					.map(statutesRoots->{
-						for ( StatutesRoot statutesRoot: statutesRoots ) {
+						for ( StatutesRoot statutesRoot: statutesRoots.getStatuteRoots() ) {
 							StatuteEntry cEntry = new StatuteEntry(statutesRoot);
 							cEntry.setPathPart(false);
 					    	viewModel.getEntries().add( cEntry );

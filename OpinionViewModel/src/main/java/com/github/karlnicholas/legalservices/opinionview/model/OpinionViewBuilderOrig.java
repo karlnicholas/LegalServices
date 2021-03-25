@@ -54,7 +54,7 @@ public class OpinionViewBuilderOrig {
 		// Flux<KeyHierarchyPair> keyHierarchyPairs =
 		// statutesRs.getStatutesAndHierarchies(statuteKeyFlux);
 		//
-		List<StatutesRoot> statuteHierarchies = statutesService.getStatutesAndHierarchies(statuteKeys).getBody();
+		List<StatutesRoot> statuteHierarchies = statutesService.getStatutesAndHierarchies(statuteKeys).getBody().getStatuteRoots();
 		// set parents within hierarchy.
 		statuteHierarchies.forEach(statutesRoot->statutesRoot.rebuildParentReferences(statutesRoot));
 		List<StatuteView> statuteViews = new ArrayList<>();

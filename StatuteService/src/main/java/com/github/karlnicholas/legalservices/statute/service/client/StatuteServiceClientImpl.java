@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -18,6 +17,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import com.github.karlnicholas.legalservices.statute.service.StatuteService;
+import com.gitub.karlnicholas.legalservices.statute.service.dto.StatutesRoots;
 import com.github.karlnicholas.legalservices.statute.StatuteKey;
 import com.github.karlnicholas.legalservices.statute.StatutesRoot;
 import com.github.karlnicholas.legalservices.statute.StatutesTitles;
@@ -44,8 +44,8 @@ public class StatuteServiceClientImpl implements StatuteService {
 	}
 	
 	@Override
-	public ResponseEntity<List<StatutesRoot>> getStatutesRoots() {
-		return restTemplate.exchange(statutesURI, HttpMethod.GET, HttpEntity.EMPTY,  new ParameterizedTypeReference<List<StatutesRoot>>() {});
+	public ResponseEntity<StatutesRoots> getStatutesRoots() {
+		return restTemplate.exchange(statutesURI, HttpMethod.GET, HttpEntity.EMPTY,  StatutesRoots.class);
 	}
 	
 	@Override
@@ -64,14 +64,14 @@ public class StatuteServiceClientImpl implements StatuteService {
 
 
 	@Override
-	public ResponseEntity<List<StatutesRoot>> getStatutesAndHierarchies(List<StatuteKey> statuteKeys) {
+	public ResponseEntity<StatutesRoots> getStatutesAndHierarchies(List<StatuteKey> statuteKeys) {
 		// Set the Content-Type header
 		HttpHeaders requestHeaders = new HttpHeaders();
 		requestHeaders.setContentType(MediaType.APPLICATION_JSON);
 		requestHeaders.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
 		HttpEntity<List<StatuteKey>> requestEntity = new HttpEntity<>(statuteKeys, requestHeaders);
 
-		return restTemplate.exchange(statutesAndHierarchiesURI, HttpMethod.POST, requestEntity, new ParameterizedTypeReference<List<StatutesRoot>>() {});
+		return restTemplate.exchange(statutesAndHierarchiesURI, HttpMethod.POST, requestEntity, StatutesRoots.class);
 	}
 
 }

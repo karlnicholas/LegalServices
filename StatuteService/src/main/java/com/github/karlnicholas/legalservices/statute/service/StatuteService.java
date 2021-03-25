@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import com.github.karlnicholas.legalservices.statute.StatuteKey;
 import com.github.karlnicholas.legalservices.statute.StatutesRoot;
 import com.github.karlnicholas.legalservices.statute.StatutesTitles;
+import com.gitub.karlnicholas.legalservices.statute.service.dto.StatutesRoots;
 
 public interface StatuteService {
 
@@ -15,12 +16,12 @@ public interface StatuteService {
 	String STATUTEHIERARCHY = "statutehierarchy";
 	String STATUTESANDHIERARCHIES = "statutesandhierarchies";
 
-	ResponseEntity<List<StatutesRoot>> getStatutesRoots();
+	ResponseEntity<StatutesRoots> getStatutesRoots();
 
 	ResponseEntity<StatutesTitles[]> getStatutesTitles();
 
 	ResponseEntity<StatutesRoot> getStatuteHierarchy(String fullFacet);
 
-	ResponseEntity<List<StatutesRoot>> getStatutesAndHierarchies(List<StatuteKey> statuteKeys);
+	ResponseEntity<StatutesRoots> getStatutesAndHierarchies(List<StatuteKey> statuteKeys);
 
 }
