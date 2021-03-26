@@ -192,7 +192,10 @@ function loadPage() {
 	} else {
 		$("#search-frag").addClass("btn-light").removeClass("btn-primary");
 	}
-	$.getJSON( "http://localhost:8080" + urlPath, function( viewModel ) {
+	var context = window.location.pathname.substring(0, window.location.pathname.indexOf("/",2)); 
+	var apiUrl =window.location.protocol+"//"+ window.location.host +context+"/api";
+	console.log("context " + window.location.host);
+	$.getJSON( '/api' + urlPath, function( viewModel ) {
 	  var entries = viewModel.entries;
 	  var lis = [];
 	  lis.push("<li class='breadcrumb-item' id='' style='cursor:pointer;'>Home</li>");

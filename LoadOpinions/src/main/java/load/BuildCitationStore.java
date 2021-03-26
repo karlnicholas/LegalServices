@@ -12,8 +12,6 @@ import com.github.karlnicholas.legalservices.opinion.memorydb.CitationStore;
 import com.github.karlnicholas.legalservices.opinion.model.DTYPES;
 import com.github.karlnicholas.legalservices.opinion.model.OpinionBase;
 import com.github.karlnicholas.legalservices.opinion.model.OpinionKey;
-import com.github.karlnicholas.legalservices.opinion.parser.OpinionDocumentParser;
-import com.github.karlnicholas.legalservices.opinion.parser.ParsedOpinionCitationSet;
 import com.github.karlnicholas.legalservices.opinion.parser.ScrapedOpinionDocument;
 import com.github.karlnicholas.legalservices.statute.api.IStatuteApi;
 
@@ -29,12 +27,10 @@ import loadmodel.LoadOpinion;
 public class BuildCitationStore implements Runnable {
 	List<LoadOpinion> clOps;
 	CitationStore citationStore;
-	private final OpinionDocumentParser parser;
 
 	public BuildCitationStore(List<LoadOpinion> clOps, CitationStore persistence, IStatuteApi iStatutesApi) {
 		this.clOps = clOps;
 		this.citationStore = persistence;
-		parser = new OpinionDocumentParser(iStatutesApi.getStatutesTitles());
 	}
 
 	@Override

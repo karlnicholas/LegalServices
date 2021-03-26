@@ -1,4 +1,4 @@
-package gsearch;
+package com.github.karlnicholas.legalservices.gsearch;
 
 public class InMemoryRestTest {
 	/*

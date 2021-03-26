@@ -1,0 +1,1 @@
+{"version":3,"sources":["webpack:///./src/styles/index.scss"],"names":[],"mappings":"AAAA,KAAK,cAAc,uBAAuB,cAAc,qBAAqB,yBAAyB","file":"bundle.css","sourcesContent":["body{color:#6a5acd;font-family:sans-serif}div.row:hover{background:lightblue}li.breadcrumb-item:hover{background:lightblue}\n"],"sourceRoot":""}

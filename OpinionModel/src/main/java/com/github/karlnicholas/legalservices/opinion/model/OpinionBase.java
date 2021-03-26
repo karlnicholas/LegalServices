@@ -3,7 +3,6 @@ package com.github.karlnicholas.legalservices.opinion.model;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeSet;
 

@@ -1,21 +1,13 @@
-package gsearch;
+package com.github.karlnicholas.legalservices.gsearch;
 
-import static org.junit.Assert.*;
-
-import java.io.IOException;
-import java.nio.file.Paths;
 import java.util.logging.Logger;
 
 import org.junit.Test;
 
-import com.github.karlnicholas.legalservices.gsearch.GSearch;
-import com.github.karlnicholas.legalservices.gsearch.viewmodel.SectionText;
-import com.github.karlnicholas.legalservices.gsearch.viewmodel.ViewModel;
-
 public class CAAppTest {
 
 	Logger logger = Logger.getLogger(CAAppTest.class.getName());
-	private static final String emptyString = "";
+//	private static final String emptyString = "";
 
 	@Test
     public void testApp() throws Exception
@@ -200,12 +192,12 @@ public class CAAppTest {
 */        
     }
 
-    private void printviewModel(ViewModel viewModel) {
-    	
-    	logger.fine( "State = " + viewModel.getState() + ": Path = " + viewModel.getPath() + ": Term = " + viewModel.getTerm() + "\n" + 
-			"codeList = " + viewModel.getEntries() + "\n" ); // + 
-//			"sectionTextList = " + viewModel.sectionTextList + "\n" ); 
-    	    	
-    }
+//    private void printviewModel(ViewModel viewModel) {
+//    	
+//    	logger.fine( "State = " + viewModel.getState() + ": Path = " + viewModel.getPath() + ": Term = " + viewModel.getTerm() + "\n" + 
+//			"codeList = " + viewModel.getEntries() + "\n" ); // + 
+////			"sectionTextList = " + viewModel.sectionTextList + "\n" ); 
+//    	    	
+//    }
 }
 

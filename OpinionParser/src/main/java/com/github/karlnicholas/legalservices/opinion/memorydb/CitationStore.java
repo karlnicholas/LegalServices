@@ -1,11 +1,8 @@
 package com.github.karlnicholas.legalservices.opinion.memorydb;
 
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 import java.util.TreeSet;
 
-import com.github.karlnicholas.legalservices.opinion.parser.ParsedOpinionCitationSet;
 import com.github.karlnicholas.legalservices.opinion.model.OpinionBase;
 import com.github.karlnicholas.legalservices.opinion.model.OpinionStatuteCitation;
 import com.github.karlnicholas.legalservices.opinion.model.StatuteCitation;

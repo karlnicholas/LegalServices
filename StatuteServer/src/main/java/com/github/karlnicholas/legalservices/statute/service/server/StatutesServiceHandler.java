@@ -15,7 +15,7 @@ import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Mono;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.karlnicholas.legalservices.statute.SectionNumber;
+import com.github.karlnicholas.legalservices.statute.*;
 import com.github.karlnicholas.legalservices.statute.StatutesRoot;
 import com.github.karlnicholas.legalservices.statute.api.IStatuteApi;
 import com.gitub.karlnicholas.legalservices.statute.service.dto.StatutesRoots;
@@ -62,10 +62,10 @@ public class StatutesServiceHandler {
 					.filter(Optional::isPresent)
 					.map(Optional::get)
 					.map(iStatutesApi::getStatutesHierarchy)
-							.collect(Collectors.groupingBy(StatutesRoot::getLawCode, Collectors.reducing((sr1, sr2)->{
-								return (StatutesRoot)sr1.mergeReferenceStatute(sr2);
-							})))
-						.values().stream().map(Optional::get).collect(Collectors.toList());
+					.collect(Collectors.groupingBy(StatutesRoot::getLawCode, Collectors.reducing((sr1, sr2)->{
+							return (StatutesRoot)sr1.mergeReferenceStatute(sr2);
+						})))
+					.values().stream().map(Optional::get).collect(Collectors.toList());
 					return StatutesRoots.builder().statuteRoots(rv).build();
 				}), StatutesRoots.class);
 	}

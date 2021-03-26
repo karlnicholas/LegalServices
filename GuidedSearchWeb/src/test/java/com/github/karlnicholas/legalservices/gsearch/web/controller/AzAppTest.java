@@ -1,15 +1,5 @@
 package com.github.karlnicholas.legalservices.gsearch.web.controller;
 
-import static org.junit.Assert.*;
-
-import java.util.logging.Logger;
-
-import org.junit.Test;
-
-import com.github.karlnicholas.legalservices.gsearch.GSearch;
-import com.github.karlnicholas.legalservices.gsearch.viewmodel.SectionText;
-import com.github.karlnicholas.legalservices.gsearch.viewmodel.ViewModel;
-
 public class AzAppTest {
 /*
 	Logger logger = Logger.getLogger(AzAppTest.class.getName());
