@@ -1,2 +1,2 @@
 docker build . -t knicholas/gsw
-docker run -p 80:8080 --name guidesearchweb --network app-tier -m 128m -e statutesrsservice=http://statutesrestca:8090/ -d -v "//c/users/karln/opcastorage:/opcastorage" -d knicholas/gsw
+docker run -p 80:8080 --name guidesearchweb --network app-tier -m 160m -e statutesrsservice=http://statutesrestca:8090/ -d -v "//c/users/karln/opcastorage:/opcastorage" -d knicholas/gsw

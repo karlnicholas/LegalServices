@@ -4,4 +4,4 @@ VOLUME /CaliforniaStatutes
 ENV californiastatutesloc=/CaliforniaStatutes
 COPY target/*.jar app.jar
 EXPOSE 8090
-CMD [ "java", "-Xmx48m", "-XX:+UseContainerSupport", "-jar", "app.jar" ]
+CMD [ "java", "-XX:+UseContainerSupport", "-jar", "app.jar" ]

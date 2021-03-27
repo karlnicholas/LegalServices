@@ -2,38 +2,66 @@ package com.github.karlnicholas.legalservices.opinionrestca;
 
 import java.sql.SQLException;
 
+import javax.sql.DataSource;
+
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
-@SpringBootApplication(scanBasePackages = {"com.github.karlnicholas.legalservices.opinionrestca", "opca"})
+@SpringBootApplication(scanBasePackages = { "com.github.karlnicholas.legalservices.opinionrestca"})
+@ConfigurationProperties("com.github.karlnicholas.legalservices.opinionrestca")
+@Configuration
 public class OpinionsRestCaApplication {
+	@Value("${database-url:mysql://localhost:3306/}")
+    private String databaseUrl;
+	@Value("${database-name:op}")
+	private String databaseName;
+	@Value("${database-user:op}")
+	private String databaseUser;
+	@Value("${database-password:op}")
+	private String databasePassword;
+
+	@Value("${maximumPoolSize:10}")
+	private String maximumPoolSize;
+	@Value("${minimumIdle:2}")
+	private String minimumIdle;
+	@Value("${useServerPrepStmts:true}")
+	private String useServerPrepStmts;
+	@Value("${cachePrepStmts:true}")
+	private String cachePrepStmts;
+	@Value("${prepStmtCacheSize:256}")
+	private String prepStmtCacheSize;
+	@Value("${prepStmtCacheSqlLimit:2048}")
+	private String prepStmtCacheSqlLimit;
 
 	public static void main(String[] args) {
 		SpringApplication.run(OpinionsRestCaApplication.class, args);
 	}
-    private static HikariConfig config = new HikariConfig();
-    private static HikariDataSource ds;
 
-    static {
-        config.setJdbcUrl( "jdbc:mysql://localhost:3306/op" );
-        config.setUsername( "op" );
-        config.setPassword( "op" );
-        
-        config.addDataSourceProperty( "maximumPoolSize" , "10" );
-        config.addDataSourceProperty( "minimumIdle",  "2" );
-        config.addDataSourceProperty( "useServerPrepStmts", "true" );
-        config.addDataSourceProperty( "cachePrepStmts" , "true" );
-        config.addDataSourceProperty( "prepStmtCacheSize" , "256" );
-        config.addDataSourceProperty( "prepStmtCacheSqlLimit" , "2048" );
-        ds = new HikariDataSource( config );
-    }
+	@Bean
+	public DataSource getDataSource() throws SQLException {
+		HikariConfig config = new HikariConfig();
+		config.setJdbcUrl("jdbc:" + databaseUrl + databaseName);
+		config.setUsername(databaseUser);
+		config.setPassword(databasePassword);
 
-    @Bean
+		config.addDataSourceProperty("maximumPoolSize", maximumPoolSize);
+		config.addDataSourceProperty("minimumIdle", minimumIdle);
+		config.addDataSourceProperty("useServerPrepStmts", useServerPrepStmts);
+		config.addDataSourceProperty("cachePrepStmts", cachePrepStmts);
+		config.addDataSourceProperty("prepStmtCacheSize", prepStmtCacheSize);
+		config.addDataSourceProperty("prepStmtCacheSqlLimit", prepStmtCacheSqlLimit);
+		return new HikariDataSource(config);
+	}
+
+	@Bean
 	OpinionBaseDao getOPinionBaseDao() throws SQLException {
-		return new OpinionBaseDao(ds);
+		return new OpinionBaseDao(getDataSource());
 	}
 }
