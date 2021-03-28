@@ -1,0 +1,2 @@
+docker build . -t knicholas/sop
+docker run -p 8080:8080 --name slipopinionprocessor --network app-tier -m 160m -e kafka.ip-address=kafka -e kafka.port=9092 -e statutesrestca=http://statutesrestca:8090/ -e opinionrestca=http://opinionrestca:8091/ -d knicholas/sop

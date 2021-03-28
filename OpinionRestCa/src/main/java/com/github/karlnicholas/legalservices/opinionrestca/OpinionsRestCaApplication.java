@@ -7,7 +7,6 @@ import javax.sql.DataSource;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -15,7 +14,6 @@ import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
 @SpringBootApplication(scanBasePackages = { "com.github.karlnicholas.legalservices.opinionrestca"})
-@ConfigurationProperties("com.github.karlnicholas.legalservices.opinionrestca")
 @Configuration
 public class OpinionsRestCaApplication {
 	@Value("${database-url:mysql://localhost:3306/}")

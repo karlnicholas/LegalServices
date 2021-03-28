@@ -8,14 +8,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.event.EventListener;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -26,7 +22,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 })
 @EnableScheduling
 @EnableAsync
-@EnableConfigurationProperties(KakfaProperties.class)
 public class SlipOpinionProcessor {
 	Logger logger = LoggerFactory.getLogger(SlipOpinionProcessor.class);
 	public static void main(String... args) {
@@ -47,13 +42,13 @@ public class SlipOpinionProcessor {
 		taskExecutor.execute(new OpinionViewBuildComponent(objectMapper, kakfaProperties));
 		taskExecutor.execute(new OpinionViewBuildComponent(objectMapper, kakfaProperties));
 	}
-	@Bean
-	public WebMvcConfigurer configurer() {
-		return new WebMvcConfigurer() {
-			@Override
-			public void addCorsMappings(CorsRegistry registry) {
-				registry.addMapping("/**").allowedOrigins("http://localhost:3000");
-			}
-		};
-	}
+//	@Bean
+//	public WebMvcConfigurer configurer() {
+//		return new WebMvcConfigurer() {
+//			@Override
+//			public void addCorsMappings(CorsRegistry registry) {
+//				registry.addMapping("/**").allowedOrigins("http://localhost:3000");
+//			}
+//		};
+//	}
 }

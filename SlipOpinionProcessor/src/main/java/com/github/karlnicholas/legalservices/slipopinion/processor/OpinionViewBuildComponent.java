@@ -28,7 +28,6 @@ import com.github.karlnicholas.legalservices.opinion.model.OpinionKey;
 import com.github.karlnicholas.legalservices.opinion.parser.ScrapedOpinionDocument;
 import com.github.karlnicholas.legalservices.opinion.service.OpinionService;
 import com.github.karlnicholas.legalservices.opinion.service.OpinionServiceFactory;
-import com.github.karlnicholas.legalservices.opinion.service.client.OpinionServiceClientImpl;
 import com.github.karlnicholas.legalservices.opinionview.model.OpinionView;
 import com.github.karlnicholas.legalservices.opinionview.model.OpinionViewBuilder;
 import com.github.karlnicholas.legalservices.slipopinion.model.SlipOpinion;
@@ -38,7 +37,6 @@ import com.github.karlnicholas.legalservices.slipopinion.scraper.TestCAParseSlip
 import com.github.karlnicholas.legalservices.statute.StatutesTitles;
 import com.github.karlnicholas.legalservices.statute.service.StatuteService;
 import com.github.karlnicholas.legalservices.statute.service.StatutesServiceFactory;
-import com.github.karlnicholas.legalservices.statute.service.client.StatuteServiceClientImpl;
 
 import lombok.extern.slf4j.Slf4j;
 

@@ -1,24 +1,26 @@
 package com.github.karlnicholas.legalservices.slipopinion.processor;
 
-import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import lombok.Data;
 
-@ConfigurationProperties(prefix = "com.github.karlnicholas.opinionservices.kafka")
 @Data
+@Component
 public class KakfaProperties {
-    
-    private String ipAddress;
+	@Value("${kafka.ip-address:localhost}")
+	private String ipAddress;
+	@Value("${kafka.port:9092}")
     private int port;
-    private String slipOpinionsTopic;
-    private String opinionViewCacheTopic;
-    private String byteArrayKeySerializer;
-    private String jsonValueSerializer;
-    private String opinionViewValueSerializer;
-    private String byteArrayKeyDeserializer;
-    private String jsonValueDeserializer;
-    private String opinionViewValueDeserializer;
-    private String slipOpinionsConsumerGroup;
-    private String opinionViewCacheConsumerGroup;
+    private String slipOpinionsTopic = "slipopinions";
+    private String opinionViewCacheTopic = "opinionviewcache";
+    private String byteArrayKeySerializer = "org.apache.kafka.common.serialization.ByteArraySerializer";
+    private String jsonValueSerializer = "org.apache.kafka.connect.json.JsonSerializer";
+    private String opinionViewValueSerializer = "com.github.karlnicholas.legalservices.slipopinion.processor.OpinionViewSerializer";
+    private String byteArrayKeyDeserializer = "org.apache.kafka.common.serialization.ByteArrayDeserializer";
+    private String jsonValueDeserializer = "org.apache.kafka.connect.json.JsonDeserializer";
+    private String opinionViewValueDeserializer = "com.github.karlnicholas.legalservices.slipopinion.processor.OpinionViewDeserializer";
+    private String slipOpinionsConsumerGroup = "slipOpinionsConsumerGroup";
+    private String opinionViewCacheConsumerGroup = "opinionViewCacheConsumerGroup";
     // standard getters and setters
 }
