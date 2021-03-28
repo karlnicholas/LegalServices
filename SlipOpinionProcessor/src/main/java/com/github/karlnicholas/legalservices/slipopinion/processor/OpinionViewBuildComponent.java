@@ -26,7 +26,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.karlnicholas.legalservices.opinion.model.OpinionBase;
 import com.github.karlnicholas.legalservices.opinion.model.OpinionKey;
 import com.github.karlnicholas.legalservices.opinion.parser.ScrapedOpinionDocument;
-import com.github.karlnicholas.legalservices.opinion.service.OpinionsService;
+import com.github.karlnicholas.legalservices.opinion.service.OpinionService;
+import com.github.karlnicholas.legalservices.opinion.service.OpinionServiceFactory;
 import com.github.karlnicholas.legalservices.opinion.service.client.OpinionServiceClientImpl;
 import com.github.karlnicholas.legalservices.opinionview.model.OpinionView;
 import com.github.karlnicholas.legalservices.opinionview.model.OpinionViewBuilder;
@@ -36,6 +37,7 @@ import com.github.karlnicholas.legalservices.slipopinion.parser.SlipOpinionDocum
 import com.github.karlnicholas.legalservices.slipopinion.scraper.TestCAParseSlipDetails;
 import com.github.karlnicholas.legalservices.statute.StatutesTitles;
 import com.github.karlnicholas.legalservices.statute.service.StatuteService;
+import com.github.karlnicholas.legalservices.statute.service.StatutesServiceFactory;
 import com.github.karlnicholas.legalservices.statute.service.client.StatuteServiceClientImpl;
 
 import lombok.extern.slf4j.Slf4j;
@@ -49,7 +51,7 @@ public class OpinionViewBuildComponent implements Runnable {
 	private final Producer<String, OpinionView> producer;
 	private final ObjectMapper objectMapper;
 	private final StatuteService statutesService;
-	private final OpinionsService opinionsService;
+	private final OpinionService opinionService;
 	private final OpinionViewBuilder opinionViewBuilder;
 	private final StatutesTitles[] arrayStatutesTitles;
 	private final OpinionScraperInterface caseScraper;
@@ -59,8 +61,8 @@ public class OpinionViewBuildComponent implements Runnable {
 		this.objectMapper = objectMapper;
 		this.kafkaProperties = kafkaProperties; 
 		currentOffsets = new HashMap<>();
-		statutesService = new StatuteServiceClientImpl("http://localhost:8090/");
-		opinionsService = new OpinionServiceClientImpl("http://localhost:8091/");
+	    statutesService = StatutesServiceFactory.getStatutesServiceClient();
+	    opinionService = OpinionServiceFactory.getOpinionServiceClient();
 		opinionViewBuilder = new OpinionViewBuilder(statutesService);
 		arrayStatutesTitles = statutesService.getStatutesTitles().getBody();
 		caseScraper = new TestCAParseSlipDetails(false);
@@ -128,7 +130,7 @@ public class OpinionViewBuildComponent implements Runnable {
 				.map(OpinionBase::getOpinionKey)
 				.collect(Collectors.toList());
 		
-		List<OpinionBase> opinionsWithReferringOpinions = opinionsService.getOpinionsWithStatuteCitations(opinionKeys).getBody();
+		List<OpinionBase> opinionsWithReferringOpinions = opinionService.getOpinionsWithStatuteCitations(opinionKeys).getBody();
 
 		slipOpinion.getOpinionCitations().clear();
 		slipOpinion.getOpinionCitations().addAll(opinionsWithReferringOpinions);

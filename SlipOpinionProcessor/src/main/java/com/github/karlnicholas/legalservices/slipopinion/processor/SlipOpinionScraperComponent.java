@@ -23,13 +23,15 @@ import org.springframework.stereotype.Component;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.karlnicholas.legalservices.opinion.parser.ScrapedOpinionDocument;
-import com.github.karlnicholas.legalservices.opinion.service.OpinionsService;
+import com.github.karlnicholas.legalservices.opinion.service.OpinionService;
+import com.github.karlnicholas.legalservices.opinion.service.OpinionServiceFactory;
 import com.github.karlnicholas.legalservices.opinion.service.client.OpinionServiceClientImpl;
 import com.github.karlnicholas.legalservices.slipopinion.model.SlipOpinion;
 import com.github.karlnicholas.legalservices.slipopinion.parser.OpinionScraperInterface;
 import com.github.karlnicholas.legalservices.slipopinion.parser.SlipOpinionDocumentParser;
 import com.github.karlnicholas.legalservices.slipopinion.scraper.TestCAParseSlipDetails;
 import com.github.karlnicholas.legalservices.statute.service.StatuteService;
+import com.github.karlnicholas.legalservices.statute.service.StatutesServiceFactory;
 import com.github.karlnicholas.legalservices.statute.service.client.StatuteServiceClientImpl;
 
 @Component
@@ -43,15 +45,15 @@ public class SlipOpinionScraperComponent {
 	private final Producer<String, JsonNode> producer;
 	private final SlipOpinionDocumentParser opinionDocumentParser;
 	private final KakfaProperties kafkaProperties;
-	private final OpinionsService opinionsService;
+	private final OpinionService opinionService;
 
 	public SlipOpinionScraperComponent(ObjectMapper objectMapper, KakfaProperties kafkaProperties) {
 	    this.objectMapper = objectMapper;
 	    this.kafkaProperties = kafkaProperties;
 
 		caseScraper = new TestCAParseSlipDetails(false);
-	    StatuteService statutesService = new StatuteServiceClientImpl("http://localhost:8090/");
-	    opinionsService = new OpinionServiceClientImpl("http://localhost:8091/");
+	    StatuteService statutesService = StatutesServiceFactory.getStatutesServiceClient();
+	    opinionService = OpinionServiceFactory.getOpinionServiceClient();
 		opinionDocumentParser = new SlipOpinionDocumentParser(statutesService.getStatutesTitles().getBody());
 		
         //Configure the Producer
@@ -64,7 +66,7 @@ public class SlipOpinionScraperComponent {
 	}
 
 
-	@Scheduled(fixedRate = 5000)
+	@Scheduled(fixedRate = 60000)
 	public void reportCurrentTime() throws SQLException {
 		log.debug("The time is now {}", dateFormat.format(new Date()));
 
@@ -82,7 +84,7 @@ public class SlipOpinionScraperComponent {
 			sb.append(',');
 		});
 		// use the transaction manager in the database for a cheap job manager
-		ResponseEntity<String> response = opinionsService.callSlipOpinionUpdateNeeded();
+		ResponseEntity<String> response = opinionService.callSlipOpinionUpdateNeeded();
 		if ( response.getStatusCodeValue() != 200 ) {
 			log.error("opinionsService.callSlipOpinionUpdateNeeded() {}", response.getStatusCode());
 			return;
@@ -102,7 +104,7 @@ public class SlipOpinionScraperComponent {
 		List<String> newOpinions = new ArrayList<>(foundOpinions);
 		newOpinions.removeAll(savedOpinions);
 		if ( newOpinions.size() > 0 ) {
-			opinionsService.updateSlipOpinionList(sb.toString());
+			opinionService.updateSlipOpinionList(sb.toString());
 
 			List<SlipOpinion> lt = onlineOpinions
 					.stream()

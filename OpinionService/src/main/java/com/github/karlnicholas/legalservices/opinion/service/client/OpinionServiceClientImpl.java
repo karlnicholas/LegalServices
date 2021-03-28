@@ -14,12 +14,12 @@ import org.springframework.http.client.BufferingClientHttpRequestFactory;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
 
-import com.github.karlnicholas.legalservices.opinion.service.OpinionsService;
+import com.github.karlnicholas.legalservices.opinion.service.OpinionService;
 
 import com.github.karlnicholas.legalservices.opinion.model.OpinionBase;
 import com.github.karlnicholas.legalservices.opinion.model.OpinionKey;
 
-public class OpinionServiceClientImpl implements OpinionsService {
+public class OpinionServiceClientImpl implements OpinionService {
 	private final RestTemplate restTemplate;
 	private final URI opinionCitationsURI;
 	private final URI slipOpinionUpdateNeededURI;
@@ -33,9 +33,9 @@ public class OpinionServiceClientImpl implements OpinionsService {
 //		ris.add(ri);
 //		restTemplate.setInterceptors(ris);
 		restTemplate.setRequestFactory(new BufferingClientHttpRequestFactory(new SimpleClientHttpRequestFactory()));
-		opinionCitationsURI = URI.create(baseUrl + OpinionsService.OPINIONCITATIONS);
-		slipOpinionUpdateNeededURI = URI.create(baseUrl + OpinionsService.SLIPOPINIONUPDATENEEDED);
-		updateSlipOpinionListURI = URI.create(baseUrl + OpinionsService.UPDATESLIPOPINIONLIST);	
+		opinionCitationsURI = URI.create(baseUrl + OpinionService.OPINIONCITATIONS);
+		slipOpinionUpdateNeededURI = URI.create(baseUrl + OpinionService.SLIPOPINIONUPDATENEEDED);
+		updateSlipOpinionListURI = URI.create(baseUrl + OpinionService.UPDATESLIPOPINIONLIST);	
 	}
 	
 	@Override

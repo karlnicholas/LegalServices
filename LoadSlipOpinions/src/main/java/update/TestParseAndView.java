@@ -20,8 +20,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.github.karlnicholas.legalservices.opinion.model.OpinionBase;
 import com.github.karlnicholas.legalservices.opinion.model.OpinionKey;
 import com.github.karlnicholas.legalservices.opinion.parser.ScrapedOpinionDocument;
-import com.github.karlnicholas.legalservices.opinion.service.OpinionsService;
-import com.github.karlnicholas.legalservices.opinion.service.client.OpinionServiceClientImpl;
+import com.github.karlnicholas.legalservices.opinion.service.OpinionService;
+import com.github.karlnicholas.legalservices.opinion.service.OpinionServiceFactory;
 import com.github.karlnicholas.legalservices.opinionview.model.OpinionView;
 import com.github.karlnicholas.legalservices.opinionview.model.OpinionViewBuilder;
 import com.github.karlnicholas.legalservices.slipopinion.model.SlipOpinion;
@@ -30,7 +30,7 @@ import com.github.karlnicholas.legalservices.slipopinion.parser.SlipOpinionDocum
 import com.github.karlnicholas.legalservices.slipopinion.scraper.TestCAParseSlipDetails;
 import com.github.karlnicholas.legalservices.statute.StatutesTitles;
 import com.github.karlnicholas.legalservices.statute.service.StatuteService;
-import com.github.karlnicholas.legalservices.statute.service.client.StatuteServiceClientImpl;
+import com.github.karlnicholas.legalservices.statute.service.StatutesServiceFactory;
 import com.mysql.cj.jdbc.MysqlDataSource;
 
 @SpringBootApplication(scanBasePackages = {"opca", "update"})
@@ -44,8 +44,8 @@ public class TestParseAndView implements ApplicationRunner {
 	@Override
 	public void run(ApplicationArguments args) throws JsonProcessingException, SQLException {
 
-		StatuteService statutesService = new StatuteServiceClientImpl("http://localhost:8090/");
-		OpinionsService opinionsService = new OpinionServiceClientImpl("http://localhost:8091/");
+		StatuteService statutesService = StatutesServiceFactory.getStatutesServiceClient();
+		OpinionService opinionService = OpinionServiceFactory.getOpinionServiceClient();
 		OpinionViewBuilder opinionViewBuilder = new OpinionViewBuilder(statutesService);
 		StatutesTitles[] arrayStatutesTitles = statutesService.getStatutesTitles().getBody();
 		MysqlDataSource dataSource = new MysqlDataSource();
@@ -60,7 +60,7 @@ public class TestParseAndView implements ApplicationRunner {
  		List<SlipOpinion> onlineOpinions = caseScraper.getCaseList();
 // 		onlineOpinions.forEach(so->System.out.println(so.getOpinionDate()+","));
  		SlipOpinion slipOpinionP = onlineOpinions.get(0);
-		parseAndPrintOpinion(opinionsService, opinionViewBuilder, arrayStatutesTitles, caseScraper, slipOpinionP);
+		parseAndPrintOpinion(opinionService, opinionViewBuilder, arrayStatutesTitles, caseScraper, slipOpinionP);
 // 		for ( SlipOpinion slipOpinion: onlineOpinions) {
 // 			parseAndPrintOpinion(opinionsService, opinionViewBuilder, arrayStatutesTitles, caseScraper, slipOpinion);
 // 		}
@@ -78,7 +78,7 @@ public class TestParseAndView implements ApplicationRunner {
 			sb.append(',');
 		});
 		// use the transaction manager in the database for a cheap job manager
-		ResponseEntity<String> response = opinionsService.callSlipOpinionUpdateNeeded();
+		ResponseEntity<String> response = opinionService.callSlipOpinionUpdateNeeded();
 		if ( response.getStatusCodeValue() != 200 ) {
 			logger.error("opinionsService.callSlipOpinionUpdateNeeded() {}", response.getStatusCode());
 			return;
@@ -94,7 +94,7 @@ public class TestParseAndView implements ApplicationRunner {
 		List<String> newOpinions = new ArrayList<>(foundOpinions);
 		newOpinions.removeAll(savedOpinions);
 		if ( newOpinions.size() > 0 ) {
-			opinionsService.updateSlipOpinionList(sb.toString());
+			opinionService.updateSlipOpinionList(sb.toString());
 			List<SlipOpinion> lt = onlineOpinions
 					.stream()
 					.filter(slipOpinion->newOpinions.contains(slipOpinion.getFileName()))
@@ -163,7 +163,7 @@ public class TestParseAndView implements ApplicationRunner {
 //  JsonNode  jsonNode2 = objectMapper.valueToTree(aCase);
 //  System.out.println(jsonNode2);
 		
-	private OpinionView parseAndPrintOpinion(OpinionsService opinionsService, OpinionViewBuilder opinionViewBuilder,
+	private OpinionView parseAndPrintOpinion(OpinionService opinionService, OpinionViewBuilder opinionViewBuilder,
 			StatutesTitles[] arrayStatutesTitles, OpinionScraperInterface caseScraper, SlipOpinion slipOpinion) {
 		// no retries
 //		parseAndView.processCase(slipOpinion, caseScraper, arrayStatutesTitles);
@@ -181,7 +181,7 @@ public class TestParseAndView implements ApplicationRunner {
 				.map(OpinionBase::getOpinionKey)
 				.collect(Collectors.toList());
 		
-		List<OpinionBase> opinionsWithReferringOpinions = opinionsService.getOpinionsWithStatuteCitations(opinionKeys).getBody();
+		List<OpinionBase> opinionsWithReferringOpinions = opinionService.getOpinionsWithStatuteCitations(opinionKeys).getBody();
 
 		slipOpinion.getOpinionCitations().clear();
 		slipOpinion.getOpinionCitations().addAll(opinionsWithReferringOpinions);

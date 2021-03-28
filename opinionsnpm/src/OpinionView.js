@@ -18,7 +18,7 @@ export default class OpinionView extends React.Component {
 			        <div className="openstat srow" key={index}>
 			        <span className="casestar">{this.createImportance(section.importance)}</span>
 			        <span className="openstat code titlepath">{section.displayTitlePath}</span>
-			        <a href={'http://op-opca.b9ad.pro-us-east-1.openshiftapps.com/?path='+section.fullFacet}><span className="openstat code sections">{section.displaySections}</span></a>
+			        <a href={'http://gsw-opca.b9ad.pro-us-east-1.openshiftapps.com/?path='+section.fullFacet}><span className="openstat code sections">{section.displaySections}</span></a>
 					</div>
 				)
 			});

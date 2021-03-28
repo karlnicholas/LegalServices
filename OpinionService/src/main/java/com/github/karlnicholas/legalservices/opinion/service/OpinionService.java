@@ -7,7 +7,7 @@ import org.springframework.http.ResponseEntity;
 import com.github.karlnicholas.legalservices.opinion.model.OpinionBase;
 import com.github.karlnicholas.legalservices.opinion.model.OpinionKey;
 
-public interface OpinionsService {
+public interface OpinionService {
 	String OPINIONCITATIONS = "opinioncitations";
 	String SLIPOPINIONUPDATENEEDED = "slipopinionupdateneeded";
 	String UPDATESLIPOPINIONLIST = "updateslipopinionlist";

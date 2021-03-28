@@ -8,18 +8,18 @@ import org.springframework.web.reactive.function.server.RouterFunction;
 import org.springframework.web.reactive.function.server.RouterFunctions;
 import org.springframework.web.reactive.function.server.ServerResponse;
 
-import com.github.karlnicholas.legalservices.opinion.service.OpinionsService;
+import com.github.karlnicholas.legalservices.opinion.service.OpinionService;
 
 @Configuration
 public class OpinionsServiceRouter {
 	@Bean
 	public RouterFunction<ServerResponse> route(OpinionsServiceHandler opinionsServiceHandler) {
 		return RouterFunctions
-			.route(RequestPredicates.POST(OpinionsService.OPINIONCITATIONS)
+			.route(RequestPredicates.POST(OpinionService.OPINIONCITATIONS)
 				.and(RequestPredicates.contentType(MediaType.APPLICATION_JSON)).and(RequestPredicates.accept(MediaType.APPLICATION_JSON)), opinionsServiceHandler::getOpinionsWithStatuteCitations)
-			.andRoute(RequestPredicates.GET(OpinionsService.SLIPOPINIONUPDATENEEDED)
+			.andRoute(RequestPredicates.GET(OpinionService.SLIPOPINIONUPDATENEEDED)
 					.and(RequestPredicates.accept(MediaType.TEXT_PLAIN)), opinionsServiceHandler::getSlipOpinionUpdateNeeded)
-			.andRoute(RequestPredicates.POST(OpinionsService.UPDATESLIPOPINIONLIST)
+			.andRoute(RequestPredicates.POST(OpinionService.UPDATESLIPOPINIONLIST)
 					.and(RequestPredicates.contentType(MediaType.TEXT_PLAIN)), opinionsServiceHandler::updateSlipOpinionList)
 			;
 	}

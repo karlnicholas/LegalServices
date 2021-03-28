@@ -1,7 +1,4 @@
-package com.github.karlnicholas.legalservices.opinionview.controller;
-
-import static org.springframework.web.reactive.function.server.RequestPredicates.GET;
-import static org.springframework.web.reactive.function.server.ServerResponse.ok;
+package com.github.karlnicholas.legalservices.gsearch.web.controller;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -13,21 +10,23 @@ import org.springframework.web.reactive.function.server.RouterFunction;
 import org.springframework.web.reactive.function.server.RouterFunctions;
 import org.springframework.web.reactive.function.server.ServerResponse;
 
+import static org.springframework.web.reactive.function.server.RequestPredicates.GET;
+import static org.springframework.web.reactive.function.server.ServerResponse.ok;
+
 @Configuration
-public class OpinionViewControllerRouter {
+public class GuidedSearchRouter {
 	@Bean
 	public RouterFunction<ServerResponse> indexRouter(@Value("classpath:/static/index.html") final Resource indexHtml) {
 		return RouterFunctions.route(GET("/"), request -> ok().contentType(MediaType.TEXT_HTML).bodyValue(indexHtml));
 	}
 
 	@Bean
-	public RouterFunction<ServerResponse> route(OpinionViewControllerHandler opinionViewControllerHandler) {
+	public RouterFunction<ServerResponse> route(GuidedSearchHandler guidedSearchHandler) {
 		return RouterFunctions
-			.route(RequestPredicates.GET("/opinionviews/cases/{startDate}")
-				.and(RequestPredicates.accept(MediaType.APPLICATION_JSON)), opinionViewControllerHandler::getOpinionViews)
-			.andRoute(RequestPredicates.GET("/opinionviews/dates")
-					.and(RequestPredicates.accept(MediaType.APPLICATION_JSON)), opinionViewControllerHandler::getOpinionViewDates)
+			.route(RequestPredicates.GET("/api")
+				.and(RequestPredicates.accept(MediaType.APPLICATION_JSON)), guidedSearchHandler::getGSearch)
 			;
 	}
 
 }
+
