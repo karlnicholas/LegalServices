@@ -28,6 +28,7 @@ import com.github.karlnicholas.legalservices.opinion.service.OpinionServiceFacto
 import com.github.karlnicholas.legalservices.slipopinion.model.SlipOpinion;
 import com.github.karlnicholas.legalservices.slipopinion.parser.OpinionScraperInterface;
 import com.github.karlnicholas.legalservices.slipopinion.parser.SlipOpinionDocumentParser;
+import com.github.karlnicholas.legalservices.slipopinion.scraper.CACaseScraper;
 import com.github.karlnicholas.legalservices.slipopinion.scraper.TestCAParseSlipDetails;
 import com.github.karlnicholas.legalservices.statute.service.StatuteService;
 import com.github.karlnicholas.legalservices.statute.service.StatutesServiceFactory;
@@ -49,7 +50,8 @@ public class SlipOpinionScraperComponent {
 	    this.objectMapper = objectMapper;
 	    this.kafkaProperties = kafkaProperties;
 
-		caseScraper = new TestCAParseSlipDetails(false);
+//		caseScraper = new TestCAParseSlipDetails(false);
+		caseScraper = new CACaseScraper(false);
 	    StatuteService statutesService = StatutesServiceFactory.getStatutesServiceClient();
 	    opinionService = OpinionServiceFactory.getOpinionServiceClient();
 		opinionDocumentParser = new SlipOpinionDocumentParser(statutesService.getStatutesTitles().getBody());
@@ -64,8 +66,8 @@ public class SlipOpinionScraperComponent {
 	}
 
 
-	@Scheduled(fixedRate = 60000)
-	public void reportCurrentTime() throws SQLException {
+	@Scheduled(fixedRate = 3600000)
+	public String reportCurrentTime() throws SQLException {
 		log.debug("The time is now {}", dateFormat.format(new Date()));
 
  		List<SlipOpinion> onlineOpinions = caseScraper.getCaseList();
@@ -85,11 +87,11 @@ public class SlipOpinionScraperComponent {
 		ResponseEntity<String> response = opinionService.callSlipOpinionUpdateNeeded();
 		if ( response.getStatusCodeValue() != 200 ) {
 			log.error("opinionsService.callSlipOpinionUpdateNeeded() {}", response.getStatusCode());
-			return;
+			return "ERROR";
 		}
 		String slipOpinionUpdateNeeded = response.getBody();
 		if ( slipOpinionUpdateNeeded != null && slipOpinionUpdateNeeded.equalsIgnoreCase("NOUPDATE")) {
-			return;
+			return "NOUPDATE";
 		}
 		List<String> savedOpinions;
 		if ( slipOpinionUpdateNeeded != null ) {
@@ -125,6 +127,6 @@ public class SlipOpinionScraperComponent {
 	        });
 
 		}
-		
+		return "POLLED";
 	}
 }

@@ -507,8 +507,29 @@ public class CACaseScraper implements OpinionScraperInterface {
 				// store all this in a class
 				sopDate = opDate;
 	        	String[] ds = opinionDate.trim().split("/");
-	        	if ( ds.length == 3) {
-	        		opDate = LocalDate.of(Integer.parseInt(ds[2])+2000, Integer.parseInt(ds[0]), Integer.parseInt(ds[1]));
+        		int year = 0;
+        		int month = 0;
+        		int dayOfMonth = 0;
+        		boolean valid = false;
+        		try {
+    	        	if ( ds.length == 3 ) {
+		        		year = Integer.parseInt(ds[2])+2000;
+		        		month = Integer.parseInt(ds[0]);
+		        		dayOfMonth = Integer.parseInt(ds[1]);
+		        		if ( year > 2010 
+		        				&& month >= 1 
+		        				&& month <= 12 
+		        				&& dayOfMonth >= 1 
+		        				&& dayOfMonth <= 31 
+        				) {
+		        			valid = true;
+		        		}
+    	        	}
+        		} catch ( NumberFormatException e ) {
+        			// ignored
+        		}
+        		if ( valid ) {
+        			opDate = LocalDate.of(Integer.parseInt(ds[2])+2000, Integer.parseInt(ds[0]), Integer.parseInt(ds[1]));
 	        	} else if ( sopDate == null ) {
 		        	// Default to current date.
 					opDate = LocalDate.now();
