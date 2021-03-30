@@ -14,10 +14,10 @@ public class KakfaProperties {
     private int port;
     private String slipOpinionsTopic = "slipopinions";
     private String opinionViewCacheTopic = "opinionviewcache";
-    private String byteArrayKeySerializer = "org.apache.kafka.common.serialization.ByteArraySerializer";
+    private String integerSerializer = "org.apache.kafka.common.serialization.IntegerSerializer";
     private String jsonValueSerializer = "org.apache.kafka.connect.json.JsonSerializer";
     private String opinionViewValueSerializer = "com.github.karlnicholas.legalservices.slipopinion.processor.OpinionViewSerializer";
-    private String byteArrayKeyDeserializer = "org.apache.kafka.common.serialization.ByteArrayDeserializer";
+    private String integerDeserializer = "org.apache.kafka.common.serialization.IntegerDeserializer";
     private String jsonValueDeserializer = "org.apache.kafka.connect.json.JsonDeserializer";
     private String opinionViewValueDeserializer = "com.github.karlnicholas.legalservices.slipopinion.processor.OpinionViewDeserializer";
     private String slipOpinionsConsumerGroup = "slipOpinionsConsumerGroup";

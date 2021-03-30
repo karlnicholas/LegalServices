@@ -25,6 +25,7 @@ import com.github.karlnicholas.legalservices.slipopinion.model.SlipOpinion;
 import com.github.karlnicholas.legalservices.slipopinion.parser.OpinionScraperInterface;
 import com.github.karlnicholas.legalservices.slipopinion.parser.SlipOpinionDocumentParser;
 import com.github.karlnicholas.legalservices.slipopinion.scraper.CACaseScraper;
+import com.github.karlnicholas.legalservices.slipopinion.scraper.TestCAParseSlipDetails;
 import com.github.karlnicholas.legalservices.statute.service.StatuteService;
 import com.github.karlnicholas.legalservices.statute.service.StatutesServiceFactory;
 
@@ -36,7 +37,7 @@ public class SlipOpinionScraperComponent {
 
 	private final OpinionScraperInterface caseScraper;
 	private final ObjectMapper objectMapper;
-	private final Producer<String, JsonNode> producer;
+	private final Producer<Integer, JsonNode> producer;
 	private final SlipOpinionDocumentParser opinionDocumentParser;
 	private final KakfaProperties kafkaProperties;
 	private final OpinionService opinionService;
@@ -54,7 +55,7 @@ public class SlipOpinionScraperComponent {
         //Configure the Producer
         Properties configProperties = new Properties();
         configProperties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG,kafkaProperties.getIpAddress()+':'+kafkaProperties.getPort());
-        configProperties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG,kafkaProperties.getByteArrayKeySerializer());
+        configProperties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG,kafkaProperties.getIntegerSerializer());
         configProperties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG,kafkaProperties.getJsonValueSerializer());
         
         producer = new KafkaProducer<>(configProperties);
@@ -113,9 +114,9 @@ public class SlipOpinionScraperComponent {
 		    		
 		            JsonNode  jsonNode = objectMapper.valueToTree(slipOpinion);
 		            	        	
-			        ProducerRecord<String, JsonNode> rec = new ProducerRecord<String, JsonNode>(kafkaProperties.getSlipOpinionsTopic(),jsonNode);
+			        ProducerRecord<Integer, JsonNode> rec = new ProducerRecord<>(kafkaProperties.getSlipOpinionsTopic(),slipOpinion.getOpinionKey().hashCode(), jsonNode);
 			        producer.send(rec);
-					log.info("producer {}", slipOpinion);
+//					log.info("producer {}", slipOpinion);
 		        });
 
 		}

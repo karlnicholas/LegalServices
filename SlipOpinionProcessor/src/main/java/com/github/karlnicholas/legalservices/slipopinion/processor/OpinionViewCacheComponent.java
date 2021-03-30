@@ -20,7 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 public class OpinionViewCacheComponent implements Runnable {
 
 //	private volatile boolean someCondition = true;
-	private final Consumer<String, OpinionView> consumer;
+	private final Consumer<Integer, OpinionView> consumer;
 	private final KakfaProperties kafkaProperties;
 	private final OpinionViewData opinionViewData;
 
@@ -31,7 +31,7 @@ public class OpinionViewCacheComponent implements Runnable {
         //Configure the Consumer
 		Properties consumerProperties = new Properties();
 		consumerProperties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG,kafkaProperties.getIpAddress()+':'+kafkaProperties.getPort());
-		consumerProperties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, kafkaProperties.getByteArrayKeyDeserializer());
+		consumerProperties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, kafkaProperties.getIntegerDeserializer());
 		consumerProperties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, kafkaProperties.getOpinionViewValueDeserializer());
 		consumerProperties.put(ConsumerConfig.GROUP_ID_CONFIG, UUID.randomUUID().toString());
 		consumerProperties.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
@@ -46,8 +46,8 @@ public class OpinionViewCacheComponent implements Runnable {
 			// Subscribe to the topic.
 		    consumer.subscribe(Collections.singletonList(kafkaProperties.getOpinionViewCacheTopic()));
 		    while (true) {
-		        ConsumerRecords<String, OpinionView> records = consumer.poll(Duration.ofMillis(100));
-		        for (ConsumerRecord<String, OpinionView> record : records) {
+		        ConsumerRecords<Integer, OpinionView> records = consumer.poll(Duration.ofMillis(100));
+		        for (ConsumerRecord<Integer, OpinionView> record : records) {
 //		        	log.debug("topic = {}, partition = {}, offset = {}, record key = {}, record value length = {}",
 //		                 record.topic(), record.partition(), record.offset(),
 //		                 record.key(), record.value());
