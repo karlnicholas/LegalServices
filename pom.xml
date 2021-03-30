@@ -9,9 +9,10 @@
 	<name>Opinion Services</name>
 	<description>Opinion Services</description>
 	<properties>
-		<spring.boot.version>2.4.2</spring.boot.version>
+		<spring.boot.version>2.4.4</spring.boot.version>
 		<version.lucene>8.6.0</version.lucene>
-	</properties>
+  		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  	</properties>
 	<modules>
 		<module>Statute</module>
 		<module>StatuteService</module>
@@ -192,6 +193,7 @@
 				<configuration>
 					<source>11</source>
 					<target>11</target>
+					<encoding>${project.build.sourceEncoding}</encoding>
 				</configuration>
 			</plugin>
 		</plugins>

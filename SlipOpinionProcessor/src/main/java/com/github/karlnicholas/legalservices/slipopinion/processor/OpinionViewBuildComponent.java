@@ -25,16 +25,11 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.karlnicholas.legalservices.opinion.model.OpinionBase;
 import com.github.karlnicholas.legalservices.opinion.model.OpinionKey;
-import com.github.karlnicholas.legalservices.opinion.parser.ScrapedOpinionDocument;
 import com.github.karlnicholas.legalservices.opinion.service.OpinionService;
 import com.github.karlnicholas.legalservices.opinion.service.OpinionServiceFactory;
 import com.github.karlnicholas.legalservices.opinionview.model.OpinionView;
 import com.github.karlnicholas.legalservices.opinionview.model.OpinionViewBuilder;
 import com.github.karlnicholas.legalservices.slipopinion.model.SlipOpinion;
-import com.github.karlnicholas.legalservices.slipopinion.parser.OpinionScraperInterface;
-import com.github.karlnicholas.legalservices.slipopinion.parser.SlipOpinionDocumentParser;
-import com.github.karlnicholas.legalservices.slipopinion.scraper.TestCAParseSlipDetails;
-import com.github.karlnicholas.legalservices.statute.StatutesTitles;
 import com.github.karlnicholas.legalservices.statute.service.StatuteService;
 import com.github.karlnicholas.legalservices.statute.service.StatutesServiceFactory;
 
@@ -43,7 +38,6 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class OpinionViewBuildComponent implements Runnable {
 
-//	private volatile boolean someCondition = true;
 	private final Map<TopicPartition, OffsetAndMetadata> currentOffsets;
 	private final Consumer<String, JsonNode> consumer;
 	private final Producer<String, OpinionView> producer;
@@ -51,8 +45,6 @@ public class OpinionViewBuildComponent implements Runnable {
 	private final StatuteService statutesService;
 	private final OpinionService opinionService;
 	private final OpinionViewBuilder opinionViewBuilder;
-	private final StatutesTitles[] arrayStatutesTitles;
-	private final OpinionScraperInterface caseScraper;
 	private final KakfaProperties kafkaProperties;
 
 	public OpinionViewBuildComponent(ObjectMapper objectMapper, KakfaProperties kafkaProperties) {
@@ -62,8 +54,6 @@ public class OpinionViewBuildComponent implements Runnable {
 	    statutesService = StatutesServiceFactory.getStatutesServiceClient();
 	    opinionService = OpinionServiceFactory.getOpinionServiceClient();
 		opinionViewBuilder = new OpinionViewBuilder(statutesService);
-		arrayStatutesTitles = statutesService.getStatutesTitles().getBody();
-		caseScraper = new TestCAParseSlipDetails(false);
         //Configure the Producer
         Properties configProperties = new Properties();
         configProperties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG,kafkaProperties.getIpAddress()+':'+kafkaProperties.getPort());
@@ -90,39 +80,31 @@ public class OpinionViewBuildComponent implements Runnable {
 			// Subscribe to the topic.
 		    consumer.subscribe(Collections.singletonList(kafkaProperties.getSlipOpinionsTopic()));
 		    while (true) {
-		        ConsumerRecords<String, JsonNode> records = consumer.poll(Duration.ofMillis(100));
-		        for (ConsumerRecord<String, JsonNode> record : records) {
-		        	log.info("topic = {}, partition = {}, offset = {}, record key = {}, record value length = {}",
-		                 record.topic(), record.partition(), record.offset(),
-		                 record.key(), record.value().toString().length());
-		        	SlipOpinion slipOpinion = objectMapper.treeToValue( record.value(), SlipOpinion.class);
-		        	OpinionView opinionView = buildOpinionView(slipOpinion);
-		        	producer.send(new ProducerRecord<String, OpinionView>(kafkaProperties.getOpinionViewCacheTopic(), opinionView));
-		        	log.info("opinionView = {}", opinionView);
-		            currentOffsets.put(
-		                 new TopicPartition(record.topic(), record.partition()),
-		                 new OffsetAndMetadata(record.offset()+1, null));
-		        }
+		    	try {
+			        ConsumerRecords<String, JsonNode> records = consumer.poll(Duration.ofMillis(100));
+			        for (ConsumerRecord<String, JsonNode> record : records) {
+//			        	log.info("topic = {}, partition = {}, offset = {}, record key = {}, record value length = {}",
+//			                 record.topic(), record.partition(), record.offset(),
+//			                 record.key(), record.value().toString().length());
+			        	SlipOpinion slipOpinion = objectMapper.treeToValue( record.value(), SlipOpinion.class);
+			        	OpinionView opinionView = buildOpinionView(slipOpinion);
+			        	producer.send(new ProducerRecord<String, OpinionView>(kafkaProperties.getOpinionViewCacheTopic(), opinionView));
+			        	log.info("opinionView = {}", opinionView);
+			            currentOffsets.put(
+			                 new TopicPartition(record.topic(), record.partition()),
+			                 new OffsetAndMetadata(record.offset()+1, null));
+			        }
+				} catch (Exception e) {
+						log.error("Unexpected error", e);
+						throw new RuntimeException(e.getCause());
+				}
 		    }
 		} catch (WakeupException e) {
-		} catch (Exception e) {
-//			if ( ! (e instanceof InterruptedException) )
-				log.error("Unexpected error", e);
-				throw new RuntimeException(e.getCause());
 		} finally {
 	        consumer.close();
 		}
 	}
 	private OpinionView buildOpinionView(SlipOpinion slipOpinion) {
-		// no retries
-		ScrapedOpinionDocument scrapedOpinionDocument = caseScraper.scrapeOpinionFile(slipOpinion);
-
-		SlipOpinionDocumentParser opinionDocumentParser = new SlipOpinionDocumentParser(arrayStatutesTitles);
-		
-		opinionDocumentParser.parseOpinionDocument(scrapedOpinionDocument, scrapedOpinionDocument.getOpinionBase());
-		// maybe someday deal with court issued modifications
-		opinionDocumentParser.parseSlipOpinionDetails((SlipOpinion) scrapedOpinionDocument.getOpinionBase(), scrapedOpinionDocument);
-		
 		List<OpinionKey> opinionKeys = slipOpinion.getOpinionCitations()
 				.stream()
 				.map(OpinionBase::getOpinionKey)
@@ -135,11 +117,5 @@ public class OpinionViewBuildComponent implements Runnable {
 
 		return opinionViewBuilder.buildOpinionView(slipOpinion);
 	}
-
-//	@Override
-//	public void destroy() {
-//		log.info("Stop Stuff");
-//		someCondition = false;
-//	}
 
 }

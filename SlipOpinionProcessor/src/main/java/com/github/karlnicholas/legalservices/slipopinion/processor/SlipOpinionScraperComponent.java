@@ -1,10 +1,8 @@
 package com.github.karlnicholas.legalservices.slipopinion.processor;
 
 import java.sql.SQLException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 import java.util.stream.Collectors;
@@ -29,7 +27,6 @@ import com.github.karlnicholas.legalservices.slipopinion.model.SlipOpinion;
 import com.github.karlnicholas.legalservices.slipopinion.parser.OpinionScraperInterface;
 import com.github.karlnicholas.legalservices.slipopinion.parser.SlipOpinionDocumentParser;
 import com.github.karlnicholas.legalservices.slipopinion.scraper.CACaseScraper;
-import com.github.karlnicholas.legalservices.slipopinion.scraper.TestCAParseSlipDetails;
 import com.github.karlnicholas.legalservices.statute.service.StatuteService;
 import com.github.karlnicholas.legalservices.statute.service.StatutesServiceFactory;
 
@@ -38,7 +35,6 @@ public class SlipOpinionScraperComponent {
 
 	private static final Logger log = LoggerFactory.getLogger(SlipOpinionScraperComponent.class);
 
-	private static final SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
 	private final OpinionScraperInterface caseScraper;
 	private final ObjectMapper objectMapper;
 	private final Producer<String, JsonNode> producer;
@@ -68,9 +64,18 @@ public class SlipOpinionScraperComponent {
 
 	@Scheduled(fixedRate = 3600000)
 	public String reportCurrentTime() throws SQLException {
-		log.debug("The time is now {}", dateFormat.format(new Date()));
-
- 		List<SlipOpinion> onlineOpinions = caseScraper.getCaseList();
+ 		// use the transaction manager in the database for a cheap job manager
+		ResponseEntity<String> response = opinionService.callSlipOpinionUpdateNeeded();
+		if ( response.getStatusCodeValue() != 200 ) {
+			log.error("opinionsService.callSlipOpinionUpdateNeeded() {}", response.getStatusCode());
+			return "ERROR";
+		}
+		String slipOpinionUpdateNeeded = response.getBody();
+		if ( slipOpinionUpdateNeeded != null && slipOpinionUpdateNeeded.equalsIgnoreCase("NOUPDATE")) {
+			return "NOUPDATE";
+		}
+		// OK to proceed with checking for new SlipOpinions
+		List<SlipOpinion> onlineOpinions = caseScraper.getCaseList();
 
  		List<String> foundOpinions = onlineOpinions
 				.stream()
@@ -83,16 +88,6 @@ public class SlipOpinionScraperComponent {
 			sb.append(f);
 			sb.append(',');
 		});
-		// use the transaction manager in the database for a cheap job manager
-		ResponseEntity<String> response = opinionService.callSlipOpinionUpdateNeeded();
-		if ( response.getStatusCodeValue() != 200 ) {
-			log.error("opinionsService.callSlipOpinionUpdateNeeded() {}", response.getStatusCode());
-			return "ERROR";
-		}
-		String slipOpinionUpdateNeeded = response.getBody();
-		if ( slipOpinionUpdateNeeded != null && slipOpinionUpdateNeeded.equalsIgnoreCase("NOUPDATE")) {
-			return "NOUPDATE";
-		}
 		List<String> savedOpinions;
 		if ( slipOpinionUpdateNeeded != null ) {
 			savedOpinions = StreamSupport.stream(Arrays.spliterator(slipOpinionUpdateNeeded.split(",")), false)
@@ -106,25 +101,23 @@ public class SlipOpinionScraperComponent {
 		if ( newOpinions.size() > 0 ) {
 			opinionService.updateSlipOpinionList(sb.toString());
 
-			List<SlipOpinion> lt = onlineOpinions
-					.stream()
-					.filter(slipOpinion->newOpinions.contains(slipOpinion.getFileName()))
-					.collect(Collectors.toList());
-
-	        lt.forEach(slipOpinion->{
-
-	            ScrapedOpinionDocument scrapedOpinionDocument = caseScraper.scrapeOpinionFile(slipOpinion);
-
-	    		opinionDocumentParser.parseOpinionDocument(scrapedOpinionDocument, scrapedOpinionDocument.getOpinionBase());
-	    		// maybe someday deal with court issued modifications
-	    		opinionDocumentParser.parseSlipOpinionDetails((SlipOpinion) scrapedOpinionDocument.getOpinionBase(), scrapedOpinionDocument);
-	    		
-	            JsonNode  jsonNode = objectMapper.valueToTree(slipOpinion);
-	            	        	
-		        ProducerRecord<String, JsonNode> rec = new ProducerRecord<String, JsonNode>(kafkaProperties.getSlipOpinionsTopic(),jsonNode);
-		        producer.send(rec);
-				log.info("producer {}", slipOpinion);
-	        });
+			onlineOpinions
+				.stream()
+				.filter(slipOpinion->newOpinions.contains(slipOpinion.getFileName()))
+				.collect(Collectors.toList())
+				.forEach(slipOpinion->{
+		            ScrapedOpinionDocument scrapedOpinionDocument = caseScraper.scrapeOpinionFile(slipOpinion);
+	
+		    		opinionDocumentParser.parseOpinionDocument(scrapedOpinionDocument, scrapedOpinionDocument.getOpinionBase());
+		    		// maybe someday deal with court issued modifications
+		    		opinionDocumentParser.parseSlipOpinionDetails((SlipOpinion) scrapedOpinionDocument.getOpinionBase(), scrapedOpinionDocument);
+		    		
+		            JsonNode  jsonNode = objectMapper.valueToTree(slipOpinion);
+		            	        	
+			        ProducerRecord<String, JsonNode> rec = new ProducerRecord<String, JsonNode>(kafkaProperties.getSlipOpinionsTopic(),jsonNode);
+			        producer.send(rec);
+					log.info("producer {}", slipOpinion);
+		        });
 
 		}
 		return "POLLED";

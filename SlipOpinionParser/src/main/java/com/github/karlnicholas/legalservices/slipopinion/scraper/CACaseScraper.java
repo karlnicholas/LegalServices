@@ -528,9 +528,20 @@ public class CACaseScraper implements OpinionScraperInterface {
         		} catch ( NumberFormatException e ) {
         			// ignored
         		}
-        		if ( valid ) {
+        		if ( valid == true ) {
         			opDate = LocalDate.of(Integer.parseInt(ds[2])+2000, Integer.parseInt(ds[0]), Integer.parseInt(ds[1]));
-	        	} else if ( sopDate == null ) {
+        			if ( opDate.compareTo(LocalDate.now()) > 0 ) {
+        				valid = false;
+        			}
+            		if ( !valid ) {
+            			if ( sopDate == null  ) {
+    			        	// Default to current date.
+    						opDate = LocalDate.now();
+    		        	} else {
+    		        		opDate = sopDate;
+    		        	}
+    	        	}
+        		} else if ( sopDate == null  ) {
 		        	// Default to current date.
 					opDate = LocalDate.now();
 	        	} else {
