@@ -48,17 +48,17 @@ public class OpinionViewCacheComponent implements Runnable {
 		    while (true) {
 		        ConsumerRecords<String, OpinionView> records = consumer.poll(Duration.ofMillis(100));
 		        for (ConsumerRecord<String, OpinionView> record : records) {
-		        	log.debug("topic = {}, partition = {}, offset = {}, record key = {}, record value length = {}",
-		                 record.topic(), record.partition(), record.offset(),
-		                 record.key(), record.value());
+//		        	log.debug("topic = {}, partition = {}, offset = {}, record key = {}, record value length = {}",
+//		                 record.topic(), record.partition(), record.offset(),
+//		                 record.key(), record.value());
 		        	OpinionView opinionView = record.value();
 		        	opinionViewData.addOpinionView(opinionView);
 		        }
 		    }
 		} catch (WakeupException e) {
+			log.error("WakeupException: {}", e);
 		} catch (Exception e) {
-//			if ( ! (e instanceof InterruptedException) )
-				log.error("Unexpected error", e);
+			log.error("Unexpected error: {}", e);
 		} finally {
 	        consumer.close();
 		}

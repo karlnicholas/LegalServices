@@ -2,9 +2,7 @@ package com.github.karlnicholas.legalservices.slipopinion.processor;
 
 import java.time.Duration;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 import java.util.stream.Collectors;
 
@@ -13,12 +11,10 @@ import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
-import org.apache.kafka.clients.consumer.OffsetAndMetadata;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
-import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.errors.WakeupException;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -38,7 +34,6 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class OpinionViewBuildComponent implements Runnable {
 
-	private final Map<TopicPartition, OffsetAndMetadata> currentOffsets;
 	private final Consumer<String, JsonNode> consumer;
 	private final Producer<String, OpinionView> producer;
 	private final ObjectMapper objectMapper;
@@ -50,7 +45,6 @@ public class OpinionViewBuildComponent implements Runnable {
 	public OpinionViewBuildComponent(ObjectMapper objectMapper, KakfaProperties kafkaProperties) {
 		this.objectMapper = objectMapper;
 		this.kafkaProperties = kafkaProperties; 
-		currentOffsets = new HashMap<>();
 	    statutesService = StatutesServiceFactory.getStatutesServiceClient();
 	    opinionService = OpinionServiceFactory.getOpinionServiceClient();
 		opinionViewBuilder = new OpinionViewBuilder(statutesService);
@@ -90,16 +84,13 @@ public class OpinionViewBuildComponent implements Runnable {
 			        	OpinionView opinionView = buildOpinionView(slipOpinion);
 			        	producer.send(new ProducerRecord<String, OpinionView>(kafkaProperties.getOpinionViewCacheTopic(), opinionView));
 			        	log.info("opinionView = {}", opinionView);
-			            currentOffsets.put(
-			                 new TopicPartition(record.topic(), record.partition()),
-			                 new OffsetAndMetadata(record.offset()+1, null));
 			        }
 				} catch (Exception e) {
-						log.error("Unexpected error", e);
-						throw new RuntimeException(e.getCause());
+					log.error("Unexpected error: {}", e);
 				}
 		    }
 		} catch (WakeupException e) {
+			log.error("WakeupException: {}", e);
 		} finally {
 	        consumer.close();
 		}

@@ -19,7 +19,7 @@ public class OpinionViewSerializer implements Serializer<OpinionView> {
 			retVal = baos.toByteArray();
 			oos.close();
 		} catch (IOException e) {
-			e.printStackTrace();
+			throw new RuntimeException(e);
 		}
 		return retVal;
 	}

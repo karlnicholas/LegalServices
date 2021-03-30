@@ -9,18 +9,18 @@ import java.util.Locale;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import com.github.karlnicholas.legalservices.opinionview.model.OpinionView;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Component
+@Slf4j
 public class OpinionViewData {
     private List<LocalDate[]> dateBrackets;
     private final List<LocalDate> opinionViewDates;
     private final List<OpinionView> opinionViews;
-    private final Logger log = LoggerFactory.getLogger(OpinionViewData.class);
 
     public OpinionViewData() {
         dateBrackets = new ArrayList<>();
@@ -119,7 +119,6 @@ public class OpinionViewData {
 //		if ( reportDates == null )
 //			return;
 //		for ( LocalDate[] dates: reportDates ) {
-//			//TODO fix this dates having null in the dates list
 //			if ( dates[0] == null || dates[1] == null ) continue;  
 //			String[] e = new String[2]; 
 //			e[0] = String.format("%s - %s", 
