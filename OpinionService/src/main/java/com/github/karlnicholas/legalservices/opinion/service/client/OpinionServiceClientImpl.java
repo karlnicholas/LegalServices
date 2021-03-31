@@ -1,6 +1,7 @@
 package com.github.karlnicholas.legalservices.opinion.service.client;
 
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -11,6 +12,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.BufferingClientHttpRequestFactory;
+import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
 
@@ -28,11 +30,13 @@ public class OpinionServiceClientImpl implements OpinionService {
 	public OpinionServiceClientImpl(String baseUrl) {
 		restTemplate = new RestTemplate();
 		//set interceptors/requestFactory
-//		ClientHttpRequestInterceptor ri = new LoggingRequestInterceptor();
-//		List<ClientHttpRequestInterceptor> ris = new ArrayList<ClientHttpRequestInterceptor>();
-//		ris.add(ri);
-//		restTemplate.setInterceptors(ris);
-		restTemplate.setRequestFactory(new BufferingClientHttpRequestFactory(new SimpleClientHttpRequestFactory()));
+		if ( LoggingRequestInterceptor.log.isDebugEnabled() ) {
+			ClientHttpRequestInterceptor ri = new LoggingRequestInterceptor();
+			List<ClientHttpRequestInterceptor> ris = new ArrayList<ClientHttpRequestInterceptor>();
+			ris.add(ri);
+			restTemplate.setInterceptors(ris);
+			restTemplate.setRequestFactory(new BufferingClientHttpRequestFactory(new SimpleClientHttpRequestFactory()));
+		}
 		opinionCitationsURI = URI.create(baseUrl + OpinionService.OPINIONCITATIONS);
 		slipOpinionUpdateNeededURI = URI.create(baseUrl + OpinionService.SLIPOPINIONUPDATENEEDED);
 		updateSlipOpinionListURI = URI.create(baseUrl + OpinionService.UPDATESLIPOPINIONLIST);	

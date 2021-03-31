@@ -32,11 +32,13 @@ public class StatuteServiceClientImpl implements StatuteService {
 	public StatuteServiceClientImpl(String baseUrl) {
 		restTemplate = new RestTemplate();
 		//set interceptors/requestFactory
-		ClientHttpRequestInterceptor ri = new LoggingRequestInterceptor();
-		List<ClientHttpRequestInterceptor> ris = new ArrayList<ClientHttpRequestInterceptor>();
-		ris.add(ri);
-		restTemplate.setInterceptors(ris);
-		restTemplate.setRequestFactory(new BufferingClientHttpRequestFactory(new SimpleClientHttpRequestFactory()));
+		if ( LoggingRequestInterceptor.log.isDebugEnabled() ) {
+			ClientHttpRequestInterceptor ri = new LoggingRequestInterceptor();
+			List<ClientHttpRequestInterceptor> ris = new ArrayList<ClientHttpRequestInterceptor>();
+			ris.add(ri);
+			restTemplate.setInterceptors(ris);
+			restTemplate.setRequestFactory(new BufferingClientHttpRequestFactory(new SimpleClientHttpRequestFactory()));
+		}
 		statutesURI = URI.create(baseUrl + StatuteService.STATUTES);
 		statuesTitlesURI = URI.create(baseUrl + StatuteService.STATUTESTITLES);
 		statuteHierarchyURI = URI.create(baseUrl + StatuteService.STATUTEHIERARCHY);

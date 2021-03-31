@@ -16,7 +16,7 @@ export default class App extends React.Component {
 		this.getData();
 	}
     getData = () => {
-		http.get('/opinionviews/dates').then(response => {
+		http.get('/api/opinionviews/dates').then(response => {
 			this.setState({
 				dates: response.data
 			});
