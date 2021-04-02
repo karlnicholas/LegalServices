@@ -1,21 +1,7 @@
-package load;
+package newops;
 
-import java.sql.Connection;
-import java.util.ArrayList;
-import java.util.List;
-
-import com.github.karlnicholas.legalservices.opinion.crud.OpinionBaseCrud;
-import com.github.karlnicholas.legalservices.opinion.crud.OpinionBaseOpinionCitationsCrud;
-import com.github.karlnicholas.legalservices.opinion.crud.OpinionStatuteCitationCrud;
-import com.github.karlnicholas.legalservices.opinion.crud.StatuteCitationCrud;
-import com.github.karlnicholas.legalservices.opinion.memorydb.CitationStore;
-import com.github.karlnicholas.legalservices.opinion.model.OpinionBase;
-import com.github.karlnicholas.legalservices.opinion.model.StatuteCitation;
-import com.github.karlnicholas.legalservices.statute.api.IStatuteApi;
-import com.github.karlnicholas.legalservices.statuteca.statuteapi.CAStatuteApiImpl;
-
-public class LoadHistoricalOpinions {}
-//public class LoadHistoricalOpinions {
+public class LoadCourtListenerOpinionsSave {}
+//public class LoadCourtListenerOpinionsSave {
 ////	private static Logger logger = Logger.getLogger(LoadHistoricalOpinions.class.getName());
 //	private final CitationStore citationStore;
 //	private final OpinionBaseCrud opinionBaseCrud;
@@ -23,7 +9,7 @@ public class LoadHistoricalOpinions {}
 //	private final StatuteCitationCrud statuteCitationCrud;
 //	private final OpinionStatuteCitationCrud opinionStatuteCitationCrud;
 //
-//	public LoadHistoricalOpinions(
+//	public LoadCourtListenerOpinionsSave(
 //			OpinionBaseCrud opinionBaseCrud, 
 //    		OpinionBaseOpinionCitationsCrud opinionBaseOpinionCitationsCrud,
 //    		StatuteCitationCrud statuteCitationCrud,

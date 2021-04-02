@@ -1,10 +1,10 @@
-package loadmodelnew;
+package model;
 
 import java.time.LocalDate;
 
 import org.jsoup.nodes.Element;
 
-public class LoadOpinionNew {
+public class JustiaOpinion implements ParsedOpinion {
 	private Long id;
 	private String citation;
 	private LocalDate dateFiled;
@@ -12,7 +12,7 @@ public class LoadOpinionNew {
 	private Element opinionElement;
 	//
     private String[] opinions_cited;
-    public LoadOpinionNew(Long id, String caseName, LocalDate dateFiled, String citation, Element opinionElement) {
+    public JustiaOpinion(Long id, String caseName, LocalDate dateFiled, String citation, Element opinionElement) {
     	this.id = id;
     	this.caseName = caseName;
     	this.dateFiled = dateFiled;

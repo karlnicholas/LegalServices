@@ -1,13 +1,13 @@
-package apimodel;
+package model;
 
 import java.net.URL;
 import java.util.List;
 
-public class Clusters {
+public class CourtListenerClusters {
 	private long count;
 	private URL next;
 	private URL previous;
-	private List<Cluster> results;
+	private List<CourtListenerCluster> results;
 	public long getCount() {
 		return count;
 	}
@@ -26,10 +26,10 @@ public class Clusters {
 	public void setPrevious(URL previous) {
 		this.previous = previous;
 	}
-	public List<Cluster> getResults() {
+	public List<CourtListenerCluster> getResults() {
 		return results;
 	}
-	public void setResults(List<Cluster> results) {
+	public void setResults(List<CourtListenerCluster> results) {
 		this.results = results;
 	}
 }

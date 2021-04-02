@@ -1,4 +1,4 @@
-package loadnew;
+package archivereader;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -16,20 +16,28 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
-import loadmodelnew.LoadOpinionNew;
+import com.github.karlnicholas.legalservices.opinion.memorydb.CitationStore;
+import com.github.karlnicholas.legalservices.statute.StatutesTitles;
 
-public class LoadCourtListenerFiles {
-	private final CourtListenerCallback courtListenerCallback;
-	int total = 0;
-	DateTimeFormatter df1 = DateTimeFormatter.ofPattern("MMM d, yyyy");
-	Pattern datePattern1 = Pattern.compile("(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\\ (([0-9])|([0-2][0-9])|([3][0-1]))\\,\\ \\d{4}");
-	DateTimeFormatter df2 = DateTimeFormatter.ofPattern("MMM d yyyy");
-	Pattern datePattern2 = Pattern.compile("(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\\ (([0-9])|([0-2][0-9])|([3][0-1]))\\ \\d{4}");
-	List<LoadOpinionNew> loadOpinions = new ArrayList<>();
+import caseparser.JustiaParser;
+import model.JustiaOpinion;
 
-	public LoadCourtListenerFiles(CourtListenerCallback courtListenerCallback) {
-		this.courtListenerCallback = courtListenerCallback;
+public class ReadJustiaFiles {
+	private int total = 0;
+	private final DateTimeFormatter df1 = DateTimeFormatter.ofPattern("MMM d, yyyy");
+	private final Pattern datePattern1 = Pattern.compile("(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\\ (([0-9])|([0-2][0-9])|([3][0-1]))\\,\\ \\d{4}");
+	private final DateTimeFormatter df2 = DateTimeFormatter.ofPattern("MMM d yyyy");
+	private final Pattern datePattern2 = Pattern.compile("(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\\ (([0-9])|([0-2][0-9])|([3][0-1]))\\ \\d{4}");
+	private final List<JustiaOpinion> loadOpinions = new ArrayList<>();
+	private final CitationStore citationStore;
+	private final StatutesTitles[] statutesTitles;
+	
+
+	public ReadJustiaFiles(CitationStore citationStore, StatutesTitles[] statutesTitles) {
+		this.citationStore = citationStore;
+		this.statutesTitles = statutesTitles;
 	}
+
 
 	public void loadFiles(String opinionsFileName, int loadOpinionNewsPerCallback) throws IOException {
 		ZipInputStream zipInputStream = new ZipInputStream(Files.newInputStream(Paths.get(opinionsFileName)));
@@ -51,7 +59,7 @@ public class LoadCourtListenerFiles {
 			zipInputStream.close();
 		}
 		if ( loadOpinions.size() > 0) {
-			courtListenerCallback.callBack(loadOpinions);
+			new JustiaParser(loadOpinions, citationStore, statutesTitles).run();
 		}
 	}
 	private void process(Element o, String n, int loadOpinionNewsPerCallback) {
@@ -92,11 +100,12 @@ public class LoadCourtListenerFiles {
 		} else {
 			caseDate = LocalDate.parse(date.substring(mr.start(), mr.end()), df1);			
 		}
-		LoadOpinionNew loadOpinionNew = new LoadOpinionNew(Long.valueOf(total++), caseName, caseDate, citation, o);
-		loadOpinions.add(loadOpinionNew);
+		JustiaOpinion justiaOpinion = new JustiaOpinion(Long.valueOf(total++), caseName, caseDate, citation, o);
+		loadOpinions.add(justiaOpinion);
 		if ( loadOpinions.size() >= loadOpinionNewsPerCallback) {
-			courtListenerCallback.callBack(loadOpinions);
-			loadOpinions = new ArrayList<>();
+			new JustiaParser(new ArrayList<>(loadOpinions), citationStore, statutesTitles).run();
+//			courtListenerCallback.callBack(loadOpinions);
+			loadOpinions.clear();
 		}
 		
 	}

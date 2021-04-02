@@ -1,4 +1,4 @@
-package load;
+package archivereader;
 
 import java.io.BufferedInputStream;
 import java.io.FileInputStream;
@@ -16,27 +16,33 @@ import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.karlnicholas.legalservices.opinion.memorydb.CitationStore;
+import com.github.karlnicholas.legalservices.statute.StatutesTitles;
 
-import apimodel.ApiOpinion;
-import apimodel.Cluster;
-import loadmodel.LoadOpinion;
+import caseparser.CourtListenerParser;
+import model.CourtListenerApiOpinion;
+import model.CourtListenerCluster;
+import model.CourtListenerOpinion;
 
-public class LoadCourtListenerFiles {
+public class ReadCourtListenerFiles {
 	private final Pattern pattern;
-	private final CourtListenerCallback courtListenerCallback;
 	private final Logger logger;
 	int total = 0;
 	private final ObjectMapper om;
+	private final CitationStore citationStore;
+	private final StatutesTitles[] statutesTitles;
+	
 
-	public LoadCourtListenerFiles(CourtListenerCallback courtListenerCallback) {
-		this.courtListenerCallback = courtListenerCallback;
+	public ReadCourtListenerFiles(CitationStore citationStore, StatutesTitles[] statutesTitles) {
+		this.citationStore = citationStore;
+		this.statutesTitles = statutesTitles;
 		pattern = Pattern.compile("/");
-		logger = Logger.getLogger(LoadCourtListenerFiles.class.getName());
+		logger = Logger.getLogger(ReadCourtListenerFiles.class.getName());
 		om = new ObjectMapper();
 	}
 
 	public void loadFiles(String opinionsFileName, String clustersFileName, int loadOpinionsPerCallback) throws IOException {
-		Map<Long, LoadOpinion> mapLoadOpinions = new TreeMap<Long, LoadOpinion>();
+		Map<Long, CourtListenerOpinion> mapLoadOpinions = new TreeMap<Long, CourtListenerOpinion>();
 		TarArchiveInputStream tarIn = new TarArchiveInputStream(new GzipCompressorInputStream(new BufferedInputStream(new FileInputStream(clustersFileName))));
 		TarArchiveEntry entry;
 		try {
@@ -52,11 +58,11 @@ public class LoadCourtListenerFiles {
 					}
 					// System.out.println("Content:" + new String(content));
 					// http://www.courtlistener.com/api/rest/v3/clusters/1361768/
-					Cluster cluster = om.readValue(content, Cluster.class);
-					if (cluster.getPrecedential_status() != null && cluster.getPrecedential_status().equals("Published")) {
-						LoadOpinion loadOpinion = new LoadOpinion(cluster);
+					CourtListenerCluster courtListenerCluster = om.readValue(content, CourtListenerCluster.class);
+					if (courtListenerCluster.getPrecedential_status() != null && courtListenerCluster.getPrecedential_status().equals("Published")) {
+						CourtListenerOpinion courtListenerOpinion = new CourtListenerOpinion(courtListenerCluster);
 //						if (loadOpinion.getCaseName() != null || !loadOpinion.getCaseName().trim().isEmpty()) {
-							mapLoadOpinions.put(loadOpinion.getId(), loadOpinion);
+							mapLoadOpinions.put(courtListenerOpinion.getId(), courtListenerOpinion);
 //						}
 					}
 				}
@@ -73,16 +79,17 @@ public class LoadCourtListenerFiles {
 		try {
 			boolean working = true;
 			while (working) {
-				List<LoadOpinion> clOps = getCases(tarIn, om, mapLoadOpinions, loadOpinionsPerCallback);
+				List<CourtListenerOpinion> clOps = getCases(tarIn, om, mapLoadOpinions, loadOpinionsPerCallback);
 //				if ( ++count <= 1 ) {
 //					continue;
 //				}
 				if (clOps.size() == 0) {
 					working = false;
-					courtListenerCallback.shutdown();
+//					courtListenerCallback.shutdown();
 					break;
 				}
-				courtListenerCallback.callBack(clOps);
+				new CourtListenerParser(new ArrayList<>(clOps), citationStore, statutesTitles).run();
+//				courtListenerCallback.callBack(clOps);
 // courtListenerCallback.shutdown();
 // break;
 			}
@@ -95,11 +102,11 @@ public class LoadCourtListenerFiles {
 		}
 	}
 
-	private List<LoadOpinion> getCases(TarArchiveInputStream tarIn, ObjectMapper om,
-			Map<Long, LoadOpinion> mapLoadOpinions, int loadOpinionsPerCallback) throws IOException {
+	private List<CourtListenerOpinion> getCases(TarArchiveInputStream tarIn, ObjectMapper om,
+			Map<Long, CourtListenerOpinion> mapLoadOpinions, int loadOpinionsPerCallback) throws IOException {
 		TarArchiveEntry entry;
 		int count = 0;
-		List<LoadOpinion> clOps = new ArrayList<LoadOpinion>(loadOpinionsPerCallback);
+		List<CourtListenerOpinion> clOps = new ArrayList<CourtListenerOpinion>(loadOpinionsPerCallback);
 		while ((entry = tarIn.getNextTarEntry()) != null) {
 			if (tarIn.canReadEntryData(entry)) {
 /*				
@@ -115,14 +122,14 @@ if ( ++total < 38 )
 						break;
 				}
 				// System.out.println("Content:" + new String(content));
-				ApiOpinion op = om.readValue(content, ApiOpinion.class);
+				CourtListenerApiOpinion op = om.readValue(content, CourtListenerApiOpinion.class);
 				Long id = Long.valueOf(pattern.split(op.getResource_uri())[7]);
-				LoadOpinion loadOpinion = mapLoadOpinions.get(id);
-				if (loadOpinion != null) {
+				CourtListenerOpinion courtListenerOpinion = mapLoadOpinions.get(id);
+				if (courtListenerOpinion != null) {
 					if (op.getHtml_lawbox() != null ) {
-						loadOpinion.setHtml_lawbox(op.getHtml_lawbox());
-						loadOpinion.setOpinions_cited(op.getOpinions_cited());
-						clOps.add(loadOpinion);
+						courtListenerOpinion.setHtml_lawbox(op.getHtml_lawbox());
+						courtListenerOpinion.setOpinions_cited(op.getOpinions_cited());
+						clOps.add(courtListenerOpinion);
 					}
 					mapLoadOpinions.remove(id);
 				}

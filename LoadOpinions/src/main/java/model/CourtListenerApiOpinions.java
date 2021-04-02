@@ -1,13 +1,13 @@
-package apimodel;
+package model;
 
 import java.net.URL;
 import java.util.List;
 
-public class ApiOpinions {
+public class CourtListenerApiOpinions {
 	private long count;
 	private URL next;
 	private URL previous;
-	private List<ApiOpinion> results;
+	private List<CourtListenerApiOpinion> results;
 	public long getCount() {
 		return count;
 	}
@@ -26,10 +26,10 @@ public class ApiOpinions {
 	public void setPrevious(URL previous) {
 		this.previous = previous;
 	}
-	public List<ApiOpinion> getResults() {
+	public List<CourtListenerApiOpinion> getResults() {
 		return results;
 	}
-	public void setResults(List<ApiOpinion> results) {
+	public void setResults(List<CourtListenerApiOpinion> results) {
 		this.results = results;
 	}
 }

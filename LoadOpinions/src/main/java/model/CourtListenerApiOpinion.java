@@ -1,6 +1,6 @@
-package apimodel;
+package model;
 
-public class ApiOpinion
+public class CourtListenerApiOpinion
 {
     private String[] joined_by;
     private String html_lawbox;

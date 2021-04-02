@@ -1,4 +1,4 @@
-package loadmodel;
+package model;
 
 import java.text.SimpleDateFormat;
 import java.time.DateTimeException;
@@ -6,9 +6,7 @@ import java.time.LocalDate;
 import java.util.Calendar;
 import java.util.regex.Pattern;
 
-import apimodel.Cluster;
-
-public class LoadOpinion {
+public class CourtListenerOpinion implements ParsedOpinion {
 	private static final Pattern pattern = Pattern.compile("/");
 	private static SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 	private Long id;
@@ -22,15 +20,15 @@ public class LoadOpinion {
     private String[] opinions_cited;
     //
     private String clusterSource;
-    public LoadOpinion() {}
-    public LoadOpinion(Cluster cluster) {
+    public CourtListenerOpinion() {}
+    public CourtListenerOpinion(CourtListenerCluster courtListenerCluster) {
         // http://www.courtlistener.com/api/rest/v3/clusters/1361768/
-    	id = Long.valueOf(pattern.split(cluster.getResource_uri())[7]);
-    	clusterSource = cluster.getSource();
+    	id = Long.valueOf(pattern.split(courtListenerCluster.getResource_uri())[7]);
+    	clusterSource = courtListenerCluster.getSource();
     	Calendar cal = Calendar.getInstance();
-    	cal.setTime(cluster.getDate_filed());
+    	cal.setTime(courtListenerCluster.getDate_filed());
     	try { 
-    		dateFiled = LocalDate.parse(format.format(cluster.getDate_filed()));
+    		dateFiled = LocalDate.parse(format.format(courtListenerCluster.getDate_filed()));
     	} catch ( DateTimeException ex) {
     		System.out.println(cal.get(Calendar.YEAR) + ":" + cal.get(Calendar.MONTH) + ":" + cal.get(Calendar.DAY_OF_MONTH));
     		System.out.println(id);
@@ -39,9 +37,9 @@ public class LoadOpinion {
     		dateFiled = LocalDate.of(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH)-1);
 //    		throw ex;
     	}
-		String citeOne = cluster.getState_cite_one().replace(". ", "."); 
-		String citeTwo = cluster.getState_cite_two().replace(". ", "."); 
-		String citeThree = cluster.getState_cite_three().replace(". ", ".");
+		String citeOne = courtListenerCluster.getState_cite_one().replace(". ", "."); 
+		String citeTwo = courtListenerCluster.getState_cite_two().replace(". ", "."); 
+		String citeThree = courtListenerCluster.getState_cite_three().replace(". ", ".");
 		if ( citeOne.contains("Cal.App.") ) {
 			citation = citeOne;
     	} else if ( citeTwo.contains("Cal.App.") ) {
@@ -63,9 +61,9 @@ public class LoadOpinion {
 //			System.out.println(++total);
 		}
 */
-		caseName = cluster.getCase_name();
-		fullCaseName = cluster.getCase_name_full();
-		shortCaseName = cluster.getCase_name_short();
+		caseName = courtListenerCluster.getCase_name();
+		fullCaseName = courtListenerCluster.getCase_name_full();
+		shortCaseName = courtListenerCluster.getCase_name_short();
 	}
 	//
 	public Long getId() {

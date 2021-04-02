@@ -1,8 +1,8 @@
-package apimodel;
+package model;
 
 import java.util.Date;
 
-public class Cluster
+public class CourtListenerCluster
 {
    private String[] panel;
    private String specialty_cite_one;
