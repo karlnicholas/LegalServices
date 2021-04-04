@@ -18,9 +18,9 @@ public class LoadJustiaOpinions {
 		file1.loadFiles("c:/users/karln/downloads/justia/casesCal.2d.zip", 1000);
 		file1.loadFiles("c:/users/karln/downloads/justia/casesCal.3d.zip", 1000);
 		file1.loadFiles("c:/users/karln/downloads/justia/casesCal.4th.zip", 1000);
-		file1.loadFiles("c:/users/karln/downloads/justia/casesCal.App.2d.zip", 1000);
-		file1.loadFiles("c:/users/karln/downloads/justia/casesCal.App.3d.zip", 1000);
-		file1.loadFiles("c:/users/karln/downloads/justia/casesCal.App.4th.zip", 1000);
+//		file1.loadFiles("c:/users/karln/downloads/justia/casesCal.App.2d.zip", 1000);
+//		file1.loadFiles("c:/users/karln/downloads/justia/casesCal.App.3d.zip", 1000);
+//		file1.loadFiles("c:/users/karln/downloads/justia/casesCal.App.4th.zip", 1000);
 
 		new WriteCitationStore().cleanCitations(citationStore, iStatuteApi);
 		

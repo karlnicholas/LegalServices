@@ -184,7 +184,7 @@ public class WriteCitationStore {
 					OpinionBase oc = ocIt.next();
 					OpinionBase boc = citationStore.opinionExists(oc);
 					if ( boc == null ) {
-						System.out.println("Oh shit");
+						System.out.println("Expected OpinionCitation not found: " + oc);
 					} else {
 						ocIt.remove();
 						opinionCitations.add(boc);
@@ -198,7 +198,7 @@ public class WriteCitationStore {
 					OpinionStatuteCitation osc = oscIt.next();
 					StatuteCitation bsc = citationStore.statuteExists(osc.getStatuteCitation());
 					if ( bsc == null ) {
-						System.out.println("Oh shit");
+						System.out.println("Expected StatuteCitation not found: " + osc);
 					} else {
 						osc.setStatuteCitation(bsc);
 					}
@@ -206,16 +206,16 @@ public class WriteCitationStore {
 			}
 		}
 
-		Iterator<OpinionBase> obIt = citationStore.getOpinionTable().iterator();
-		while (obIt.hasNext()) {
-			OpinionBase o = obIt.next();
-			if ( (o.getOpinionCitations() == null || o.getOpinionCitations().size() == 0)
-					&& (o.getStatuteCitations() == null || o.getStatuteCitations().size() == 0)
-					&& (o.getReferringOpinions()== null || o.getReferringOpinions().size() == 0)
-			) {
-				obIt.remove();
-			}
-		}
+//		Iterator<OpinionBase> obIt = citationStore.getOpinionTable().iterator();
+//		while (obIt.hasNext()) {
+//			OpinionBase o = obIt.next();
+//			if ( (o.getOpinionCitations() == null || o.getOpinionCitations().size() == 0)
+//					&& (o.getStatuteCitations() == null || o.getStatuteCitations().size() == 0)
+//					&& (o.getReferringOpinions()== null || o.getReferringOpinions().size() == 0)
+//			) {
+//				obIt.remove();
+//			}
+//		}
 
 		System.out.println("\rO:" + citationStore.getOpinionTable().size());
 		System.out.println("OC:" + citationStore.getOpinionCitationTable().size());

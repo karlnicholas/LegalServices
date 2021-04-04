@@ -3,15 +3,16 @@ package caseparser;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jsoup.nodes.Document;
+import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
-import org.jsoup.parser.Parser;
 import org.jsoup.select.Elements;
 
 import com.github.karlnicholas.legalservices.opinion.memorydb.CitationStore;
+import com.github.karlnicholas.legalservices.opinion.model.OpinionKey;
 import com.github.karlnicholas.legalservices.opinion.parser.OpinionDocumentParser;
 import com.github.karlnicholas.legalservices.statute.StatutesTitles;
 
+import model.CourtListenerCluster;
 import model.CourtListenerOpinion;
 
 /**
@@ -22,44 +23,60 @@ import model.CourtListenerOpinion;
  *
  */
 public class CourtListenerParser extends BaseParser implements Runnable {
-	private final List<CourtListenerOpinion> clOps;
+	private final List<CourtListenerCluster> clOps;
 
-	public CourtListenerParser(List<CourtListenerOpinion> clOps, CitationStore citationStore, StatutesTitles[] statutesTitles) {
+	public CourtListenerParser(List<CourtListenerCluster> clOps, CitationStore citationStore, StatutesTitles[] statutesTitles) {
 		super(citationStore, new OpinionDocumentParser(statutesTitles));
 		this.clOps = clOps;
 	}
 
 	@Override
 	public void run() {
-//		for (LoadOpinion op : clOps) {
 		int l = clOps.size();
 		int i;
 		for (i=0; i < l; ++i) {
-			CourtListenerOpinion op = clOps.get(i);
-			Document lawBox = Parser.parse(op.getHtml_lawbox(), "");
-			Elements ps = lawBox.getElementsByTag("p");
-			List<String> paragraphs = new ArrayList<String>();
-			List<String> footnotes = new ArrayList<String>();
-
-			for (Element p : ps) {
-				String text = p.text();
-				if (text.length() == 0)
-					continue;
-				if (text.charAt(0) == '[' || text.charAt(0) == '(')
-					footnotes.add(text);
-				else {
-					Elements bs = p.getElementsByTag("span");
-					for ( Element b: bs) {
-						b.remove();
-					}
-					paragraphs.add(p.text());
+			CourtListenerCluster courtListenerCluster = clOps.get(i);
+			String citation = null;
+			for ( CourtListenerCluster.Citation citeClass: courtListenerCluster.citations) {
+				String cec = citeClass.volume + " " + citeClass.reporter.replace(" " , "") + " " + citeClass.page;
+				if ( OpinionKey.testValidOpinionKey(cec) ) {
+					citation = cec;
+					break;
 				}
 			}
-			String citation = op.getCitation();
+			
+//			Document lawBox = Parser.parse(op.getHtml_lawbox(), "");
+//			Elements ps = lawBox.getElementsByTag("p");
+			List<String> paragraphs = new ArrayList<String>();
+			List<String> footnotes = new ArrayList<String>();
+			for ( CourtListenerOpinion opinion: courtListenerCluster.opinions) {
+				if ( opinion.html_columbia != null && !opinion.html_columbia.isBlank() ) {
+					pParser(Jsoup.parse(opinion.html_columbia).getElementsByTag("p"), paragraphs, footnotes);
+				} else if ( opinion.html_lawbox != null && !opinion.html_lawbox .isBlank() ) {
+					pParser(Jsoup.parse(opinion.html_lawbox).getElementsByTag("p"), paragraphs, footnotes);
+				}
+			}
+//
 			// if ( name != null && name.contains("Rptr.") ) name =
 			// op.getCitation();
-			processOpinion(op, paragraphs, footnotes, citation);
+			processOpinion(courtListenerCluster, paragraphs, footnotes, citation);
 		}
 	}
 
+	private void pParser(Elements ps, List<String> paragraphs, List<String> footnotes) {
+		for (Element p : ps) {
+			String text = p.text();
+			if (text.length() == 0)
+				continue;
+			if (text.charAt(0) == '[' || text.charAt(0) == '(')
+				footnotes.add(text);
+			else {
+				Elements bs = p.getElementsByTag("span");
+				for ( Element b: bs) {
+					b.remove();
+				}
+				paragraphs.add(p.text());
+			}
+		}
+	}
 }

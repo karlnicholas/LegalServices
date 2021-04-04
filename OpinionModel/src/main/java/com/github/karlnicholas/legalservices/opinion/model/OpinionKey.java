@@ -18,7 +18,7 @@ public class OpinionKey implements Serializable, Comparable<OpinionKey> {
         "Cal.5th", 
         "Cal.6th", 
         "Cal.7th", 
-        "Cal.App", 		// 8
+        "Cal.App.", 		// 8
         "Cal.App.Supp", 
         "Cal.App.2d", 		// 10
         "Cal.App.Supp.2d", 

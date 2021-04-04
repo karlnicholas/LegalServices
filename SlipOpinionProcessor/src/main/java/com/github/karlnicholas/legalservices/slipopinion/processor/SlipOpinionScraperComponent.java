@@ -46,8 +46,8 @@ public class SlipOpinionScraperComponent {
 	    this.objectMapper = objectMapper;
 	    this.kafkaProperties = kafkaProperties;
 
-//		caseScraper = new TestCAParseSlipDetails(false);
-		caseScraper = new CACaseScraper(false);
+		caseScraper = new TestCAParseSlipDetails(false);
+//		caseScraper = new CACaseScraper(false);
 	    StatuteService statutesService = StatutesServiceFactory.getStatutesServiceClient();
 	    opinionService = OpinionServiceFactory.getOpinionServiceClient();
 		opinionDocumentParser = new SlipOpinionDocumentParser(statutesService.getStatutesTitles().getBody());

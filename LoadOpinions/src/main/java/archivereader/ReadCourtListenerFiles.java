@@ -9,41 +9,44 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.regex.Pattern;
 
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
 import com.github.karlnicholas.legalservices.opinion.memorydb.CitationStore;
+import com.github.karlnicholas.legalservices.opinion.model.OpinionKey;
 import com.github.karlnicholas.legalservices.statute.StatutesTitles;
 
 import caseparser.CourtListenerParser;
-import model.CourtListenerApiOpinion;
 import model.CourtListenerCluster;
 import model.CourtListenerOpinion;
 
 public class ReadCourtListenerFiles {
-	private final Pattern pattern;
 	private final Logger logger;
 	int total = 0;
 	private final ObjectMapper om;
 	private final CitationStore citationStore;
 	private final StatutesTitles[] statutesTitles;
-	
+	private final List<CourtListenerCluster> loadOpinions = new ArrayList<>();
+
 
 	public ReadCourtListenerFiles(CitationStore citationStore, StatutesTitles[] statutesTitles) {
 		this.citationStore = citationStore;
 		this.statutesTitles = statutesTitles;
-		pattern = Pattern.compile("/");
 		logger = Logger.getLogger(ReadCourtListenerFiles.class.getName());
-		om = new ObjectMapper();
+		om = new ObjectMapper()
+	        .findAndRegisterModules()
+	        .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
 	}
 
 	public void loadFiles(String opinionsFileName, String clustersFileName, int loadOpinionsPerCallback) throws IOException {
 		Map<Long, CourtListenerOpinion> mapLoadOpinions = new TreeMap<Long, CourtListenerOpinion>();
-		TarArchiveInputStream tarIn = new TarArchiveInputStream(new GzipCompressorInputStream(new BufferedInputStream(new FileInputStream(clustersFileName))));
+		long totalCount = 0;
+		TarArchiveInputStream tarIn = new TarArchiveInputStream(new GzipCompressorInputStream(new BufferedInputStream(new FileInputStream(opinionsFileName))));
 		TarArchiveEntry entry;
 		try {
 			while ((entry = tarIn.getNextTarEntry()) != null) {
@@ -58,12 +61,12 @@ public class ReadCourtListenerFiles {
 					}
 					// System.out.println("Content:" + new String(content));
 					// http://www.courtlistener.com/api/rest/v3/clusters/1361768/
-					CourtListenerCluster courtListenerCluster = om.readValue(content, CourtListenerCluster.class);
-					if (courtListenerCluster.getPrecedential_status() != null && courtListenerCluster.getPrecedential_status().equals("Published")) {
-						CourtListenerOpinion courtListenerOpinion = new CourtListenerOpinion(courtListenerCluster);
-//						if (loadOpinion.getCaseName() != null || !loadOpinion.getCaseName().trim().isEmpty()) {
-							mapLoadOpinions.put(courtListenerOpinion.getId(), courtListenerOpinion);
-//						}
+					try {
+						CourtListenerOpinion courtListenerOpinion = om.readValue(content, CourtListenerOpinion.class);
+						mapLoadOpinions.put(courtListenerOpinion.id, courtListenerOpinion);
+					} catch ( UnrecognizedPropertyException ex) {
+						System.out.println(new String(content));
+						throw ex;
 					}
 				}
 			}
@@ -74,24 +77,56 @@ public class ReadCourtListenerFiles {
 				logger.log(Level.SEVERE, null, e);
 			}
 		}
-		//
-		tarIn = new TarArchiveInputStream(new GzipCompressorInputStream(new BufferedInputStream(new FileInputStream(opinionsFileName))));
+		
+		tarIn = new TarArchiveInputStream(new GzipCompressorInputStream(new BufferedInputStream(new FileInputStream(clustersFileName))));
 		try {
-			boolean working = true;
-			while (working) {
-				List<CourtListenerOpinion> clOps = getCases(tarIn, om, mapLoadOpinions, loadOpinionsPerCallback);
-//				if ( ++count <= 1 ) {
-//					continue;
-//				}
-				if (clOps.size() == 0) {
-					working = false;
-//					courtListenerCallback.shutdown();
-					break;
+			while ((entry = tarIn.getNextTarEntry()) != null) {
+				if (tarIn.canReadEntryData(entry)) {
+					int entrySize = (int) entry.getSize();
+					byte[] content = new byte[entrySize];
+					int offset = 0;
+
+					while ((offset += tarIn.read(content, offset, (entrySize - offset))) != -1) {
+						if (entrySize - offset == 0)
+							break;
+					}
+					// System.out.println("Content:" + new String(content));
+					// http://www.courtlistener.com/api/rest/v3/clusters/1361768/
+					CourtListenerCluster courtListenerCluster = om.readValue(content, CourtListenerCluster.class);
+					boolean citation = false;
+					for ( CourtListenerCluster.Citation citeClass: courtListenerCluster.citations) {
+						String cec = citeClass.volume + " " + citeClass.reporter.replace(" " , "") + " " + citeClass.page;
+						if ( OpinionKey.testValidOpinionKey(cec) ) {
+							citation = true;
+							break;
+						}
+					}
+					if ( !citation) {
+						continue;
+					}
+					courtListenerCluster.opinions = new ArrayList<>();
+					for ( String subOpinion: courtListenerCluster.sub_opinions) {
+						Long id = Long.valueOf(subOpinion
+								.replace("https://www.courtlistener.com:80/api/rest/v3/opinions/", "")
+								.replace("https://www.courtlistener.com/api/rest/v3/opinions/", "")
+								.replace("/", "")
+								);
+						courtListenerCluster.opinions.add(mapLoadOpinions.get(id));
+					}
+					for ( CourtListenerOpinion opinion: courtListenerCluster.opinions) {
+						if ( opinion.html_columbia == null || opinion.html_columbia.isBlank() ) {
+							if ( opinion.html_lawbox == null || opinion.html_lawbox .isBlank() ) {
+								continue;
+							}
+						}
+					}
+					totalCount++;
+					loadOpinions.add(courtListenerCluster);
+					if ( loadOpinions.size() >= loadOpinionsPerCallback) {
+						new CourtListenerParser(new ArrayList<>(loadOpinions), citationStore, statutesTitles).run();
+						loadOpinions.clear();
+					}
 				}
-				new CourtListenerParser(new ArrayList<>(clOps), citationStore, statutesTitles).run();
-//				courtListenerCallback.callBack(clOps);
-// courtListenerCallback.shutdown();
-// break;
 			}
 		} finally {
 			try {
@@ -100,56 +135,7 @@ public class ReadCourtListenerFiles {
 				logger.log(Level.SEVERE, null, e);
 			}
 		}
+		System.out.println(totalCount);
 	}
-
-	private List<CourtListenerOpinion> getCases(TarArchiveInputStream tarIn, ObjectMapper om,
-			Map<Long, CourtListenerOpinion> mapLoadOpinions, int loadOpinionsPerCallback) throws IOException {
-		TarArchiveEntry entry;
-		int count = 0;
-		List<CourtListenerOpinion> clOps = new ArrayList<CourtListenerOpinion>(loadOpinionsPerCallback);
-		while ((entry = tarIn.getNextTarEntry()) != null) {
-			if (tarIn.canReadEntryData(entry)) {
-/*				
-if ( ++total < 38 )
-	continue;
-*/
-				int entrySize = (int) entry.getSize();
-				byte[] content = new byte[entrySize];
-				int offset = 0;
-
-				while ((offset += tarIn.read(content, offset, (entrySize - offset))) != -1) {
-					if (entrySize - offset == 0)
-						break;
-				}
-				// System.out.println("Content:" + new String(content));
-				CourtListenerApiOpinion op = om.readValue(content, CourtListenerApiOpinion.class);
-				Long id = Long.valueOf(pattern.split(op.getResource_uri())[7]);
-				CourtListenerOpinion courtListenerOpinion = mapLoadOpinions.get(id);
-				if (courtListenerOpinion != null) {
-					if (op.getHtml_lawbox() != null ) {
-						courtListenerOpinion.setHtml_lawbox(op.getHtml_lawbox());
-						courtListenerOpinion.setOpinions_cited(op.getOpinions_cited());
-						clOps.add(courtListenerOpinion);
-					}
-					mapLoadOpinions.remove(id);
-				}
-				/*
-				 * if( op.getPrecedentialStatus() == null ) { continue; } if
-				 * (op.getPrecedentialStatus().toLowerCase().equals(
-				 * "unpublished")) { continue; } if (op.getHtmlLawbox() == null)
-				 * { continue; } if
-				 * (op.getCitation().getCaseName().trim().length() == 0) {
-				 * System.out.print('T'); continue; }
-				 */
-
-				if (++count >= loadOpinionsPerCallback)
-					break;
-/*				
-if ( total >= 39 )
-	break;
-*/					
-			}
-		}
-		return clOps;
-	}
+		//
 }

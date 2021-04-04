@@ -16,11 +16,11 @@ public class LoadCourtListenerOpinions {
 
 		ReadCourtListenerFiles file1 = new ReadCourtListenerFiles(citationStore, iStatuteApi.getStatutesTitles());
 	    file1.loadFiles("c:/users/karln/downloads/calctapp-opinions.tar.gz", "c:/users/karln/downloads/calctapp-clusters.tar.gz", 1000);
-
+//
 	    ReadCourtListenerFiles file2 = new ReadCourtListenerFiles(citationStore, iStatuteApi.getStatutesTitles());
 	    file2.loadFiles("c:/users/karln/downloads/cal-opinions.tar.gz", "c:/users/karln/downloads/cal-clusters.tar.gz", 1000);
 
-	    new WriteCitationStore().cleanCitations(citationStore, iStatuteApi);
+	    new WriteCitationStore().writeCitationStore(citationStore, iStatuteApi);
 
         System.out.println("LoadCourtListenerOpinions: DONE");
     }	     
