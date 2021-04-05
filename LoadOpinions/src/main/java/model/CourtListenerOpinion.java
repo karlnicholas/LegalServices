@@ -1,14 +1,7 @@
 package model;
 
-import java.net.URL;
-import java.text.SimpleDateFormat;
-import java.time.DateTimeException;
 import java.time.Instant;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.Calendar;
 import java.util.List;
-import java.util.regex.Pattern;
 //{
 //	  "resource_uri": "https://www.courtlistener.com/api/rest/v3/opinions/3302605/",
 //	  "id": 3302605,

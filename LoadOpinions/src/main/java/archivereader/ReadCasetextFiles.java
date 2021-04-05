@@ -3,12 +3,8 @@ package archivereader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -26,10 +22,6 @@ import model.CasetextOpinion;
 
 public class ReadCasetextFiles {
 	private int total = 0;
-	private final DateTimeFormatter df1 = DateTimeFormatter.ofPattern("MMM d, yyyy");
-	private final Pattern datePattern1 = Pattern.compile("(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\\ (([0-9])|([0-2][0-9])|([3][0-1]))\\,\\ \\d{4}");
-	private final DateTimeFormatter df2 = DateTimeFormatter.ofPattern("MMM d yyyy");
-	private final Pattern datePattern2 = Pattern.compile("(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\\ (([0-9])|([0-2][0-9])|([3][0-1]))\\ \\d{4}");
 	private final List<CasetextOpinion> loadOpinions = new ArrayList<>();
 	private final CitationStore citationStore;
 	private final StatutesTitles[] statutesTitles;

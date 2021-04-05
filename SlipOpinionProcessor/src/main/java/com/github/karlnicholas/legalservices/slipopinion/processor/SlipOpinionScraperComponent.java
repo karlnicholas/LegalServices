@@ -24,7 +24,6 @@ import com.github.karlnicholas.legalservices.opinion.service.OpinionServiceFacto
 import com.github.karlnicholas.legalservices.slipopinion.model.SlipOpinion;
 import com.github.karlnicholas.legalservices.slipopinion.parser.OpinionScraperInterface;
 import com.github.karlnicholas.legalservices.slipopinion.parser.SlipOpinionDocumentParser;
-import com.github.karlnicholas.legalservices.slipopinion.scraper.CACaseScraper;
 import com.github.karlnicholas.legalservices.slipopinion.scraper.TestCAParseSlipDetails;
 import com.github.karlnicholas.legalservices.statute.service.StatuteService;
 import com.github.karlnicholas.legalservices.statute.service.StatutesServiceFactory;
