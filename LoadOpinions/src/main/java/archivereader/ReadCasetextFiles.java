@@ -38,7 +38,15 @@ public class ReadCasetextFiles {
 		try {
 			ZipEntry zipEntry = zipInputStream.getNextEntry();
 			while ( zipEntry != null ) {
-				Document d = Jsoup.parse(new String(zipInputStream.readAllBytes()));
+				int entrySize = (int) zipEntry.getSize();
+				byte[] content = new byte[entrySize];
+				int offset = 0;
+
+				while ((offset += zipInputStream.read(content, offset, (entrySize - offset))) != -1) {
+					if (entrySize - offset == 0)
+						break;
+				}
+				Document d = Jsoup.parse(new String(content));
 				Element o = d.selectFirst("main.case-page");
 				zipInputStream.closeEntry();
 				String n = zipEntry.getName();

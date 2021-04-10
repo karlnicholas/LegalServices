@@ -1,0 +1,37 @@
+# This file configures the hello-world app which serves public web traffic.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: statutes-rest-ca
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: statutes-rest-ca
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: statutes-rest-ca
+    spec:
+      containers:
+      - name: statutes-rest-ca-app
+        # Replace $GCLOUD_PROJECT with your project ID
+        image: gcr.io/eng-mechanism-308601/statutes-rest-ca:v2
+        env:
+          - name: PORT
+            value: "8090"
+        # This app listens on port 8080 for web traffic by default.
+        ports:
+        - containerPort: 8090
+        volumeMounts:
+        - name: statutes-rest-ca-storage
+          mountPath: /opcastorage
+          readOnly: true
+      volumes:
+      - name: statutes-rest-ca-storage
+        persistentVolumeClaim:
+          claimName: statutes-rest-ca-pvc
+          readOnly: true
+         

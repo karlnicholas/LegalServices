@@ -114,8 +114,8 @@ public class ReadCourtListenerFiles {
 						courtListenerCluster.opinions.add(mapLoadOpinions.get(id));
 					}
 					for ( CourtListenerOpinion opinion: courtListenerCluster.opinions) {
-						if ( opinion.html_columbia == null || opinion.html_columbia.isBlank() ) {
-							if ( opinion.html_lawbox == null || opinion.html_lawbox .isBlank() ) {
+						if ( opinion.html_columbia == null || opinion.html_columbia.isEmpty() ) {
+							if ( opinion.html_lawbox == null || opinion.html_lawbox.isEmpty() ) {
 								continue;
 							}
 						}

@@ -1,8 +1,21 @@
-Just and error duplicate entry: - No case name available -(76 Cal. App. 4th 684) 
-Just and error duplicate entry: DeYoung v. City of San Diego (1983)(147 Cal. App. 3d 11, 194 Cal. App. 3d 722) 
-Just and error duplicate entry: Agricultural Labor Relations Bd. v. Tex-Cal Land Management, Inc. (1985)(183 Cal. App. 3d 545, 192 Cal. App. 3d 1530) 
-Just and error status code: 410, reason phrase: Gone 
-Just and error duplicate entry: Kruse v. Bank of America (1988)(201 Cal. App. 3d 354, 202 Cal. App. 3d 38) 
-Just and error duplicate entry: People v. Maestas (1988)(203 Cal. App. 3d 1322, 204 Cal. App. 3d 1208) 
-Just and error duplicate entry: People v. Diaz (1989)(207 Cal. App. 3d 922, 208 Cal. App. 3d 338) 
-totalCounts: [6425, 3136, 1205, 35754, 25222, 12386]
+Application Info
+Kafka
+Kafka 2.7.0-1
+Kafka is a distributed streaming platform designed to build real-time pipelines and can be used as a message broker or...  Learn More
+
+CREDENTIALS
+USERNAME	user
+PASSWORD	
+j5J86ORI6DDO
+HIDE
+HOW TO CONNECT	Check the documentation
+
+Kafka 2.7.0-1
+Kafka is a distributed streaming platform designed to build real-time pipelines and can be used as a message broker or...  Learn More
+
+CREDENTIALS
+USERNAME	user
+PASSWORD	
+j5J86ORI6DDO
+HIDE
+HOW TO CONNECT	Check the documentation

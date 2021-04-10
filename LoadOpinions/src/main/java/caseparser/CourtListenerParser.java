@@ -50,9 +50,9 @@ public class CourtListenerParser extends BaseParser implements Runnable {
 			List<String> paragraphs = new ArrayList<String>();
 			List<String> footnotes = new ArrayList<String>();
 			for ( CourtListenerOpinion opinion: courtListenerCluster.opinions) {
-				if ( opinion.html_columbia != null && !opinion.html_columbia.isBlank() ) {
+				if ( opinion.html_columbia != null && !opinion.html_columbia.isEmpty() ) {
 					pParser(Jsoup.parse(opinion.html_columbia).getElementsByTag("p"), paragraphs, footnotes);
-				} else if ( opinion.html_lawbox != null && !opinion.html_lawbox .isBlank() ) {
+				} else if ( opinion.html_lawbox != null && !opinion.html_lawbox.isEmpty() ) {
 					pParser(Jsoup.parse(opinion.html_lawbox).getElementsByTag("p"), paragraphs, footnotes);
 				}
 			}
