@@ -1,8 +1,15 @@
-FROM registry.redhat.io/openjdk/openjdk-11-rhel7
-VOLUME /tmp
-VOLUME /opcastorage
+# Use AdoptOpenJDK for base image.
+# It's important to use OpenJDK 8u191 or above that has container support enabled.
+# https://hub.docker.com/r/adoptopenjdk/openjdk8
+# https://docs.docker.com/develop/develop-images/multistage-build/#use-multi-stage-builds
+FROM adoptopenjdk/openjdk8:jdk8u282-b08-alpine-slim
+
+VOLUME /CaliforniaStatutes
+# Copy the jar to the production image from the builder stage.
+COPY target/guidedsearch-web-*.jar /guidedsearch-web.jar
 ENV gsindexloc=/opcastorage/index
 ENV gsindextaxoloc=/opcastorage/indextaxo
-COPY target/*.jar app.jar
 EXPOSE 8080
-CMD [ "java", "-XX:+UseContainerSupport", "-jar", "app.jar" ]
+
+# Run the web service on container startup.
+CMD ["java","-Djava.security.egd=file:/dev/./urandom","-Dserver.port=${PORT}","-jar","/guidedsearch-web.jar"]

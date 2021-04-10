@@ -1,0 +1,37 @@
+# This file configures the hello-world app which serves public web traffic.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: guidedsearch-web
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: guidedsearch-web
+  template:
+    metadata:
+      labels:
+        app: guidedsearch-web
+    spec:
+      containers:
+      - name: guidedsearch-web-app
+        # Replace $GCLOUD_PROJECT with your project ID
+        image: gcr.io/eng-mechanism-308601/guidedsearch-web
+        env:
+          - name: PORT
+            value: "8080"
+          - name: statutesrestca
+            value: "http://statutes-rest-ca-service:8090/"
+        # This app listens on port 8080 for web traffic by default.
+        ports:
+        - containerPort: 8080
+        volumeMounts:
+        - name: statutes-rest-ca-storage
+          mountPath: /opcastorage
+          readOnly: true
+      volumes:
+      - name: statutes-rest-ca-storage
+        persistentVolumeClaim:
+          claimName: statutes-rest-ca-pvc
+          readOnly: true
+         
