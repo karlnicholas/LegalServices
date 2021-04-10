@@ -1,0 +1,51 @@
+# This file configures the hello-world app which serves public web traffic.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: opinion-rest-ca
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: opinion-rest-ca
+  template:
+    metadata:
+      labels:
+        app: opinion-rest-ca
+    spec:
+      containers:
+      - name: opinion-rest-ca-app
+        # Replace $GCLOUD_PROJECT with your project ID
+        image: gcr.io/eng-mechanism-308601/opinion-rest-ca
+        env:
+          - name: PORT
+            value: "8091"
+          - name: database-url
+            value: "mysql://10.128.15.214:3306/"
+          - name: database-user
+            valueFrom:
+              secretKeyRef:
+                name: mysqldb
+                key: database-user
+          - name: database-name
+            valueFrom:
+              secretKeyRef:
+                name: mysqldb
+                key: database-name
+          - name: database-password
+            valueFrom:
+              secretKeyRef:
+                name: mysqldb
+                key: database-password
+          - name: GOOGLE_APPLICATION_CREDENTIALS
+            value: /var/secrets/google/key.json
+        # This app listens on port 8080 for web traffic by default.
+        ports:
+        - containerPort: 8091
+        volumeMounts:
+        - name: google-cloud-key
+          mountPath: /var/secrets/google
+      volumes:
+      - name: google-cloud-key
+        secret:
+          secretName: gmysql-key
