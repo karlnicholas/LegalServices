@@ -5,11 +5,13 @@ import java.util.Collections;
 import java.util.Properties;
 import java.util.UUID;
 
+import org.apache.kafka.clients.CommonClientConfigs;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
+import org.apache.kafka.common.config.SaslConfigs;
 import org.apache.kafka.common.errors.WakeupException;
 
 import com.github.karlnicholas.legalservices.opinionview.model.OpinionView;
@@ -35,7 +37,13 @@ public class OpinionViewCacheComponent implements Runnable {
 		consumerProperties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, kafkaProperties.getOpinionViewValueDeserializer());
 		consumerProperties.put(ConsumerConfig.GROUP_ID_CONFIG, UUID.randomUUID().toString());
 		consumerProperties.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
-
+        if ( kafkaProperties.getUser() != null ) {
+        	consumerProperties.put(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, "SASL_PLAINTEXT");
+        	consumerProperties.put(SaslConfigs.SASL_MECHANISM, "PLAIN");
+        	consumerProperties.put(SaslConfigs.SASL_JAAS_CONFIG, "org.apache.kafka.common.security.plain.PlainLoginModule required username=\"" +
+    		kafkaProperties.getUser() + "\" password=\"" + 
+    		kafkaProperties.getPassword() + "\";");
+        }
 		// Create the consumer using props.
 		 consumer = new KafkaConsumer<>(consumerProperties);
 	}

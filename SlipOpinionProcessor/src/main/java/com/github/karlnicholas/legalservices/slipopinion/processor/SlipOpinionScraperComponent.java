@@ -8,10 +8,12 @@ import java.util.Properties;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
+import org.apache.kafka.clients.CommonClientConfigs;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
+import org.apache.kafka.common.config.SaslConfigs;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -24,7 +26,7 @@ import com.github.karlnicholas.legalservices.opinion.service.OpinionServiceFacto
 import com.github.karlnicholas.legalservices.slipopinion.model.SlipOpinion;
 import com.github.karlnicholas.legalservices.slipopinion.parser.OpinionScraperInterface;
 import com.github.karlnicholas.legalservices.slipopinion.parser.SlipOpinionDocumentParser;
-import com.github.karlnicholas.legalservices.slipopinion.scraper.TestCAParseSlipDetails;
+import com.github.karlnicholas.legalservices.slipopinion.scraper.CACaseScraper;
 import com.github.karlnicholas.legalservices.statute.service.StatuteService;
 import com.github.karlnicholas.legalservices.statute.service.StatutesServiceFactory;
 
@@ -45,8 +47,8 @@ public class SlipOpinionScraperComponent {
 	    this.objectMapper = objectMapper;
 	    this.kafkaProperties = kafkaProperties;
 
-		caseScraper = new TestCAParseSlipDetails(false);
-//		caseScraper = new CACaseScraper(false);
+//		caseScraper = new TestCAParseSlipDetails(false);
+		caseScraper = new CACaseScraper(false);
 	    StatuteService statutesService = StatutesServiceFactory.getStatutesServiceClient();
 	    opinionService = OpinionServiceFactory.getOpinionServiceClient();
 		opinionDocumentParser = new SlipOpinionDocumentParser(statutesService.getStatutesTitles().getBody());
@@ -56,6 +58,13 @@ public class SlipOpinionScraperComponent {
         configProperties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG,kafkaProperties.getIpAddress()+':'+kafkaProperties.getPort());
         configProperties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG,kafkaProperties.getIntegerSerializer());
         configProperties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG,kafkaProperties.getJsonValueSerializer());
+        if ( kafkaProperties.getUser() != null ) {
+            configProperties.put(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, "SASL_PLAINTEXT");
+            configProperties.put(SaslConfigs.SASL_MECHANISM, "PLAIN");
+            configProperties.put(SaslConfigs.SASL_JAAS_CONFIG, "org.apache.kafka.common.security.plain.PlainLoginModule required username=\"" +
+    		kafkaProperties.getUser() + "\" password=\"" + 
+    		kafkaProperties.getPassword() + "\";");
+        }
         
         producer = new KafkaProducer<>(configProperties);
 	}

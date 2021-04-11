@@ -12,6 +12,10 @@ public class KakfaProperties {
 	private String ipAddress;
 	@Value("${kafka.port:9092}")
     private String port;
+	@Value("${kafka.user}")
+    private String user;
+	@Value("${kafka.password}")
+    private String password;
     private String slipOpinionsTopic = "slipopinions";
     private String opinionViewCacheTopic = "opinionviewcache";
     private String integerSerializer = "org.apache.kafka.common.serialization.IntegerSerializer";

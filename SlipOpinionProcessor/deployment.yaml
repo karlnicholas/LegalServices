@@ -1,0 +1,43 @@
+# This file configures the hello-world app which serves public web traffic.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: slipopinionprocessor
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: slipopinionprocessor
+  template:
+    metadata:
+      labels:
+        app: slipopinionprocessor
+    spec:
+      containers:
+      - name: slipopinionprocessor-app
+        # Replace $GCLOUD_PROJECT with your project ID
+        image: gcr.io/eng-mechanism-308601/slipopinionprocessor
+        env:
+          - name: PORT
+            value: "8080"
+          - name: statutesrestca
+            value: "http://statutes-rest-ca-service:8090/"
+          - name: opinionrestca
+            value: "http://opinion-rest-ca-service:8091/"
+          - name: kafka.ip-address
+            value: "kafka-1-vm"
+          - name: kafka.port
+            value: "9092"
+          - name: kafka.user
+            valueFrom:
+              secretKeyRef:
+                name: kafka-config
+                key: kafka.user
+          - name: kafka.password
+            valueFrom:
+              secretKeyRef:
+                name: kafka-config
+                key: kafka.password
+        # This app listens on port 8080 for web traffic by default.
+        ports:
+        - containerPort: 8080
