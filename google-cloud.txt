@@ -1,0 +1,20 @@
+Create project
+Create gke instance - get to minimum settings
+  delete pools and things
+  create new pool - g2-small instance.
+
+Bitnami Kafka - G2-small
+Bitnami Mysql - F2-micro instance
+
+GCE - Create Disk.
+Use GKE instance to 
+	mount disk 
+	format disk
+		https://cloud.google.com/compute/docs/disks/add-persistent-disk
+		https://cloud.google.com/compute/docs/disks/add-persistent-disk
+	gcloud scp --recurse to copy files
+		https://cloud.google.com/filestore/docs/copying-data
+		gcloud beta compute scp --recurse --zone "us-central1-c" . gke-cluster-opca-pool-1-69669795-0qr8:/mnt/disks/opcastorage  --project "legalservices"
+
+create pv with pv.yaml
+create pvc with pvc.yaml

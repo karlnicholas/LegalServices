@@ -1,17 +1,17 @@
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: statutes-rest-ca-pv
+  name: opcastorage-pv
 spec:
-  storageClassName: "opca-storageclass"
+  storageClassName: "opcastorage-class"
   capacity:
     storage: 10Gi
   accessModes:
     - ReadOnlyMany
   claimRef:
     namespace: default
-    name: statutes-rest-ca-pvc
+    name: opcastorage-pvc
   gcePersistentDisk:
-    pdName: statutes-rest-ca-disk
+    pdName: opcastorage-disk
     fsType: ext4
     readOnly: true

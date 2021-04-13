@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: statutes-rest-ca-service
+spec:
+  selector:
+    app: statutes-rest-ca
+  ports:
+  - port: 8090
+    protocol: TCP
+    targetPort: 8090

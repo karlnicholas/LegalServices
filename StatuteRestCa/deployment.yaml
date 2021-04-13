@@ -16,7 +16,7 @@ spec:
       containers:
       - name: statutes-rest-ca-app
         # Replace $GCLOUD_PROJECT with your project ID
-        image: gcr.io/eng-mechanism-308601/statutes-rest-ca:v2
+        image: gcr.io/legalservices/statutes-rest-ca
         env:
           - name: PORT
             value: "8090"
@@ -24,12 +24,11 @@ spec:
         ports:
         - containerPort: 8090
         volumeMounts:
-        - name: statutes-rest-ca-storage
+        - name: opcastorage-mount
           mountPath: /opcastorage
           readOnly: true
       volumes:
-      - name: statutes-rest-ca-storage
+      - name: opcastorage-mount
         persistentVolumeClaim:
-          claimName: statutes-rest-ca-pvc
+          claimName: opcastorage-pvc
           readOnly: true
-         

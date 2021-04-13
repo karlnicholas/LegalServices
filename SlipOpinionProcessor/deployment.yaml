@@ -16,7 +16,7 @@ spec:
       containers:
       - name: slipopinionprocessor-app
         # Replace $GCLOUD_PROJECT with your project ID
-        image: gcr.io/eng-mechanism-308601/slipopinionprocessor
+        image: gcr.io/legalservices/slipopinionprocessor
         env:
           - name: PORT
             value: "8080"
@@ -25,7 +25,7 @@ spec:
           - name: opinionrestca
             value: "http://opinion-rest-ca-service:8091/"
           - name: kafka.ip-address
-            value: "kafka-1-vm"
+            value: "kafka-opca-vm"
           - name: kafka.port
             value: "9092"
           - name: kafka.user

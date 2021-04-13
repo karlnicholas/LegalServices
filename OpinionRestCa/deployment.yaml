@@ -16,12 +16,12 @@ spec:
       containers:
       - name: opinion-rest-ca-app
         # Replace $GCLOUD_PROJECT with your project ID
-        image: gcr.io/eng-mechanism-308601/opinion-rest-ca
+        image: gcr.io/legalservices/opinion-rest-ca
         env:
           - name: PORT
             value: "8091"
           - name: database-url
-            value: "mysql://10.128.15.214:3306/"
+            value: "mysql://mysql-opca-vm:3306/"
           - name: database-user
             valueFrom:
               secretKeyRef:
@@ -37,15 +37,6 @@ spec:
               secretKeyRef:
                 name: mysqldb
                 key: database-password
-          - name: GOOGLE_APPLICATION_CREDENTIALS
-            value: /var/secrets/google/key.json
         # This app listens on port 8080 for web traffic by default.
         ports:
         - containerPort: 8091
-        volumeMounts:
-        - name: google-cloud-key
-          mountPath: /var/secrets/google
-      volumes:
-      - name: google-cloud-key
-        secret:
-          secretName: gmysql-key
