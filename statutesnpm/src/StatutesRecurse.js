@@ -15,11 +15,11 @@ export default class StatutesRecurse extends React.Component {
 	render() {
 		if ( this.props.index < this.props.entries.length ) {
 			return ( 
-				<div>
+				<>
 				<StatuteNode entry={this.props.entries[this.props.index]}/>
 				<StatuteLeaf entry={this.props.entries[this.props.index]}/>
                 {this.recurse(this.props.entries, this.props.index)}
-				</div>
+				</>
 			)
 		} else {
 			return null;
