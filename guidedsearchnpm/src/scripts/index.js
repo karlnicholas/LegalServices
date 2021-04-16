@@ -16,7 +16,7 @@ function displayReference(entry, items) {
 		}
 		items.push( "<div class='reference col-sm-3' id='" + entry.fullFacet + "'>" + entry.displayTitle);
 	    if ( entry.count > 0 ) {
-	    	items.push('<span class="badge badge-primary pull-right"/>'+entry.count+'</span></div>');	    	
+	    	items.push('<span class="badge badge-primary pull-right">'+entry.count+'</span></div>');	    	
 	    } else {
 	    	items.push("&nbsp;</div>");	    	
 	    }
