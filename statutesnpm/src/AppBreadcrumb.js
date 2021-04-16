@@ -3,9 +3,9 @@ import React from "react";
 
 export default class AppBreadcrumb extends React.Component {
 	recurse(entries) {
-		if ( entries != null && entries.length == 1) {
+		if ( entries !== null && entries.length === 1) {
 			const entry = entries[0];
-			if ( entry.entries != null && entry.entries.length == 1) {
+			if ( entry.entries !== null && entry.entries.length === 1) {
 				return (<><li className='breadcrumb-item' style={{ cursor: 'pointer' }}>{entry.text}</li><AppBreadcrumb entries={entry.entries}/></>);
 			} else if ( entry.entries != null && entry.entries.length > 1) {
 				return (<><li className='breadcrumb-item' style={{ cursor: 'pointer' }}>{entry.text} - {entry.statutesBaseClass.title}</li><AppBreadcrumb entries={entry.entries}/></>);
@@ -19,7 +19,7 @@ export default class AppBreadcrumb extends React.Component {
 	}
 	render() {
 		return (
-		<><li className='breadcrumb-item' style={{ cursor: 'pointer' }}>Home</li>
+		<>
 		{this.recurse(this.props.entries)}
 		{this.breadcrumbCount(this.props.totalCount, this.props.term)}
 		</>

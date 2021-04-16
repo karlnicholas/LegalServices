@@ -1,6 +1,5 @@
 import React from "react";
-import { Link, BrowserRouter as Router, Route } from "react-router-dom";
-import http from "./http-common";
+import { Link} from "react-router-dom";
 import logo from './spring-logo-30.png';
 
 export default class Home extends React.Component {
