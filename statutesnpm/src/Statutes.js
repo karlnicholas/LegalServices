@@ -1,13 +1,15 @@
 import React from "react";
+import {withRouter} from "react-router-dom";
 import queryString from "query-string";
 import http from "./http-common";
 import StatutesRecurse from "./StatutesRecurse";
 import AppBreadcrumb from "./AppBreadcrumb";
 import "./Statutes.css";
 
-export default class Statutes extends React.Component {
+class Statutes extends React.Component {
 	constructor(props) {
 		super(props);
+		this.navFacet = this.navFacet.bind(this);
 		this.state = {
 			viewModel: null,
 			path: queryString.parse(this.props.location.search).path, 
@@ -33,6 +35,10 @@ export default class Statutes extends React.Component {
 
 	componentDidMount() {
 		this.fetchStatutes(this.state.path);
+	}
+	navFacet(fullFacet, e) {
+	    e.preventDefault();
+	    this.props.history.push('/statutes?path='+fullFacet);
 	}
 
 	render() {
@@ -96,14 +102,15 @@ export default class Statutes extends React.Component {
 		      </nav>
 		      <nav aria-label="breadcrumb">
 		      	<ol className="breadcrumb" id="breadcrumbs">
-		      		<li className='breadcrumb-item' style={{ cursor: 'pointer' }}>Home</li>
-	      			<AppBreadcrumb entries={this.state.viewModel.entries} />
+		      		<li className='breadcrumb-item' onClick={(e) => this.navFacet('', e)} style={{ cursor: 'pointer' }}>Home</li>
+	      			<AppBreadcrumb entries={this.state.viewModel.entries} navFacet={this.navFacet} />
       			</ol>
 		      </nav>
-			  <StatutesRecurse entries={this.state.viewModel.entries} index={0}/>
+			  <StatutesRecurse entries={this.state.viewModel.entries} navFacet={this.navFacet} index={0}/>
 		      </div>
 		  );
 		}
 		return null;
 	}
 }
+export default withRouter(Statutes);

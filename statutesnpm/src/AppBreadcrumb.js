@@ -1,14 +1,13 @@
 import React from "react";
 
-
 export default class AppBreadcrumb extends React.Component {
-	recurse(entries) {
+	recurse(entries, navFacet) {
 		if ( entries !== null && entries.length === 1) {
 			const entry = entries[0];
 			if ( entry.entries !== null && entry.entries.length === 1) {
-				return (<><li className='breadcrumb-item' style={{ cursor: 'pointer' }}>{entry.text}</li><AppBreadcrumb entries={entry.entries}/></>);
+                return (<><li className='breadcrumb-item' onClick={(e) => navFacet(entry.fullFacet, e)} style={{ cursor: 'pointer' }}>{entry.text}</li><AppBreadcrumb entries={entry.entries} navFacet={navFacet}/></>);
 			} else if ( entry.entries != null && entry.entries.length > 1) {
-				return (<><li className='breadcrumb-item' style={{ cursor: 'pointer' }}>{entry.text} - {entry.statutesBaseClass.title}</li><AppBreadcrumb entries={entry.entries}/></>);
+                return (<><li className='breadcrumb-item' onClick={(e) => navFacet(entry.fullFacet, e)} style={{ cursor: 'pointer' }}>{entry.text} - {entry.statutesBaseClass.title}</li><AppBreadcrumb entries={entry.entries} navFacet={navFacet}/></>);
 			}
 		}
 	}
@@ -20,7 +19,7 @@ export default class AppBreadcrumb extends React.Component {
 	render() {
 		return (
 		<>
-		{this.recurse(this.props.entries)}
+		{this.recurse(this.props.entries, this.props.navFacet)}
 		{this.breadcrumbCount(this.props.totalCount, this.props.term)}
 		</>
 		)
