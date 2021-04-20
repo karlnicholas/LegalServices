@@ -6,28 +6,32 @@ import StatutesRecurse from "./StatutesRecurse";
 import AppBreadcrumb from "./AppBreadcrumb";
 import "./Statutes.css";
 
+//A custom hook that builds on useLocation to parse
+//the query string for you.
+function useQuery() {
+  return new URLSearchParams(useLocation().search);
+}
+
 export default function Statutes(props) {
   const history = useHistory();
   const location = useLocation();
   const [viewModel, setViewModel] = useState();
-  const path = new URLSearchParams(location.search).get('path');
+  let query = useQuery();
   
   // Similar to componentDidMount and componentDidUpdate:
-  useEffect(() => {
-    let url = 'api';
-    if ( path !== null ) {
-      url += '?path='+path;
-    }
-    return http.get(url)
-    .then(response => {
-      setViewModel(response.data);
-    });
-  },[path]);
-  
   function navFacet(fullFacet) {
     history.push('/statutes?path='+fullFacet);
   };
 
+  let url = 'api';
+  let path = query.get("path");
+  if ( path !== null ) {
+    url += '?path='+path;
+  }
+  http.get(url)
+  .then(response => {
+    setViewModel(response.data);
+  });  
   if ( viewModel != null && viewModel.entries.length > 0 ) {
     return (
       <div className="container">
@@ -93,7 +97,6 @@ export default function Statutes(props) {
         <StatutesRecurse entries={viewModel.entries} navFacet={navFacet} index={0}/>
       </div>
     );
-  } else {
-    return null;
   }
+  return null;
 }
