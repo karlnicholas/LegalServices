@@ -1,6 +1,5 @@
 import {useState, useEffect} from "react";
 import {useHistory, useLocation} from "react-router-dom";
-import queryString from "query-string";
 import http from "./http-common";
 import StatutesRecurse from "./StatutesRecurse";
 import AppBreadcrumb from "./AppBreadcrumb";
@@ -15,23 +14,26 @@ function useQuery() {
 export default function Statutes(props) {
   const history = useHistory();
   const location = useLocation();
+  const query = useQuery();
   const [viewModel, setViewModel] = useState();
-  let query = useQuery();
+  const path = query.get('path');
   
   // Similar to componentDidMount and componentDidUpdate:
+  useEffect(() => {
+    let url = 'api';
+    if ( path !== null ) {
+      url += '?path='+path;
+    }
+    return http.get(url)
+    .then(response => {
+      setViewModel(response.data);
+    });
+  },[path]);
+  
   function navFacet(fullFacet) {
     history.push('/statutes?path='+fullFacet);
   };
 
-  let url = 'api';
-  let path = query.get("path");
-  if ( path !== null ) {
-    url += '?path='+path;
-  }
-  http.get(url)
-  .then(response => {
-    setViewModel(response.data);
-  });  
   if ( viewModel != null && viewModel.entries.length > 0 ) {
     return (
       <div className="container">
