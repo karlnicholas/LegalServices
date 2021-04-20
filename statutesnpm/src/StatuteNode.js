@@ -28,7 +28,7 @@ export default class StatuteNode extends React.Component {
 	render() {
 		if ( !this.props.entry.pathPart && !this.props.entry.sectionText ) {
 			return (
-				<div className="row" onClick={(e) => this.props.navFacet(this.props.entry.fullFacet, e)} style={{ cursor: 'pointer' }}>
+				<div className="row" onClick={() => this.props.navFacet(this.props.entry.fullFacet)} style={{ cursor: 'pointer' }}>
 					<div className='col-sm-1' style={{ cursor: 'pointer' }}>
 						{this.getCollapse(this.props.entry.entries.length, this.props.hiddenFrag)}
 					</div>

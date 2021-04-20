@@ -25,8 +25,7 @@ export default class StatutesRecurse extends React.Component {
                 {this.recurse(this.props.entries, this.props.index, this.props.navFacet)}
 				</>
 			)
-		} else {
-			return null;
 		}
+		return null;
 	}
  }
