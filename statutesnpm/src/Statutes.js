@@ -11,27 +11,55 @@ function useQuery() {
   return new URLSearchParams(useLocation().search);
 }
 
+function buildParams() {
+  return new URLSearchParams();
+}
+
 export default function Statutes(props) {
   const history = useHistory();
-  const location = useLocation();
   const query = useQuery();
+  const params = buildParams();
   const [viewModel, setViewModel] = useState();
-  const path = query.get('path');
+  const [path, setPath] = useState(query.get('path'));
+  const [term, setTerm] = useState(query.get('term'));
+  const [frag, setFrag] = useState(query.get('frag'));
+  const [searchTerm, setSearchTerm] = useState(term);
+  let fragDisabled = ( path === null || path === '' || term === null || term === '' );
+  
   
   // Similar to componentDidMount and componentDidUpdate:
   useEffect(() => {
-    let url = 'api';
-    if ( path !== null ) {
-      url += '?path='+path;
-    }
-    return http.get(url)
+    fragDisabled = ( path === null || path === '' || term === null || term === '' );
+    console.log('fragDisabled: ' + fragDisabled);
+    console.log('path: ' + path + '\nterm: ' + term + '\nfrag: ' + frag);
+    if ( path != null && path != '' ) params.append('path', path);
+    if ( term != null && term != '' ) params.append('term', term);
+    if ( !fragDisabled && frag != null && frag != '' ) params.append('frag', frag);
+    history.push('/statutes?' + params);
+    return http.get('api?'+params)
     .then(response => {
       setViewModel(response.data);
     });
-  },[path]);
+  },[path,term,frag]);
   
+  function handleSubmit(event) {
+    console.log('path: ' + path + '\nterm: ' + term + '\nfrag: ' + frag);
+    event.preventDefault();
+    setPath(path);
+    setTerm(searchTerm);
+  }
+  
+  function handleFrag(event) {
+    setFrag(!frag);
+    event.target.blur();
+  }
+  function handleClear(event) {
+    event.target.blur();
+    setSearchTerm('');
+    setTerm('');
+  };
   function navFacet(fullFacet) {
-    history.push('/statutes?path='+fullFacet);
+    setPath(fullFacet);
   };
 
   if ( viewModel != null && viewModel.entries.length > 0 ) {
@@ -43,11 +71,8 @@ export default function Statutes(props) {
           </a>
           <div className="collapse navbar-collapse" id="navbarSupportedContent">
             <div className="btn-group" role="group" aria-label="Button group with nested dropdown"></div>
-            <form action="/" className="navbar-nav mr-auto form-inline my-2 my-lg-0" id="search-form">
-              <input type="hidden" id="hidden-path" />
-              <input type="hidden" id="hidden-term" />
-              <input type="hidden" id="hidden-frag" />
-              <input className="form-control mr-sm-2" placeholder="Search" id="search-input" aria-label="Search"/>
+            <form className="navbar-nav mr-auto form-inline my-2 my-lg-0" id="search-form" onSubmit={handleSubmit}>
+              <input className="form-control mr-sm-2" placeholder="Search" value={searchTerm} id="search-input" onChange={e=>setSearchTerm(e.target.value)} aria-label="Search" />
               <div className="btn-group" >
               <button className="btn btn-outline-secondary my-2 my-sm-0" id="search-submit">Submit</button>
               <div className="btn-group" role="group">
@@ -75,8 +100,13 @@ export default function Statutes(props) {
               </div>
               </div>
               </div>
-              <button className="btn btn-light my-2 my-sm-0" name="cl" id="search-clear" >Clear</button>
-              <button className="btn my-2 my-sm-0" id="search-frag" >Fragments</button>
+              <button className="btn btn-light my-2 my-sm-0" name="cl" id="search-clear" onClick={handleClear}>Clear</button>
+              { fragDisabled ? 
+                  <button className="btn btn-list my-2 my-sm-0" id="search-frag" disabled>Fragments</button>
+                  : frag ? 
+                    <button className="btn btn-primary my-2 my-sm-0" id="search-frag" onClick={handleFrag}>Fragments</button>
+                    : <button className="btn btn-light my-2 my-sm-0" id="search-frag" onClick={handleFrag}>Fragments</button>
+              }
               <input type="hidden" name="fs" />
             </form>
             <ul className="navbar-nav ml-auto">
