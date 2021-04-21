@@ -1,4 +1,4 @@
-import {useState, useEffect} from "react";
+import {useState, useEffect, useRef} from "react";
 import {useHistory, useLocation} from "react-router-dom";
 import http from "./http-common";
 import StatutesRecurse from "./StatutesRecurse";
@@ -11,39 +11,32 @@ function useQuery() {
   return new URLSearchParams(useLocation().search);
 }
 
-function buildParams() {
-  return new URLSearchParams();
-}
-
 export default function Statutes(props) {
   const history = useHistory();
   const query = useQuery();
-  const params = buildParams();
   const [viewModel, setViewModel] = useState();
   const [path, setPath] = useState(query.get('path'));
   const [term, setTerm] = useState(query.get('term'));
   const [frag, setFrag] = useState(query.get('frag'));
-  const [searchTerm, setSearchTerm] = useState(term);
-  let fragDisabled = ( path === null || path === '' || term === null || term === '' );
+  const [searchTerm, setSearchTerm] = useState(term !== null ? term : '');
+  const fragDisabled = useRef(path === null || path === '' || term === null || term === '' );
   
   
   // Similar to componentDidMount and componentDidUpdate:
   useEffect(() => {
-    fragDisabled = ( path === null || path === '' || term === null || term === '' );
-    console.log('fragDisabled: ' + fragDisabled);
-    console.log('path: ' + path + '\nterm: ' + term + '\nfrag: ' + frag);
-    if ( path != null && path != '' ) params.append('path', path);
-    if ( term != null && term != '' ) params.append('term', term);
-    if ( !fragDisabled && frag != null && frag != '' ) params.append('frag', frag);
+    let params = new URLSearchParams();
+    fragDisabled.current = ( path === null || path === '' || term === null || term === '' );
+    if ( path !== null && path !== '' ) params.append('path', path);
+    if ( term !== null && term !== '' ) params.append('term', term);
+    if ( !fragDisabled.current && frag !== null && frag !== '' ) params.append('frag', frag);
     history.push('/statutes?' + params);
     return http.get('api?'+params)
     .then(response => {
       setViewModel(response.data);
     });
-  },[path,term,frag]);
+  },[history,path,term,frag]);
   
   function handleSubmit(event) {
-    console.log('path: ' + path + '\nterm: ' + term + '\nfrag: ' + frag);
     event.preventDefault();
     setPath(path);
     setTerm(searchTerm);
