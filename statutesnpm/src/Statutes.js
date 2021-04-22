@@ -1,12 +1,11 @@
 import {useState, useEffect, useRef} from "react";
 import {useHistory, useLocation} from "react-router-dom";
 import http from "./http-common";
+import {getAdvancedSearchFields, getSearchTerm} from "./SearchTerms";
 import StatutesRecurse from "./StatutesRecurse";
 import AppBreadcrumb from "./AppBreadcrumb";
 import "./Statutes.css";
 
-//A custom hook that builds on useLocation to parse
-//the query string for you.
 function useQuery() {
   return new URLSearchParams(useLocation().search);
 }
@@ -15,39 +14,64 @@ export default function Statutes(props) {
   const history = useHistory();
   const query = useQuery();
   const [viewModel, setViewModel] = useState();
-  const [path, setPath] = useState(query.get('path'));
-  const [term, setTerm] = useState(query.get('term'));
-  const [frag, setFrag] = useState(query.get('frag'));
-  const [searchTerm, setSearchTerm] = useState(term !== null ? term : '');
-  const fragDisabled = useRef(path === null || path === '' || term === null || term === '' );
-  
-  
+  const [path, setPath] = useState(query.get('path') === null ? '' : query.get('path'));
+  const [term, setTerm] = useState(query.get('term') === null ? '' : query.get('term'));
+  const [frag, setFrag] = useState(query.get('frag') === null ? '' : query.get('frag'));
+  const [searchTerm, setSearchTerm] = useState(term);
+  const fragDisabled = useRef(path === '' || term === '' );
+  const [urlParams, setUrlParams] = useState(duplicateFuckingCode());
+  const searchTerms = getAdvancedSearchFields(term);
+  const [allSearchTerm, setAllSearchTerm] = useState(searchTerms[0]);
+  const [notSearchTerm, setNotSearchterm] = useState(searchTerms[1]);
+  const [anySearchTerm, setAnySearchTerm] = useState(searchTerms[2]);
+  const [exactSearchTerm, setExactSearchTerm] = useState(searchTerms[3]);
+
+  function duplicateFuckingCode() {
+    const params = new URLSearchParams();
+    fragDisabled.current = ( path === '' || term === '' );
+    if ( path !== '' ) params.append('path', path);
+    if ( term !== '' ) params.append('term', term);
+    if ( !fragDisabled.current && frag !== '' ) params.append('frag', frag);
+    return params;
+  }
+
   // Similar to componentDidMount and componentDidUpdate:
   useEffect(() => {
-    let params = new URLSearchParams();
-    fragDisabled.current = ( path === null || path === '' || term === null || term === '' );
-    if ( path !== null && path !== '' ) params.append('path', path);
-    if ( term !== null && term !== '' ) params.append('term', term);
-    if ( !fragDisabled.current && frag !== null && frag !== '' ) params.append('frag', frag);
-    history.push('/statutes?' + params);
-    return http.get('api?'+params)
+    const params = new URLSearchParams();
+    fragDisabled.current = ( path === '' || term === '' );
+    if ( path !== '' ) params.append('path', path);
+    if ( term !== '' ) params.append('term', term);
+    if ( !fragDisabled.current && frag !== '' ) params.append('frag', frag);
+    setUrlParams(params);
+  },[path, term, frag]);
+
+  useEffect(() => {
+    history.push('/statutes?' + urlParams);
+    return http.get('api?'+urlParams)
     .then(response => {
       setViewModel(response.data);
     });
-  },[history,path,term,frag]);
-  
+  },[history, urlParams]);
+
   function handleSubmit(event) {
     event.preventDefault();
-    setPath(path);
     setTerm(searchTerm);
+//    let params = duplicateFuckingCode();
+//    let newTerm = getSearchTerm(allSearchTerm, notSearchTerm, anySearchTerm, exactSearchTerm)
+//    if ( params.has('term') || )
+//    if ( newTerm !== '' ) params.append('term', newTerm);
+//    history.location.push('/statutes?' + params);
   }
-  
+  function handleAnySearchTerm(event) {
+    setAnySearchTerm(event.target.value);
+ }
   function handleFrag(event) {
     setFrag(!frag);
     event.target.blur();
   }
   function handleClear(event) {
     event.target.blur();
+    setFrag(false);
     setSearchTerm('');
     setTerm('');
   };
@@ -82,11 +106,11 @@ export default function Statutes(props) {
                   </div>
                   <div className="form-group">
                     <label htmlFor="inAny">Any&nbsp;Of:&nbsp;&nbsp;</label>
-                    <input type="text" className="form-control" name="inAny" id="inAny" />
+                    <input type="text" className="form-control" name="inAny" id="inAny" value={anySearchTerm.current} onChange={handleAnySearchTerm}/>
                   </div>
                   <div className="form-group">
                     <label htmlFor="inExact">Exact&nbsp;Phrase:&nbsp;&nbsp;</label>
-                    <input type="text" className="form-control" name="inExact" id="inExact" />
+                    <input type="text" className="form-control" name="inExact" id="inExact"/>
                   </div>
                   <button type="submit" className="btn btn-primary" id="search-form-input">Submit</button>
                </div>
@@ -94,7 +118,7 @@ export default function Statutes(props) {
               </div>
               </div>
               <button className="btn btn-light my-2 my-sm-0" name="cl" id="search-clear" onClick={handleClear}>Clear</button>
-              { fragDisabled ? 
+              { fragDisabled.current ? 
                   <button className="btn btn-list my-2 my-sm-0" id="search-frag" disabled>Fragments</button>
                   : frag ? 
                     <button className="btn btn-primary my-2 my-sm-0" id="search-frag" onClick={handleFrag}>Fragments</button>
@@ -125,3 +149,4 @@ export default function Statutes(props) {
   }
   return null;
 }
+

@@ -9,7 +9,7 @@ export default function App(props) {
     <section className="App">
       <Router>
       <Route exact path="/" render={() => <Home />}/>
-      <Route exact path="/statutes:path?" component={Statutes} />
+      <Route exact path="/statutes" component={Statutes} />
       </Router>
     </section>
   );
