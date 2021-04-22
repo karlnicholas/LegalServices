@@ -19,10 +19,11 @@ export default function Statutes(props) {
   const [frag, setFrag] = useState(query.get('frag') === null ? '' : query.get('frag'));
   const [searchTerm, setSearchTerm] = useState(term);
   const fragDisabled = useRef(path === '' || term === '' );
+  const adSearchTermsChanged = new useRef(false);
   const [urlParams, setUrlParams] = useState(duplicateFuckingCode());
   const searchTerms = getAdvancedSearchFields(term);
   const [allSearchTerm, setAllSearchTerm] = useState(searchTerms[0]);
-  const [notSearchTerm, setNotSearchterm] = useState(searchTerms[1]);
+  const [notSearchTerm, setNotSearchTerm] = useState(searchTerms[1]);
   const [anySearchTerm, setAnySearchTerm] = useState(searchTerms[2]);
   const [exactSearchTerm, setExactSearchTerm] = useState(searchTerms[3]);
 
@@ -46,6 +47,14 @@ export default function Statutes(props) {
   },[path, term, frag]);
 
   useEffect(() => {
+    const searchTerms = getAdvancedSearchFields(term);
+    setAllSearchTerm(searchTerms[0]);
+    setNotSearchTerm(searchTerms[1]);
+    setAnySearchTerm(searchTerms[2]);
+    setExactSearchTerm(searchTerms[3]);
+  },[term]);
+
+  useEffect(() => {
     history.push('/statutes?' + urlParams);
     return http.get('api?'+urlParams)
     .then(response => {
@@ -54,17 +63,30 @@ export default function Statutes(props) {
   },[history, urlParams]);
 
   function handleSubmit(event) {
+    if ( adSearchTermsChanged.current === true) {
+      setTerm(getSearchTerm(allSearchTerm, notSearchTerm, anySearchTerm, exactSearchTerm));
+    } else {
+      setTerm(searchTerm);
+    }
     event.preventDefault();
-    setTerm(searchTerm);
-//    let params = duplicateFuckingCode();
-//    let newTerm = getSearchTerm(allSearchTerm, notSearchTerm, anySearchTerm, exactSearchTerm)
-//    if ( params.has('term') || )
-//    if ( newTerm !== '' ) params.append('term', newTerm);
-//    history.location.push('/statutes?' + params);
+    adSearchTermsChanged.current = false;
+  }
+  function handleAllSearchTerm(event) {
+    setAllSearchTerm(event.target.value);
+    adSearchTermsChanged.current = true;
+  }
+  function handleNotSearchTerm(event) {
+    setNotSearchTerm(event.target.value);
+    adSearchTermsChanged.current = true;
   }
   function handleAnySearchTerm(event) {
     setAnySearchTerm(event.target.value);
- }
+    adSearchTermsChanged.current = true;
+  }
+  function handleExactSearchTerm(event) {
+    setExactSearchTerm(event.target.value);
+    adSearchTermsChanged.current = true;
+  }
   function handleFrag(event) {
     setFrag(!frag);
     event.target.blur();
@@ -91,28 +113,28 @@ export default function Statutes(props) {
             <form className="navbar-nav mr-auto form-inline my-2 my-lg-0" id="search-form" onSubmit={handleSubmit}>
               <input className="form-control mr-sm-2" placeholder="Search" value={searchTerm} id="search-input" onChange={e=>setSearchTerm(e.target.value)} aria-label="Search" />
               <div className="btn-group" >
-              <button className="btn btn-outline-secondary my-2 my-sm-0" id="search-submit">Submit</button>
+              <button className="btn btn-outline-secondary my-2 my-sm-0" name="term-submit" id="search-submit">Submit</button>
               <div className="btn-group" role="group">
                 <button className="btn btn-outline-secondary dropdown-toggle" data-toggle="dropdown"><span className="caret"></span></button>
               <div className="dropdown-menu">
                <div className="px-4 py-3">
                   <div className="form-group">
                    <label htmlFor="inAll">All&nbsp;Of:&nbsp;&nbsp;</label>
-                    <input type="text" className="form-control" name="inAll" id="inAll" />
+                    <input type="text" className="form-control" name="inAll" id="inAll" value={allSearchTerm} onChange={handleAllSearchTerm}/>
                   </div>
                   <div className="form-group">
                    <label htmlFor="inNot">None&nbsp;Of:&nbsp;&nbsp;</label>
-                    <input type="text" className="form-control" name="inNot" id="inNot" />
+                    <input type="text" className="form-control" name="inNot" id="inNot" value={notSearchTerm} onChange={handleNotSearchTerm}/>
                   </div>
                   <div className="form-group">
                     <label htmlFor="inAny">Any&nbsp;Of:&nbsp;&nbsp;</label>
-                    <input type="text" className="form-control" name="inAny" id="inAny" value={anySearchTerm.current} onChange={handleAnySearchTerm}/>
+                    <input type="text" className="form-control" name="inAny" id="inAny" value={anySearchTerm} onChange={handleAnySearchTerm}/>
                   </div>
                   <div className="form-group">
                     <label htmlFor="inExact">Exact&nbsp;Phrase:&nbsp;&nbsp;</label>
-                    <input type="text" className="form-control" name="inExact" id="inExact"/>
+                    <input type="text" className="form-control" name="inExact" id="inExact" value={exactSearchTerm} onChange={handleExactSearchTerm}/>
                   </div>
-                  <button type="submit" className="btn btn-primary" id="search-form-input">Submit</button>
+                  <button type="submit" className="btn btn-primary" name="ad-terms-submit" id="search-form-input">Submit</button>
                </div>
               </div>
               </div>
@@ -121,8 +143,8 @@ export default function Statutes(props) {
               { fragDisabled.current ? 
                   <button className="btn btn-list my-2 my-sm-0" id="search-frag" disabled>Fragments</button>
                   : frag ? 
-                    <button className="btn btn-primary my-2 my-sm-0" id="search-frag" onClick={handleFrag}>Fragments</button>
-                    : <button className="btn btn-light my-2 my-sm-0" id="search-frag" onClick={handleFrag}>Fragments</button>
+                    <button className="btn btn-primary my-2 my-sm-0" name="frag" id="search-frag" onClick={handleFrag}>Fragments</button>
+                    : <button className="btn btn-light my-2 my-sm-0" name="frag" id="search-frag" onClick={handleFrag}>Fragments</button>
               }
               <input type="hidden" name="fs" />
             </form>
