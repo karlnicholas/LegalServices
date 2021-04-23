@@ -64,12 +64,14 @@ export default function Statutes(props) {
 
   function handleSubmit(event) {
     if ( adSearchTermsChanged.current === true) {
-      setTerm(getSearchTerm(allSearchTerm, notSearchTerm, anySearchTerm, exactSearchTerm));
+      let s = getSearchTerm(allSearchTerm, notSearchTerm, anySearchTerm, exactSearchTerm);
+      setTerm(s);
+      setSearchTerm(s);
     } else {
       setTerm(searchTerm);
     }
-    event.preventDefault();
     adSearchTermsChanged.current = false;
+    event.preventDefault();
   }
   function handleAllSearchTerm(event) {
     setAllSearchTerm(event.target.value);
