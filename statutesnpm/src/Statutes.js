@@ -20,14 +20,14 @@ export default function Statutes(props) {
   const [searchTerm, setSearchTerm] = useState(term);
   const fragDisabled = useRef(path === '' || term === '' );
   const adSearchTermsChanged = new useRef(false);
-  const [urlParams, setUrlParams] = useState(duplicateFuckingCode());
+  const [urlParams, setUrlParams] = useState(duplicateCode());
   const searchTerms = getAdvancedSearchFields(term);
   const [allSearchTerm, setAllSearchTerm] = useState(searchTerms[0]);
   const [notSearchTerm, setNotSearchTerm] = useState(searchTerms[1]);
   const [anySearchTerm, setAnySearchTerm] = useState(searchTerms[2]);
   const [exactSearchTerm, setExactSearchTerm] = useState(searchTerms[3]);
 
-  function duplicateFuckingCode() {
+  function duplicateCode() {
     const params = new URLSearchParams();
     fragDisabled.current = ( path === '' || term === '' );
     if ( path !== '' ) params.append('path', path);
