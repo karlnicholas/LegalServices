@@ -55,7 +55,7 @@ public class OpinionViewBuildComponent implements Runnable {
         configProperties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG,kafkaProperties.getIpAddress()+':'+kafkaProperties.getPort());
         configProperties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG,kafkaProperties.getIntegerSerializer());
         configProperties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG,kafkaProperties.getOpinionViewValueSerializer());
-        if ( kafkaProperties.getUser() != null ) {
+        if ( !kafkaProperties.getUser().equalsIgnoreCase("notFound") ) {
             configProperties.put(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, "SASL_PLAINTEXT");
             configProperties.put(SaslConfigs.SASL_MECHANISM, "PLAIN");
             configProperties.put(SaslConfigs.SASL_JAAS_CONFIG, "org.apache.kafka.common.security.plain.PlainLoginModule required username=\"" +
@@ -71,7 +71,7 @@ public class OpinionViewBuildComponent implements Runnable {
 		consumerProperties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, kafkaProperties.getIntegerDeserializer());
 		consumerProperties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, kafkaProperties.getJsonValueDeserializer());
 		consumerProperties.put(ConsumerConfig.GROUP_ID_CONFIG, kafkaProperties.getSlipOpinionsConsumerGroup());
-        if ( kafkaProperties.getUser() != null ) {
+        if ( !kafkaProperties.getUser().equalsIgnoreCase("notFound") ) {
         	consumerProperties.put(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, "SASL_PLAINTEXT");
         	consumerProperties.put(SaslConfigs.SASL_MECHANISM, "PLAIN");
         	consumerProperties.put(SaslConfigs.SASL_JAAS_CONFIG, "org.apache.kafka.common.security.plain.PlainLoginModule required username=\"" +

@@ -37,7 +37,7 @@ public class OpinionViewCacheComponent implements Runnable {
 		consumerProperties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, kafkaProperties.getOpinionViewValueDeserializer());
 		consumerProperties.put(ConsumerConfig.GROUP_ID_CONFIG, UUID.randomUUID().toString());
 		consumerProperties.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
-        if ( kafkaProperties.getUser() != null ) {
+        if ( !kafkaProperties.getUser().equalsIgnoreCase("notFound") ) {
         	consumerProperties.put(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, "SASL_PLAINTEXT");
         	consumerProperties.put(SaslConfigs.SASL_MECHANISM, "PLAIN");
         	consumerProperties.put(SaslConfigs.SASL_JAAS_CONFIG, "org.apache.kafka.common.security.plain.PlainLoginModule required username=\"" +

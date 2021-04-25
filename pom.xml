@@ -20,11 +20,9 @@
 		<module>OpinionService</module>
 		<module>OpinionServiceReactive</module>
 		<module>StatuteServer</module>
-		<module>StatuteServerStd</module>
 		<module>GuidedSearchCore</module>
 		<module>StatuteCa</module>
 		<module>StatuteRestCa</module>
-		<module>StatuteRestCaStd</module>
 		<module>OpinionRestCa</module>
 		<module>OpinionModel</module>
 		<module>OpinionParser</module>
@@ -82,13 +80,6 @@
 			<dependency>
 				<groupId>com.github.karlnicholas.legalservices</groupId>
 				<artifactId>statute-server</artifactId>
-				<version>${project.version}</version>
-				<type>jar</type>
-				<scope>compile</scope>
-			</dependency>
-			<dependency>
-				<groupId>com.github.karlnicholas.legalservices</groupId>
-				<artifactId>statute-server-std</artifactId>
 				<version>${project.version}</version>
 				<type>jar</type>
 				<scope>compile</scope>

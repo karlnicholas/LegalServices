@@ -12,9 +12,9 @@ public class KakfaProperties {
 	private String ipAddress;
 	@Value("${kafka.port:9092}")
     private String port;
-	@Value("${kafka.user}")
+	@Value("${kafka.user:notFound}")
     private String user;
-	@Value("${kafka.password}")
+	@Value("${kafka.password:notFound}")
     private String password;
     private String slipOpinionsTopic = "slipopinions";
     private String opinionViewCacheTopic = "opinionviewcache";

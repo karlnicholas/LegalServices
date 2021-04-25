@@ -1,5 +1,6 @@
 import {useState, useEffect, useRef} from "react";
 import {useHistory, useLocation} from "react-router-dom";
+import logo from "./spring-logo.png";
 import http from "./http-common";
 import {getAdvancedSearchFields, getSearchTerm} from "./SearchTerms";
 import StatutesRecurse from "./StatutesRecurse";
@@ -108,7 +109,7 @@ export default function Statutes(props) {
       <div className="container">
         <nav className="navbar navbar-expand-lg navbar-light bg-light">
         <a className="navbar-brand" href="/">
-          <img src="spring-logo.png" width="95" height="50" className="d-inline-block align-center" alt="" loading="lazy"/>
+          <img src={logo} width="95" height="50" className="d-inline-block align-center" alt="" loading="lazy"/>
         </a>
         <div className="collapse navbar-collapse" id="navbarSupportedContent">
           <div className="btn-group" role="group" aria-label="Button group with nested dropdown"></div>
@@ -155,7 +156,7 @@ export default function Statutes(props) {
               <a className="nav-link dropdown-toggle" href="/" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Applications</a>
               <div className="dropdown-menu" aria-labelledby="navbarDropdown">
                 <a className="dropdown-item" href="/statutes">Guided Search</a>
-                <a className="dropdown-item" href="/">Court Opinions</a>
+                <a className="dropdown-item" href="/opinions">Court Opinions</a>
               </div>
             </li>
           </ul>
