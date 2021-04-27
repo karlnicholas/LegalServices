@@ -38,6 +38,16 @@ public class OpinionViewControllerHandler {
 			return ServerResponse.status(HttpStatus.INTERNAL_SERVER_ERROR).bodyValue(e.getMessage());
 		}
 	}
+	public Mono<ServerResponse> getRecentOpinionViews(ServerRequest request) {
+		try {
+			return ServerResponse.ok().contentType(MediaType.APPLICATION_JSON)
+					.bodyValue(opinionViewData.getOpinionViews());
+		} catch ( IllegalArgumentException e) {
+			return ServerResponse.badRequest().bodyValue(e.getMessage());
+		} catch ( Exception e) {
+			return ServerResponse.status(HttpStatus.INTERNAL_SERVER_ERROR).bodyValue(e.getMessage());
+		}
+	}
 	public Mono<ServerResponse> getOpinionViewDates(ServerRequest request) {
 		return ServerResponse.ok().contentType(MediaType.APPLICATION_JSON)
 				.bodyValue(opinionViewData.getDateBrackets());

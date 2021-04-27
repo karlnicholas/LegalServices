@@ -19,6 +19,8 @@ public class OpinionViewControllerRouter {
 		return RouterFunctions
 			.route(RequestPredicates.GET("/api/opinionviews/cases/{startDate}")
 				.and(RequestPredicates.accept(MediaType.APPLICATION_JSON)), opinionViewControllerHandler::getOpinionViews)
+			.andRoute(RequestPredicates.GET("/api/opinionviews/cases")
+					.and(RequestPredicates.accept(MediaType.APPLICATION_JSON)), opinionViewControllerHandler::getRecentOpinionViews)
 			.andRoute(RequestPredicates.GET("/api/opinionviews/dates")
 					.and(RequestPredicates.accept(MediaType.APPLICATION_JSON)), opinionViewControllerHandler::getOpinionViewDates)
 			.andRoute(RequestPredicates.GET("/api/poll"), opinionViewControllerHandler::getPoll)

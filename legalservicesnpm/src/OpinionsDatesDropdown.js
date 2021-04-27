@@ -5,7 +5,7 @@ export default function OpinionsDatesDropdown(props) {
   function getDropdown() {
     if ( props.dates.length > 0 ) {
       return props.dates.map((date, index) => (
-          <Link key={index} className="dropdown-item" to={`/opinions/${date[0]}`}>{date[0]} - {date[1]}</Link>
+          <Link key={index} className="dropdown-item" to={`/${date[0]}`}>{date[0]} - {date[1]}</Link>
       ))
     } else {
       return ( <a key={1} className="dropdown-item" href='/opinions'>Loading ...</a>); 

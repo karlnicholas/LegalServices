@@ -102,6 +102,13 @@ public class OpinionViewData {
 		}
 					
 	}
+	public List<OpinionView> getOpinionViews() {
+		if ( dateBrackets.size() > 0 ) {
+			return getOpinionViews(dateBrackets.get(0)[0]);
+		} else {
+			return Collections.emptyList();
+		}
+	}
 	public List<OpinionView> getOpinionViews(LocalDate startDate) {
 		return findDateBracket(startDate).map(dates->{
 			return opinionViews.stream()
