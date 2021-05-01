@@ -5,8 +5,7 @@ metadata:
 spec:
   selector:
     app: guidedsearch-web
-  type: LoadBalancer
   ports:
-  - port: 80
+  - port: 8092
     protocol: TCP
-    targetPort: 8080
+    targetPort: 8092

@@ -15,10 +15,6 @@ export default function Home(props) {
     http.get('/api/opinionviews/dates').then(response => {
       setDates(response.data);
     });
-    http.get('/api/opinionviews/cases')
-    .then(response => {
-      setOpinions(response.data);
-    });
   }, []);
 
   useEffect(()=> {
@@ -28,6 +24,11 @@ export default function Home(props) {
   useEffect(()=> {
     if ( startDate !== undefined ) {
       http.get('/api/opinionviews/cases/'+startDate)
+      .then(response => {
+        setOpinions(response.data);
+      });
+    } else {
+      http.get('/api/opinionviews/cases')
       .then(response => {
         setOpinions(response.data);
       });

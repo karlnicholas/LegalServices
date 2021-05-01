@@ -1,5 +1,5 @@
 import React from "react";
-import './css/opinion.css'
+import './OpinionView.css'
 import { BsStarFill } from "react-icons/bs";
 
 export default function OpinionView(props) {
@@ -18,7 +18,7 @@ export default function OpinionView(props) {
           <div className="openstat srow" key={index}>
           <span className="casestar">{createImportance(section.importance)}</span>
           <span className="openstat code titlepath">{section.displayTitlePath}</span>
-          <a href={'http://gsw-opca.b9ad.pro-us-east-1.openshiftapps.com/?path='+section.fullFacet}><span className="openstat code sections">{section.displaySections}</span></a>
+          <a href={'statutes?path='+section.fullFacet} ><span className="openstat code sections" style={{ cursor: 'pointer' }}>{section.displaySections}</span></a>
           </div>
         )
       });
