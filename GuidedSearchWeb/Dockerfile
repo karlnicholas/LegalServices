@@ -9,7 +9,7 @@ VOLUME /CaliforniaStatutes
 COPY target/guidedsearch-web-*.jar /guidedsearch-web.jar
 ENV gsindexloc=/opcastorage/index
 ENV gsindextaxoloc=/opcastorage/indextaxo
-EXPOSE 8080
+EXPOSE 8092
 
 # Run the web service on container startup.
 CMD ["java","-Djava.security.egd=file:/dev/./urandom","-Dserver.port=${PORT}","-jar","/guidedsearch-web.jar"]

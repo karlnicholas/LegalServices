@@ -41,3 +41,12 @@ spec:
         # This app listens on port 8080 for web traffic by default.
         ports:
         - containerPort: 8080
+          name: actuator
+        livenessProbe:
+          httpGet:
+            path: /actuator/health/liveness
+            port: actuator
+        readinessProbe:
+          httpGet:
+            path: /actuator/health/readiness
+            port: actuator

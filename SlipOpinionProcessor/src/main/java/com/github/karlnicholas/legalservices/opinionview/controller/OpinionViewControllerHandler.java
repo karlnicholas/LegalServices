@@ -52,11 +52,4 @@ public class OpinionViewControllerHandler {
 		return ServerResponse.ok().contentType(MediaType.APPLICATION_JSON)
 				.bodyValue(opinionViewData.getDateBrackets());
 	}
-	public Mono<ServerResponse> getPoll(ServerRequest request) {
-		try {
-			return ServerResponse.ok().bodyValue(slipOpinionScraperComponent.reportCurrentTime());
-		} catch (SQLException e) {
-			return ServerResponse.status(HttpStatus.INTERNAL_SERVER_ERROR).bodyValue(e.getMessage());
-		}
-	}
 }

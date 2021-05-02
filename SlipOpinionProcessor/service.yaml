@@ -5,8 +5,7 @@ metadata:
 spec:
   selector:
     app: slipopinionprocessor
-  type: LoadBalancer
   ports:
-  - port: 80
+  - port: 8080
     protocol: TCP
     targetPort: 8080

@@ -23,7 +23,6 @@ public class OpinionViewControllerRouter {
 					.and(RequestPredicates.accept(MediaType.APPLICATION_JSON)), opinionViewControllerHandler::getRecentOpinionViews)
 			.andRoute(RequestPredicates.GET("/api/opinionviews/dates")
 					.and(RequestPredicates.accept(MediaType.APPLICATION_JSON)), opinionViewControllerHandler::getOpinionViewDates)
-			.andRoute(RequestPredicates.GET("/api/poll"), opinionViewControllerHandler::getPoll)
 			;
 	}
 

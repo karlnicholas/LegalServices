@@ -19,12 +19,21 @@ spec:
         image: gcr.io/legalservices/guidedsearch-web
         env:
           - name: PORT
-            value: "8080"
+            value: "8092"
           - name: statutesrestca
             value: "http://statutes-rest-ca-service:8090/"
-        # This app listens on port 8080 for web traffic by default.
+        # This app listens on port 8092 for web traffic by default.
         ports:
-        - containerPort: 8080
+        - containerPort: 8092
+          name: actuator
+        livenessProbe:
+          httpGet:
+            path: /actuator/health/liveness
+            port: actuator
+        readinessProbe:
+          httpGet:
+            path: /actuator/health/readiness
+            port: actuator
         volumeMounts:
         - name: opcastorage-mount
           mountPath: /opcastorage

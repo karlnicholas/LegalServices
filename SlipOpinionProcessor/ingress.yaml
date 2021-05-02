@@ -1,0 +1,16 @@
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: legalservices-ingress
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /*
+        backend:
+          serviceName: slipopinionprocessor-service
+          servicePort: 8080
+      - path: /api/statutes
+        backend:
+          serviceName: guidedsearch-web-service
+          servicePort: 8092
