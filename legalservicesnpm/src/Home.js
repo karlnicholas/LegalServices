@@ -1,5 +1,5 @@
 import {useState, useEffect} from "react";
-import http from "./http-common";
+import httpopinions from "./httpopinions";
 
 import OpinionView from "./OpinionView";
 import OpinionsDatesDropdown from "./OpinionsDatesDropdown";
@@ -12,7 +12,7 @@ export default function Home(props) {
   const[dates, setDates] = useState([]);
 
   useEffect(() => {
-    http.get('/api/opinionviews/dates').then(response => {
+    httpopinions.get('/api/opinionviews/dates').then(response => {
       setDates(response.data);
     });
   }, []);
@@ -23,12 +23,12 @@ export default function Home(props) {
 
   useEffect(()=> {
     if ( startDate !== undefined ) {
-      http.get('/api/opinionviews/cases/'+startDate)
+      httpopinions.get('/api/opinionviews/cases/'+startDate)
       .then(response => {
         setOpinions(response.data);
       });
     } else {
-      http.get('/api/opinionviews/cases')
+      httpopinions.get('/api/opinionviews/cases')
       .then(response => {
         setOpinions(response.data);
       });

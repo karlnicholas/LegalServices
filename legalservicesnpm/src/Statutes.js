@@ -1,7 +1,7 @@
 import {useState, useEffect, useRef} from "react";
 import {useHistory, useLocation} from "react-router-dom";
 import {getAdvancedSearchFields, getSearchTerm} from "./SearchTerms";
-import axios from "axios";
+import httpstatutes from "./httpstatutes";
 import StatutesRecurse from "./StatutesRecurse";
 import AppBreadcrumb from "./AppBreadcrumb";
 import AppNavDropdown from "./AppNavDropdown";
@@ -58,9 +58,7 @@ export default function Statutes(props) {
 
   useEffect(() => {
     history.push('/statutes?' + urlParams);
-    const GS_SERVICE_URL = process.env.GS_SERVICE_URL || 'http://localhost:8092';
-    console.log('GS_SERVICE_URL: ' + GS_SERVICE_URL);
-    return axios.get(GS_SERVICE_URL+'/api?'+urlParams)
+    return httpstatutes.get('/api/statutes?'+urlParams)
     .then(response => {
       setViewModel(response.data);
     })
