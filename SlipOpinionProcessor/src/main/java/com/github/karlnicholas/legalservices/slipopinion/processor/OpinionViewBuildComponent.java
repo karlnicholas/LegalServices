@@ -90,7 +90,7 @@ public class OpinionViewBuildComponent implements Runnable {
 		    consumer.subscribe(Collections.singletonList(kafkaProperties.getSlipOpinionsTopic()));
 		    while (true) {
 		    	try {
-			        ConsumerRecords<Integer, JsonNode> records = consumer.poll(Duration.ofMillis(100));
+			        ConsumerRecords<Integer, JsonNode> records = consumer.poll(Duration.ofSeconds(1));
 			        for (ConsumerRecord<Integer, JsonNode> record : records) {
 //			        	log.info("topic = {}, partition = {}, offset = {}, record key = {}, record value length = {}",
 //			                 record.topic(), record.partition(), record.offset(),

@@ -27,6 +27,7 @@ import com.github.karlnicholas.legalservices.opinionview.model.OpinionViewBuilde
 import com.github.karlnicholas.legalservices.slipopinion.model.SlipOpinion;
 import com.github.karlnicholas.legalservices.slipopinion.parser.OpinionScraperInterface;
 import com.github.karlnicholas.legalservices.slipopinion.parser.SlipOpinionDocumentParser;
+import com.github.karlnicholas.legalservices.slipopinion.scraper.CACaseScraper;
 import com.github.karlnicholas.legalservices.slipopinion.scraper.TestCAParseSlipDetails;
 import com.github.karlnicholas.legalservices.statute.StatutesTitles;
 import com.github.karlnicholas.legalservices.statute.service.StatuteService;
@@ -44,70 +45,70 @@ public class TestParseAndView implements ApplicationRunner {
 	@Override
 	public void run(ApplicationArguments args) throws JsonProcessingException, SQLException {
 
-		StatuteService statutesService = StatutesServiceFactory.getStatutesServiceClient();
-		OpinionService opinionService = OpinionServiceFactory.getOpinionServiceClient();
-		OpinionViewBuilder opinionViewBuilder = new OpinionViewBuilder(statutesService);
-		StatutesTitles[] arrayStatutesTitles = statutesService.getStatutesTitles().getBody();
-		MysqlDataSource dataSource = new MysqlDataSource();
-		dataSource.setUrl("jdbc:mysql://localhost:3306/op");
-		dataSource.setUser("op");
-		dataSource.setPassword("op");
+//		StatuteService statutesService = StatutesServiceFactory.getStatutesServiceClient();
+//		OpinionService opinionService = OpinionServiceFactory.getOpinionServiceClient();
+//		OpinionViewBuilder opinionViewBuilder = new OpinionViewBuilder(statutesService);
+//		StatutesTitles[] arrayStatutesTitles = statutesService.getStatutesTitles().getBody();
+//		MysqlDataSource dataSource = new MysqlDataSource();
+//		dataSource.setUrl("jdbc:mysql://localhost:3306/op");
+//		dataSource.setUser("op");
+//		dataSource.setPassword("op");
 		 
-		//				OpinionScraperInterface caseScraper = new CACaseScraper(true);
+		OpinionScraperInterface caseScraper = new CACaseScraper(true);
 //				OpinionScraperInterface caseScraper = new TestCACaseScraper(false);
-		OpinionScraperInterface caseScraper = new TestCAParseSlipDetails(false);
+//		OpinionScraperInterface caseScraper = new TestCAParseSlipDetails(true);
 
  		List<SlipOpinion> onlineOpinions = caseScraper.getCaseList();
 // 		onlineOpinions.forEach(so->System.out.println(so.getOpinionDate()+","));
- 		SlipOpinion slipOpinionP = onlineOpinions.get(0);
-		parseAndPrintOpinion(opinionService, opinionViewBuilder, arrayStatutesTitles, caseScraper, slipOpinionP);
+// 		SlipOpinion slipOpinionP = onlineOpinions.get(0);
+//		parseAndPrintOpinion(opinionService, opinionViewBuilder, arrayStatutesTitles, caseScraper, slipOpinionP);
 // 		for ( SlipOpinion slipOpinion: onlineOpinions) {
 // 			parseAndPrintOpinion(opinionsService, opinionViewBuilder, arrayStatutesTitles, caseScraper, slipOpinion);
 // 		}
 //		parseAndPrintOpinion(opinionsService, opinionViewBuilder, arrayStatutesTitles, caseScraper, onlineOpinions.get(209));
 // 		onlineOpinions.parallelStream().forEach(slipOpinion->parseAndPrintOpinion(opinionsService, opinionViewBuilder, arrayStatutesTitles, caseScraper, slipOpinion));
 
-		List<String> foundOpinions = onlineOpinions
-				.stream()
-				.map(SlipOpinion::getFileName)
-				.collect(Collectors.toList());
-// 		onlineOpinions.str
+//		List<String> foundOpinions = onlineOpinions
+//				.stream()
+//				.map(SlipOpinion::getFileName)
+//				.collect(Collectors.toList());
+//// 		onlineOpinions.str
 		StringBuilder sb = new StringBuilder();
-		foundOpinions.forEach(f->{
-			sb.append(f);
-			sb.append(',');
-		});
-		// use the transaction manager in the database for a cheap job manager
-		ResponseEntity<String> response = opinionService.callSlipOpinionUpdateNeeded();
-		if ( response.getStatusCodeValue() != 200 ) {
-			logger.error("opinionsService.callSlipOpinionUpdateNeeded() {}", response.getStatusCode());
-			return;
-		}
-		String slipOpinionsList = response.getBody();
-		if ( slipOpinionsList.equalsIgnoreCase("NOUPDATE")) {
-			return;
-		}
-		List<String> savedOpinions = StreamSupport.stream(Arrays.spliterator(
-				slipOpinionsList.split(",")), false)
-		.collect(Collectors.toList());
+//		foundOpinions.forEach(f->{
+//			sb.append(f);
+//			sb.append(',');
+//		});
+//		// use the transaction manager in the database for a cheap job manager
+//		ResponseEntity<String> response = opinionService.callSlipOpinionUpdateNeeded();
+//		if ( response.getStatusCodeValue() != 200 ) {
+//			logger.error("opinionsService.callSlipOpinionUpdateNeeded() {}", response.getStatusCode());
+//			return;
+//		}
+//		String slipOpinionsList = response.getBody();
+//		if ( slipOpinionsList.equalsIgnoreCase("NOUPDATE")) {
+//			return;
+//		}
+//		List<String> savedOpinions = StreamSupport.stream(Arrays.spliterator(
+//				slipOpinionsList.split(",")), false)
+//		.collect(Collectors.toList());
 		
-		List<String> newOpinions = new ArrayList<>(foundOpinions);
-		newOpinions.removeAll(savedOpinions);
-		if ( newOpinions.size() > 0 ) {
-			opinionService.updateSlipOpinionList(sb.toString());
-			List<SlipOpinion> lt = onlineOpinions
-					.stream()
-					.filter(slipOpinion->newOpinions.contains(slipOpinion.getFileName()))
-					.collect(Collectors.toList());
+//		List<String> newOpinions = new ArrayList<>(foundOpinions);
+//		newOpinions.removeAll(savedOpinions);
+		if ( onlineOpinions.size() > 0 ) {
+//			opinionService.updateSlipOpinionList(sb.toString());
+//			List<SlipOpinion> lt = onlineOpinions
+//					.stream()
+//					.filter(slipOpinion->onlineOpinions.contains(slipOpinion.getFileName()))
+//					.collect(Collectors.toList());
 
-			lt.forEach(slipOpinion->{
+			onlineOpinions.forEach(slipOpinion->{
 		        ScrapedOpinionDocument scrapedOpinionDocument = caseScraper.scrapeOpinionFile(slipOpinion);
 
-				SlipOpinionDocumentParser opinionDocumentParser = new SlipOpinionDocumentParser(arrayStatutesTitles);
-				
-				opinionDocumentParser.parseOpinionDocument(scrapedOpinionDocument, scrapedOpinionDocument.getOpinionBase());
-				// maybe someday deal with court issued modifications
-				opinionDocumentParser.parseSlipOpinionDetails((SlipOpinion) scrapedOpinionDocument.getOpinionBase(), scrapedOpinionDocument);
+//				SlipOpinionDocumentParser opinionDocumentParser = new SlipOpinionDocumentParser(arrayStatutesTitles);
+//				
+//				opinionDocumentParser.parseOpinionDocument(scrapedOpinionDocument, scrapedOpinionDocument.getOpinionBase());
+//				// maybe someday deal with court issued modifications
+//				opinionDocumentParser.parseSlipOpinionDetails((SlipOpinion) scrapedOpinionDocument.getOpinionBase(), scrapedOpinionDocument);
 				System.out.println(slipOpinion);
 //		        JsonNode  jsonNode = objectMapper.valueToTree(slipOpinion);
 //		        System.out.println(jsonNode);

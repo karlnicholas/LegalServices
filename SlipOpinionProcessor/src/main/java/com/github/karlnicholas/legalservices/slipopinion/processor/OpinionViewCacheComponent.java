@@ -54,7 +54,7 @@ public class OpinionViewCacheComponent implements Runnable {
 			// Subscribe to the topic.
 		    consumer.subscribe(Collections.singletonList(kafkaProperties.getOpinionViewCacheTopic()));
 		    while (true) {
-		        ConsumerRecords<Integer, OpinionView> records = consumer.poll(Duration.ofMillis(100));
+		        ConsumerRecords<Integer, OpinionView> records = consumer.poll(Duration.ofSeconds(1));
 		        for (ConsumerRecord<Integer, OpinionView> record : records) {
 //		        	log.debug("topic = {}, partition = {}, offset = {}, record key = {}, record value length = {}",
 //		                 record.topic(), record.partition(), record.offset(),
