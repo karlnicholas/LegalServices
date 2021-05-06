@@ -35,7 +35,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Component
 @Slf4j
-public class SlipOpinionScraperComponent {
+public class SaveProcessorComponent {
 
 	private final OpinionScraperInterface caseScraper;
 	private final ObjectMapper objectMapper;
@@ -44,7 +44,7 @@ public class SlipOpinionScraperComponent {
 	private final KakfaProperties kafkaProperties;
 	private final OpinionService opinionService;
 
-	public SlipOpinionScraperComponent(ObjectMapper objectMapper, KakfaProperties kafkaProperties) {
+	public SaveProcessorComponent(ObjectMapper objectMapper, KakfaProperties kafkaProperties) {
 	    this.objectMapper = objectMapper;
 	    this.kafkaProperties = kafkaProperties;
 

@@ -10,19 +10,19 @@ import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
 
 import com.github.karlnicholas.legalservices.slipopinion.processor.OpinionViewData;
-import com.github.karlnicholas.legalservices.slipopinion.processor.SlipOpinionScraperComponent;
+import com.github.karlnicholas.legalservices.slipopinion.processor.CaseListScraperComponent;
 
 import reactor.core.publisher.Mono;
 
 @Component
 public class OpinionViewControllerHandler {
 	private final OpinionViewData opinionViewData;
-	private final SlipOpinionScraperComponent slipOpinionScraperComponent;
+	private final CaseListScraperComponent caseListScraperComponent;
 	
 	public OpinionViewControllerHandler(OpinionViewData opinionViewData, 
-			SlipOpinionScraperComponent slipOpinionScraperComponent
+			CaseListScraperComponent caseListScraperComponent
 	) {
-		this.slipOpinionScraperComponent = slipOpinionScraperComponent; 
+		this.caseListScraperComponent = caseListScraperComponent; 
 		this.opinionViewData = opinionViewData;
 
 	}

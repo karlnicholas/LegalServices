@@ -62,6 +62,10 @@
 			<groupId>javax.xml.bind</groupId>
 			<artifactId>jaxb-api</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>com.github.karlnicholas.legalservices</groupId>
+			<artifactId>caselist-model</artifactId>
+		</dependency>
 	</dependencies>
 	<build>
 		<resources>

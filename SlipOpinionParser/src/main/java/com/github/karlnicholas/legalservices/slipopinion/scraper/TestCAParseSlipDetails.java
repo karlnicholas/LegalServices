@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
+import com.github.karlnicholas.legalservices.caselist.model.CaseListEntry;
 import com.github.karlnicholas.legalservices.opinion.parser.ScrapedOpinionDocument;
 
 import com.github.karlnicholas.legalservices.slipopinion.model.SlipOpinion;
@@ -19,7 +20,7 @@ public class TestCAParseSlipDetails extends CACaseScraper {
 	}
 	
 	@Override
-	public List<SlipOpinion> getCaseList() {
+	public List<CaseListEntry> getCaseList() {
 		try {
 			return parseCaseList(new FileInputStream( CACaseScraper.caseListDir + "/" +  CACaseScraper.caseListFile ));
 		} catch (IOException e) {
@@ -29,10 +30,11 @@ public class TestCAParseSlipDetails extends CACaseScraper {
 	}
 
 	@Override
-	public List<ScrapedOpinionDocument> scrapeOpinionFiles(List<SlipOpinion> opinions) {
+	public List<ScrapedOpinionDocument> scrapeOpinionFiles(List<CaseListEntry> caseListEntries) {
 		List<ScrapedOpinionDocument> documents = new ArrayList<ScrapedOpinionDocument>();		
 		CAParseScrapedDocument parseScrapedDocument = new CAParseScrapedDocument();
-		for (SlipOpinion slipOpinion: opinions ) {			
+		for (CaseListEntry caseListEntry: caseListEntries) {
+			SlipOpinion slipOpinion = new SlipOpinion(caseListEntry.getFileName(), caseListEntry.getFileExtension(), caseListEntry.getTitle(), caseListEntry.getOpinionDate(), caseListEntry.getCourt(), caseListEntry.getSearchUrl());
 			try ( InputStream inputStream = Files.newInputStream( Paths.get(casesDir + slipOpinion.getFileName() + slipOpinion.getFileExtension())) ) {
 				ScrapedOpinionDocument parsedDoc = parseScrapedDocument.parseScrapedDocument(slipOpinion, inputStream);
 	        	if ( parsedDoc.isScrapedSuccess() ) {

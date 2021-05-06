@@ -30,6 +30,7 @@ import org.jsoup.nodes.Node;
 import org.jsoup.select.Elements;
 
 import com.github.karlnicholas.legalservices.slipopinion.parser.OpinionScraperInterface;
+import com.github.karlnicholas.legalservices.caselist.model.CaseListEntry;
 import com.github.karlnicholas.legalservices.opinion.parser.ScrapedOpinionDocument;
 
 import com.github.karlnicholas.legalservices.slipopinion.model.PartyAttorneyPair;
@@ -63,8 +64,8 @@ public class CACaseScraper implements OpinionScraperInterface {
 	}
 
 	@Override
-	public List<SlipOpinion> getCaseList() {
-		List<SlipOpinion> slipOpinionList = null;
+	public List<CaseListEntry> getCaseList() {
+		List<CaseListEntry> caseListEntries = null;
 		try ( CloseableHttpClient httpclient = HttpClients.createDefault() ) {
 			HttpGet httpGet = new HttpGet("http://www.courts.ca.gov/cms/opinions.htm?Courts=Y");
 			CloseableHttpResponse response = httpclient.execute(httpGet);
@@ -79,23 +80,24 @@ public class CACaseScraper implements OpinionScraperInterface {
 				saveCopyOfCase(caseListDir, caseListFile, new BufferedInputStream(bais));
 				bais.reset();
 			}
-			slipOpinionList = parseCaseList(bais);
+			caseListEntries = parseCaseList(bais);
 			httpclient.close();
 		} catch (IOException ex ) {
 			logger.severe(ex.getMessage());
 		}
-		return slipOpinionList;
+		return caseListEntries;
 	}
 
 	@Override
-	public List<ScrapedOpinionDocument> scrapeOpinionFiles(List<SlipOpinion> slipOpinions) {
+	public List<ScrapedOpinionDocument> scrapeOpinionFiles(List<CaseListEntry> caseListEntries) {
 		List<ScrapedOpinionDocument> documents = new ArrayList<ScrapedOpinionDocument>();
 		CAParseScrapedDocument parseScrapedDocument = new CAParseScrapedDocument();
 		
 		try ( CloseableHttpClient httpclient = HttpClients.createDefault() ) {
-			for (SlipOpinion slipOpinion: slipOpinions ) {
+			for (CaseListEntry caseListEntry: caseListEntries ) {
+				SlipOpinion slipOpinion = new SlipOpinion(caseListEntry.getFileName(), caseListEntry.getFileExtension(), caseListEntry.getTitle(), caseListEntry.getOpinionDate(), caseListEntry.getCourt(), caseListEntry.getSearchUrl());
 				logger.fine("Downloading: " + slipOpinion.getFileName()+ slipOpinion.getFileExtension());
-				HttpGet httpGet = new HttpGet(downloadURL + slipOpinion.getFileName() + slipOpinion.getFileExtension());
+				HttpGet httpGet = new HttpGet(downloadURL + caseListEntry.getFileName() + caseListEntry.getFileExtension());
 				try ( CloseableHttpResponse response = httpclient.execute(httpGet) ) {
 					// uhmm .. I don't think the key is the same as the name.
 //					HttpGet httpGet = new HttpGet("http://www.courts.ca.gov/opinions/documents/" + slipOpinion.getName() + slipOpinion.getFileExtension());
@@ -474,8 +476,8 @@ public class CACaseScraper implements OpinionScraperInterface {
 	    }
 	}
 
-	protected List<SlipOpinion> parseCaseList(InputStream inputStream) {
-		ArrayList<SlipOpinion> cases = new ArrayList<SlipOpinion>();
+	protected List<CaseListEntry> parseCaseList(InputStream inputStream) {
+		ArrayList<CaseListEntry> cases = new ArrayList<CaseListEntry>();
 //		DateFormat dfs = DateFormat.getDateInstance(DateFormat.SHORT);
 //		DateTimeFormatter dfs = DateTimeFormatter.ofPattern("YY/mm/DD");
 //		DateTimeFormatter dfs = DateTimeFormatter.ofPattern("MM/dd/yy");
@@ -577,12 +579,19 @@ public class CACaseScraper implements OpinionScraperInterface {
 					}
 				}
 				// fill out the title, date, and court with details later
-				SlipOpinion slipOpinion = new SlipOpinion(fileName, fileExtension, tempa[0].trim(), opDate, court, searchUrl);
+				CaseListEntry caseListEntry = CaseListEntry.builder()
+						.fileName(fileName)
+						.fileExtension(fileExtension)
+						.title(tempa[0].trim())
+						.opinionDate(opDate)
+						.court(court)
+						.searchUrl(searchUrl)
+						.build();
 				// test for duplicates
-				if ( cases.contains(slipOpinion)) {
-			    	logger.fine("Duplicate Detected:" + slipOpinion);
+				if ( cases.contains(caseListEntry)) {
+			    	logger.fine("Duplicate Detected:" + caseListEntry);
 				} else {
-					cases.add(slipOpinion);
+					cases.add(caseListEntry);
 				}
 			}
 			

@@ -17,7 +17,7 @@ import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
 
 import com.github.karlnicholas.legalservices.opinion.service.OpinionService;
-
+import com.github.karlnicholas.legalservices.caselist.model.CaseListEntry;
 import com.github.karlnicholas.legalservices.opinion.model.OpinionBase;
 import com.github.karlnicholas.legalservices.opinion.model.OpinionKey;
 
@@ -67,6 +67,24 @@ public class OpinionServiceClientImpl implements OpinionService {
 		requestHeaders.setContentType(MediaType.TEXT_PLAIN);
 		HttpEntity<String> requestEntity = new HttpEntity<>(string, requestHeaders);
 		return restTemplate.exchange(updateSlipOpinionListURI, HttpMethod.POST, requestEntity, Void.class);
+	}
+
+	@Override
+	public List<CaseListEntry> caseListEntries() {
+		// TODO Auto-generated method stub
+		return new ArrayList<>();
+	}
+
+	@Override
+	public void caseListEntryUpdates(List<CaseListEntry> currentCaseListEntries) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void caseListEntryUpdate(CaseListEntry caseListEntry) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

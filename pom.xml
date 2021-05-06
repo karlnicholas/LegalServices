@@ -17,6 +17,7 @@
 		<module>Statute</module>
 		<module>StatuteService</module>
 		<module>StatuteServiceReactive</module>
+		<module>CaseListModel</module>
 		<module>OpinionService</module>
 		<module>OpinionServiceReactive</module>
 		<module>StatuteServer</module>
@@ -73,6 +74,13 @@
 			<dependency>
 				<groupId>com.github.karlnicholas.legalservices</groupId>
 				<artifactId>opinion-service</artifactId>
+				<version>${project.version}</version>
+				<type>jar</type>
+				<scope>compile</scope>
+			</dependency>
+			<dependency>
+				<groupId>com.github.karlnicholas.legalservices</groupId>
+				<artifactId>caselist-model</artifactId>
 				<version>${project.version}</version>
 				<type>jar</type>
 				<scope>compile</scope>
