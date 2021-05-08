@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
 
+import com.github.karlnicholas.legalservices.caselist.model.CaseListEntry;
 import com.github.karlnicholas.legalservices.opinion.model.OpinionBase;
 import com.github.karlnicholas.legalservices.opinion.model.OpinionKey;
 import reactor.core.publisher.Mono;
@@ -18,6 +19,7 @@ import reactor.core.publisher.Mono;
 public class OpinionsServiceHandler {
 	private ParameterizedTypeReference<List<OpinionBase>> opinionBaseType;
 	private ParameterizedTypeReference<List<OpinionKey>> opinionKeysType;
+	private ParameterizedTypeReference<List<CaseListEntry>> caseListEntriesType;
 	private final OpinionBaseDao opinionBaseDao;
 
 	public OpinionsServiceHandler(OpinionBaseDao opinionBaseDao) {
@@ -45,10 +47,29 @@ public class OpinionsServiceHandler {
 		}
 	}
 
-	public Mono<ServerResponse> updateSlipOpinionList(ServerRequest request) {
-		return request.bodyToMono(String.class).flatMap(string -> {
+	public Mono<ServerResponse> caseListEntries(ServerRequest request) {
+		try {
+			return ServerResponse.ok().contentType(MediaType.APPLICATION_JSON).bodyValue(opinionBaseDao.caseListEntries());
+		} catch (SQLException e) {
+			return ServerResponse.status(HttpStatus.INTERNAL_SERVER_ERROR).bodyValue(e.getLocalizedMessage());
+		}
+	}
+
+	public Mono<ServerResponse> caseListEntryUpdates(ServerRequest request) {
+		return request.bodyToMono(caseListEntriesType).flatMap(caseListEntries -> {
 			try {
-				opinionBaseDao.updateSlipOpinionList(string);
+				opinionBaseDao.caseListEntryUpdates(caseListEntries);
+				return ServerResponse.ok().build();
+			} catch (SQLException e) {
+				return ServerResponse.status(HttpStatus.INTERNAL_SERVER_ERROR).bodyValue(e.getLocalizedMessage());
+			}
+		});
+	}
+
+	public Mono<ServerResponse> caseListEntryUpdate(ServerRequest request) {
+		return request.bodyToMono(CaseListEntry.class).flatMap(caseListEntry -> {
+			try {
+				opinionBaseDao.caseListEntryUpdate(caseListEntry);
 				return ServerResponse.ok().build();
 			} catch (SQLException e) {
 				return ServerResponse.status(HttpStatus.INTERNAL_SERVER_ERROR).bodyValue(e.getLocalizedMessage());

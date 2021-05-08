@@ -7,9 +7,9 @@ create table slipproperties (author varchar(63), casecaption varchar(255), casec
 create table statutecitation (id integer not null auto_increment, designated bit not null, lawcode char(4), sectionnumber char(32), primary key (id)) engine=InnoDB;
 create table user (id bigint not null auto_increment, createdate datetime, email varchar(255), emailupdates bit not null, firstname varchar(255), lastname varchar(255), locale varchar(255), optout bit not null, optoutkey varchar(255), password varchar(255), startverify bit not null, titles tinyblob, updatedate datetime, verified bit not null, verifycount integer not null, verifyerrors integer not null, verifykey varchar(255), welcomeerrors integer not null, welcomed bit not null, primary key (id)) engine=InnoDB;
 create table user_roles (user_id bigint not null, roles_id bigint not null) engine=InnoDB;
-create table caselistentry(id varchar(32), filename varchar(31), fileextension(varchar(7), title varchar(137), opiniondate datetime, posteddate datetime, court varchar(15), searchurl varchar(128), status integer not null, retrycount integer, primary key (id)) engine=InnoDB;
+create table caselistentry(id varchar(32), filename varchar(31), fileextension varchar(7), title varchar(137), opiniondate datetime, posteddate datetime, court varchar(15), searchurl varchar(128), status varchar(15) not null, retrycount integer, primary key (id)) engine=InnoDB;
 create table slipopinionlist(id bigint not null, updatetime timestamp, primary key (id)) engine=InnoDB;
-insert into slipopinionlist(id, updatetime, slipopinionlist) values( 1, current_timestamp());
+insert into slipopinionlist(id, updatetime) values( 1, current_timestamp());
 create table opinionview(id bigint not null auto_increment, opiniondate date, opinionview BLOB, primary key (id)) engine=InnoDB;
 create index IDXd587qslmmirn7juop20is6gwt on opinionbase (vset, volume, page);
 alter table role add constraint UK_bjxn5ii7v7ygwx39et0wawu0q unique (role);

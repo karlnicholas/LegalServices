@@ -90,7 +90,7 @@ public class CaseListProcessorComponent implements Runnable {
 		}
 	}
 	private void processCaseListEntries(CaseListEntry[] caseListEntries) {
-		List<CaseListEntry> currentCaseListEntries = opinionService.caseListEntries();
+		List<CaseListEntry> currentCaseListEntries = opinionService.caseListEntries().getBody();
 		List<CaseListEntry> newCaseListEntries = new ArrayList<>();
 		List<CaseListEntry> existingCaseListEntries = new ArrayList<>();
 

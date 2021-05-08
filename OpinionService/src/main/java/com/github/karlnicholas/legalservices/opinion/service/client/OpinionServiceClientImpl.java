@@ -23,8 +23,11 @@ import com.github.karlnicholas.legalservices.opinion.model.OpinionKey;
 
 public class OpinionServiceClientImpl implements OpinionService {
 	private final RestTemplate restTemplate;
-	private final URI opinionCitationsURI;
-	private final URI slipOpinionUpdateNeededURI;
+	private final URI opinionCitationsUri;
+	private final URI slipOpinionUpdateNeededUri;
+	private final URI caseEntriesUri;
+	private final URI caseListEntryUpdatesUri;
+	private final URI caseListEntryUpdateUri;
 	
 	public OpinionServiceClientImpl(String baseUrl) {
 		restTemplate = new RestTemplate();
@@ -36,8 +39,11 @@ public class OpinionServiceClientImpl implements OpinionService {
 			restTemplate.setInterceptors(ris);
 			restTemplate.setRequestFactory(new BufferingClientHttpRequestFactory(new SimpleClientHttpRequestFactory()));
 		}
-		opinionCitationsURI = URI.create(baseUrl + OpinionService.OPINIONCITATIONS);
-		slipOpinionUpdateNeededURI = URI.create(baseUrl + OpinionService.SLIPOPINIONUPDATENEEDED);
+		opinionCitationsUri = URI.create(baseUrl + OpinionService.OPINIONCITATIONS);
+		slipOpinionUpdateNeededUri = URI.create(baseUrl + OpinionService.SLIPOPINIONUPDATENEEDED);
+		caseEntriesUri = URI.create(baseUrl + OpinionService.CASELISTENTRIES);
+		caseListEntryUpdatesUri = URI.create(baseUrl + OpinionService.CASELISTENTRYUPDATES);
+		caseListEntryUpdateUri = URI.create(baseUrl + OpinionService.CASELISTENTRYUPDATE);
 	}
 	
 	@Override
@@ -47,7 +53,7 @@ public class OpinionServiceClientImpl implements OpinionService {
 		requestHeaders.setContentType(MediaType.APPLICATION_JSON);
 		requestHeaders.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
 		HttpEntity<List<OpinionKey>> requestEntity = new HttpEntity<>(opinionKeys, requestHeaders);
-		return restTemplate.exchange(opinionCitationsURI, HttpMethod.POST, requestEntity, new ParameterizedTypeReference<List<OpinionBase>>() {});
+		return restTemplate.exchange(opinionCitationsUri, HttpMethod.POST, requestEntity, new ParameterizedTypeReference<List<OpinionBase>>() {});
 	}
 
 	@Override
@@ -55,25 +61,33 @@ public class OpinionServiceClientImpl implements OpinionService {
 		// Set the Content-Type header
 		HttpHeaders requestHeaders = new HttpHeaders();
 		requestHeaders.setAccept(Collections.singletonList(MediaType.TEXT_PLAIN));
-		return restTemplate.getForEntity(slipOpinionUpdateNeededURI, String.class);
+		return restTemplate.getForEntity(slipOpinionUpdateNeededUri, String.class);
 	}
 
 	@Override
-	public List<CaseListEntry> caseListEntries() {
-		// TODO Auto-generated method stub
-		return new ArrayList<>();
+	public ResponseEntity<List<CaseListEntry>> caseListEntries() {
+		// Set the Content-Type header
+		HttpHeaders requestHeaders = new HttpHeaders();
+		requestHeaders.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+		return restTemplate.exchange(caseEntriesUri, HttpMethod.GET, null, new ParameterizedTypeReference<List<CaseListEntry>>() {});
 	}
 
 	@Override
-	public void caseListEntryUpdates(List<CaseListEntry> currentCaseListEntries) {
-		// TODO Auto-generated method stub
-		
+	public ResponseEntity<Void> caseListEntryUpdates(List<CaseListEntry> currentCaseListEntries) {
+		// Set the Content-Type header
+		HttpHeaders requestHeaders = new HttpHeaders();
+		requestHeaders.setContentType(MediaType.APPLICATION_JSON);
+		HttpEntity<List<CaseListEntry>> requestEntity = new HttpEntity<>(currentCaseListEntries, requestHeaders);
+		return restTemplate.exchange(caseListEntryUpdatesUri, HttpMethod.POST, requestEntity, new ParameterizedTypeReference<Void>() {});
 	}
 
 	@Override
-	public void caseListEntryUpdate(CaseListEntry caseListEntry) {
-		// TODO Auto-generated method stub
-		
+	public ResponseEntity<Void> caseListEntryUpdate(CaseListEntry caseListEntry) {
+		// Set the Content-Type header
+		HttpHeaders requestHeaders = new HttpHeaders();
+		requestHeaders.setContentType(MediaType.APPLICATION_JSON);
+		HttpEntity<CaseListEntry> requestEntity = new HttpEntity<>(caseListEntry, requestHeaders);
+		return restTemplate.exchange(caseListEntryUpdateUri, HttpMethod.POST, requestEntity, new ParameterizedTypeReference<Void>() {});
 	}
 
 }
