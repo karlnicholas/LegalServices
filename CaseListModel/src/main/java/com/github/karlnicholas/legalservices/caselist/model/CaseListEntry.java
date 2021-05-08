@@ -15,8 +15,8 @@ import lombok.NoArgsConstructor;
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class CaseListEntry {
 	@EqualsAndHashCode.Include
+	private String id;
 	private String fileName;
-	@EqualsAndHashCode.Include
 	private String fileExtension;
 	private String title;
 	private LocalDate opinionDate;
@@ -26,5 +26,3 @@ public class CaseListEntry {
 	private CASELISTSTATUS status;
 	private int retryCount;
 }
-
-//fileName, fileExtension, tempa[0].trim(), opDate, court, searchUrl

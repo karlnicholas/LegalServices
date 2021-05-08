@@ -2,15 +2,9 @@ package com.github.karlnicholas.legalservices.slipopinion.processor;
 
 import java.sql.SQLException;
 import java.util.List;
-import java.util.Properties;
-import java.util.stream.Collectors;
 
-import org.apache.kafka.clients.CommonClientConfigs;
-import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.Producer;
-import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
-import org.apache.kafka.common.config.SaslConfigs;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -31,32 +25,22 @@ public class CaseListScraperComponent {
 
 	private final OpinionScraperInterface caseScraper;
 	private final ObjectMapper objectMapper;
+	private final OpinionService opinionService;
 	private final Producer<Integer, JsonNode> producer;
 	private final KakfaProperties kafkaProperties;
-	private final OpinionService opinionService;
 
-	public CaseListScraperComponent(ObjectMapper objectMapper, KakfaProperties kafkaProperties) {
+	public CaseListScraperComponent(ObjectMapper objectMapper, 
+			Producer<Integer, JsonNode> producer, 
+			KakfaProperties kafkaProperties
+	) {
 	    this.objectMapper = objectMapper;
+	    this.producer = producer;
 	    this.kafkaProperties = kafkaProperties;
 
 //		caseScraper = new TestCAParseSlipDetails(false);
 		caseScraper = new CACaseScraper(false);
 	    opinionService = OpinionServiceFactory.getOpinionServiceClient();
 		
-        //Configure the Producer
-        Properties configProperties = new Properties();
-        configProperties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG,kafkaProperties.getIpAddress()+':'+kafkaProperties.getPort());
-        configProperties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG,kafkaProperties.getIntegerSerializer());
-        configProperties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG,kafkaProperties.getJsonValueSerializer());
-        if ( !kafkaProperties.getUser().equalsIgnoreCase("notFound") ) {
-            configProperties.put(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, "SASL_PLAINTEXT");
-            configProperties.put(SaslConfigs.SASL_MECHANISM, "PLAIN");
-            configProperties.put(SaslConfigs.SASL_JAAS_CONFIG, "org.apache.kafka.common.security.plain.PlainLoginModule required username=\"" +
-    		kafkaProperties.getUser() + "\" password=\"" + 
-    		kafkaProperties.getPassword() + "\";");
-        }
-        
-        producer = new KafkaProducer<>(configProperties);
 	}
 
 
@@ -72,13 +56,10 @@ public class CaseListScraperComponent {
 		if ( slipOpinionUpdateNeeded != null && slipOpinionUpdateNeeded.equalsIgnoreCase("NOUPDATE")) {
 			return "NOUPDATE";
 		}
-		// OK to proceed with checking for new SlipOpinions
-		List<CaseListEntry> cases = caseScraper.getCaseList().stream()
-		.map(slipOpinion->CaseListEntry.builder().fileName(slipOpinion.getFileName()).fileExtension(slipOpinion.getFileExtension()).build())
-		.collect(Collectors.toList());
-	
-	    JsonNode  jsonNode = objectMapper.valueToTree(cases);
-	    ProducerRecord<Integer, JsonNode> rec = new ProducerRecord<>(kafkaProperties.getSlipOpinionsTopic(), jsonNode);
+		// OK to proceed with pushing caseListEntries to kafka
+		List<CaseListEntry> caseListEntries = caseScraper.getCaseList();
+	    JsonNode  jsonNode = objectMapper.valueToTree(caseListEntries);
+	    ProducerRecord<Integer, JsonNode> rec = new ProducerRecord<>(kafkaProperties.getCaseListEntriesTopic(), jsonNode);
 	    producer.send(rec);
 		return "POLLED";
 	}

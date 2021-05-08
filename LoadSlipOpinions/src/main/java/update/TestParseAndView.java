@@ -17,6 +17,7 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.http.ResponseEntity;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.github.karlnicholas.legalservices.caselist.model.CaseListEntry;
 import com.github.karlnicholas.legalservices.opinion.model.OpinionBase;
 import com.github.karlnicholas.legalservices.opinion.model.OpinionKey;
 import com.github.karlnicholas.legalservices.opinion.parser.ScrapedOpinionDocument;
@@ -54,11 +55,11 @@ public class TestParseAndView implements ApplicationRunner {
 //		dataSource.setUser("op");
 //		dataSource.setPassword("op");
 		 
-		OpinionScraperInterface caseScraper = new CACaseScraper(true);
+//		OpinionScraperInterface caseScraper = new CACaseScraper(true);
 //				OpinionScraperInterface caseScraper = new TestCACaseScraper(false);
-//		OpinionScraperInterface caseScraper = new TestCAParseSlipDetails(true);
+		OpinionScraperInterface caseScraper = new TestCAParseSlipDetails(false);
 
- 		List<SlipOpinion> onlineOpinions = caseScraper.getCaseList();
+ 		List<CaseListEntry> caseListEntries = caseScraper.getCaseList();
 // 		onlineOpinions.forEach(so->System.out.println(so.getOpinionDate()+","));
 // 		SlipOpinion slipOpinionP = onlineOpinions.get(0);
 //		parseAndPrintOpinion(opinionService, opinionViewBuilder, arrayStatutesTitles, caseScraper, slipOpinionP);
@@ -94,22 +95,24 @@ public class TestParseAndView implements ApplicationRunner {
 		
 //		List<String> newOpinions = new ArrayList<>(foundOpinions);
 //		newOpinions.removeAll(savedOpinions);
-		if ( onlineOpinions.size() > 0 ) {
+		if ( caseListEntries.size() > 0 ) {
 //			opinionService.updateSlipOpinionList(sb.toString());
 //			List<SlipOpinion> lt = onlineOpinions
 //					.stream()
 //					.filter(slipOpinion->onlineOpinions.contains(slipOpinion.getFileName()))
 //					.collect(Collectors.toList());
 
-			onlineOpinions.forEach(slipOpinion->{
-		        ScrapedOpinionDocument scrapedOpinionDocument = caseScraper.scrapeOpinionFile(slipOpinion);
+			caseListEntries.forEach(caseListEntry->{
+				System.out.println(caseListEntry);
+//				SlipOpinion slipOpinion = new SlipOpinion(caseListEntry.getFileName(), caseListEntry.getFileExtension(), caseListEntry.getTitle(), caseListEntry.getOpinionDate(), caseListEntry.getCourt(), caseListEntry.getSearchUrl());
+//		        ScrapedOpinionDocument scrapedOpinionDocument = caseScraper.scrapeOpinionFile(slipOpinion);
 
 //				SlipOpinionDocumentParser opinionDocumentParser = new SlipOpinionDocumentParser(arrayStatutesTitles);
 //				
 //				opinionDocumentParser.parseOpinionDocument(scrapedOpinionDocument, scrapedOpinionDocument.getOpinionBase());
 //				// maybe someday deal with court issued modifications
 //				opinionDocumentParser.parseSlipOpinionDetails((SlipOpinion) scrapedOpinionDocument.getOpinionBase(), scrapedOpinionDocument);
-				System.out.println(slipOpinion);
+//				System.out.println(slipOpinion);
 //		        JsonNode  jsonNode = objectMapper.valueToTree(slipOpinion);
 //		        System.out.println(jsonNode);
 		        

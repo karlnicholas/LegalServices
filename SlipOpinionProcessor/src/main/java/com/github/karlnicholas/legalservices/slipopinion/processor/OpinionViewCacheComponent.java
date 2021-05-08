@@ -2,16 +2,10 @@ package com.github.karlnicholas.legalservices.slipopinion.processor;
 
 import java.time.Duration;
 import java.util.Collections;
-import java.util.Properties;
-import java.util.UUID;
 
-import org.apache.kafka.clients.CommonClientConfigs;
 import org.apache.kafka.clients.consumer.Consumer;
-import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
-import org.apache.kafka.clients.consumer.KafkaConsumer;
-import org.apache.kafka.common.config.SaslConfigs;
 import org.apache.kafka.common.errors.WakeupException;
 
 import com.github.karlnicholas.legalservices.opinionview.model.OpinionView;
@@ -26,26 +20,14 @@ public class OpinionViewCacheComponent implements Runnable {
 	private final KakfaProperties kafkaProperties;
 	private final OpinionViewData opinionViewData;
 
-	public OpinionViewCacheComponent(KakfaProperties kafkaProperties, OpinionViewData opinionViewData) {
+	public OpinionViewCacheComponent(
+			KakfaProperties kafkaProperties, 
+			OpinionViewData opinionViewData, 
+			Consumer<Integer, OpinionView> consumer
+	) {
 		this.kafkaProperties = kafkaProperties;
 		this.opinionViewData = opinionViewData;
-
-        //Configure the Consumer
-		Properties consumerProperties = new Properties();
-		consumerProperties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG,kafkaProperties.getIpAddress()+':'+kafkaProperties.getPort());
-		consumerProperties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, kafkaProperties.getIntegerDeserializer());
-		consumerProperties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, kafkaProperties.getOpinionViewValueDeserializer());
-		consumerProperties.put(ConsumerConfig.GROUP_ID_CONFIG, UUID.randomUUID().toString());
-		consumerProperties.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
-        if ( !kafkaProperties.getUser().equalsIgnoreCase("notFound") ) {
-        	consumerProperties.put(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, "SASL_PLAINTEXT");
-        	consumerProperties.put(SaslConfigs.SASL_MECHANISM, "PLAIN");
-        	consumerProperties.put(SaslConfigs.SASL_JAAS_CONFIG, "org.apache.kafka.common.security.plain.PlainLoginModule required username=\"" +
-    		kafkaProperties.getUser() + "\" password=\"" + 
-    		kafkaProperties.getPassword() + "\";");
-        }
-		// Create the consumer using props.
-		 consumer = new KafkaConsumer<>(consumerProperties);
+		this.consumer = consumer;
 	}
 
 	@Override

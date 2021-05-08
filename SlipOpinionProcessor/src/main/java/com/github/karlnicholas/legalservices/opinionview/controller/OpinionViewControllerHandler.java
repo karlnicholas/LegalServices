@@ -1,6 +1,5 @@
 package com.github.karlnicholas.legalservices.opinionview.controller;
 
-import java.sql.SQLException;
 import java.time.LocalDate;
 
 import org.springframework.http.HttpStatus;
@@ -17,12 +16,10 @@ import reactor.core.publisher.Mono;
 @Component
 public class OpinionViewControllerHandler {
 	private final OpinionViewData opinionViewData;
-	private final CaseListScraperComponent caseListScraperComponent;
 	
 	public OpinionViewControllerHandler(OpinionViewData opinionViewData, 
 			CaseListScraperComponent caseListScraperComponent
 	) {
-		this.caseListScraperComponent = caseListScraperComponent; 
 		this.opinionViewData = opinionViewData;
 
 	}

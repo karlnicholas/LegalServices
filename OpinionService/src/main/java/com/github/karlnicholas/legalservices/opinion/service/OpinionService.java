@@ -14,7 +14,6 @@ public interface OpinionService {
 	String UPDATESLIPOPINIONLIST = "updateslipopinionlist";
 	ResponseEntity<List<OpinionBase>> getOpinionsWithStatuteCitations(List<OpinionKey> opinionKeys);
 	ResponseEntity<String> callSlipOpinionUpdateNeeded();
-	ResponseEntity<Void> updateSlipOpinionList(String string);
 	List<CaseListEntry> caseListEntries();
 	void caseListEntryUpdates(List<CaseListEntry> currentCaseListEntries);
 	void caseListEntryUpdate(CaseListEntry caseListEntry);

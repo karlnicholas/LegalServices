@@ -25,7 +25,6 @@ public class OpinionServiceClientImpl implements OpinionService {
 	private final RestTemplate restTemplate;
 	private final URI opinionCitationsURI;
 	private final URI slipOpinionUpdateNeededURI;
-	private final URI updateSlipOpinionListURI;
 	
 	public OpinionServiceClientImpl(String baseUrl) {
 		restTemplate = new RestTemplate();
@@ -39,7 +38,6 @@ public class OpinionServiceClientImpl implements OpinionService {
 		}
 		opinionCitationsURI = URI.create(baseUrl + OpinionService.OPINIONCITATIONS);
 		slipOpinionUpdateNeededURI = URI.create(baseUrl + OpinionService.SLIPOPINIONUPDATENEEDED);
-		updateSlipOpinionListURI = URI.create(baseUrl + OpinionService.UPDATESLIPOPINIONLIST);	
 	}
 	
 	@Override
@@ -58,15 +56,6 @@ public class OpinionServiceClientImpl implements OpinionService {
 		HttpHeaders requestHeaders = new HttpHeaders();
 		requestHeaders.setAccept(Collections.singletonList(MediaType.TEXT_PLAIN));
 		return restTemplate.getForEntity(slipOpinionUpdateNeededURI, String.class);
-	}
-
-	@Override
-	public ResponseEntity<Void> updateSlipOpinionList(String string) {
-		// Set the Content-Type header
-		HttpHeaders requestHeaders = new HttpHeaders();
-		requestHeaders.setContentType(MediaType.TEXT_PLAIN);
-		HttpEntity<String> requestEntity = new HttpEntity<>(string, requestHeaders);
-		return restTemplate.exchange(updateSlipOpinionListURI, HttpMethod.POST, requestEntity, Void.class);
 	}
 
 	@Override
