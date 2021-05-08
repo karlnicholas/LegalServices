@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Component;
 
+import com.github.karlnicholas.legalservices.opinion.model.OpinionKey;
 import com.github.karlnicholas.legalservices.opinionview.model.OpinionView;
 
 import lombok.extern.slf4j.Slf4j;
@@ -19,12 +20,10 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class OpinionViewData {
     private List<LocalDate[]> dateBrackets;
-    private final List<LocalDate> opinionViewDates;
     private final List<OpinionView> opinionViews;
 
     public OpinionViewData() {
         dateBrackets = new ArrayList<>();
-        opinionViewDates = new ArrayList<>();
         opinionViews = new ArrayList<>();    
     	
     }
@@ -38,7 +37,6 @@ public class OpinionViewData {
 			return;
 		}
 		opinionViews.add(opinionView);		
-		opinionViewDates.add(opinionView.getOpinionDate());
 		resetReportDates();
 	}
 
@@ -47,17 +45,18 @@ public class OpinionViewData {
 		// do the work.
 		LocalDate firstDay = LocalDate.now();
 		LocalDate lastDay = LocalDate.now();
-		Collections.sort(opinionViewDates, (d1, d2)->{
-			return d2.compareTo(d1);
+		Collections.sort(opinionViews, (ov1, ov2)->{
+			return ov2.getOpinionDate().compareTo(ov1.getOpinionDate());
 		});
-		if ( opinionViewDates.size() > 0 ) {
-			firstDay = opinionViewDates.get(0);
-			lastDay = opinionViewDates.get(0);
+		if ( opinionViews.size() > 0 ) {
+			firstDay = opinionViews.get(0).getOpinionDate();
+			lastDay = opinionViews.get(0).getOpinionDate();
 		}
 		firstDay = firstDay.with(WeekFields.of(Locale.US).dayOfWeek(), 1);
 		lastDay = firstDay.plusWeeks(1);
 		LocalDate[] currentDates = new LocalDate[2];
-		for (LocalDate date: opinionViewDates) {
+		for (OpinionView opinionView: opinionViews) {
+			LocalDate date = opinionView.getOpinionDate();
 			if ( testBracket(date, firstDay, lastDay)) {
 				addToCurrentDates(date, currentDates);
 			} else {
@@ -70,7 +69,7 @@ public class OpinionViewData {
 				addToCurrentDates(date, currentDates);
 			}
 		}
-		if ( dateBrackets.size() == 0 && opinionViewDates.size() > 0 ) {
+		if ( dateBrackets.size() == 0 && opinionViews.size() > 0 ) {
 			dateBrackets.add(currentDates);
 		}
 	}
@@ -116,6 +115,12 @@ public class OpinionViewData {
 			.sorted((ov1, ov2)->ov2.getOpinionDate().compareTo(ov1.getOpinionDate()))
 			.collect(Collectors.toList());			
 		}).orElseGet(()->Collections.emptyList());
+	}
+	public void deleteOpinionView(OpinionKey opinionKey) {
+		opinionViews.stream().filter(opinionView->opinionView.getOpinionKey().compareTo(opinionKey) == 0).findAny().ifPresent(opinionView->{
+			opinionViews.remove(opinionView);
+			resetReportDates();
+		});
 	}
 	
 //	public void setStringDateList() {
