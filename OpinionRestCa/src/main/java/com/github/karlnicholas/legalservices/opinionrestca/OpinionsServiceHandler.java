@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
 
+import com.github.karlnicholas.legalservices.caselist.model.CaseListEntries;
 import com.github.karlnicholas.legalservices.caselist.model.CaseListEntry;
 import com.github.karlnicholas.legalservices.opinion.model.OpinionBase;
 import com.github.karlnicholas.legalservices.opinion.model.OpinionKey;
@@ -19,7 +20,6 @@ import reactor.core.publisher.Mono;
 public class OpinionsServiceHandler {
 	private ParameterizedTypeReference<List<OpinionBase>> opinionBaseType;
 	private ParameterizedTypeReference<List<OpinionKey>> opinionKeysType;
-	private ParameterizedTypeReference<List<CaseListEntry>> caseListEntriesType;
 	private final OpinionBaseDao opinionBaseDao;
 
 	public OpinionsServiceHandler(OpinionBaseDao opinionBaseDao) {
@@ -56,7 +56,7 @@ public class OpinionsServiceHandler {
 	}
 
 	public Mono<ServerResponse> caseListEntryUpdates(ServerRequest request) {
-		return request.bodyToMono(caseListEntriesType).flatMap(caseListEntries -> {
+		return request.bodyToMono(CaseListEntries.class).flatMap(caseListEntries -> {
 			try {
 				opinionBaseDao.caseListEntryUpdates(caseListEntries);
 				return ServerResponse.ok().build();

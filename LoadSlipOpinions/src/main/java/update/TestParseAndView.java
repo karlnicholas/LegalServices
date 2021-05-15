@@ -1,11 +1,8 @@
 package update;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,6 +14,7 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.http.ResponseEntity;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.github.karlnicholas.legalservices.caselist.model.CaseListEntries;
 import com.github.karlnicholas.legalservices.caselist.model.CaseListEntry;
 import com.github.karlnicholas.legalservices.opinion.model.OpinionBase;
 import com.github.karlnicholas.legalservices.opinion.model.OpinionKey;
@@ -59,7 +57,7 @@ public class TestParseAndView implements ApplicationRunner {
 //				OpinionScraperInterface caseScraper = new TestCACaseScraper(false);
 		OpinionScraperInterface caseScraper = new TestCAParseSlipDetails(false);
 
- 		List<CaseListEntry> caseListEntries = caseScraper.getCaseList();
+		CaseListEntries caseListEntries = caseScraper.getCaseList();
 // 		onlineOpinions.forEach(so->System.out.println(so.getOpinionDate()+","));
 // 		SlipOpinion slipOpinionP = onlineOpinions.get(0);
 //		parseAndPrintOpinion(opinionService, opinionViewBuilder, arrayStatutesTitles, caseScraper, slipOpinionP);

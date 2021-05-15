@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
+import com.github.karlnicholas.legalservices.caselist.model.CaseListEntries;
 import com.github.karlnicholas.legalservices.caselist.model.CaseListEntry;
 import com.github.karlnicholas.legalservices.opinion.parser.ScrapedOpinionDocument;
 
@@ -20,7 +21,7 @@ public class TestCAParseSlipDetails extends CACaseScraper {
 	}
 	
 	@Override
-	public List<CaseListEntry> getCaseList() {
+	public CaseListEntries getCaseList() {
 		try {
 			return parseCaseList(new FileInputStream( CACaseScraper.caseListDir + "/" +  CACaseScraper.caseListFile ));
 		} catch (IOException e) {
@@ -30,7 +31,7 @@ public class TestCAParseSlipDetails extends CACaseScraper {
 	}
 
 	@Override
-	public List<ScrapedOpinionDocument> scrapeOpinionFiles(List<CaseListEntry> caseListEntries) {
+	public List<ScrapedOpinionDocument> scrapeOpinionFiles(CaseListEntries caseListEntries) {
 		List<ScrapedOpinionDocument> documents = new ArrayList<ScrapedOpinionDocument>();		
 		CAParseScrapedDocument parseScrapedDocument = new CAParseScrapedDocument();
 		for (CaseListEntry caseListEntry: caseListEntries) {

@@ -21,6 +21,7 @@ import org.apache.kafka.common.errors.WakeupException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.karlnicholas.legalservices.caselist.model.CASELISTSTATUS;
+import com.github.karlnicholas.legalservices.caselist.model.CaseListEntries;
 import com.github.karlnicholas.legalservices.caselist.model.CaseListEntry;
 import com.github.karlnicholas.legalservices.opinion.service.OpinionService;
 import com.github.karlnicholas.legalservices.opinion.service.OpinionServiceFactory;
@@ -73,11 +74,11 @@ public class CaseListProcessorComponent implements Runnable {
 //			        	log.info("topic = {}, partition = {}, offset = {}, record key = {}, record value length = {}",
 //			                 record.topic(), record.partition(), record.offset(),
 //			                 record.key(), record.value().toString().length());
-			        	CaseListEntry[] caseListEntries = objectMapper.treeToValue( record.value(), CaseListEntry[].class);
+			        	CaseListEntries caseListEntries = objectMapper.treeToValue( record.value(), CaseListEntries.class);
 			        	
 			        	processCaseListEntries(caseListEntries);
 			        	log.info("partition = {}, offset = {}, record key = {}, caseListEntries.length = {}",
-			        			record.partition(), record.offset(), record.key(), caseListEntries.length);
+			        			record.partition(), record.offset(), record.key(), caseListEntries.size());
 			        }
 				} catch (Exception e) {
 					log.error("Unexpected error: {}", e);
@@ -89,22 +90,22 @@ public class CaseListProcessorComponent implements Runnable {
 	        consumer.close();
 		}
 	}
-	private void processCaseListEntries(CaseListEntry[] caseListEntries) {
-		List<CaseListEntry> currentCaseListEntries = opinionService.caseListEntries().getBody();
-		List<CaseListEntry> newCaseListEntries = new ArrayList<>();
-		List<CaseListEntry> existingCaseListEntries = new ArrayList<>();
+	private void processCaseListEntries(CaseListEntries caseListEntries) {
+		CaseListEntries currentCaseListEntries = opinionService.caseListEntries().getBody();
+		CaseListEntries newCaseListEntries = new CaseListEntries(new ArrayList<>());
+		CaseListEntries existingCaseListEntries = new CaseListEntries(new ArrayList<>());
 
 		for ( CaseListEntry caseListEntry: caseListEntries ) {
-			if ( currentCaseListEntries.contains(caseListEntry) ) {
-				existingCaseListEntries.add(currentCaseListEntries.get(currentCaseListEntries.indexOf(caseListEntry)));
+			int index = currentCaseListEntries.indexOf(caseListEntry);
+			if ( index >= 0 ) {
+				existingCaseListEntries.add(currentCaseListEntries.get(index));
 			} else {
 				newCaseListEntries.add(caseListEntry);
 			}
 		}
 		// currentCaseListEntries will have only deleted items
 		newCaseListEntries.forEach(cle->cle.setStatus(CASELISTSTATUS.PENDING));
-		List<CaseListEntry> retryCaseListEntries = existingCaseListEntries.stream().filter(cle->cle.getStatus() != CASELISTSTATUS.PROCESSED).collect(Collectors.toList());
-		List<CaseListEntry> failedCaseListEntries = retryCaseListEntries.stream().filter(cle->cle.getStatus() != CASELISTSTATUS.RETRY).collect(Collectors.toList());
+		List<CaseListEntry> failedCaseListEntries = existingCaseListEntries.stream().filter(cle->cle.getStatus() != CASELISTSTATUS.PROCESSED).collect(Collectors.toList());
 		List<CaseListEntry> deletedCaseListEntries = new ArrayList<>(currentCaseListEntries);
 		deletedCaseListEntries.removeAll(existingCaseListEntries);
 		deletedCaseListEntries.forEach(cle->cle.setStatus(CASELISTSTATUS.DELETED));
@@ -118,13 +119,6 @@ public class CaseListProcessorComponent implements Runnable {
 		    producer.send(rec);
 		});
 
-		// send retry cases
-		retryCaseListEntries.forEach(cle->{
-		    JsonNode  jsonNode = objectMapper.valueToTree(cle);
-		    ProducerRecord<Integer, JsonNode> rec = new ProducerRecord<>(kafkaProperties.getRetryCaseListTopic(), jsonNode);
-		    producer.send(rec);
-		});
-		
 		// send delete cases
 		deletedCaseListEntries.forEach(cle->{
 		    JsonNode  jsonNode = objectMapper.valueToTree(cle);
@@ -132,7 +126,7 @@ public class CaseListProcessorComponent implements Runnable {
 		    producer.send(rec);
 		});
 		
-		// send delete cases
+		// send failed cases
 		failedCaseListEntries.forEach(cle->{
 		    JsonNode  jsonNode = objectMapper.valueToTree(cle);
 		    ProducerRecord<Integer, JsonNode> rec = new ProducerRecord<>(kafkaProperties.getFailCaseListTopic(), jsonNode);

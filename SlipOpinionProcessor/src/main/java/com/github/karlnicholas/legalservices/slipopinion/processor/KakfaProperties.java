@@ -18,7 +18,6 @@ public class KakfaProperties {
     private String password;
     private String caseListEntriesTopic = "caselistentries";
     private String newCaseListTopic = "newcaselist";
-    private String retryCaseListTopic = "retrycaselist";
     private String deleteCaseListTopic = "deletecaselist";
     private String failCaseListTopic = "failcaselist";
     private String slipOpinionsTopic = "slipopinions";

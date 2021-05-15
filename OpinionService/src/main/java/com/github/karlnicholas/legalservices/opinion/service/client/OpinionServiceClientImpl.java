@@ -17,6 +17,7 @@ import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
 
 import com.github.karlnicholas.legalservices.opinion.service.OpinionService;
+import com.github.karlnicholas.legalservices.caselist.model.CaseListEntries;
 import com.github.karlnicholas.legalservices.caselist.model.CaseListEntry;
 import com.github.karlnicholas.legalservices.opinion.model.OpinionBase;
 import com.github.karlnicholas.legalservices.opinion.model.OpinionKey;
@@ -28,9 +29,11 @@ public class OpinionServiceClientImpl implements OpinionService {
 	private final URI caseEntriesUri;
 	private final URI caseListEntryUpdatesUri;
 	private final URI caseListEntryUpdateUri;
+	private final ParameterizedTypeReference<List<OpinionBase>> opinionListTypeReference;
 	
 	public OpinionServiceClientImpl(String baseUrl) {
 		restTemplate = new RestTemplate();
+		opinionListTypeReference =  new ParameterizedTypeReference<List<OpinionBase>>() {};
 		//set interceptors/requestFactory
 		if ( LoggingRequestInterceptor.log.isDebugEnabled() ) {
 			ClientHttpRequestInterceptor ri = new LoggingRequestInterceptor();
@@ -53,7 +56,7 @@ public class OpinionServiceClientImpl implements OpinionService {
 		requestHeaders.setContentType(MediaType.APPLICATION_JSON);
 		requestHeaders.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
 		HttpEntity<List<OpinionKey>> requestEntity = new HttpEntity<>(opinionKeys, requestHeaders);
-		return restTemplate.exchange(opinionCitationsUri, HttpMethod.POST, requestEntity, new ParameterizedTypeReference<List<OpinionBase>>() {});
+		return restTemplate.exchange(opinionCitationsUri, HttpMethod.POST, requestEntity, opinionListTypeReference);
 	}
 
 	@Override
@@ -65,11 +68,11 @@ public class OpinionServiceClientImpl implements OpinionService {
 	}
 
 	@Override
-	public ResponseEntity<List<CaseListEntry>> caseListEntries() {
+	public ResponseEntity<CaseListEntries> caseListEntries() {
 		// Set the Content-Type header
 		HttpHeaders requestHeaders = new HttpHeaders();
 		requestHeaders.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
-		return restTemplate.exchange(caseEntriesUri, HttpMethod.GET, null, new ParameterizedTypeReference<List<CaseListEntry>>() {});
+		return restTemplate.getForEntity(caseEntriesUri, CaseListEntries.class);
 	}
 
 	@Override
@@ -78,7 +81,7 @@ public class OpinionServiceClientImpl implements OpinionService {
 		HttpHeaders requestHeaders = new HttpHeaders();
 		requestHeaders.setContentType(MediaType.APPLICATION_JSON);
 		HttpEntity<List<CaseListEntry>> requestEntity = new HttpEntity<>(currentCaseListEntries, requestHeaders);
-		return restTemplate.exchange(caseListEntryUpdatesUri, HttpMethod.POST, requestEntity, new ParameterizedTypeReference<Void>() {});
+		return restTemplate.postForEntity(caseListEntryUpdatesUri, requestEntity, Void.class);
 	}
 
 	@Override
@@ -87,7 +90,7 @@ public class OpinionServiceClientImpl implements OpinionService {
 		HttpHeaders requestHeaders = new HttpHeaders();
 		requestHeaders.setContentType(MediaType.APPLICATION_JSON);
 		HttpEntity<CaseListEntry> requestEntity = new HttpEntity<>(caseListEntry, requestHeaders);
-		return restTemplate.exchange(caseListEntryUpdateUri, HttpMethod.POST, requestEntity, new ParameterizedTypeReference<Void>() {});
+		return restTemplate.postForEntity(caseListEntryUpdateUri, requestEntity, Void.class);
 	}
 
 }

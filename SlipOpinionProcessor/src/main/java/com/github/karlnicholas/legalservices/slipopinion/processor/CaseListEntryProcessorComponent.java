@@ -39,7 +39,7 @@ import com.github.karlnicholas.legalservices.statute.service.StatutesServiceFact
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public abstract class AbstractCaseListEntryProcessorComponent implements Runnable {
+public class CaseListEntryProcessorComponent implements Runnable {
 	private final Consumer<Integer, JsonNode> consumer;
 	private final Producer<Integer, OpinionView> producer;
 	private final ObjectMapper objectMapper;
@@ -48,17 +48,14 @@ public abstract class AbstractCaseListEntryProcessorComponent implements Runnabl
 	private final OpinionScraperInterface caseScraper;
 	private final SlipOpinionDocumentParser opinionDocumentParser;
 	private final OpinionViewBuilder opinionViewBuilder;
-	private final java.util.function.Consumer<CaseListEntry> errorConsumer;
 	
-	protected AbstractCaseListEntryProcessorComponent(ObjectMapper objectMapper, 
+	protected CaseListEntryProcessorComponent(ObjectMapper objectMapper, 
 			KakfaProperties kafkaProperties,
-			Producer<Integer, OpinionView> producer, 
-			java.util.function.Consumer<CaseListEntry> errorConsumer
+			Producer<Integer, OpinionView> producer
 	) {
 		this.objectMapper = objectMapper;
 		this.kafkaProperties = kafkaProperties; 
 		this.producer = producer; 
-		this.errorConsumer = errorConsumer;
 	    opinionService = OpinionServiceFactory.getOpinionServiceClient();
 		caseScraper = new CACaseScraper(false);
 	    StatuteService statutesService = StatutesServiceFactory.getStatutesServiceClient();
@@ -135,7 +132,7 @@ public abstract class AbstractCaseListEntryProcessorComponent implements Runnabl
 		    producer.send(rec);
 			caseListEntry.setStatus(CASELISTSTATUS.PROCESSED);
 		} catch ( Exception ex) {
-			errorConsumer.accept(caseListEntry);
+			caseListEntry.setStatus(CASELISTSTATUS.FAILED);
 			log.error("SlipOpinion error: {}", caseListEntry);
 		} finally {
 			opinionService.caseListEntryUpdate(caseListEntry);

@@ -24,5 +24,4 @@ public class CaseListEntry {
 	private String court;
 	private String searchUrl;
 	private CASELISTSTATUS status;
-	private int retryCount;
 }

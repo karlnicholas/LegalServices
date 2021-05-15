@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 import javax.sql.DataSource;
 
 import com.github.karlnicholas.legalservices.caselist.model.CASELISTSTATUS;
+import com.github.karlnicholas.legalservices.caselist.model.CaseListEntries;
 import com.github.karlnicholas.legalservices.caselist.model.CaseListEntry;
 import com.github.karlnicholas.legalservices.opinion.model.*;
 import com.github.karlnicholas.legalservices.statute.StatuteKey;
@@ -115,12 +116,12 @@ public class OpinionBaseDao {
 		}
 	}
 
-	public List<CaseListEntry> caseListEntries() throws SQLException {
+	public CaseListEntries caseListEntries() throws SQLException {
 		try (Connection con = dataSource.getConnection();
 			 PreparedStatement ps = con.prepareStatement("select * from caselistentry", ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 		) {
 			try (ResultSet rs = ps.executeQuery()) {
-				return new ResultSetIterable<CaseListEntry>(rs, rs2 -> mapCaseListEntry(rs2)).stream().collect(Collectors.toList());
+				return new CaseListEntries(new ResultSetIterable<CaseListEntry>(rs, rs2 -> mapCaseListEntry(rs2)).stream().collect(Collectors.toList()));
 			}
 		}
 	}
@@ -135,15 +136,14 @@ public class OpinionBaseDao {
 				.court(resultSet.getString("court"))
 				.searchUrl(resultSet.getString("searchurl"))
 				.status(CASELISTSTATUS.valueOf(resultSet.getString("status")))
-				.retryCount(resultSet.getInt("retrycount"))
 				.build();
 	}
 
-	public void caseListEntryUpdates(List<CaseListEntry> caseListEntries) throws SQLException {
+	public void caseListEntryUpdates(CaseListEntries caseListEntries) throws SQLException {
 		try (Connection con = dataSource.getConnection(); 
 			PreparedStatement pss = con.prepareStatement("select * from caselistentry", ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
-			PreparedStatement psi = con.prepareStatement("insert into caselistentry(id, filename, fileextension, title, opiniondate, posteddate, court, searchurl, status, retrycount) values(?,?,?,?,?,?,?,?,?,?)");
-			PreparedStatement psu = con.prepareStatement("update caselistentry set status = ?, retrycount = ? where id = ?");
+			PreparedStatement psi = con.prepareStatement("insert into caselistentry(id, filename, fileextension, title, opiniondate, posteddate, court, searchurl, status) values(?,?,?,?,?,?,?,?,?)");
+			PreparedStatement psu = con.prepareStatement("update caselistentry set status = ? where id = ?");
 			PreparedStatement psd = con.prepareStatement("delete from caselistentry where id = ?");
 		) {
 			con.setAutoCommit(false);
@@ -170,14 +170,12 @@ public class OpinionBaseDao {
 					psi.setString(7, caseListEntry.getCourt());
 					psi.setString(8, caseListEntry.getSearchUrl());
 					psi.setString(9, caseListEntry.getStatus().name());
-					psi.setInt(10, caseListEntry.getRetryCount());
 					psi.addBatch();
 				}
 				psi.executeBatch();
 				for ( CaseListEntry caseListEntry: existingEntries) {
 					psu.setString(1, caseListEntry.getStatus().name());
-					psu.setInt(2, caseListEntry.getRetryCount());
-					psu.setString(3, caseListEntry.getId());
+					psu.setString(2, caseListEntry.getId());
 					psu.addBatch();
 				}
 				psu.executeBatch();
@@ -194,11 +192,10 @@ public class OpinionBaseDao {
 //	id varchar(32), filename varchar(31), fileextension varchar(7), title varchar(137), opiniondate datetime, posteddate datetime, court varchar(15), searchurl varchar(128), status varchar(15) not null, retrycount integer
 	public void caseListEntryUpdate(CaseListEntry caseListEntry) throws SQLException {
 		try (Connection con = dataSource.getConnection();
-			PreparedStatement ps = con.prepareStatement("update caselistentry set status = ?, retrycount = ? where id = ?");
+			PreparedStatement ps = con.prepareStatement("update caselistentry set status = ? where id = ?");
 		) {
 			ps.setString(1, caseListEntry.getStatus().name());
-			ps.setInt(2, caseListEntry.getRetryCount());
-			ps.setString(3, caseListEntry.getId());
+			ps.setString(2, caseListEntry.getId());
 			ps.executeUpdate();
 		}
 	}

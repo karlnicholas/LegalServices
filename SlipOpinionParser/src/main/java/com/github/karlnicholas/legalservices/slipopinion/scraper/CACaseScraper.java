@@ -30,6 +30,7 @@ import org.jsoup.nodes.Node;
 import org.jsoup.select.Elements;
 
 import com.github.karlnicholas.legalservices.slipopinion.parser.OpinionScraperInterface;
+import com.github.karlnicholas.legalservices.caselist.model.CaseListEntries;
 import com.github.karlnicholas.legalservices.caselist.model.CaseListEntry;
 import com.github.karlnicholas.legalservices.opinion.parser.ScrapedOpinionDocument;
 
@@ -65,8 +66,8 @@ public class CACaseScraper implements OpinionScraperInterface {
 	}
 
 	@Override
-	public List<CaseListEntry> getCaseList() {
-		List<CaseListEntry> caseListEntries = null;
+	public CaseListEntries getCaseList() {
+		CaseListEntries caseListEntries = new CaseListEntries();
 		try ( CloseableHttpClient httpclient = HttpClients.createDefault() ) {
 			HttpGet httpGet = new HttpGet("http://www.courts.ca.gov/cms/opinions.htm?Courts=Y");
 			CloseableHttpResponse response = httpclient.execute(httpGet);
@@ -90,7 +91,7 @@ public class CACaseScraper implements OpinionScraperInterface {
 	}
 
 	@Override
-	public List<ScrapedOpinionDocument> scrapeOpinionFiles(List<CaseListEntry> caseListEntries) {
+	public List<ScrapedOpinionDocument> scrapeOpinionFiles(CaseListEntries caseListEntries) {
 		List<ScrapedOpinionDocument> documents = new ArrayList<ScrapedOpinionDocument>();
 		CAParseScrapedDocument parseScrapedDocument = new CAParseScrapedDocument();
 		
@@ -477,8 +478,8 @@ public class CACaseScraper implements OpinionScraperInterface {
 	    }
 	}
 
-	protected List<CaseListEntry> parseCaseList(InputStream inputStream) {
-		ArrayList<CaseListEntry> cases = new ArrayList<CaseListEntry>();
+	protected CaseListEntries parseCaseList(InputStream inputStream) {
+		CaseListEntries cases = new CaseListEntries(new ArrayList<>());
 //		DateFormat dfs = DateFormat.getDateInstance(DateFormat.SHORT);
 //		DateTimeFormatter dfs = DateTimeFormatter.ofPattern("YY/mm/DD");
 //		DateTimeFormatter dfs = DateTimeFormatter.ofPattern("MM/dd/yy");

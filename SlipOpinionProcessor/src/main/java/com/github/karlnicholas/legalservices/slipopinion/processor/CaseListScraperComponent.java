@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.karlnicholas.legalservices.caselist.model.CaseListEntries;
 import com.github.karlnicholas.legalservices.caselist.model.CaseListEntry;
 import com.github.karlnicholas.legalservices.opinion.service.OpinionService;
 import com.github.karlnicholas.legalservices.opinion.service.OpinionServiceFactory;
@@ -57,7 +58,7 @@ public class CaseListScraperComponent {
 			return "NOUPDATE";
 		}
 		// OK to proceed with pushing caseListEntries to kafka
-		List<CaseListEntry> caseListEntries = caseScraper.getCaseList();
+		CaseListEntries caseListEntries = caseScraper.getCaseList();
 	    JsonNode  jsonNode = objectMapper.valueToTree(caseListEntries);
 	    ProducerRecord<Integer, JsonNode> rec = new ProducerRecord<>(kafkaProperties.getCaseListEntriesTopic(), jsonNode);
 	    producer.send(rec);
