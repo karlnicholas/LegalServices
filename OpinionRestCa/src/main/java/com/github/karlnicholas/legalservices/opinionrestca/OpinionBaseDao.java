@@ -153,11 +153,16 @@ public class OpinionBaseDao {
 				Iterator<CaseListEntry> cleIt = caseListEntries.iterator();
 				while ( cleIt.hasNext()) {
 					CaseListEntry cle = cleIt.next();
-					if ( cle.getStatus().compareTo(CASELISTSTATUS.DELETED) == 0 ) {
+					if ( cle.getStatus() == CASELISTSTATUS.DELETED ) {
 						cleIt.remove();
 						deleteEntries.add(cle);
 					} else if ( existingEntries.contains(cle)) {
 						cleIt.remove();
+						if ( cle.getStatus() == existingEntries.get(existingEntries.indexOf(cle)).getStatus()) {
+							existingEntries.remove(cle);
+						} else {
+							existingEntries.get(existingEntries.indexOf(cle)).setStatus(cle.getStatus());
+						}
 					}
 				}
 				for ( CaseListEntry caseListEntry: caseListEntries) {

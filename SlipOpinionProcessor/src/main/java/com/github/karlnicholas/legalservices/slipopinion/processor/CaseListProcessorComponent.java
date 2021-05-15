@@ -1,10 +1,12 @@
 package com.github.karlnicholas.legalservices.slipopinion.processor;
 
+import java.io.IOException;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.apache.kafka.clients.CommonClientConfigs;
@@ -44,7 +46,7 @@ public class CaseListProcessorComponent implements Runnable {
 		this.objectMapper = objectMapper;
 		this.kafkaProperties = kafkaProperties;
 		this.producer = producer;
-	    opinionService = OpinionServiceFactory.getOpinionServiceClient();
+	    opinionService = OpinionServiceFactory.getOpinionServiceClient(objectMapper);
         //Configure the Consumer
 		Properties consumerProperties = new Properties();
 		consumerProperties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG,kafkaProperties.getIpAddress()+':'+kafkaProperties.getPort());
@@ -106,6 +108,11 @@ public class CaseListProcessorComponent implements Runnable {
 		// currentCaseListEntries will have only deleted items
 		newCaseListEntries.forEach(cle->cle.setStatus(CASELISTSTATUS.PENDING));
 		List<CaseListEntry> failedCaseListEntries = existingCaseListEntries.stream().filter(cle->cle.getStatus() != CASELISTSTATUS.PROCESSED).collect(Collectors.toList());
+		failedCaseListEntries.removeIf(cle->cle.getStatus() == CASELISTSTATUS.FAILED);		
+		failedCaseListEntries.forEach(cle->{
+			cle.setStatus(CASELISTSTATUS.FAILED);
+			currentCaseListEntries.get(currentCaseListEntries.indexOf(cle)).setStatus(CASELISTSTATUS.FAILED);
+		});
 		List<CaseListEntry> deletedCaseListEntries = new ArrayList<>(currentCaseListEntries);
 		deletedCaseListEntries.removeAll(existingCaseListEntries);
 		deletedCaseListEntries.forEach(cle->cle.setStatus(CASELISTSTATUS.DELETED));

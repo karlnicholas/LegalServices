@@ -1,5 +1,6 @@
 package com.github.karlnicholas.legalservices.opinion.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.karlnicholas.legalservices.opinion.service.client.OpinionServiceClientImpl;
 
 public class OpinionServiceFactory {
@@ -10,7 +11,7 @@ public class OpinionServiceFactory {
 		if (serviceUrl == null)
 			serviceUrl = defaultAddress;
 	}
-	public static OpinionService getOpinionServiceClient() {
-		return new OpinionServiceClientImpl(serviceUrl);
+	public static OpinionService getOpinionServiceClient(ObjectMapper objectMapper) {
+		return new OpinionServiceClientImpl(serviceUrl, objectMapper);
 	}
 }

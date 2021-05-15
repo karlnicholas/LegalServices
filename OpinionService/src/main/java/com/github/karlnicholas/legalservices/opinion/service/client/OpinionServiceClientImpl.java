@@ -1,10 +1,12 @@
 package com.github.karlnicholas.legalservices.opinion.service.client;
 
+import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -17,6 +19,7 @@ import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
 
 import com.github.karlnicholas.legalservices.opinion.service.OpinionService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.karlnicholas.legalservices.caselist.model.CaseListEntries;
 import com.github.karlnicholas.legalservices.caselist.model.CaseListEntry;
 import com.github.karlnicholas.legalservices.opinion.model.OpinionBase;
@@ -31,8 +34,11 @@ public class OpinionServiceClientImpl implements OpinionService {
 	private final URI caseListEntryUpdateUri;
 	private final ParameterizedTypeReference<List<OpinionBase>> opinionListTypeReference;
 	
-	public OpinionServiceClientImpl(String baseUrl) {
+	ObjectMapper objectMapper;
+	
+	public OpinionServiceClientImpl(String baseUrl, ObjectMapper objectMapper) {
 		restTemplate = new RestTemplate();
+		this.objectMapper = objectMapper;
 		opinionListTypeReference =  new ParameterizedTypeReference<List<OpinionBase>>() {};
 		//set interceptors/requestFactory
 		if ( LoggingRequestInterceptor.log.isDebugEnabled() ) {
@@ -81,6 +87,12 @@ public class OpinionServiceClientImpl implements OpinionService {
 		HttpHeaders requestHeaders = new HttpHeaders();
 		requestHeaders.setContentType(MediaType.APPLICATION_JSON);
 		HttpEntity<List<CaseListEntry>> requestEntity = new HttpEntity<>(currentCaseListEntries, requestHeaders);
+//try {
+//	objectMapper.writerWithDefaultPrettyPrinter().writeValue(System.out, currentCaseListEntries);
+//} catch (IOException e) {
+//	// TODO Auto-generated catch block
+//	e.printStackTrace();
+//}
 		return restTemplate.postForEntity(caseListEntryUpdatesUri, requestEntity, Void.class);
 	}
 

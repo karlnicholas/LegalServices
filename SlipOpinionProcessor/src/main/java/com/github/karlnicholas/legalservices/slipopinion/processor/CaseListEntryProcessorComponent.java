@@ -57,7 +57,7 @@ public class CaseListEntryProcessorComponent implements Runnable {
 		this.objectMapper = objectMapper;
 		this.kafkaProperties = kafkaProperties; 
 		this.producer = producer; 
-	    opinionService = OpinionServiceFactory.getOpinionServiceClient();
+	    opinionService = OpinionServiceFactory.getOpinionServiceClient(objectMapper);
 //		caseScraper = new CACaseScraper(false);
 		caseScraper = new TestCAParseSlipDetails(false);
 	    StatuteService statutesService = StatutesServiceFactory.getStatutesServiceClient();
@@ -86,7 +86,7 @@ public class CaseListEntryProcessorComponent implements Runnable {
     public void run(){
 		try {
 			// Subscribe to the topic.
-		    consumer.subscribe(Collections.singletonList(kafkaProperties.getCaseListEntriesTopic()));
+		    consumer.subscribe(Collections.singletonList(kafkaProperties.getNewCaseListTopic()));
 		    while (true) {
 		    	try {
 			        ConsumerRecords<Integer, JsonNode> records = consumer.poll(Duration.ofSeconds(1));
@@ -134,7 +134,7 @@ public class CaseListEntryProcessorComponent implements Runnable {
 		    producer.send(rec);
 			caseListEntry.setStatus(CASELISTSTATUS.PROCESSED);
 		} catch ( Exception ex) {
-			caseListEntry.setStatus(CASELISTSTATUS.FAILED);
+			caseListEntry.setStatus(CASELISTSTATUS.ERROR);
 			log.error("SlipOpinion error: {}", caseListEntry);
 		} finally {
 			opinionService.caseListEntryUpdate(caseListEntry);

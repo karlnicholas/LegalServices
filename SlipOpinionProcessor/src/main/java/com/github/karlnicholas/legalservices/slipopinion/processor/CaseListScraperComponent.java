@@ -39,7 +39,7 @@ public class CaseListScraperComponent {
 
 		caseScraper = new TestCAParseSlipDetails(false);
 //		caseScraper = new CACaseScraper(false);
-	    opinionService = OpinionServiceFactory.getOpinionServiceClient();
+	    opinionService = OpinionServiceFactory.getOpinionServiceClient(objectMapper);
 		
 	}
 
