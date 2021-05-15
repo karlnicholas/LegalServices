@@ -33,6 +33,7 @@ import com.github.karlnicholas.legalservices.slipopinion.model.SlipOpinion;
 import com.github.karlnicholas.legalservices.slipopinion.parser.OpinionScraperInterface;
 import com.github.karlnicholas.legalservices.slipopinion.parser.SlipOpinionDocumentParser;
 import com.github.karlnicholas.legalservices.slipopinion.scraper.CACaseScraper;
+import com.github.karlnicholas.legalservices.slipopinion.scraper.TestCAParseSlipDetails;
 import com.github.karlnicholas.legalservices.statute.service.StatuteService;
 import com.github.karlnicholas.legalservices.statute.service.StatutesServiceFactory;
 
@@ -57,7 +58,8 @@ public class CaseListEntryProcessorComponent implements Runnable {
 		this.kafkaProperties = kafkaProperties; 
 		this.producer = producer; 
 	    opinionService = OpinionServiceFactory.getOpinionServiceClient();
-		caseScraper = new CACaseScraper(false);
+//		caseScraper = new CACaseScraper(false);
+		caseScraper = new TestCAParseSlipDetails(false);
 	    StatuteService statutesService = StatutesServiceFactory.getStatutesServiceClient();
 		opinionDocumentParser = new SlipOpinionDocumentParser(statutesService.getStatutesTitles().getBody());
 		opinionViewBuilder = new OpinionViewBuilder(statutesService);
@@ -84,7 +86,7 @@ public class CaseListEntryProcessorComponent implements Runnable {
     public void run(){
 		try {
 			// Subscribe to the topic.
-		    consumer.subscribe(Collections.singletonList(kafkaProperties.getSlipOpinionsTopic()));
+		    consumer.subscribe(Collections.singletonList(kafkaProperties.getCaseListEntriesTopic()));
 		    while (true) {
 		    	try {
 			        ConsumerRecords<Integer, JsonNode> records = consumer.poll(Duration.ofSeconds(1));
@@ -128,7 +130,7 @@ public class CaseListEntryProcessorComponent implements Runnable {
 
 			OpinionView opinionView = opinionViewBuilder.buildOpinionView(slipOpinion);
 		    	        	
-			ProducerRecord<Integer, OpinionView> rec = new ProducerRecord<>(kafkaProperties.getSlipOpinionsTopic(),slipOpinion.getOpinionKey().hashCode(), opinionView);
+			ProducerRecord<Integer, OpinionView> rec = new ProducerRecord<>(kafkaProperties.getOpinionViewCacheTopic(),slipOpinion.getOpinionKey().hashCode(), opinionView);
 		    producer.send(rec);
 			caseListEntry.setStatus(CASELISTSTATUS.PROCESSED);
 		} catch ( Exception ex) {

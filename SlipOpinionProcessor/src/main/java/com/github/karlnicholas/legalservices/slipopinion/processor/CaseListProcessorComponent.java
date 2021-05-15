@@ -66,7 +66,7 @@ public class CaseListProcessorComponent implements Runnable {
     public void run(){
 		try {
 			// Subscribe to the topic.
-		    consumer.subscribe(Collections.singletonList(kafkaProperties.getSlipOpinionsTopic()));
+		    consumer.subscribe(Collections.singletonList(kafkaProperties.getCaseListEntriesTopic()));
 		    while (true) {
 		    	try {
 			        ConsumerRecords<Integer, JsonNode> records = consumer.poll(Duration.ofSeconds(1));
@@ -122,7 +122,7 @@ public class CaseListProcessorComponent implements Runnable {
 		// send delete cases
 		deletedCaseListEntries.forEach(cle->{
 		    JsonNode  jsonNode = objectMapper.valueToTree(cle);
-		    ProducerRecord<Integer, JsonNode> rec = new ProducerRecord<>(kafkaProperties.getDeleteCaseListTopic(), jsonNode);
+		    ProducerRecord<Integer, JsonNode> rec = new ProducerRecord<>(kafkaProperties.getOpinionViewDeleteTopic(), jsonNode);
 		    producer.send(rec);
 		});
 		

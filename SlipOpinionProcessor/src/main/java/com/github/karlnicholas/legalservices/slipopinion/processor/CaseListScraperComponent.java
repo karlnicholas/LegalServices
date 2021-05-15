@@ -1,7 +1,6 @@
 package com.github.karlnicholas.legalservices.slipopinion.processor;
 
 import java.sql.SQLException;
-import java.util.List;
 
 import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerRecord;
@@ -12,11 +11,11 @@ import org.springframework.stereotype.Component;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.karlnicholas.legalservices.caselist.model.CaseListEntries;
-import com.github.karlnicholas.legalservices.caselist.model.CaseListEntry;
 import com.github.karlnicholas.legalservices.opinion.service.OpinionService;
 import com.github.karlnicholas.legalservices.opinion.service.OpinionServiceFactory;
 import com.github.karlnicholas.legalservices.slipopinion.parser.OpinionScraperInterface;
 import com.github.karlnicholas.legalservices.slipopinion.scraper.CACaseScraper;
+import com.github.karlnicholas.legalservices.slipopinion.scraper.TestCAParseSlipDetails;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -38,8 +37,8 @@ public class CaseListScraperComponent {
 	    this.producer = producer;
 	    this.kafkaProperties = kafkaProperties;
 
-//		caseScraper = new TestCAParseSlipDetails(false);
-		caseScraper = new CACaseScraper(false);
+		caseScraper = new TestCAParseSlipDetails(false);
+//		caseScraper = new CACaseScraper(false);
 	    opinionService = OpinionServiceFactory.getOpinionServiceClient();
 		
 	}

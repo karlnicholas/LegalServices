@@ -18,9 +18,7 @@ public class KakfaProperties {
     private String password;
     private String caseListEntriesTopic = "caselistentries";
     private String newCaseListTopic = "newcaselist";
-    private String deleteCaseListTopic = "deletecaselist";
     private String failCaseListTopic = "failcaselist";
-    private String slipOpinionsTopic = "slipopinions";
     private String opinionViewCacheTopic = "opinionviewcache";
     private String opinionViewDeleteTopic = "opinionviewdelete";
     private String integerSerializer = "org.apache.kafka.common.serialization.IntegerSerializer";

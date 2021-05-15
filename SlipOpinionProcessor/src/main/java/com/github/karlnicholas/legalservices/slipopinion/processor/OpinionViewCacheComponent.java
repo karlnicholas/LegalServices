@@ -80,7 +80,7 @@ public class OpinionViewCacheComponent implements Runnable {
 		try {
 			// Subscribe to the topics.
 			opinionViewConsumer.subscribe(Collections.singletonList(kafkaProperties.getOpinionViewCacheTopic()));
-			deleteCaseListConsumer.subscribe(Collections.singletonList(kafkaProperties.getDeleteCaseListTopic()));
+			deleteCaseListConsumer.subscribe(Collections.singletonList(kafkaProperties.getOpinionViewDeleteTopic()));
 		    while (true) {
 		        ConsumerRecords<Integer, OpinionView> opinionViewRecords = opinionViewConsumer.poll(Duration.ofSeconds(1));
 		        for (ConsumerRecord<Integer, OpinionView> opinionViewRecord : opinionViewRecords) {
