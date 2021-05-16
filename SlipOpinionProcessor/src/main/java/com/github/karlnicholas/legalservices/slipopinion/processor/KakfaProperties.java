@@ -17,18 +17,19 @@ public class KakfaProperties {
 	@Value("${kafka.password:notFound}")
     private String password;
     private String caseListEntriesTopic = "caselistentries";
+    private String caseListEntriesConsumerGroup = "caseListEntriesConsumerGroup";
     private String newCaseListTopic = "newcaselist";
+    private String newCaseListConsumerGroup = "newCaseListConsumerGroup";
+    private String deleteCaseListTopic = "deletecaselist";
+    private String deleteCaseListConsumerGroup = "deleteCaseListConsumerGroup";
     private String failCaseListTopic = "failcaselist";
+    private String failCaseListConsumerGroup = "failCaseListConsumerGroup";
     private String opinionViewCacheTopic = "opinionviewcache";
-    private String opinionViewDeleteTopic = "opinionviewdelete";
+    private String opinionViewCacheConsumerGroup = "opinionViewCacheConsumerGroup";
     private String integerSerializer = "org.apache.kafka.common.serialization.IntegerSerializer";
     private String integerDeserializer = "org.apache.kafka.common.serialization.IntegerDeserializer";
     private String jsonValueSerializer = "org.apache.kafka.connect.json.JsonSerializer";
     private String jsonValueDeserializer = "org.apache.kafka.connect.json.JsonDeserializer";
-    private String opinionViewSerializer = "com.github.karlnicholas.legalservices.slipopinion.processor.OpinionViewSerializer";
-    private String opinionViewDeserializer = "com.github.karlnicholas.legalservices.slipopinion.processor.OpinionViewDeserializer";
-    private String caseListEntrySerializer = "com.github.karlnicholas.legalservices.slipopinion.processor.CaseListEntrySerializer";
-    private String caseListEntryDeserializer = "com.github.karlnicholas.legalservices.slipopinion.processor.CaseListEntryDeserializer";
-    private String slipOpinionsConsumerGroup = "slipOpinionsConsumerGroup";
-    private String opinionViewCacheConsumerGroup = "opinionViewCacheConsumerGroup";
+    private String opinionViewMessageSerializer = "com.github.karlnicholas.legalservices.slipopinion.processor.OpinionViewMessageSerializer";
+    private String opinionViewMessageDeserializer = "com.github.karlnicholas.legalservices.slipopinion.processor.OpinionViewMessageDeserializer";
 }

@@ -6,11 +6,9 @@ import java.io.ObjectOutputStream;
 
 import org.apache.kafka.common.serialization.Serializer;
 
-import com.github.karlnicholas.legalservices.opinionview.model.OpinionView;
-
-public class OpinionViewSerializer implements Serializer<OpinionView> {
+public class OpinionViewMessageSerializer implements Serializer<OpinionViewMessage> {
 	@Override
-	public byte[] serialize(String topic, OpinionView data) {
+	public byte[] serialize(String topic, OpinionViewMessage data) {
 		byte[] retVal = null;
 		try {
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();

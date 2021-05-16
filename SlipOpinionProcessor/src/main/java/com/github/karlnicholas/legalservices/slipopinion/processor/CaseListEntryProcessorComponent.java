@@ -4,6 +4,7 @@ import java.sql.SQLException;
 import java.time.Duration;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.stream.Collectors;
 
@@ -41,8 +42,9 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class CaseListEntryProcessorComponent implements Runnable {
-	private final Consumer<Integer, JsonNode> consumer;
-	private final Producer<Integer, OpinionView> producer;
+	private final Consumer<Integer, JsonNode> newCaseListconsumer;
+	private final Consumer<Integer, JsonNode> deleteCaseListConsumer;
+	private final Producer<Integer, OpinionViewMessage> producer;
 	private final ObjectMapper objectMapper;
 	private final OpinionService opinionService;
 	private final KakfaProperties kafkaProperties;
@@ -52,7 +54,7 @@ public class CaseListEntryProcessorComponent implements Runnable {
 	
 	protected CaseListEntryProcessorComponent(ObjectMapper objectMapper, 
 			KakfaProperties kafkaProperties,
-			Producer<Integer, OpinionView> producer
+			Producer<Integer, OpinionViewMessage> producer
 	) {
 		this.objectMapper = objectMapper;
 		this.kafkaProperties = kafkaProperties; 
@@ -69,7 +71,7 @@ public class CaseListEntryProcessorComponent implements Runnable {
 		consumerProperties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG,kafkaProperties.getIpAddress()+':'+kafkaProperties.getPort());
 		consumerProperties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, kafkaProperties.getIntegerDeserializer());
 		consumerProperties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, kafkaProperties.getJsonValueDeserializer());
-		consumerProperties.put(ConsumerConfig.GROUP_ID_CONFIG, kafkaProperties.getSlipOpinionsConsumerGroup());
+		consumerProperties.put(ConsumerConfig.GROUP_ID_CONFIG, kafkaProperties.getNewCaseListConsumerGroup());
         if ( !kafkaProperties.getUser().equalsIgnoreCase("notFound") ) {
         	consumerProperties.put(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, "SASL_PLAINTEXT");
         	consumerProperties.put(SaslConfigs.SASL_MECHANISM, "PLAIN");
@@ -79,26 +81,53 @@ public class CaseListEntryProcessorComponent implements Runnable {
         }
 
 		// Create the consumer using props.
-        consumer = new KafkaConsumer<>(consumerProperties);
+        newCaseListconsumer = new KafkaConsumer<>(consumerProperties);
+        //Configure the Consumer
+		consumerProperties = new Properties();
+		consumerProperties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG,kafkaProperties.getIpAddress()+':'+kafkaProperties.getPort());
+		consumerProperties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, kafkaProperties.getIntegerDeserializer());
+		consumerProperties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, kafkaProperties.getJsonValueDeserializer());
+		consumerProperties.put(ConsumerConfig.GROUP_ID_CONFIG, kafkaProperties.getDeleteCaseListConsumerGroup());
+        if ( !kafkaProperties.getUser().equalsIgnoreCase("notFound") ) {
+        	consumerProperties.put(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, "SASL_PLAINTEXT");
+        	consumerProperties.put(SaslConfigs.SASL_MECHANISM, "PLAIN");
+        	consumerProperties.put(SaslConfigs.SASL_JAAS_CONFIG, "org.apache.kafka.common.security.plain.PlainLoginModule required username=\"" +
+    		kafkaProperties.getUser() + "\" password=\"" + 
+    		kafkaProperties.getPassword() + "\";");
+        }
+
+		// Create the consumer using props.
+        deleteCaseListConsumer = new KafkaConsumer<>(consumerProperties);
 	}
 
 	@Override
     public void run(){
 		try {
 			// Subscribe to the topic.
-		    consumer.subscribe(Collections.singletonList(kafkaProperties.getNewCaseListTopic()));
+			newCaseListconsumer.subscribe(Collections.singletonList(kafkaProperties.getNewCaseListTopic()));
+			deleteCaseListConsumer.subscribe(Collections.singletonList(kafkaProperties.getDeleteCaseListTopic()));
 		    while (true) {
 		    	try {
-			        ConsumerRecords<Integer, JsonNode> records = consumer.poll(Duration.ofSeconds(1));
+			        ConsumerRecords<Integer, JsonNode> records = newCaseListconsumer.poll(Duration.ofSeconds(1));
 			        for (ConsumerRecord<Integer, JsonNode> record : records) {
 //			        	log.info("topic = {}, partition = {}, offset = {}, record key = {}, record value length = {}",
 //			                 record.topic(), record.partition(), record.offset(),
 //			                 record.key(), record.value().toString().length());
 			        	CaseListEntry caseListEntry = objectMapper.treeToValue( record.value(), CaseListEntry.class);
-			        	
 			        	processSlipOpinion(caseListEntry);
 			        	log.info("partition = {}, offset = {}, record key = {}, caseListEntries = {}",
 			        			record.partition(), record.offset(), record.key(), caseListEntry);
+			        }
+			        ConsumerRecords<Integer, JsonNode> deleteRecords = deleteCaseListConsumer.poll(Duration.ofSeconds(1));
+			        for (ConsumerRecord<Integer, JsonNode> deleteRecord : deleteRecords) {
+//			        	log.debug("topic = {}, partition = {}, offset = {}, record key = {}, record value length = {}",
+//			                 record.topic(), record.partition(), record.offset(),
+//			                 record.key(), record.value());
+			        	CaseListEntry caseListEntry = objectMapper.treeToValue( deleteRecord.value(), CaseListEntry.class);
+			        	log.info("partition = {}, offset = {}, record key = {}, caseListEntries = {}",
+			        			deleteRecord.partition(), deleteRecord.offset(), deleteRecord.key(), caseListEntry);
+						ProducerRecord<Integer, OpinionViewMessage> rec = new ProducerRecord<>(kafkaProperties.getOpinionViewCacheTopic(), OpinionViewMessage.builder().opinionView(Optional.empty()).caseListEntry(Optional.of(caseListEntry)).build());
+					    producer.send(rec);
 			        }
 				} catch (Exception e) {
 					log.error("Unexpected error: {}", e);
@@ -107,7 +136,8 @@ public class CaseListEntryProcessorComponent implements Runnable {
 		} catch (WakeupException e) {
 			log.error("WakeupException: {}", e);
 		} finally {
-	        consumer.close();
+			newCaseListconsumer.close();
+			deleteCaseListConsumer.close();
 		}
 	}
 	public void processSlipOpinion(CaseListEntry caseListEntry) throws SQLException {
@@ -130,7 +160,7 @@ public class CaseListEntryProcessorComponent implements Runnable {
 
 			OpinionView opinionView = opinionViewBuilder.buildOpinionView(slipOpinion);
 		    	        	
-			ProducerRecord<Integer, OpinionView> rec = new ProducerRecord<>(kafkaProperties.getOpinionViewCacheTopic(),slipOpinion.getOpinionKey().hashCode(), opinionView);
+			ProducerRecord<Integer, OpinionViewMessage> rec = new ProducerRecord<>(kafkaProperties.getOpinionViewCacheTopic(), OpinionViewMessage.builder().opinionView(Optional.of(opinionView)).caseListEntry(Optional.empty()).build());
 		    producer.send(rec);
 			caseListEntry.setStatus(CASELISTSTATUS.PROCESSED);
 		} catch ( Exception ex) {

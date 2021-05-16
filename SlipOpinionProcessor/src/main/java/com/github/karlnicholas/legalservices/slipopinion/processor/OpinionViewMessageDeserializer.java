@@ -8,13 +8,13 @@ import org.apache.kafka.common.serialization.Deserializer;
 
 import com.github.karlnicholas.legalservices.opinionview.model.OpinionView;
 
-public class OpinionViewDeserializer implements Deserializer<OpinionView> {
+public class OpinionViewMessageDeserializer implements Deserializer<OpinionViewMessage> {
 
 	@Override
-	public OpinionView deserialize(String topic, byte[] data) {
+	public OpinionViewMessage deserialize(String topic, byte[] data) {
 		try {
 		    ObjectInputStream objIn = new ObjectInputStream(new ByteArrayInputStream(data));
-			OpinionView obj = (OpinionView) objIn.readObject();
+		    OpinionViewMessage obj = (OpinionViewMessage) objIn.readObject();
 			objIn.close();
 		    return obj;
 		} catch (IOException | ClassNotFoundException e) {

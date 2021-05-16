@@ -46,9 +46,9 @@ public class SlipOpinionProcessor {
 	public void doSomethingAfterStartup() throws SQLException {
 		taskExecutor.execute(new OpinionViewCacheComponent(objectMapper, kafkaProperties, opinionViewData));
 
-		taskExecutor.execute(new CaseListEntryProcessorComponent(objectMapper, kafkaProperties, integerOpinionViewProducer()));
-		taskExecutor.execute(new CaseListEntryProcessorComponent(objectMapper, kafkaProperties, integerOpinionViewProducer()));
-		taskExecutor.execute(new CaseListEntryProcessorComponent(objectMapper, kafkaProperties, integerOpinionViewProducer()));
+		taskExecutor.execute(new CaseListEntryProcessorComponent(objectMapper, kafkaProperties, integerOpinionViewMessageProducer()));
+		taskExecutor.execute(new CaseListEntryProcessorComponent(objectMapper, kafkaProperties, integerOpinionViewMessageProducer()));
+		taskExecutor.execute(new CaseListEntryProcessorComponent(objectMapper, kafkaProperties, integerOpinionViewMessageProducer()));
 
 		taskExecutor.execute(new CaseListProcessorComponent(objectMapper, kafkaProperties, integerJsonProducer()));
 	}
@@ -72,12 +72,12 @@ public class SlipOpinionProcessor {
 	}
 
 	@Bean 
-	public Producer<Integer, OpinionView> integerOpinionViewProducer() {
+	public Producer<Integer, OpinionViewMessage> integerOpinionViewMessageProducer() {
 	    //Configure the Producer
 	    Properties configProperties = new Properties();
 	    configProperties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG,kafkaProperties.getIpAddress()+':'+kafkaProperties.getPort());
 	    configProperties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG,kafkaProperties.getIntegerSerializer());
-	    configProperties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG,kafkaProperties.getOpinionViewSerializer());
+	    configProperties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG,kafkaProperties.getOpinionViewMessageSerializer());
 	    if ( !kafkaProperties.getUser().equalsIgnoreCase("notFound") ) {
 	        configProperties.put(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, "SASL_PLAINTEXT");
 	        configProperties.put(SaslConfigs.SASL_MECHANISM, "PLAIN");

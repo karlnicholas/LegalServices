@@ -1,12 +1,10 @@
 package com.github.karlnicholas.legalservices.slipopinion.processor;
 
-import java.io.IOException;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.apache.kafka.clients.CommonClientConfigs;
@@ -52,7 +50,7 @@ public class CaseListProcessorComponent implements Runnable {
 		consumerProperties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG,kafkaProperties.getIpAddress()+':'+kafkaProperties.getPort());
 		consumerProperties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, kafkaProperties.getIntegerDeserializer());
 		consumerProperties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, kafkaProperties.getJsonValueDeserializer());
-		consumerProperties.put(ConsumerConfig.GROUP_ID_CONFIG, kafkaProperties.getSlipOpinionsConsumerGroup());
+		consumerProperties.put(ConsumerConfig.GROUP_ID_CONFIG, kafkaProperties.getCaseListEntriesConsumerGroup());
         if ( !kafkaProperties.getUser().equalsIgnoreCase("notFound") ) {
         	consumerProperties.put(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, "SASL_PLAINTEXT");
         	consumerProperties.put(SaslConfigs.SASL_MECHANISM, "PLAIN");
@@ -129,7 +127,7 @@ public class CaseListProcessorComponent implements Runnable {
 		// send delete cases
 		deletedCaseListEntries.forEach(cle->{
 		    JsonNode  jsonNode = objectMapper.valueToTree(cle);
-		    ProducerRecord<Integer, JsonNode> rec = new ProducerRecord<>(kafkaProperties.getOpinionViewDeleteTopic(), jsonNode);
+		    ProducerRecord<Integer, JsonNode> rec = new ProducerRecord<>(kafkaProperties.getDeleteCaseListTopic(), jsonNode);
 		    producer.send(rec);
 		});
 		
