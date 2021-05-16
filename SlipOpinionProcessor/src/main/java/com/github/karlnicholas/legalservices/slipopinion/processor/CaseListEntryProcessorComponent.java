@@ -4,7 +4,6 @@ import java.sql.SQLException;
 import java.time.Duration;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import java.util.Properties;
 import java.util.stream.Collectors;
 
@@ -113,20 +112,21 @@ public class CaseListEntryProcessorComponent implements Runnable {
 //			        	log.info("topic = {}, partition = {}, offset = {}, record key = {}, record value length = {}",
 //			                 record.topic(), record.partition(), record.offset(),
 //			                 record.key(), record.value().toString().length());
-			        	CaseListEntry caseListEntry = objectMapper.treeToValue( record.value(), CaseListEntry.class);
-			        	processSlipOpinion(caseListEntry);
+			        	CaseListEntry newCaseListEntry = objectMapper.treeToValue( record.value(), CaseListEntry.class);
+			        	processSlipOpinion(newCaseListEntry);
 			        	log.info("partition = {}, offset = {}, record key = {}, caseListEntries = {}",
-			        			record.partition(), record.offset(), record.key(), caseListEntry);
+			        			record.partition(), record.offset(), record.key(), newCaseListEntry);
 			        }
 			        ConsumerRecords<Integer, JsonNode> deleteRecords = deleteCaseListConsumer.poll(Duration.ofSeconds(1));
 			        for (ConsumerRecord<Integer, JsonNode> deleteRecord : deleteRecords) {
 //			        	log.debug("topic = {}, partition = {}, offset = {}, record key = {}, record value length = {}",
 //			                 record.topic(), record.partition(), record.offset(),
 //			                 record.key(), record.value());
-			        	CaseListEntry caseListEntry = objectMapper.treeToValue( deleteRecord.value(), CaseListEntry.class);
+			        	CaseListEntry deleteCaseListEntry = objectMapper.treeToValue( deleteRecord.value(), CaseListEntry.class);
 			        	log.info("partition = {}, offset = {}, record key = {}, caseListEntries = {}",
-			        			deleteRecord.partition(), deleteRecord.offset(), deleteRecord.key(), caseListEntry);
-						ProducerRecord<Integer, OpinionViewMessage> rec = new ProducerRecord<>(kafkaProperties.getOpinionViewCacheTopic(), OpinionViewMessage.builder().opinionView(Optional.empty()).caseListEntry(Optional.of(caseListEntry)).build());
+			        			deleteRecord.partition(), deleteRecord.offset(), deleteRecord.key(), deleteCaseListEntry);
+						ProducerRecord<Integer, OpinionViewMessage> rec = new ProducerRecord<>(kafkaProperties.getOpinionViewCacheTopic(), 
+								OpinionViewMessage.builder().caseListEntry(deleteCaseListEntry).build());
 					    producer.send(rec);
 			        }
 				} catch (Exception e) {
@@ -160,12 +160,13 @@ public class CaseListEntryProcessorComponent implements Runnable {
 
 			OpinionView opinionView = opinionViewBuilder.buildOpinionView(slipOpinion);
 		    	        	
-			ProducerRecord<Integer, OpinionViewMessage> rec = new ProducerRecord<>(kafkaProperties.getOpinionViewCacheTopic(), OpinionViewMessage.builder().opinionView(Optional.of(opinionView)).caseListEntry(Optional.empty()).build());
+			ProducerRecord<Integer, OpinionViewMessage> rec = new ProducerRecord<>(kafkaProperties.getOpinionViewCacheTopic(), 
+					OpinionViewMessage.builder().opinionView(opinionView).build());
 		    producer.send(rec);
 			caseListEntry.setStatus(CASELISTSTATUS.PROCESSED);
 		} catch ( Exception ex) {
 			caseListEntry.setStatus(CASELISTSTATUS.ERROR);
-			log.error("SlipOpinion error: {}", caseListEntry);
+			log.error("SlipOpinion error: {} {} {}", caseListEntry.getId(), caseListEntry.getFileName(), ex.getMessage());
 		} finally {
 			opinionService.caseListEntryUpdate(caseListEntry);
 		}

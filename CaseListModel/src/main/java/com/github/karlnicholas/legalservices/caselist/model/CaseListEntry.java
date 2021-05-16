@@ -1,5 +1,6 @@
 package com.github.karlnicholas.legalservices.caselist.model;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 
 import lombok.AllArgsConstructor;
@@ -13,7 +14,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class CaseListEntry {
+public class CaseListEntry implements Serializable {
+	private static final long serialVersionUID = 1L;
 	@EqualsAndHashCode.Include
 	private String id;
 	private String fileName;
