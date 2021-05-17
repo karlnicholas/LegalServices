@@ -17,6 +17,8 @@ import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.config.SaslConfigs;
 import org.apache.kafka.common.errors.WakeupException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -32,15 +34,13 @@ import com.github.karlnicholas.legalservices.opinionview.model.OpinionViewBuilde
 import com.github.karlnicholas.legalservices.slipopinion.model.SlipOpinion;
 import com.github.karlnicholas.legalservices.slipopinion.parser.OpinionScraperInterface;
 import com.github.karlnicholas.legalservices.slipopinion.parser.SlipOpinionDocumentParser;
-import com.github.karlnicholas.legalservices.slipopinion.scraper.CACaseScraper;
 import com.github.karlnicholas.legalservices.slipopinion.scraper.TestCAParseSlipDetails;
 import com.github.karlnicholas.legalservices.statute.service.StatuteService;
 import com.github.karlnicholas.legalservices.statute.service.StatutesServiceFactory;
 
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 public class CaseListEntryProcessorComponent implements Runnable {
+	private final Logger log = LoggerFactory.getLogger(CaseListEntryProcessorComponent.class);
 	private final Consumer<Integer, JsonNode> newCaseListconsumer;
 	private final Consumer<Integer, JsonNode> deleteCaseListConsumer;
 	private final Producer<Integer, OpinionViewMessage> producer;
@@ -166,7 +166,7 @@ public class CaseListEntryProcessorComponent implements Runnable {
 			caseListEntry.setStatus(CASELISTSTATUS.PROCESSED);
 		} catch ( Exception ex) {
 			caseListEntry.setStatus(CASELISTSTATUS.ERROR);
-			log.error("SlipOpinion error: {} {} {}", caseListEntry.getId(), caseListEntry.getFileName(), ex.getMessage());
+			log.error("SlipOpinion error: {} {} {}", caseListEntry.getId(), caseListEntry.getFileName(), ex.toString());
 		} finally {
 			opinionService.caseListEntryUpdate(caseListEntry);
 		}

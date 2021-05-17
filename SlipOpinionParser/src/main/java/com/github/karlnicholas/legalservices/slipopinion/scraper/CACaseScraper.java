@@ -66,7 +66,7 @@ public class CACaseScraper implements OpinionScraperInterface {
 	}
 
 	@Override
-	public CaseListEntries getCaseList() {
+	public CaseListEntries getCaseList() throws IOException {
 		CaseListEntries caseListEntries = new CaseListEntries();
 		try ( CloseableHttpClient httpclient = HttpClients.createDefault() ) {
 			HttpGet httpGet = new HttpGet("http://www.courts.ca.gov/cms/opinions.htm?Courts=Y");
@@ -135,7 +135,7 @@ public class CACaseScraper implements OpinionScraperInterface {
 	}
 	
 	@Override
-	public ScrapedOpinionDocument scrapeOpinionFile(SlipOpinion slipOpinion) {
+	public ScrapedOpinionDocument scrapeOpinionFile(SlipOpinion slipOpinion) throws IOException {
 		List<ScrapedOpinionDocument> documents = new ArrayList<ScrapedOpinionDocument>();
 		CAParseScrapedDocument parseScrapedDocument = new CAParseScrapedDocument();
 		ScrapedOpinionDocument parsedDoc = null;

@@ -21,13 +21,8 @@ public class TestCAParseSlipDetails extends CACaseScraper {
 	}
 	
 	@Override
-	public CaseListEntries getCaseList() {
-		try {
-			return parseCaseList(new FileInputStream( CACaseScraper.caseListDir + "/" +  CACaseScraper.caseListFile ));
-		} catch (IOException e) {
-			e.printStackTrace();
-			return null;
-		}
+	public CaseListEntries getCaseList() throws IOException {
+		return parseCaseList(new FileInputStream( CACaseScraper.caseListDir + "/" +  CACaseScraper.caseListFile ));
 	}
 
 	@Override
@@ -44,7 +39,6 @@ public class TestCAParseSlipDetails extends CACaseScraper {
 				} else {
 					logger.warning("Opinion not parsed: " + slipOpinion.getFileName() + " " + slipOpinion.getFileExtension());
 				}
-				inputStream.close();
 			} catch (IOException e) {
 				logger.severe("Parse Scraped Document: " + e.getMessage());
 			}
@@ -100,7 +94,7 @@ public class TestCAParseSlipDetails extends CACaseScraper {
 	}
 
 	@Override
-	public ScrapedOpinionDocument scrapeOpinionFile(SlipOpinion slipOpinion) {
+	public ScrapedOpinionDocument scrapeOpinionFile(SlipOpinion slipOpinion) throws IOException {
 		CAParseScrapedDocument parseScrapedDocument = new CAParseScrapedDocument();
 		ScrapedOpinionDocument parsedDoc = null;
 		try ( InputStream inputStream = Files.newInputStream( Paths.get(casesDir + slipOpinion.getFileName() + slipOpinion.getFileExtension())) ) {
@@ -111,8 +105,6 @@ public class TestCAParseSlipDetails extends CACaseScraper {
 				logger.warning("Opinion not parsed: " + slipOpinion.getFileName() + " " + slipOpinion.getFileExtension());
 			}
 			inputStream.close();
-		} catch (IOException e) {
-			logger.severe("Parse Scraped Document: " + e.getMessage());
 		}
 		boolean goodtogo = true;
 		try ( InputStream inputStream = Files.newInputStream( 

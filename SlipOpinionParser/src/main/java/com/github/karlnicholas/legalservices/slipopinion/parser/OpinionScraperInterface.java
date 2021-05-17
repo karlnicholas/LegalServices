@@ -1,5 +1,6 @@
 package com.github.karlnicholas.legalservices.slipopinion.parser;
 
+import java.io.IOException;
 import java.util.List;
 
 import com.github.karlnicholas.legalservices.caselist.model.CaseListEntries;
@@ -7,7 +8,7 @@ import com.github.karlnicholas.legalservices.opinion.parser.ScrapedOpinionDocume
 import com.github.karlnicholas.legalservices.slipopinion.model.SlipOpinion;
 
 public interface OpinionScraperInterface {
-	CaseListEntries getCaseList();
+	CaseListEntries getCaseList() throws IOException;
 	List<ScrapedOpinionDocument> scrapeOpinionFiles(CaseListEntries slipOpinions);
-	ScrapedOpinionDocument scrapeOpinionFile(SlipOpinion slipOpinion);
+	ScrapedOpinionDocument scrapeOpinionFile(SlipOpinion slipOpinion) throws IOException;
 }

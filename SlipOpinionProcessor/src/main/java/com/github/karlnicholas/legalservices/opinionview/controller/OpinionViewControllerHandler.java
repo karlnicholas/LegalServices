@@ -1,5 +1,6 @@
 package com.github.karlnicholas.legalservices.opinionview.controller;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.time.LocalDate;
 
@@ -51,7 +52,7 @@ public class OpinionViewControllerHandler {
 		try {
 			return ServerResponse.ok().contentType(MediaType.TEXT_PLAIN)
 					.bodyValue(caseListScraperComponent.reportCurrentTime());
-		} catch (SQLException e) {
+		} catch (SQLException | IOException e) {
 			return ServerResponse.status(HttpStatus.INTERNAL_SERVER_ERROR).bodyValue(e.getMessage());
 		}
 	}

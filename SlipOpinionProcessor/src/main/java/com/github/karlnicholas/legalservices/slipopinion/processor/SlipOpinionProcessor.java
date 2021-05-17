@@ -22,7 +22,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.karlnicholas.legalservices.opinionview.model.OpinionView;
 
 @SpringBootApplication(scanBasePackages = {
 	"com.github.karlnicholas.legalservices.opinionview.service", 

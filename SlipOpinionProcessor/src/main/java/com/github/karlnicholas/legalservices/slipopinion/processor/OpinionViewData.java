@@ -9,17 +9,17 @@ import java.util.Locale;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import com.github.karlnicholas.legalservices.opinion.model.OpinionKey;
 import com.github.karlnicholas.legalservices.opinionview.model.OpinionView;
 
-import lombok.extern.slf4j.Slf4j;
-
 @Component
-@Slf4j
 public class OpinionViewData {
-    private List<LocalDate[]> dateBrackets;
+	private final Logger log = LoggerFactory.getLogger(OpinionViewData.class); 
+    private final List<LocalDate[]> dateBrackets;
     private final List<OpinionView> opinionViews;
 
     public OpinionViewData() {

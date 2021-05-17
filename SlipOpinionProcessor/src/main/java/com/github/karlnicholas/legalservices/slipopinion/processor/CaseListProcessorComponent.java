@@ -17,6 +17,8 @@ import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.config.SaslConfigs;
 import org.apache.kafka.common.errors.WakeupException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -26,11 +28,8 @@ import com.github.karlnicholas.legalservices.caselist.model.CaseListEntry;
 import com.github.karlnicholas.legalservices.opinion.service.OpinionService;
 import com.github.karlnicholas.legalservices.opinion.service.OpinionServiceFactory;
 
-import lombok.extern.slf4j.Slf4j;
-
-@Slf4j
 public class CaseListProcessorComponent implements Runnable {
-
+	private final Logger log = LoggerFactory.getLogger(CaseListProcessorComponent.class);
 	private final Consumer<Integer, JsonNode> consumer;
 	private final Producer<Integer, JsonNode> producer;
 	private final ObjectMapper objectMapper;

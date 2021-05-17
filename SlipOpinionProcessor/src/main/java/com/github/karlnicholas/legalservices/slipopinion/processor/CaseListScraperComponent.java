@@ -1,9 +1,12 @@
 package com.github.karlnicholas.legalservices.slipopinion.processor;
 
+import java.io.IOException;
 import java.sql.SQLException;
 
 import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerRecord;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -14,15 +17,11 @@ import com.github.karlnicholas.legalservices.caselist.model.CaseListEntries;
 import com.github.karlnicholas.legalservices.opinion.service.OpinionService;
 import com.github.karlnicholas.legalservices.opinion.service.OpinionServiceFactory;
 import com.github.karlnicholas.legalservices.slipopinion.parser.OpinionScraperInterface;
-import com.github.karlnicholas.legalservices.slipopinion.scraper.CACaseScraper;
 import com.github.karlnicholas.legalservices.slipopinion.scraper.TestCAParseSlipDetails;
 
-import lombok.extern.slf4j.Slf4j;
-
 @Component
-@Slf4j
 public class CaseListScraperComponent {
-
+	private final Logger log = LoggerFactory.getLogger(CaseListScraperComponent.class);
 	private final OpinionScraperInterface caseScraper;
 	private final ObjectMapper objectMapper;
 	private final OpinionService opinionService;
@@ -45,7 +44,7 @@ public class CaseListScraperComponent {
 
 
 	@Scheduled(fixedRate = 3600000)
-	public String reportCurrentTime() throws SQLException {
+	public String reportCurrentTime() throws SQLException, IOException {
  		// use the transaction manager in the database for a cheap job manager
 		ResponseEntity<String> response = opinionService.callSlipOpinionUpdateNeeded();
 		if ( response.getStatusCodeValue() != 200 ) {

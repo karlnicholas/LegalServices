@@ -12,17 +12,15 @@ import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.config.SaslConfigs;
 import org.apache.kafka.common.errors.WakeupException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.karlnicholas.legalservices.caselist.model.CaseListEntry;
 import com.github.karlnicholas.legalservices.slipopinion.model.SlipOpinion;
 
-import lombok.extern.slf4j.Slf4j;
-
-@Slf4j
 public class OpinionViewCacheComponent implements Runnable {
-
-//	private volatile boolean someCondition = true;
+	private final Logger log = LoggerFactory.getLogger(OpinionViewCacheComponent.class);
 	private final Consumer<Integer, OpinionViewMessage> opinionViewCacheConsumer;
 	private final KakfaProperties kafkaProperties;
 	private final OpinionViewData opinionViewData;

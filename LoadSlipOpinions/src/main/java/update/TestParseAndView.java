@@ -1,5 +1,6 @@
 package update;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -42,7 +43,7 @@ public class TestParseAndView implements ApplicationRunner {
 	}
 
 	@Override
-	public void run(ApplicationArguments args) throws JsonProcessingException, SQLException {
+	public void run(ApplicationArguments args) throws SQLException, IOException {
 
 //		StatuteService statutesService = StatutesServiceFactory.getStatutesServiceClient();
 //		OpinionService opinionService = OpinionServiceFactory.getOpinionServiceClient();
@@ -166,7 +167,7 @@ public class TestParseAndView implements ApplicationRunner {
 //  System.out.println(jsonNode2);
 		
 	private OpinionView parseAndPrintOpinion(OpinionService opinionService, OpinionViewBuilder opinionViewBuilder,
-			StatutesTitles[] arrayStatutesTitles, OpinionScraperInterface caseScraper, SlipOpinion slipOpinion) {
+			StatutesTitles[] arrayStatutesTitles, OpinionScraperInterface caseScraper, SlipOpinion slipOpinion) throws IOException {
 		// no retries
 //		parseAndView.processCase(slipOpinion, caseScraper, arrayStatutesTitles);
 		// Create the CACodes list
