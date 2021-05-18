@@ -20,8 +20,6 @@ public class KakfaProperties {
     private String caseListEntriesConsumerGroup = "caseListEntriesConsumerGroup";
     private String newCaseListTopic = "newcaselist";
     private String newCaseListConsumerGroup = "newCaseListConsumerGroup";
-    private String deleteCaseListTopic = "deletecaselist";
-    private String deleteCaseListConsumerGroup = "deleteCaseListConsumerGroup";
     private String failCaseListTopic = "failcaselist";
     private String failCaseListConsumerGroup = "failCaseListConsumerGroup";
     private String opinionViewCacheTopic = "opinionviewcache";

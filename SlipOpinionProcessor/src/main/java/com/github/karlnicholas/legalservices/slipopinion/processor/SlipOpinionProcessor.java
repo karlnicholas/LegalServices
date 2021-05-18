@@ -49,7 +49,7 @@ public class SlipOpinionProcessor {
 		taskExecutor.execute(new CaseListEntryProcessorComponent(objectMapper, kafkaProperties, integerOpinionViewMessageProducer()));
 		taskExecutor.execute(new CaseListEntryProcessorComponent(objectMapper, kafkaProperties, integerOpinionViewMessageProducer()));
 
-		taskExecutor.execute(new CaseListProcessorComponent(objectMapper, kafkaProperties, integerJsonProducer()));
+		taskExecutor.execute(new CaseListProcessorComponent(objectMapper, kafkaProperties, integerJsonProducer(), integerOpinionViewMessageProducer()));
 	}
 
 	@Bean

@@ -32,17 +32,20 @@ public class CaseListProcessorComponent implements Runnable {
 	private final Logger log = LoggerFactory.getLogger(CaseListProcessorComponent.class);
 	private final Consumer<Integer, JsonNode> consumer;
 	private final Producer<Integer, JsonNode> producer;
+	private final Producer<Integer, OpinionViewMessage> cacheProducer;
 	private final ObjectMapper objectMapper;
 	private final OpinionService opinionService;
 	private final KakfaProperties kafkaProperties;
 
 	public CaseListProcessorComponent(ObjectMapper objectMapper, 
 			KakfaProperties kafkaProperties, 
-			Producer<Integer, JsonNode> producer
+			Producer<Integer, JsonNode> producer,
+			Producer<Integer, OpinionViewMessage> cacheProducer
 	) {
 		this.objectMapper = objectMapper;
 		this.kafkaProperties = kafkaProperties;
 		this.producer = producer;
+		this.cacheProducer = cacheProducer;
 	    opinionService = OpinionServiceFactory.getOpinionServiceClient(objectMapper);
         //Configure the Consumer
 		Properties consumerProperties = new Properties();
@@ -121,13 +124,15 @@ public class CaseListProcessorComponent implements Runnable {
 		    JsonNode  jsonNode = objectMapper.valueToTree(cle);
 		    ProducerRecord<Integer, JsonNode> rec = new ProducerRecord<>(kafkaProperties.getNewCaseListTopic(), jsonNode);
 		    producer.send(rec);
+		    log.info("New Case: {}", cle);
 		});
 
 		// send delete cases
 		deletedCaseListEntries.forEach(cle->{
-		    JsonNode  jsonNode = objectMapper.valueToTree(cle);
-		    ProducerRecord<Integer, JsonNode> rec = new ProducerRecord<>(kafkaProperties.getDeleteCaseListTopic(), jsonNode);
-		    producer.send(rec);
+			ProducerRecord<Integer, OpinionViewMessage> rec = new ProducerRecord<>(kafkaProperties.getOpinionViewCacheTopic(), 
+					OpinionViewMessage.builder().caseListEntry(cle).build());
+		    cacheProducer.send(rec);
+		    log.info("Deleted Case: {}", cle);
 		});
 		
 		// send failed cases
@@ -135,6 +140,7 @@ public class CaseListProcessorComponent implements Runnable {
 		    JsonNode  jsonNode = objectMapper.valueToTree(cle);
 		    ProducerRecord<Integer, JsonNode> rec = new ProducerRecord<>(kafkaProperties.getFailCaseListTopic(), jsonNode);
 		    producer.send(rec);
+		    log.warn("Failed Case: {}", cle);
 		});
 	
 	}

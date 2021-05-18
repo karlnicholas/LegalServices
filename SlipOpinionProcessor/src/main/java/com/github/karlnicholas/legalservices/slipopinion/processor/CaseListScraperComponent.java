@@ -17,6 +17,7 @@ import com.github.karlnicholas.legalservices.caselist.model.CaseListEntries;
 import com.github.karlnicholas.legalservices.opinion.service.OpinionService;
 import com.github.karlnicholas.legalservices.opinion.service.OpinionServiceFactory;
 import com.github.karlnicholas.legalservices.slipopinion.parser.OpinionScraperInterface;
+import com.github.karlnicholas.legalservices.slipopinion.scraper.CACaseScraper;
 import com.github.karlnicholas.legalservices.slipopinion.scraper.TestCAParseSlipDetails;
 
 @Component
@@ -36,14 +37,14 @@ public class CaseListScraperComponent {
 	    this.producer = producer;
 	    this.kafkaProperties = kafkaProperties;
 
-		caseScraper = new TestCAParseSlipDetails(false);
-//		caseScraper = new CACaseScraper(false);
+//		caseScraper = new TestCAParseSlipDetails(false);
+		caseScraper = new CACaseScraper(false);
 	    opinionService = OpinionServiceFactory.getOpinionServiceClient(objectMapper);
 		
 	}
 
 
-	@Scheduled(fixedRate = 3600000)
+	@Scheduled(fixedRate = 3600000, initialDelay = 60000)
 	public String reportCurrentTime() throws SQLException, IOException {
  		// use the transaction manager in the database for a cheap job manager
 		ResponseEntity<String> response = opinionService.callSlipOpinionUpdateNeeded();
