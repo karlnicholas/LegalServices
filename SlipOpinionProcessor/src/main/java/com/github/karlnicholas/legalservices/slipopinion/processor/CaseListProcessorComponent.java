@@ -117,10 +117,11 @@ public class CaseListProcessorComponent implements Runnable {
 		deletedCaseListEntries.removeAll(existingCaseListEntries);
 		deletedCaseListEntries.forEach(cle->cle.setStatus(CASELISTSTATUS.DELETED));
 		// construct database update
-		currentCaseListEntries.addAll(newCaseListEntries);
+		List<CaseListEntry> max10newList = newCaseListEntries.subList(0, newCaseListEntries.size() > 10 ? 10 : newCaseListEntries.size());
+		currentCaseListEntries.addAll(max10newList);
 		opinionService.caseListEntryUpdates(currentCaseListEntries);
 		// send new cases
-		newCaseListEntries.forEach(cle->{
+		max10newList.forEach(cle->{
 		    JsonNode  jsonNode = objectMapper.valueToTree(cle);
 		    ProducerRecord<Integer, JsonNode> rec = new ProducerRecord<>(kafkaProperties.getNewCaseListTopic(), jsonNode);
 		    producer.send(rec);
