@@ -43,13 +43,13 @@ public class SlipOpinionProcessor {
 	
 	@EventListener(ApplicationReadyEvent.class)
 	public void doSomethingAfterStartup() throws SQLException {
-		taskExecutor.execute(new OpinionViewCacheComponent(objectMapper, kafkaProperties, opinionViewData));
+		new Thread(new OpinionViewCacheComponent(objectMapper, kafkaProperties, opinionViewData)).start();
 
-		taskExecutor.execute(new CaseListEntryProcessorComponent(objectMapper, kafkaProperties, integerOpinionViewMessageProducer()));
-		taskExecutor.execute(new CaseListEntryProcessorComponent(objectMapper, kafkaProperties, integerOpinionViewMessageProducer()));
-		taskExecutor.execute(new CaseListEntryProcessorComponent(objectMapper, kafkaProperties, integerOpinionViewMessageProducer()));
+		new Thread(new CaseListEntryProcessorComponent(objectMapper, kafkaProperties, integerOpinionViewMessageProducer())).start();
+//		taskExecutor.execute(new CaseListEntryProcessorComponent(objectMapper, kafkaProperties, integerOpinionViewMessageProducer()));
+//		taskExecutor.execute(new CaseListEntryProcessorComponent(objectMapper, kafkaProperties, integerOpinionViewMessageProducer()));
 
-		taskExecutor.execute(new CaseListProcessorComponent(objectMapper, kafkaProperties, integerJsonProducer(), integerOpinionViewMessageProducer()));
+		new Thread(new CaseListProcessorComponent(objectMapper, kafkaProperties, integerJsonProducer(), integerOpinionViewMessageProducer())).start();
 	}
 
 	@Bean
