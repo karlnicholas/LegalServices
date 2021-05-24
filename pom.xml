@@ -1,11 +1,11 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.github.karlnicholas.legalservices</groupId>
-	<artifactId>parent</artifactId>
+	<artifactId>legalservices</artifactId>
 	<version>2.0.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
-	<name>Opinion Services</name>
-	<description>Opinion Services</description>
+	<name>Legal Services</name>
+	<description>Legal Services</description>
 	<properties>
 		<spring.boot.version>2.4.4</spring.boot.version>
 		<version.lucene>8.6.0</version.lucene>
@@ -45,6 +45,7 @@
 		<module>OpinionServiceReactive</module>
 		<module>StatuteServer</module>
 		<module>GuidedSearchCore</module>
+		<module>GuidedSearchWeb</module>
 		<module>StatuteCa</module>
 		<module>StatuteRestCa</module>
 		<module>OpinionRestCa</module>
