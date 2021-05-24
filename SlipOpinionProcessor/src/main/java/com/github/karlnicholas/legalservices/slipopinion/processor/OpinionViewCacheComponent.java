@@ -39,6 +39,7 @@ public class OpinionViewCacheComponent implements Runnable {
 		consumerProperties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, kafkaProperties.getIntegerDeserializer());
 		consumerProperties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, kafkaProperties.getOpinionViewMessageDeserializer());
 		consumerProperties.put(ConsumerConfig.GROUP_ID_CONFIG, kafkaProperties.getOpinionViewCacheConsumerGroup());
+//		consumerProperties.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
         if ( !kafkaProperties.getUser().equalsIgnoreCase("notFound") ) {
         	consumerProperties.put(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, "SASL_PLAINTEXT");
         	consumerProperties.put(SaslConfigs.SASL_MECHANISM, "PLAIN");
@@ -57,12 +58,16 @@ public class OpinionViewCacheComponent implements Runnable {
 		try {
 			// Subscribe to the topics.
 			opinionViewCacheConsumer.subscribe(Collections.singletonList(kafkaProperties.getOpinionViewCacheTopic()));
+			opinionViewCacheConsumer.poll(0);  // without this, the assignment will be empty. 
+			opinionViewCacheConsumer.assignment().forEach(t -> {
+		        System.out.printf("Set %s to offset 0%n", t.toString());
+		        opinionViewCacheConsumer.seek(t, 0);
+		    });
 		    while (true) {
 		        ConsumerRecords<Integer, OpinionViewMessage> opinionViewMessageRecords = opinionViewCacheConsumer.poll(Duration.ofSeconds(1));
 		        for (ConsumerRecord<Integer, OpinionViewMessage> opinionViewMessageRecord : opinionViewMessageRecords) {
-//		        	log.debug("topic = {}, partition = {}, offset = {}, record key = {}, record value length = {}",
-//		                 record.topic(), record.partition(), record.offset(),
-//		                 record.key(), record.value());
+//		        	log.info("topic = {}, partition = {}, offset = {}, record key = {}, record value length = {}",
+//		        			opinionViewMessageRecord.topic(), opinionViewMessageRecord.partition(), opinionViewMessageRecord.offset());
 	        		OpinionViewMessage opinionViewMessage = opinionViewMessageRecord.value();
 	        		if ( opinionViewMessage.getOpinionView().isPresent() ) {
 			        	opinionViewData.addOpinionView(opinionViewMessage.getOpinionView().get());

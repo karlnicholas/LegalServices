@@ -43,54 +43,35 @@ public class OpinionViewData {
 	private void resetReportDates() {
 		dateBrackets.clear();
 		// do the work.
-		LocalDate firstDay = LocalDate.now();
-		LocalDate lastDay = LocalDate.now();
+
 		Collections.sort(opinionViews, (ov1, ov2)->{
 			return ov2.getOpinionDate().compareTo(ov1.getOpinionDate());
 		});
-		if ( opinionViews.size() > 0 ) {
-			firstDay = opinionViews.get(0).getOpinionDate();
-			lastDay = opinionViews.get(0).getOpinionDate();
-		}
-		firstDay = firstDay.with(WeekFields.of(Locale.US).dayOfWeek(), 1);
-		lastDay = firstDay.plusWeeks(1);
-		LocalDate[] currentDates = new LocalDate[2];
+
 		for (OpinionView opinionView: opinionViews) {
-			LocalDate date = opinionView.getOpinionDate();
-			if ( testBracket(date, firstDay, lastDay)) {
-				addToCurrentDates(date, currentDates);
-			} else {
-				dateBrackets.add(currentDates);
-				currentDates = new LocalDate[2];
-				firstDay = date;
-				lastDay = date;
-				firstDay = firstDay.with(WeekFields.of(Locale.US).dayOfWeek(), 1);
-				lastDay = firstDay.plusWeeks(1);
-				addToCurrentDates(date, currentDates);
+			LocalDate[] week = getWeekForDate(opinionView.getOpinionDate());
+			if ( !bracketContains(week)) {
+				dateBrackets.add(week);
 			}
 		}
-		if ( dateBrackets.size() == 0 && opinionViews.size() > 0 ) {
-			dateBrackets.add(currentDates);
-		}
+		Collections.sort(dateBrackets, (w1, w2)->{
+			return w2[0].compareTo(w1[0]);
+		});
 	}
 	
-	private void addToCurrentDates(LocalDate date, LocalDate[] currentDates) {
-		if (currentDates[0] == null ) {
-			currentDates[0] = date;
-			currentDates[1] = date;
-			return;
-		} else if ( currentDates[0].compareTo(date) > 0 ) {
-			currentDates[0] = date;
-			return;
-		} else if ( currentDates[1].compareTo(date) < 0 ) {
-			currentDates[1] = date;
-			return;
-		}
-		return;
+	private LocalDate[] getWeekForDate(LocalDate date) {
+		LocalDate[] week = new LocalDate[2];
+		week[0] = date.with(WeekFields.of(Locale.US).dayOfWeek(), 1);
+		week[1] = week[0].plusWeeks(1);
+		return week;
 	}
 	
-	private boolean testBracket(LocalDate date, LocalDate firstDay, LocalDate lastDay ) {
-		return (firstDay.compareTo(date) <= 0 && lastDay.compareTo(date) > 0);
+	private boolean bracketContains(LocalDate[] week)  {
+		for ( LocalDate[] bWeek: dateBrackets) {
+			if ( bWeek[0].equals(week[0]))
+				return true;
+		}
+		return false;
 	}
 
 	private Optional<LocalDate[]> findDateBracket(LocalDate startDate) {
@@ -123,22 +104,4 @@ public class OpinionViewData {
 		});
 	}
 	
-//	public void setStringDateList() {
-//		stringDateList.clear();
-//		SimpleDateFormat lform = new SimpleDateFormat("yyyy-MM-dd");
-//		SimpleDateFormat sform = new SimpleDateFormat("MMM dd");
-//		List<LocalDate[]> reportDates = getReportDates();
-//		if ( reportDates == null )
-//			return;
-//		for ( LocalDate[] dates: reportDates ) {
-//			if ( dates[0] == null || dates[1] == null ) continue;  
-//			String[] e = new String[2]; 
-//			e[0] = String.format("%s - %s", 
-//				sform.format(dates[0]),
-//				sform.format(dates[1]));
-////			e[1] = String.format("?startDate=%s", lform.format(dates[0]));
-//			e[1] = lform.format(dates[0]);
-//			stringDateList.add(e);	
-//		}
-//	}
 }
