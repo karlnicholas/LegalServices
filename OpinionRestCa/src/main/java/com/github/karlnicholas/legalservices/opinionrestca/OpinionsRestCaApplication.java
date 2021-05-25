@@ -18,7 +18,7 @@ import com.zaxxer.hikari.HikariDataSource;
 public class OpinionsRestCaApplication {
 	@Value("${database-url:mysql://localhost:3306/}")
     private String databaseUrl;
-	@Value("${database-name:rmdt}")
+	@Value("${database-name:op}")
 	private String databaseName;
 	@Value("${database-user:op}")
 	private String databaseUser;
