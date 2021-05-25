@@ -68,10 +68,10 @@ public class OpinionBase implements Comparable<OpinionBase>, Serializable {
         // do it the paranoid way
         countReferringOpinions = referringOpinions.size();
     }
-	/**
-	 * adds a new referringOpinions.
-	 * @param opinionBase OpinionBase 
-	 */
+    /**
+     * adds a new referringOpinions.
+     * @param opinionBases to add as referring opinions
+     */
     public void addAllReferringOpinions(Collection<OpinionBase> opinionBases) {
     	if (referringOpinions == null ) {
     		setReferringOpinions(new TreeSet<OpinionBase>());

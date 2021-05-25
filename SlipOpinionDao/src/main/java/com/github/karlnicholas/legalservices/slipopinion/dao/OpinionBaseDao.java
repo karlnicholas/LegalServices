@@ -33,9 +33,9 @@ public class OpinionBaseDao {
 	 * select distinct o from OpinionBase o 
 	 * left join fetch o.referringOpinions 
 	 * where o.opinionKey in :opinionKeys"
-	 * 
-	 * @param opinionKeys
-	 * @return
+
+	 * @param opinionKeys to select for 
+	 * @return List of {@link OpinionBase}
 	 */
 	public List<OpinionBase> opinionsWithReferringOpinions(List<OpinionKey> opinionKeys) {
 		return jdbcTemplate.queryForStream((conn)->{
@@ -87,8 +87,8 @@ public class OpinionBaseDao {
 	 *  left join fetch oocsc.statuteCitation 
 	 *  where o.id in :opinionIds"
 	 *   
-	 * @param opinionIds
-	 * @return
+	 * @param opinionIds to select for
+	 * @return List of {@link OpinionBase}
 	 */
 	public List<OpinionBase> fetchOpinionCitationsForOpinions(List<Integer> opinionIds) {
 		return jdbcTemplate.queryForStream((conn)->{
@@ -137,8 +137,8 @@ public class OpinionBaseDao {
 
 	/**
 	 *  
-	 * @param opinionKeys
-	 * @return
+	 * @param opinionKeys to select for
+	 * @return List of {@link OpinionBase}
 	 */
 	public List<OpinionBase> getOpinionsWithStatuteCitations(List<OpinionKey> opinionKeys) {
 		return jdbcTemplate.queryForStream((conn)->{
@@ -228,8 +228,8 @@ public class OpinionBaseDao {
 	 * left join fetch oro.referringOpinions 
 	 * where o2.id in :opinionIds"),
 	 * 
-	 * @param opinionIds
-	 * @return
+	 * @param opinionIds to select for
+	 * @return List of {@link OpinionBase}
 	 */
 	public List<OpinionBase> fetchCitedOpinionsWithReferringOpinions(List<Integer> opinionIds) {
 		return jdbcTemplate.queryForStream((conn)->{
@@ -309,7 +309,7 @@ public class OpinionBaseDao {
 	 * title varchar(127), 
 	 * primary key (id)) engine=InnoDB;
 	 * 
-	 * @param opinion
+	 * @param opinion to insert
 	 */
 	public void insert(OpinionBase opinion) {
 		KeyHolder keyHolder = new GeneratedKeyHolder();

@@ -55,8 +55,8 @@ public class CASaveLuceneFromDb extends CAProcessDb {
 
 	/**
      * This part loads Lucene Indexes
-     * @throws IOException 
-	 * @throws SQLException 
+     * @throws IOException if file not found
+	 * @throws SQLException if database error
      */
 	public void loadCode() throws IOException, SQLException {
 		Date start = new Date();
