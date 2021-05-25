@@ -4,7 +4,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import com.github.karlnicholas.legalservices.opinion.memorydb.CitationStore;
-import com.github.karlnicholas.legalservices.opinion.model.DTYPES;
 import com.github.karlnicholas.legalservices.opinion.model.OpinionBase;
 import com.github.karlnicholas.legalservices.opinion.model.OpinionKey;
 import com.github.karlnicholas.legalservices.opinion.parser.OpinionDocumentParser;
@@ -28,7 +27,7 @@ public class BaseParser {
 			String citation
 	) {
 		// deal with citation here
-		OpinionBase opinionBase = new OpinionBase(DTYPES.OPINIONBASE, new OpinionKey(citation), op.getCaseName(), op.getDateFiled(), "");
+		OpinionBase opinionBase = new OpinionBase(new OpinionKey(citation), op.getCaseName(), op.getDateFiled(), "");
 //			opinionBase.setOpinionCitations(new TreeSet<>());
 //			opinionBase.setStatuteCitations(new TreeSet<>());
 		//

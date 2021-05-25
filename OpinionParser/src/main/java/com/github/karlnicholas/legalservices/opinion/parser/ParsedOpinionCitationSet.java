@@ -32,7 +32,7 @@ public class ParsedOpinionCitationSet {
 	}
     
 	public OpinionBase findOpinion(OpinionKey key) {
-		OpinionBase tempOpinion = new OpinionBase(DTYPES.OPINIONBASE, key);
+		OpinionBase tempOpinion = new OpinionBase(key);
         if ( opinionTable.contains(tempOpinion))
         	return opinionTable.floor(tempOpinion);
         else return null;

@@ -26,7 +26,7 @@ public class WriteCitationStore {
 	public void writeCitationStore(CitationStore citationStore, IStatuteApi iStatuteApi) throws Exception {
 		cleanCitations(citationStore, iStatuteApi);
 		 
-		try ( Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/op", "op", "op") ) {
+		try ( Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/rmdt", "op", "op") ) {
 			con.setAutoCommit(false);
 		    try {
 		    	initializeDB(citationStore, iStatuteApi, con);

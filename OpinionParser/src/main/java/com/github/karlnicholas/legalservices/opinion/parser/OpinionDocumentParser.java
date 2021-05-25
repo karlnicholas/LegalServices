@@ -433,7 +433,7 @@ public class OpinionDocumentParser {
     	OpinionBase citatedOpinion = null;
     	for ( String appellateSet: OpinionKey.appellateSets ) {
         	if ( parts[1].equalsIgnoreCase(appellateSet) ) {
-        		citatedOpinion = new OpinionBase(DTYPES.OPINIONBASE, opinionBase, parts[0], parts[1], parts[2]);
+        		citatedOpinion = new OpinionBase(opinionBase, parts[0], parts[1], parts[2]);
         	}
     	}
     	if ( citatedOpinion != null ) {

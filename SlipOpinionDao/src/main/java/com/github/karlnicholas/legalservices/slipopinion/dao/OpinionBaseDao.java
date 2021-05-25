@@ -29,39 +29,6 @@ public class OpinionBaseDao {
 		this.jdbcTemplate = jdbcTemplate;
 	}
 
-
-/*
-	public OpinionBase findOpinionByKeyFetchReferringOpinions(OpinionKey key) {
-		return jdbcTemplate.queryForStream((conn)->{
-			PreparedStatement ps = conn.prepareStatement("select " + 
-					"oboc.id as oboc_id, " + 
-					"oboc.countreferringopinions as oboc_countreferringopinions, " + 
-					"oboc.opiniondate as oboc_opiniondate, " + 
-					"oboc.page oboc_page, " + 
-					"oboc.volume oboc_volume, " + 
-					"oboc.vset oboc_vset, " + 
-					"oboc.title oboc_title, " +
-					"obro.id as obro_id, " + 
-					"obro.countreferringopinions as obro_countreferringopinions, " + 
-					"obro.opiniondate as obro_opiniondate, " + 
-					"obro.page obro_page, " + 
-					"obro.volume obro_volume, " + 
-					"obro.vset obro_vset, " + 
-					"obro.title obro_title" + 
-					"from opinionbase oboc " + 
-					"left outer join opinionbase_opinioncitations obroj on oboc.id = obroj.referringopinions_id  " + 
-					"left outer join opinionbase obro on obroj.opinioncitations_id = obro.id " + 
-					"where (oboc.page, oboc.volume, oboc.vset) = (?,?,?)" );
-				ps.setInt(0, key.getPage());
-				ps.setInt(1, key.getVolume());
-				ps.setInt(2, key.getVset());
-			return ps;
-		}, this::mapOpinionsWithReferringOpinions).collect(Collectors.groupingBy(OpinionBase::getId, Collectors.reducing((ob1, ob2)->{
-			ob1.getReferringOpinions().addAll(ob2.getReferringOpinions());
-			return ob1;
-		}))).values().iterator().next().get();
-	}
-*/
 	/**
 	 * select distinct o from OpinionBase o 
 	 * left join fetch o.referringOpinions 
@@ -213,7 +180,6 @@ public class OpinionBaseDao {
 
 	private OpinionBase mapOpinionsWithStatuteCitations(ResultSet resultSet, int rowNum) throws SQLException {
 		OpinionBase opinionBase = new OpinionBase(
-				DTYPES.OPINIONBASE, 
 				resultSet.getInt("ooc_volume"), 
 				resultSet.getInt("ooc_vset"), 
 				resultSet.getInt("ooc_page"));
@@ -233,7 +199,6 @@ public class OpinionBaseDao {
 
 	private OpinionBase mapFetchOpinionCitationsForOpinions(ResultSet resultSet, int rowNum) throws SQLException {
 		OpinionBase opinionBase = new OpinionBase(
-				DTYPES.OPINIONBASE, 
 				resultSet.getInt("o_volume"), 
 				resultSet.getInt("o_vset"), 
 				resultSet.getInt("o_page"));
@@ -243,7 +208,6 @@ public class OpinionBaseDao {
 		opinionBase.setOpinionCitations(new HashSet<>());
 		opinionBase.setCountReferringOpinions(resultSet.getInt("o_countreferrringopinions"));
 		OpinionBase opinionBaseCitation = new OpinionBase(
-				DTYPES.OPINIONBASE,  
 				resultSet.getInt("ooc_volume"), 
 				resultSet.getInt("ooc_vset"), 
 				resultSet.getInt("ooc_page"));
@@ -309,7 +273,6 @@ public class OpinionBaseDao {
 	
 	private OpinionBase mapOpinionsWithReferringOpinions(ResultSet resultSet, int rowNum) throws SQLException {
 		OpinionBase opinionBase = new OpinionBase(
-				DTYPES.OPINIONBASE, 
 				resultSet.getInt("oboc_volume"), 
 				resultSet.getInt("oboc_vset"), 
 				resultSet.getInt("oboc_page"));
@@ -321,7 +284,6 @@ public class OpinionBaseDao {
 		opinionBase.setReferringOpinions(new HashSet<>());
 		opinionBase.setCountReferringOpinions(resultSet.getInt("oboc_countreferringopinions"));
 		OpinionBase opinionBaseReferring = new OpinionBase(
-				DTYPES.OPINIONBASE, 
 				resultSet.getInt("obro_volume"), 
 				resultSet.getInt("obro_vset"),
 				resultSet.getInt("obro_page"));
@@ -353,15 +315,14 @@ public class OpinionBaseDao {
 		KeyHolder keyHolder = new GeneratedKeyHolder();
 		jdbcTemplate.update((conn)->{
 			PreparedStatement ps = conn.prepareStatement(
-					"insert into opinionbase(dtype, countreferringopinions, opiniondate, page, volume, vset, title) " +
-					"values(?, ?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
-			ps.setInt(1, opinion.getDtype().getDtype());
-			ps.setInt(2, opinion.getCountReferringOpinions());
-			ps.setObject(3, opinion.getOpinionDate());
-			ps.setInt(4, opinion.getOpinionKey().getPage());
-			ps.setInt(5, opinion.getOpinionKey().getVolume());
-			ps.setInt(6, opinion.getOpinionKey().getVset());
-			ps.setString(7, opinion.getTitle());
+					"insert into opinionbase(countreferringopinions, opiniondate, page, volume, vset, title) " +
+					"values(?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
+			ps.setInt(1, opinion.getCountReferringOpinions());
+			ps.setObject(2, opinion.getOpinionDate());
+			ps.setInt(3, opinion.getOpinionKey().getPage());
+			ps.setInt(4, opinion.getOpinionKey().getVolume());
+			ps.setInt(5, opinion.getOpinionKey().getVset());
+			ps.setString(6, opinion.getTitle());
 			return ps;
 		}, keyHolder);
 		opinion.setId(keyHolder.getKey().intValue());

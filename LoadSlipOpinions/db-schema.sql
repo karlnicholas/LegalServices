@@ -1,4 +1,4 @@
-create table opinionbase (dtype integer not null, id integer not null auto_increment, countreferringopinions integer not null, opiniondate date, page integer not null, volume integer not null, vset integer not null, title varchar(127), primary key (id)) engine=InnoDB;
+create table opinionbase (id integer not null auto_increment, countreferringopinions integer not null, opiniondate date, page integer not null, volume integer not null, vset integer not null, title varchar(127), primary key (id)) engine=InnoDB;
 create table opinionbase_opinioncitations (referringopinions_id integer not null, opinioncitations_id integer not null, primary key (referringopinions_id, opinioncitations_id)) engine=InnoDB;
 create table opinionstatutecitation (countreferences integer not null, opinionbase_id integer not null, statutecitation_id integer not null, primary key (opinionbase_id, statutecitation_id)) engine=InnoDB;
 create table partyattorneypair (id integer not null auto_increment, attorney varchar(3070), party varchar(1022), slipproperties_slipopinion_id integer, primary key (id)) engine=InnoDB;
