@@ -15,40 +15,13 @@ import com.github.karlnicholas.legalservices.statute.StatuteKey;
  * To change this template use File | Settings | File Templates.
  */
 
-//@NamedQueries({
-//	@NamedQuery(name="StatuteCitation.findStatutesForKeys", 
-//		query="select s from StatuteCitation s where s.statuteKey in :keys"),
-///*	
-//	@NamedQuery(name="StatuteCitation.findByStatuteKeyJoinReferringOpinions", 
-//	query="select distinct(s) from StatuteCitation s left join fetch s.referringOpinions ro left join fetch ro.opinionBase where s.statuteKey = :statuteKey"),
-//	@NamedQuery(name="StatuteCitation.statutesWithReferringOpinions", 
-//	query="select distinct(s) from StatuteCitation s left join fetch s.referringOpinions ro left join fetch ro.opinionBase where s.statuteKey in :statuteKeys"),
-//*/
-//	@NamedQuery(name="StatuteCitation.statutesWithReferringOpinions", 
-//		query="select distinct(s) from StatuteCitation s where s.statuteKey in :statuteKeys"),
-//})
-//@NamedEntityGraphs({ 
-//	@NamedEntityGraph(name="fetchGraphForStatutesWithReferringOpinions", attributeNodes= {
-//		@NamedAttributeNode(value="referringOpinions", subgraph="fetchGraphForStatutesWithReferringOpinionsPartB")
-//	}, 
-//	subgraphs= {
-//		@NamedSubgraph(
-//			name = "fetchGraphForStatutesWithReferringOpinionsPartB", 
-//			attributeNodes = { @NamedAttributeNode(value = "opinionBase") } 
-//		),
-//	}) 
-//})
-@SuppressWarnings("serial")
-//@Entity
-//@Table(indexes = {@Index(columnList="lawCode,sectionNumber")})
 public class StatuteCitation implements Comparable<StatuteCitation>, Serializable { 
-//	@Id @GeneratedValue(strategy=GenerationType.IDENTITY)
+	private static final long serialVersionUID = 1L;
+
 	private Integer id;
 	
-//	@Embedded
     private StatuteKey statuteKey;
 
-//	@OneToMany(mappedBy="statuteCitation")
 	private Set<OpinionStatuteCitation> referringOpinions;
     
     private boolean designated;
@@ -74,27 +47,6 @@ public class StatuteCitation implements Comparable<StatuteCitation>, Serializabl
     public StatuteCitation(StatuteKey key) {
 		this.statuteKey = key;
 	}
-    /**
-     * The passed statute is created from loaded SlipOpinions, 
-     * so the only referringOpinions will be slip opinions
-     * therefore, there will be nothing to sum, just add
-     * the referring opinions in ..
-     * @param statute citation
-     */
-//	public void mergeStatuteCitationFromSlipLoad(StatuteCitation statute) {
-//    	Iterator<OpinionStatuteCitation> refOpIt = statute.referringOpinions.iterator();
-//    	while (refOpIt.hasNext()) {
-//    		OpinionStatuteCitation opinionStatuteReference = refOpIt.next();
-//    		// test for error condition
-//    		if ( referringOpinions.contains(opinionStatuteReference) ) {
-//				throw new RuntimeException("Cannot merge: key exists " + opinionStatuteReference);
-//    		}
-//    		// replace existing statuteCitation with the this one b/c it was loaded from the database
-//    		// and is being used to replace the statute one found in a new SlipOpinion
-//    		opinionStatuteReference.setStatuteCitation(this);
-//    		referringOpinions.add(opinionStatuteReference);
-//    	}
-//	}
 	public void addOpinionCitation(OpinionStatuteCitation opinionStatuteCitation) {
 		referringOpinions.add(opinionStatuteCitation);
 	}
@@ -138,18 +90,6 @@ public class StatuteCitation implements Comparable<StatuteCitation>, Serializabl
         }
     }
     
-//	public OpinionStatuteCitation removeOpinionStatuteReference(SlipOpinion deleteOpinion) {
-//    	Iterator<OpinionStatuteCitation> refOpIt = referringOpinions.iterator();
-//    	while (refOpIt.hasNext()) {
-//    		OpinionStatuteCitation opinionStatuteReference = refOpIt.next();
-//    		if ( opinionStatuteReference.getOpinionBase().equals(deleteOpinion) ) {
-//    			refOpIt.remove();
-//    			return opinionStatuteReference;
-//    		}
-//    	}
-//    	return null;
-//	}
-
 	@JsonIgnore
     public boolean getDesignated() {
         return designated;

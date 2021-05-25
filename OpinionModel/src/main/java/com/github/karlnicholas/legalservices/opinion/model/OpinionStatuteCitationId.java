@@ -2,9 +2,8 @@ package com.github.karlnicholas.legalservices.opinion.model;
 
 import java.io.Serializable;
 
-//@Embeddable
-@SuppressWarnings("serial")
 public class OpinionStatuteCitationId implements Serializable {
+	private static final long serialVersionUID = 1L;
 	private Integer statuteId;
 	private Integer opinionId;
 	public Integer getStatuteId() {

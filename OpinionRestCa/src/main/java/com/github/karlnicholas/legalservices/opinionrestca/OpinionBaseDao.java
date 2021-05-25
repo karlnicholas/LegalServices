@@ -79,7 +79,6 @@ public class OpinionBaseDao {
 
 	private OpinionBase mapOpinionsWithStatuteCitations(ResultSet resultSet) throws SQLException {
 		OpinionBase opinionBase = new OpinionBase(
-				DTYPES.OPINIONBASE, 
 				resultSet.getInt("ooc_volume"), 
 				resultSet.getInt("ooc_vset"), 
 				resultSet.getInt("ooc_page"));

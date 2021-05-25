@@ -2,17 +2,9 @@ package com.github.karlnicholas.legalservices.opinion.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-//@NamedQueries( {
-//	@NamedQuery(name="OpinionStatuteCitation.deleteOpinionStatuteCitations", 
-//		query="delete from OpinionStatuteCitation c where c.opinionBase.id in :opinionIds"), 
-//})
-//@Entity
 public class OpinionStatuteCitation implements Comparable<OpinionStatuteCitation> {
-//	@EmbeddedId
 	private OpinionStatuteCitationId id;
-//    @ManyToOne @MapsId("opinionId")
     private OpinionBase opinionBase;
-//    @ManyToOne @MapsId("statuteId")
     private StatuteCitation statuteCitation;
     private int countReferences;
 	public OpinionStatuteCitation() {

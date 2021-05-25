@@ -12,18 +12,17 @@ import com.github.karlnicholas.legalservices.opinion.model.OpinionBase;
 public class OpinionBaseCrud {
 	public void insertBatch(List<OpinionBase> opinionBatch, Connection con) throws SQLException {
 		try ( PreparedStatement ps = con.prepareStatement(
-						"insert into opinionbase(dtype, countreferringopinions, opiniondate, page, volume, vset, title) " +
-						"values(?, ?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
+						"insert into opinionbase(countreferringopinions, opiniondate, page, volume, vset, title) " +
+						"values(?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
 		) {
 	
 			for ( OpinionBase opinion: opinionBatch) { 
-				ps.setInt(1, opinion.getDtype().getDtype());
-				ps.setInt(2, opinion.getCountReferringOpinions());
-				ps.setObject(3, opinion.getOpinionDate());
-				ps.setInt(4, opinion.getOpinionKey().getPage());
-				ps.setInt(5, opinion.getOpinionKey().getVolume());
-				ps.setInt(6, opinion.getOpinionKey().getVset());
-				ps.setString(7, opinion.getTitle());
+				ps.setInt(1, opinion.getCountReferringOpinions());
+				ps.setObject(2, opinion.getOpinionDate());
+				ps.setInt(3, opinion.getOpinionKey().getPage());
+				ps.setInt(4, opinion.getOpinionKey().getVolume());
+				ps.setInt(5, opinion.getOpinionKey().getVset());
+				ps.setString(6, opinion.getTitle());
 				ps.addBatch();
 			}
 			ps.executeBatch();
