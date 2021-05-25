@@ -29,10 +29,10 @@ public class OpinionBaseDao {
 	}
 
 	/**
-	 *  
-	 * @param opinionKeys
-	 * @return
-	 * @throws SQLException 
+	 * return a List of OpinionBases from keys
+	 * @param opinionKeys reference keys
+	 * @return List of {@link OpinionBase} getOpinionsWithStatuteCitations
+	 * @throws SQLException if database error
 	 */
 	public List<OpinionBase> getOpinionsWithStatuteCitations(List<OpinionKey> opinionKeys) throws SQLException {
 		if ( opinionKeys.size() == 0 )
