@@ -36,6 +36,7 @@ public class CaseListProcessorComponent implements Runnable {
 	private final ObjectMapper objectMapper;
 	private final OpinionService opinionService;
 	private final KakfaProperties kafkaProperties;
+	private static final int MAX_ENTRIES_PROCESS = 30;
 
 	public CaseListProcessorComponent(ObjectMapper objectMapper, 
 			KakfaProperties kafkaProperties, 
@@ -117,7 +118,7 @@ public class CaseListProcessorComponent implements Runnable {
 		deletedCaseListEntries.removeAll(existingCaseListEntries);
 		deletedCaseListEntries.forEach(cle->cle.setStatus(CASELISTSTATUS.DELETED));
 		// construct database update
-		List<CaseListEntry> max10newList = newCaseListEntries.subList(0, newCaseListEntries.size() > 10 ? 10 : newCaseListEntries.size());
+		List<CaseListEntry> max10newList = newCaseListEntries.subList(0, newCaseListEntries.size() > MAX_ENTRIES_PROCESS ? MAX_ENTRIES_PROCESS : newCaseListEntries.size());
 		currentCaseListEntries.addAll(max10newList);
 		opinionService.caseListEntryUpdates(currentCaseListEntries);
 		// send new cases

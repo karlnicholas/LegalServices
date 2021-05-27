@@ -46,6 +46,8 @@ public class SlipOpinionProcessor {
 		new Thread(new OpinionViewCacheComponent(objectMapper, kafkaProperties, opinionViewData)).start();
 
 		new Thread(new CaseListEntryProcessorComponent(objectMapper, kafkaProperties, integerOpinionViewMessageProducer())).start();
+		new Thread(new CaseListEntryProcessorComponent(objectMapper, kafkaProperties, integerOpinionViewMessageProducer())).start();
+		new Thread(new CaseListEntryProcessorComponent(objectMapper, kafkaProperties, integerOpinionViewMessageProducer())).start();
 //		taskExecutor.execute(new CaseListEntryProcessorComponent(objectMapper, kafkaProperties, integerOpinionViewMessageProducer()));
 //		taskExecutor.execute(new CaseListEntryProcessorComponent(objectMapper, kafkaProperties, integerOpinionViewMessageProducer()));
 
