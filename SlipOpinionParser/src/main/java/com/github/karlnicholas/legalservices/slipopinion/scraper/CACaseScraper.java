@@ -485,10 +485,8 @@ public class CACaseScraper implements OpinionScraperInterface {
 //		DateTimeFormatter dfs = DateTimeFormatter.ofPattern("MM/dd/yy");
 //		Date sopDate;
 //		Date opDate = null;
-		LocalDate postedDate = null;
 		LocalDate sopDate;
 		LocalDate opDate = null;
-		int keyIndex = 0;
 		try {
 			Document doc = Jsoup.parse(inputStream, StandardCharsets.UTF_8.name(), "http://www.courts.ca.gov/");
 			Elements trs = doc.select("table>tbody>tr");
@@ -498,11 +496,7 @@ public class CACaseScraper implements OpinionScraperInterface {
 					continue;
 
 				// 
-				LocalDate tPostedDate = LocalDate.from(formatterPostedDate.parse(tds.get(0).text()));
-				if ( postedDate == null || postedDate.compareTo(tPostedDate) != 0) {
-					postedDate = tPostedDate;
-					keyIndex = 0;
-				}
+				LocalDate postedDate = LocalDate.from(formatterPostedDate.parse(tds.get(0).text()));
 				String temp = tds.get(2).text().replace("Case Details", "").replace("\u00a0", "").trim();
 				String[] tempa = temp.split("\\b.{1,2}[/].{1,2}[/].{2}");
 				String opinionDate = null;
@@ -590,7 +584,7 @@ public class CACaseScraper implements OpinionScraperInterface {
 				}
 				// fill out the title, date, and court with details later
 				CaseListEntry caseListEntry = CaseListEntry.builder()
-						.id(postedDate.toString() + '-' + ++keyIndex)
+						.id(postedDate.toString() + '-' + fileName)
 						.fileName(fileName)
 						.fileExtension(fileExtension)
 						.title(tempa[0].trim())
