@@ -1,16 +1,26 @@
-apiVersion: networking.k8s.io/v1beta1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: legalservices-ingress
+  annotations:
+    kubernetes.io/ingress.global-static-ip-name: legalservices-staticip
+    networking.gke.io/managed-certificates: legalservices-certificate
+    kubernetes.io/ingress.class: "gce"
 spec:
   rules:
   - http:
       paths:
       - path: /*
+        pathType: Prefix
         backend:
-          serviceName: slipopinionprocessor-service
-          servicePort: 8080
+          service:
+            name: slipopinionprocessor-service
+            port: 
+              number: 8080
       - path: /api/statutes
+        pathType: Prefix
         backend:
-          serviceName: guidedsearch-web-service
-          servicePort: 8092
+          service:
+            name: guidedsearch-web-service
+            port:
+              number: 8092
