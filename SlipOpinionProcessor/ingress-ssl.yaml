@@ -2,6 +2,10 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: legalservices-ingress
+  annotations:
+    kubernetes.io/ingress.global-static-ip-name: legalservices-staticip
+    networking.gke.io/managed-certificates: legalservices-certificate
+    kubernetes.io/ingress.class: "gce"
 spec:
   rules:
   - http:
