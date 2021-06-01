@@ -28,7 +28,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
 import com.github.karlnicholas.legalservices.opinionview.model.OpinionView;
-import com.github.karlnicholas.legalservices.user.security.model.User;
+import com.github.karlnicholas.legalservices.user.model.UserSave;
 
 @Service
 public class SendGridMailer {
@@ -75,16 +75,16 @@ public class SendGridMailer {
 		return sendGridEmail(new EmailInformation(email, comment, locale), "/xsl/about.xsl");
 	}
 	
-	public boolean sendEmail(User user, String emailResource) {
-		return sendGridEmail(new EmailInformation(user), emailResource);
+	public boolean sendEmail(UserSave userSave, String emailResource) {
+		return sendGridEmail(new EmailInformation(userSave), emailResource);
 	}
 
-	public boolean sendOpinionReport(User user, List<OpinionView> opinionCases) {
-		return sendGridEmail(new EmailInformation(user, opinionCases), "/xsl/opinionreport.xsl");
+	public boolean sendOpinionReport(UserSave userSave, List<OpinionView> opinionCases) {
+		return sendGridEmail(new EmailInformation(userSave, opinionCases), "/xsl/opinionreport.xsl");
 	}
 
-	public boolean sendSystemReport(User user, Map<String, Long> memoryMap) {
-		return sendGridEmail(new EmailInformation(user, memoryMap), "/xsl/systemreport.xsl");
+	public boolean sendSystemReport(UserSave userSave, Map<String, Long> memoryMap) {
+		return sendGridEmail(new EmailInformation(userSave, memoryMap), "/xsl/systemreport.xsl");
 	}
 	public boolean sendGridEmail(EmailInformation emailInformation, String emailResource) {
 		

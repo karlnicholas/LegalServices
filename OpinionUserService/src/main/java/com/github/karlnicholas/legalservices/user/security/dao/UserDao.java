@@ -1,14 +1,16 @@
 package com.github.karlnicholas.legalservices.user.security.dao;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
-import com.github.karlnicholas.legalservices.user.security.model.User;
+import com.github.karlnicholas.legalservices.user.model.User;
+import com.github.karlnicholas.legalservices.user.model.UserSave;
 
 @Service
 public class UserDao {
-	public User findByEmail(String email) {
+	public UserSave findByEmail(String email) {
 		// TODO: implement stub method
 		return null;
 		
@@ -18,12 +20,12 @@ public class UserDao {
 		return null;
 		
 	}
-	public List<User> findUnverified() {
+	public List<UserSave> findUnverified() {
 		// TODO: implement stub method
 		return null;
 		
 	}
-	public List<User> findUnwelcomed() {
+	public List<UserSave> findUnwelcomed() {
 		// TODO: implement stub method
 		return null;
 		
@@ -32,11 +34,11 @@ public class UserDao {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	public User save(User user) {
+	public UserSave save(UserSave userSave) {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	public void saveAndFlush(User user) {
+	public void saveAndFlush(UserSave userSave) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -44,13 +46,17 @@ public class UserDao {
 		// TODO Auto-generated method stub
 		
 	}
-	public User getOne(Long id) {
+	public UserSave getOne(Long id) {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	public List<User> findAll() {
+	public List<UserSave> findAll() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+	public Optional<User> findByUsername(String username) {
+		// TODO Auto-generated method stub
+		return Optional.empty();
 	}
 
 }

@@ -1,4 +1,4 @@
-package com.github.karlnicholas.legalservices.user.service;
+package com.github.karlnicholas.legalservices.user.security.service;
 
 import java.util.List;
 import java.util.Locale;
@@ -7,10 +7,10 @@ import javax.annotation.PostConstruct;
 
 import org.springframework.stereotype.Component;
 
+import com.github.karlnicholas.legalservices.user.model.RoleSave;
+import com.github.karlnicholas.legalservices.user.model.UserSave;
 import com.github.karlnicholas.legalservices.user.security.dao.RoleDao;
 import com.github.karlnicholas.legalservices.user.security.dao.UserDao;
-import com.github.karlnicholas.legalservices.user.security.model.Role;
-import com.github.karlnicholas.legalservices.user.security.model.User;
 
 /**
  * This class is a singleton that loads and holds all Role definitions from 
@@ -22,7 +22,7 @@ import com.github.karlnicholas.legalservices.user.security.model.User;
 //@Singleton
 @Component
 public class RoleSingletonBean {
-    private List<Role> allRoles;
+    private List<RoleSave> allRoles;
     private final RoleDao roleDao;
     private final UserDao userDao;
 
@@ -60,9 +60,9 @@ public class RoleSingletonBean {
      * Get the USER Role
      * @return USER Role
      */
-    public Role getUserRole()  {
-        for ( Role role: allRoles ) {
-            if ( role.getRole().equals("USER")) return role;
+    public RoleSave getUserRole()  {
+        for ( RoleSave roleSave: allRoles ) {
+            if ( roleSave.getRole().equals("USER")) return roleSave;
         }
         throw new RuntimeException("Role USER not found"); 
     }
@@ -70,9 +70,9 @@ public class RoleSingletonBean {
      * Get the ADMIN Role
      * @return ADMIN Role
      */
-    public Role getAdminRole()  {
-        for ( Role role: allRoles ) {
-            if ( role.getRole().equals("ADMIN")) return role;
+    public RoleSave getAdminRole()  {
+        for ( RoleSave roleSave: allRoles ) {
+            if ( roleSave.getRole().equals("ADMIN")) return roleSave;
         }
         throw new RuntimeException("Role ADMIN not found"); 
     }

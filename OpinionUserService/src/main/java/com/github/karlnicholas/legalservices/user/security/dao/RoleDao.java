@@ -4,16 +4,16 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import com.github.karlnicholas.legalservices.user.security.model.Role;
+import com.github.karlnicholas.legalservices.user.model.RoleSave;
 
 @Service
 public class RoleDao {
-	public List<Role> listAvailable() {
+	public List<RoleSave> listAvailable() {
 		// TODO: implement stub method
 		return null;
 	}
 
-	public Role save(Role role) {
+	public RoleSave save(RoleSave roleSave) {
 		// TODO Auto-generated method stub
 		return null;
 	}

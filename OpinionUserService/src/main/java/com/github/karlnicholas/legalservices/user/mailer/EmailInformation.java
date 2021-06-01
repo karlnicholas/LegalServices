@@ -11,7 +11,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import com.github.karlnicholas.legalservices.opinionview.model.OpinionView;
-import com.github.karlnicholas.legalservices.user.security.model.User;
+import com.github.karlnicholas.legalservices.user.model.UserSave;
 
 @SuppressWarnings("serial")
 @XmlRootElement
@@ -28,14 +28,14 @@ public class EmailInformation implements Serializable {
 	private List<OpinionView> opinionCases;
 	private String titles;
 	private Map<String, Long> memoryMap;
-	public EmailInformation(User user) {
+	public EmailInformation(UserSave userSave) {
 		this();
-		this.firstName = user.getFirstName();
-		this.lastName = user.getLastName();
-		this.email = user.getEmail();
-		this.verifyKey = user.getVerifyKey();
-		this.verifyCount = user.getVerifyCount();
-		this.titles = Arrays.toString(user.getTitles());
+		this.firstName = userSave.getFirstName();
+		this.lastName = userSave.getLastName();
+		this.email = userSave.getEmail();
+		this.verifyKey = userSave.getVerifyKey();
+		this.verifyCount = userSave.getVerifyCount();
+		this.titles = Arrays.toString(userSave.getTitles());
 	}
 	public EmailInformation(String email, String comment, Locale locale) {
 		this();
@@ -43,10 +43,10 @@ public class EmailInformation implements Serializable {
 		this.comment = comment;
 		this.locale = locale;
 	}
-	public EmailInformation(User user, List<OpinionView> opinionCases) {
+	public EmailInformation(UserSave userSave, List<OpinionView> opinionCases) {
 		this();
-		this.email = user.getEmail();
-		this.titles = user.getTitles() != null && user.getTitles().length > 0 ? Arrays.toString(user.getTitles()) : "[All]";
+		this.email = userSave.getEmail();
+		this.titles = userSave.getTitles() != null && userSave.getTitles().length > 0 ? Arrays.toString(userSave.getTitles()) : "[All]";
 		this.opinionCases = opinionCases;
 	}
 	public EmailInformation() {
@@ -58,10 +58,10 @@ public class EmailInformation implements Serializable {
 			
 		}
 	}
-	public EmailInformation(User user, Map<String, Long> memoryMap) {
+	public EmailInformation(UserSave userSave, Map<String, Long> memoryMap) {
 		this();
-		this.titles = user.getTitles() != null && user.getTitles().length > 0 ? Arrays.toString(user.getTitles()) : "[All]";
-		this.email = user.getEmail();
+		this.titles = userSave.getTitles() != null && userSave.getTitles().length > 0 ? Arrays.toString(userSave.getTitles()) : "[All]";
+		this.email = userSave.getEmail();
 		this.memoryMap = memoryMap;
 	}
 	public String getEmail() {

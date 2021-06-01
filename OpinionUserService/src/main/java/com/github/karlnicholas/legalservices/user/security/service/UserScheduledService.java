@@ -1,4 +1,4 @@
-package com.github.karlnicholas.legalservices.user.service;
+package com.github.karlnicholas.legalservices.user.security.service;
 
 import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryMXBean;

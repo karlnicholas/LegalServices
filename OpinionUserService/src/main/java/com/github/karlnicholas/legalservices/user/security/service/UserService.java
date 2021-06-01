@@ -1,4 +1,4 @@
-package com.github.karlnicholas.legalservices.user.service;
+package com.github.karlnicholas.legalservices.user.security.service;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -9,10 +9,10 @@ import javax.xml.bind.DatatypeConverter;
 
 import org.springframework.stereotype.Service;
 
+import com.github.karlnicholas.legalservices.user.model.RoleSave;
+import com.github.karlnicholas.legalservices.user.model.UserSave;
 import com.github.karlnicholas.legalservices.user.security.dao.RoleDao;
 import com.github.karlnicholas.legalservices.user.security.dao.UserDao;
-import com.github.karlnicholas.legalservices.user.security.model.Role;
-import com.github.karlnicholas.legalservices.user.security.model.User;
 
 import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
@@ -34,12 +34,12 @@ public class UserService {
 	/**
      * Register new users. Encodes the password and adds the "USER" role to the user's roles.
      * Returns null if user already exists.
-     * @param user new user.
+     * @param userSave new user.
      * @return user with role added and password encoded, unless user already exists, then null.
      * @throws NoSuchAlgorithmException if SHA-256 not available. 
      */
     @PermitAll
-    public User encodeAndSave(User user) throws NoSuchAlgorithmException {
+    public UserSave encodeAndSave(UserSave userSave) throws NoSuchAlgorithmException {
 //        // sanity check to see if user already exists.
 ////        TypedQuery<Long> q = userRepository.createNamedQuery(User.COUNT_EMAIL, Long.class).setParameter("email", user.getEmail());
 ////        if ( q.getSingleResult().longValue() > 0L ) {
@@ -76,25 +76,25 @@ public class UserService {
 
     /**
      * Update the User's password
-     * @param user to update.
+     * @param userSave to update.
      * @return Updated User
      * @throws NoSuchAlgorithmException if SHA-256 not available.
      */
     @RolesAllowed({"USER"})
-    public User updatePassword(User user) throws NoSuchAlgorithmException {
-        byte[] hash = MessageDigest.getInstance("SHA-256").digest(user.getPassword().getBytes());
-        user.setPassword( DatatypeConverter.printBase64Binary(hash) ); 
-        return userDao.save(user);
+    public UserSave updatePassword(UserSave userSave) throws NoSuchAlgorithmException {
+        byte[] hash = MessageDigest.getInstance("SHA-256").digest(userSave.getPassword().getBytes());
+        userSave.setPassword( DatatypeConverter.printBase64Binary(hash) ); 
+        return userDao.save(userSave);
     }
 
     /**
      * Merge user with Database
-     * @param user to merge.
+     * @param userSave to merge.
      * @return Merged User
      */
     @PermitAll
-    public User merge(User user) {
-        return userDao.save(user);
+    public UserSave merge(UserSave userSave) {
+        return userDao.save(userSave);
     }
     
     /**
@@ -103,7 +103,7 @@ public class UserService {
      * @return User found, else runtime exception.
      */
     @PermitAll
-    public User findByEmail(String email) {
+    public UserSave findByEmail(String email) {
         return userDao.findByEmail(email);
     }
 
@@ -114,22 +114,22 @@ public class UserService {
      * @return User found, else runtime exception.
      */
     @PermitAll
-    public User verifyUser(String email, String verifyKey) {
+    public UserSave verifyUser(String email, String verifyKey) {
 //        List<User> users = em.createNamedQuery(User.FIND_BY_EMAIL, User.class)
 //            .setParameter("email", email)
 //            .getResultList();
-    	User user = userDao.findByEmail(email); 
-        if ( user != null && user.getVerifyKey().equals(verifyKey)) {
-        	user.setVerified(true);
-        	user.setStartVerify(false);
-        	user.setVerifyErrors(0);
-        	user.setVerifyCount(0);
+    	UserSave userSave = userDao.findByEmail(email); 
+        if ( userSave != null && userSave.getVerifyKey().equals(verifyKey)) {
+        	userSave.setVerified(true);
+        	userSave.setStartVerify(false);
+        	userSave.setVerifyErrors(0);
+        	userSave.setVerifyCount(0);
         }
-        return user;
+        return userSave;
     }
 
     @PermitAll
-    public User checkUserByEmail(String email) {
+    public UserSave checkUserByEmail(String email) {
     	return userDao.findByEmail(email);
     }
     /**
@@ -148,8 +148,8 @@ public class UserService {
      */
     @RolesAllowed({"ADMIN"})    
 	public void unverify(Long id) {
-        User user = userDao.getOne(id);
-        user.setVerified(false);
+        UserSave userSave = userDao.getOne(id);
+        userSave.setVerified(false);
 	}
     /**
      * Find User by Database Id
@@ -157,7 +157,7 @@ public class UserService {
      * @return User or null if not exists
      */
     @RolesAllowed({"ADMIN"})
-    public User findById(Long id) {
+    public UserSave findById(Long id) {
         return userDao.getOne(id);
     }
     
@@ -167,7 +167,7 @@ public class UserService {
      */
     // @RolesAllowed({"ADMIN"})
     @PermitAll // because court Report service uses it. 
-    public List<User> findAll() {
+    public List<UserSave> findAll() {
         return userDao.findAll();
     }
     
@@ -177,11 +177,11 @@ public class UserService {
      * @return User or null if not exists
      */
     @RolesAllowed({"ADMIN"})
-    public User promoteUser(Long id) {
-        User user = userDao.getOne(id);
-        user.getRoles().add(roleBean.getAdminRole());
+    public UserSave promoteUser(Long id) {
+        UserSave userSave = userDao.getOne(id);
+        userSave.getRoles().add(roleBean.getAdminRole());
 //        return em.merge( user );
-        return user;
+        return userSave;
     }
     
     /**
@@ -190,14 +190,14 @@ public class UserService {
      * @return User or null if not exists
      */
     @RolesAllowed({"ADMIN"})
-    public User demoteUser(Long id) {
-        User user = userDao.getOne(id);
-        Iterator<Role> rIt = user.getRoles().iterator();
+    public UserSave demoteUser(Long id) {
+        UserSave userSave = userDao.getOne(id);
+        Iterator<RoleSave> rIt = userSave.getRoles().iterator();
         while ( rIt.hasNext()  ) {
-            Role role = rIt.next();
-            if ( role.getRole().equals("ADMIN")) rIt.remove();
+            RoleSave roleSave = rIt.next();
+            if ( roleSave.getRole().equals("ADMIN")) rIt.remove();
         }
-        return userDao.save(user);
+        return userDao.save(userSave);
     }
 
     /**
@@ -211,46 +211,46 @@ public class UserService {
     }
 
     @PermitAll
-	public void incrementVerifyCount(User user) {
-		user.setVerifyCount( user.getVerifyCount() + 1);
-        userDao.save(user);
+	public void incrementVerifyCount(UserSave userSave) {
+		userSave.setVerifyCount( userSave.getVerifyCount() + 1);
+        userDao.save(userSave);
 	}
     @PermitAll
-	public void incrementVerifyErrors(User user) {
-		user.setVerifyErrors( user.getVerifyErrors() + 1);
-        userDao.save(user);
+	public void incrementVerifyErrors(UserSave userSave) {
+		userSave.setVerifyErrors( userSave.getVerifyErrors() + 1);
+        userDao.save(userSave);
 	}
     @PermitAll
-	public List<User> findAllUnverified() {
+	public List<UserSave> findAllUnverified() {
         return userDao.findUnverified();
 	}
 
     @PermitAll
-	public void incrementWelcomeErrors(User user) {
-		user.setWelcomeErrors( user.getWelcomeErrors() + 1);
-        userDao.save(user);
+	public void incrementWelcomeErrors(UserSave userSave) {
+		userSave.setWelcomeErrors( userSave.getWelcomeErrors() + 1);
+        userDao.save(userSave);
 	}
 
     @PermitAll
-	public void setWelcomedTrue(User user) {
-		user.setWelcomed( true );
-        userDao.save(user);
+	public void setWelcomedTrue(UserSave userSave) {
+		userSave.setWelcomed( true );
+        userDao.save(userSave);
 	}
 
     @PermitAll
-	public void setOptOut(User user) {
-		user.setOptout( true );
-        userDao.save(user);
+	public void setOptOut(UserSave userSave) {
+		userSave.setOptout( true );
+        userDao.save(userSave);
 	}
 
     @PermitAll
-	public void clearOptOut(User user) {
-		user.setOptout( false );
-        userDao.save(user);
+	public void clearOptOut(UserSave userSave) {
+		userSave.setOptout( false );
+        userDao.save(userSave);
 	}
 
     @PermitAll
-    public List<User> findAllUnWelcomed() {
+    public List<UserSave> findAllUnWelcomed() {
         return userDao.findUnwelcomed();
 	}
 

@@ -1,4 +1,4 @@
-package com.github.karlnicholas.legalservices.user.service;
+package com.github.karlnicholas.legalservices.user.security.service;
 
 import java.util.List;
 import java.util.Locale;
@@ -10,7 +10,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import com.github.karlnicholas.legalservices.user.mailer.SendGridMailer;
-import com.github.karlnicholas.legalservices.user.security.model.User;
+import com.github.karlnicholas.legalservices.user.model.UserSave;
 
 //@Stateless
 @Service
@@ -26,16 +26,16 @@ public class SystemService {
 
 	/**
      * Merge user with Database
-     * @param user to merge.
+     * @param userSave to merge.
      */
 //    @Asynchronous
-    public void startVerify(User user) {
+    public void startVerify(UserSave userSave) {
 		// prevent all exceptions from leaving @Asynchronous block
     	try {
-	    	sendGridMailer.sendEmail(user, "/xsl/verify.xsl");
-	    	user.setStartVerify(true);
-	    	userService.merge(user);
-	    	logger.info("Verification started: " + user.getEmail());
+	    	sendGridMailer.sendEmail(userSave, "/xsl/verify.xsl");
+	    	userSave.setStartVerify(true);
+	    	userService.merge(userSave);
+	    	logger.info("Verification started: " + userSave.getEmail());
     	} catch ( Exception ex ) {
 	    	logger.error("Verification failed: {}", ex.getMessage());
     	}
@@ -58,10 +58,10 @@ public class SystemService {
 		}
     }
 
-	public void sendWelcomeEmail(User user) {
-    	user.setWelcomed(true);
-    	userService.merge(user);
-		sendGridMailer.sendEmail(user, "/xsl/welcome.xsl");
+	public void sendWelcomeEmail(UserSave userSave) {
+    	userSave.setWelcomed(true);
+    	userService.merge(userSave);
+		sendGridMailer.sendEmail(userSave, "/xsl/welcome.xsl");
     }
 
 	public void doWelcomeService() {
@@ -135,12 +135,12 @@ public class SystemService {
 
 	public void sendSystemReport(Map<String, Long> memoryMap) {
         logger.info("System Report started");
-        List<User> users = userService.findAll();
-        for ( User user: users ) {
-        	if ( user.isAdmin() ) {
+        List<UserSave> userSaves = userService.findAll();
+        for ( UserSave userSave: userSaves ) {
+        	if ( userSave.isAdmin() ) {
 	            // Prepare the evaluation context
-        		sendGridMailer.sendSystemReport(user, memoryMap);
-	            logger.info("System Report sent: " + user.getEmail());
+        		sendGridMailer.sendSystemReport(userSave, memoryMap);
+	            logger.info("System Report sent: " + userSave.getEmail());
 	            //            System.out.println("Resend = " + account.getEmail());
         	}
         }

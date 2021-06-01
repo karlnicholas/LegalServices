@@ -1,4 +1,4 @@
-package com.github.karlnicholas.legalservices.user.security.model;
+package com.github.karlnicholas.legalservices.user.model;
 
 import java.io.Serializable;
 import java.time.LocalDate;
@@ -20,7 +20,7 @@ import javax.validation.constraints.Pattern;
 //	@NamedQuery(name = User.FIND_UNVERIFIED, query = "select u from User u where u.verified = false and u.verifyErrors <= 3 and u.verifyCount <= 5"), 
 //	@NamedQuery(name = User.FIND_UNWELCOMED, query = "select u from User u where u.welcomed = false and u.welcomeErrors <= 3"), 
 //})
-public class User implements Serializable {
+public class UserSave implements Serializable {
     public static final String FIND_BY_EMAIL = "User.findByEmail";
     public static final String COUNT_EMAIL = "User.countEmail";
     public static final String FIND_ALL = "User.findAll";
@@ -65,9 +65,9 @@ public class User implements Serializable {
     
 //    @ManyToMany(fetch=FetchType.EAGER)
 //    @JoinTable(name="user_roles")
-    private List<Role> roles;
+    private List<RoleSave> roleSaves;
     
-    public User() {
+    public UserSave() {
 		init();
     }
 
@@ -79,7 +79,7 @@ public class User implements Serializable {
      * @param password of user
      * @param locale of user
      */
-	public User(String email, boolean emailUpdates, String password, Locale locale) {
+	public UserSave(String email, boolean emailUpdates, String password, Locale locale) {
 		init();
 		this.email = email;
 		this.emailUpdates = emailUpdates;
@@ -179,15 +179,15 @@ public class User implements Serializable {
      * Get Roles associated with User
      * @return List of Roles
      */
-    public List<Role> getRoles() {
-        return roles;
+    public List<RoleSave> getRoles() {
+        return roleSaves;
     }
     /**
      * Set Roles associated with User
-     * @param roles List of roles to set.
+     * @param roleSaves List of roles to set.
      */
-    public void setRoles(List<Role> roles) {
-        this.roles = roles;
+    public void setRoles(List<RoleSave> roleSaves) {
+        this.roleSaves = roleSaves;
     }
     /**
      * Check to see if the User is has Admin role
@@ -195,8 +195,8 @@ public class User implements Serializable {
      * @return true if admin
      */
     public boolean isAdmin() {
-        for ( Role role: roles ) {
-            if ( role.getRole().equals("ADMIN")) return true;
+        for ( RoleSave roleSave: roleSaves ) {
+            if ( roleSave.getRole().equals("ADMIN")) return true;
         }
         return false;
     }
