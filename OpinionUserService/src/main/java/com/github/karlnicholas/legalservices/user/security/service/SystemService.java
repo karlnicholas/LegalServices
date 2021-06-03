@@ -10,7 +10,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import com.github.karlnicholas.legalservices.user.mailer.SendGridMailer;
-import com.github.karlnicholas.legalservices.user.model.UserSave;
+import com.github.karlnicholas.legalservices.user.model.ApplicationUser;
 
 //@Stateless
 @Service
@@ -24,22 +24,22 @@ public class SystemService {
 		this.sendGridMailer = sendGridMailer;
 	}
 
-	/**
-     * Merge user with Database
-     * @param userSave to merge.
-     */
-//    @Asynchronous
-    public void startVerify(UserSave userSave) {
-		// prevent all exceptions from leaving @Asynchronous block
-    	try {
-	    	sendGridMailer.sendEmail(userSave, "/xsl/verify.xsl");
-	    	userSave.setStartVerify(true);
-	    	userService.merge(userSave);
-	    	logger.info("Verification started: " + userSave.getEmail());
-    	} catch ( Exception ex ) {
-	    	logger.error("Verification failed: {}", ex.getMessage());
-    	}
-    }
+//	/**
+//     * Merge user with Database
+//     * @param ApplicationUser to merge.
+//     */
+////    @Asynchronous
+//    public void startVerify(ApplicationUser ApplicationUser) {
+//		// prevent all exceptions from leaving @Asynchronous block
+//    	try {
+//	    	sendGridMailer.sendEmail(ApplicationUser, "/xsl/verify.xsl");
+//	    	ApplicationUser.setStartVerify(true);
+//	    	userService.merge(ApplicationUser);
+//	    	logger.info("Verification started: " + ApplicationUser.getEmail());
+//    	} catch ( Exception ex ) {
+//	    	logger.error("Verification failed: {}", ex.getMessage());
+//    	}
+//    }
 
     /**
      * Send email async
@@ -58,11 +58,11 @@ public class SystemService {
 		}
     }
 
-	public void sendWelcomeEmail(UserSave userSave) {
-    	userSave.setWelcomed(true);
-    	userService.merge(userSave);
-		sendGridMailer.sendEmail(userSave, "/xsl/welcome.xsl");
-    }
+//	public void sendWelcomeEmail(ApplicationUser ApplicationUser) {
+//    	ApplicationUser.setWelcomed(true);
+//    	userService.merge(ApplicationUser);
+//		sendGridMailer.sendEmail(ApplicationUser, "/xsl/welcome.xsl");
+//    }
 
 	public void doWelcomeService() {
 //        logger.info("Welcome service started");
@@ -80,8 +80,8 @@ public class SystemService {
 //        cal.set(Calendar.DAY_OF_YEAR, dayOfYear);
 //        Date threeDaysAgo = cal.getTime();
 //
-//        List<User> users = userService.findAllUnWelcomed();
-//        for ( User user: users ) {
+//        List<ApplicationUser> users = userService.findAllUnWelcomed();
+//        for ( ApplicationUser user: users ) {
 //        	if ( !user.isAdmin() ) {
 //	            if ( user.getCreateDate().compareTo(threeDaysAgo) < 0 ) {
 //	            		userService.delete(user.getId());
@@ -112,8 +112,8 @@ public class SystemService {
 //        calLastWeek.set(Calendar.YEAR, year);
 //        calLastWeek.set(Calendar.DAY_OF_YEAR, dayOfYear);
 //
-//        List<User> users = userService.findAll();
-//        for ( User user: users ) {
+//        List<ApplicationUser> users = userService.findAll();
+//        for ( ApplicationUser user: users ) {
 //        	if ( !user.isOptout() || user.isAdmin() ) {
 //	            // Prepare the evaluation context
 //        		ViewParameters viewInfo= new ViewParameters(calLastWeek.getTime(), calNow.getTime());
@@ -135,12 +135,12 @@ public class SystemService {
 
 	public void sendSystemReport(Map<String, Long> memoryMap) {
         logger.info("System Report started");
-        List<UserSave> userSaves = userService.findAll();
-        for ( UserSave userSave: userSaves ) {
-        	if ( userSave.isAdmin() ) {
+        List<ApplicationUser> Users = userService.findAll();
+        for ( ApplicationUser ApplicationUser: Users ) {
+        	if ( ApplicationUser.isAdmin() ) {
 	            // Prepare the evaluation context
-        		sendGridMailer.sendSystemReport(userSave, memoryMap);
-	            logger.info("System Report sent: " + userSave.getEmail());
+        		sendGridMailer.sendSystemReport(ApplicationUser, memoryMap);
+	            logger.info("System Report sent: " + ApplicationUser.getEmail());
 	            //            System.out.println("Resend = " + account.getEmail());
         	}
         }

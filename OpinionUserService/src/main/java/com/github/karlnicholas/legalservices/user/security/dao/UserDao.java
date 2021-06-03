@@ -5,12 +5,11 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
-import com.github.karlnicholas.legalservices.user.model.User;
-import com.github.karlnicholas.legalservices.user.model.UserSave;
+import com.github.karlnicholas.legalservices.user.model.ApplicationUser;
 
 @Service
 public class UserDao {
-	public UserSave findByEmail(String email) {
+	public Optional<ApplicationUser> findByEmail(String email) {
 		// TODO: implement stub method
 		return null;
 		
@@ -20,12 +19,12 @@ public class UserDao {
 		return null;
 		
 	}
-	public List<UserSave> findUnverified() {
+	public List<ApplicationUser> findUnverified() {
 		// TODO: implement stub method
 		return null;
 		
 	}
-	public List<UserSave> findUnwelcomed() {
+	public List<ApplicationUser> findUnwelcomed() {
 		// TODO: implement stub method
 		return null;
 		
@@ -34,11 +33,11 @@ public class UserDao {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	public UserSave save(UserSave userSave) {
+	public ApplicationUser save(ApplicationUser user) {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	public void saveAndFlush(UserSave userSave) {
+	public void saveAndFlush(ApplicationUser ApplicationUser) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -46,17 +45,25 @@ public class UserDao {
 		// TODO Auto-generated method stub
 		
 	}
-	public UserSave getOne(Long id) {
+	public ApplicationUser getOne(Long id) {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	public List<UserSave> findAll() {
+	public List<ApplicationUser> findAll() {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	public Optional<User> findByUsername(String username) {
+	public Optional<ApplicationUser> findByUsername(String username) {
 		// TODO Auto-generated method stub
 		return Optional.empty();
+	}
+	public boolean existsByUsername(String username) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+	public boolean existsByEmail(String email) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 }
