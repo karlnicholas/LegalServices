@@ -3,6 +3,8 @@ package com.github.karlnicholas.legalservices.slipopinion.processor;
 import java.sql.SQLException;
 import java.util.Properties;
 
+import javax.sql.DataSource;
+
 import org.apache.kafka.clients.CommonClientConfigs;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.Producer;
@@ -23,11 +25,14 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-@SpringBootApplication(scanBasePackages = {
-	"com.github.karlnicholas.legalservices.opinionview.service", 
-	"com.github.karlnicholas.legalservices.slipopinion.processor", 
-	"com.github.karlnicholas.legalservices.opinionview.controller"
-})
+//@SpringBootApplication(scanBasePackages = {
+//	"com.github.karlnicholas.legalservices.opinionview.service", 
+//	"com.github.karlnicholas.legalservices.slipopinion.processor", 
+//	"com.github.karlnicholas.legalservices.opinionview.controller", 
+//	"com.github.karlnicholas.legalservices.sqlutil"
+//})
+
+@SpringBootApplication(scanBasePackages = {"com.github.karlnicholas.legalservices"}) 
 @EnableScheduling
 @EnableAsync
 public class SlipOpinionProcessor {
@@ -40,18 +45,19 @@ public class SlipOpinionProcessor {
 	@Autowired ObjectMapper objectMapper;
 	@Autowired KakfaProperties kafkaProperties;
 	@Autowired OpinionViewData opinionViewData;
-	
+	@Autowired DataSource dataSource;
+
 	@EventListener(ApplicationReadyEvent.class)
 	public void doSomethingAfterStartup() throws SQLException {
 		new Thread(new OpinionViewCacheComponent(objectMapper, kafkaProperties, opinionViewData)).start();
 
-		new Thread(new CaseListEntryProcessorComponent(objectMapper, kafkaProperties, integerOpinionViewMessageProducer())).start();
-		new Thread(new CaseListEntryProcessorComponent(objectMapper, kafkaProperties, integerOpinionViewMessageProducer())).start();
-		new Thread(new CaseListEntryProcessorComponent(objectMapper, kafkaProperties, integerOpinionViewMessageProducer())).start();
+		new Thread(new CaseListEntryProcessorComponent(objectMapper, kafkaProperties, integerOpinionViewMessageProducer(), dataSource)).start();
+		new Thread(new CaseListEntryProcessorComponent(objectMapper, kafkaProperties, integerOpinionViewMessageProducer(), dataSource)).start();
+		new Thread(new CaseListEntryProcessorComponent(objectMapper, kafkaProperties, integerOpinionViewMessageProducer(), dataSource)).start();
 //		taskExecutor.execute(new CaseListEntryProcessorComponent(objectMapper, kafkaProperties, integerOpinionViewMessageProducer()));
 //		taskExecutor.execute(new CaseListEntryProcessorComponent(objectMapper, kafkaProperties, integerOpinionViewMessageProducer()));
 
-		new Thread(new CaseListProcessorComponent(objectMapper, kafkaProperties, integerJsonProducer(), integerOpinionViewMessageProducer())).start();
+		new Thread(new CaseListProcessorComponent(objectMapper, kafkaProperties, integerJsonProducer(), integerOpinionViewMessageProducer(), dataSource)).start();
 	}
 
 	@Bean

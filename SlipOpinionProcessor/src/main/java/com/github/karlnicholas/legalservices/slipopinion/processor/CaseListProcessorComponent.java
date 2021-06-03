@@ -1,11 +1,14 @@
 package com.github.karlnicholas.legalservices.slipopinion.processor;
 
+import java.sql.SQLException;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 import java.util.stream.Collectors;
+
+import javax.sql.DataSource;
 
 import org.apache.kafka.clients.CommonClientConfigs;
 import org.apache.kafka.clients.consumer.Consumer;
@@ -25,29 +28,28 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.karlnicholas.legalservices.caselist.model.CASELISTSTATUS;
 import com.github.karlnicholas.legalservices.caselist.model.CaseListEntries;
 import com.github.karlnicholas.legalservices.caselist.model.CaseListEntry;
-import com.github.karlnicholas.legalservices.opinion.service.OpinionService;
-import com.github.karlnicholas.legalservices.opinion.service.OpinionServiceFactory;
 
 public class CaseListProcessorComponent implements Runnable {
 	private final Logger log = LoggerFactory.getLogger(CaseListProcessorComponent.class);
 	private final Consumer<Integer, JsonNode> consumer;
 	private final Producer<Integer, JsonNode> producer;
 	private final Producer<Integer, OpinionViewMessage> cacheProducer;
+	private final SlipOpininScraperDao slipOpininScraperDao;
 	private final ObjectMapper objectMapper;
-	private final OpinionService opinionService;
 	private final KakfaProperties kafkaProperties;
 	private static final int MAX_ENTRIES_PROCESS = 30;
 
 	public CaseListProcessorComponent(ObjectMapper objectMapper, 
 			KakfaProperties kafkaProperties, 
 			Producer<Integer, JsonNode> producer,
-			Producer<Integer, OpinionViewMessage> cacheProducer
+			Producer<Integer, OpinionViewMessage> cacheProducer, 
+			DataSource dataSource
 	) {
 		this.objectMapper = objectMapper;
 		this.kafkaProperties = kafkaProperties;
 		this.producer = producer;
 		this.cacheProducer = cacheProducer;
-	    opinionService = OpinionServiceFactory.getOpinionServiceClient(objectMapper);
+		slipOpininScraperDao = new SlipOpininScraperDao(dataSource);
         //Configure the Consumer
 		Properties consumerProperties = new Properties();
 		consumerProperties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG,kafkaProperties.getIpAddress()+':'+kafkaProperties.getPort());
@@ -93,8 +95,8 @@ public class CaseListProcessorComponent implements Runnable {
 	        consumer.close();
 		}
 	}
-	private void processCaseListEntries(CaseListEntries caseListEntries) {
-		CaseListEntries currentCaseListEntries = opinionService.caseListEntries().getBody();
+	private void processCaseListEntries(CaseListEntries caseListEntries) throws SQLException {
+		CaseListEntries currentCaseListEntries = slipOpininScraperDao.caseListEntries();
 		CaseListEntries newCaseListEntries = new CaseListEntries(new ArrayList<>());
 		CaseListEntries existingCaseListEntries = new CaseListEntries(new ArrayList<>());
 
@@ -120,7 +122,7 @@ public class CaseListProcessorComponent implements Runnable {
 		// construct database update
 		List<CaseListEntry> max10newList = newCaseListEntries.subList(0, newCaseListEntries.size() > MAX_ENTRIES_PROCESS ? MAX_ENTRIES_PROCESS : newCaseListEntries.size());
 		currentCaseListEntries.addAll(max10newList);
-		opinionService.caseListEntryUpdates(currentCaseListEntries);
+		slipOpininScraperDao.caseListEntryUpdates(currentCaseListEntries);
 		// send new cases
 		max10newList.forEach(cle->{
 		    JsonNode  jsonNode = objectMapper.valueToTree(cle);
