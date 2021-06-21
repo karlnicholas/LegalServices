@@ -87,21 +87,26 @@
     <orderEntry type="library" name="Maven: com.fasterxml.jackson.core:jackson-core:2.11.4" level="project" />
     <orderEntry type="library" name="Maven: com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.11.4" level="project" />
     <orderEntry type="library" name="Maven: org.slf4j:slf4j-api:1.7.30" level="project" />
-    <orderEntry type="module" module-name="StatuteCa" />
+    <orderEntry type="module" module-name="statute-ca" />
     <orderEntry type="module" module-name="statute" />
-    <orderEntry type="module" module-name="sqlutil" />
+    <orderEntry type="module" module-name="sql-util" />
     <orderEntry type="library" scope="RUNTIME" name="Maven: mysql:mysql-connector-java:8.0.23" level="project" />
     <orderEntry type="library" name="Maven: com.zaxxer:HikariCP:3.4.5" level="project" />
-    <orderEntry type="module" module-name="statuteservice" />
+    <orderEntry type="module" module-name="statute-service" />
     <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot-starter-web:2.4.4" level="project" />
     <orderEntry type="library" name="Maven: org.springframework:spring-webmvc:5.3.5" level="project" />
-    <orderEntry type="module" module-name="opinionservice" />
-    <orderEntry type="module" module-name="opinionmodel" />
-    <orderEntry type="module" module-name="slipopinionparser" />
-    <orderEntry type="module" module-name="slipopinionmodel" />
-    <orderEntry type="module" module-name="opinionparser" />
+    <orderEntry type="module" module-name="opinion-service" />
+    <orderEntry type="module" module-name="opinion-model" />
+    <orderEntry type="module" module-name="slipopinion-parser" />
+    <orderEntry type="module" module-name="slipopinion-model" />
+    <orderEntry type="module" module-name="opinion-parser" />
+    <orderEntry type="library" name="Maven: org.apache.poi:poi-ooxml:4.1.2" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.poi:poi-ooxml-schemas:4.1.2" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.xmlbeans:xmlbeans:3.1.0" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.commons:commons-compress:1.19" level="project" />
+    <orderEntry type="library" name="Maven: com.github.virtuald:curvesapi:1.06" level="project" />
     <orderEntry type="library" name="Maven: org.jsoup:jsoup:1.13.1" level="project" />
-    <orderEntry type="module" module-name="opinionviewmodel" />
+    <orderEntry type="module" module-name="opinion-view-model" />
     <orderEntry type="library" name="Maven: org.projectlombok:lombok:1.18.18" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.springframework.boot:spring-boot-starter-test:2.4.4" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.springframework.boot:spring-boot-test:2.4.4" level="project" />
@@ -133,8 +138,8 @@
     <orderEntry type="library" scope="TEST" name="Maven: org.xmlunit:xmlunit-core:2.7.0" level="project" />
     <orderEntry type="library" name="Maven: javax.xml.bind:jaxb-api:2.3.1" level="project" />
     <orderEntry type="library" name="Maven: javax.activation:javax.activation-api:1.2.0" level="project" />
-    <orderEntry type="module" module-name="caselistmodel" />
-    <orderEntry type="module" module-name="opinionuserservice" />
+    <orderEntry type="module" module-name="caselist-model" />
+    <orderEntry type="module" module-name="opinion-user-service" />
     <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot-starter-mail:2.4.4" level="project" />
     <orderEntry type="library" name="Maven: org.springframework:spring-context-support:5.3.5" level="project" />
     <orderEntry type="library" name="Maven: com.sun.mail:jakarta.mail:1.6.6" level="project" />
@@ -153,7 +158,6 @@
     <orderEntry type="library" scope="RUNTIME" name="Maven: io.jsonwebtoken:jjwt-jackson:0.11.1" level="project" />
     <orderEntry type="library" name="Maven: io.jsonwebtoken:jjwt-api:0.11.1" level="project" />
     <orderEntry type="library" name="Maven: io.jsonwebtoken:jjwt-impl:0.11.2" level="project" />
-    <orderEntry type="library" name="Maven: org.mapstruct:mapstruct:1.4.2.Final" level="project" />
     <orderEntry type="library" name="Maven: org.apache.poi:poi-scratchpad:4.1.2" level="project" />
     <orderEntry type="library" name="Maven: org.apache.poi:poi:4.1.2" level="project" />
     <orderEntry type="library" name="Maven: org.apache.commons:commons-collections4:4.4" level="project" />
@@ -162,15 +166,10 @@
     <orderEntry type="library" name="Maven: org.apache.httpcomponents:httpclient:4.5.13" level="project" />
     <orderEntry type="library" name="Maven: org.apache.httpcomponents:httpcore:4.4.14" level="project" />
     <orderEntry type="library" name="Maven: commons-codec:commons-codec:1.15" level="project" />
-    <orderEntry type="library" name="Maven: org.apache.poi:poi-ooxml:4.1.2" level="project" />
-    <orderEntry type="library" name="Maven: org.apache.poi:poi-ooxml-schemas:4.1.2" level="project" />
-    <orderEntry type="library" name="Maven: org.apache.xmlbeans:xmlbeans:3.1.0" level="project" />
-    <orderEntry type="library" name="Maven: org.apache.commons:commons-compress:1.19" level="project" />
-    <orderEntry type="library" name="Maven: com.github.virtuald:curvesapi:1.06" level="project" />
-    <orderEntry type="module" module-name="slipopiniondao" />
+    <orderEntry type="module" module-name="slipopinion-dao" />
     <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot-starter-jdbc:2.4.4" level="project" />
     <orderEntry type="library" name="Maven: org.springframework:spring-jdbc:5.3.5" level="project" />
     <orderEntry type="library" name="Maven: org.springframework:spring-tx:5.3.5" level="project" />
-    <orderEntry type="module" module-name="opinioncrud" />
+    <orderEntry type="module" module-name="opinion-crud" />
   </component>
 </module>

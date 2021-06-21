@@ -111,7 +111,7 @@
     <orderEntry type="library" name="Maven: com.fasterxml.jackson.core:jackson-databind:2.11.4" level="project" />
     <orderEntry type="library" name="Maven: com.fasterxml.jackson.core:jackson-annotations:2.11.4" level="project" />
     <orderEntry type="library" name="Maven: com.fasterxml.jackson.core:jackson-core:2.11.4" level="project" />
-    <orderEntry type="module" module-name="guidedsearchcore" />
+    <orderEntry type="module" module-name="guided-search-core" />
     <orderEntry type="library" name="Maven: org.apache.lucene:lucene-facet:8.6.0" level="project" />
     <orderEntry type="library" name="Maven: org.apache.lucene:lucene-core:8.6.0" level="project" />
     <orderEntry type="library" name="Maven: com.carrotsearch:hppc:0.8.1" level="project" />
@@ -123,8 +123,8 @@
     <orderEntry type="library" name="Maven: org.apache.lucene:lucene-memory:8.6.0" level="project" />
     <orderEntry type="library" name="Maven: org.apache.commons:commons-text:1.9" level="project" />
     <orderEntry type="library" name="Maven: org.apache.commons:commons-lang3:3.11" level="project" />
-    <orderEntry type="module" module-name="statuteservicereactive" />
-    <orderEntry type="module" module-name="statuteservice" />
+    <orderEntry type="module" module-name="statute-service-reactive" />
+    <orderEntry type="module" module-name="statute-service" />
     <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot-starter-web:2.4.4" level="project" />
     <orderEntry type="library" name="Maven: org.springframework:spring-webmvc:5.3.5" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: junit:junit:4.13.2" level="project" />

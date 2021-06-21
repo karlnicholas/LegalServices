@@ -98,13 +98,6 @@
 			</dependency>
 			<dependency>
 				<groupId>com.github.karlnicholas.legalservices</groupId>
-				<artifactId>opinion-service</artifactId>
-				<version>${project.version}</version>
-				<type>jar</type>
-				<scope>compile</scope>
-			</dependency>
-			<dependency>
-				<groupId>com.github.karlnicholas.legalservices</groupId>
 				<artifactId>caselist-model</artifactId>
 				<version>${project.version}</version>
 				<type>jar</type>
@@ -119,6 +112,20 @@
 			</dependency>
 			<dependency>
 				<groupId>com.github.karlnicholas.legalservices</groupId>
+				<artifactId>opinion-service</artifactId>
+				<version>${project.version}</version>
+				<type>jar</type>
+				<scope>compile</scope>
+			</dependency>
+			<dependency>
+				<groupId>com.github.karlnicholas.legalservices</groupId>
+				<artifactId>opinion-service-reactive</artifactId>
+				<version>${project.version}</version>
+				<type>jar</type>
+				<scope>compile</scope>
+			</dependency>
+			<dependency>
+				<groupId>com.github.karlnicholas.legalservices</groupId>
 				<artifactId>statute-server</artifactId>
 				<version>${project.version}</version>
 				<type>jar</type>
@@ -127,13 +134,6 @@
 			<dependency>
 				<groupId>com.github.karlnicholas.legalservices</groupId>
 				<artifactId>statute-ca</artifactId>
-				<version>${project.version}</version>
-				<type>jar</type>
-				<scope>compile</scope>
-			</dependency>
-			<dependency>
-				<groupId>com.github.karlnicholas.legalservices</groupId>
-				<artifactId>statute-rest-ca</artifactId>
 				<version>${project.version}</version>
 				<type>jar</type>
 				<scope>compile</scope>
@@ -197,13 +197,6 @@
 			<dependency>
 				<groupId>com.github.karlnicholas.legalservices</groupId>
 				<artifactId>opinion-view-dao</artifactId>
-				<version>${project.version}</version>
-				<type>jar</type>
-				<scope>compile</scope>
-			</dependency>
-			<dependency>
-				<groupId>com.github.karlnicholas.legalservices</groupId>
-				<artifactId>opinion-user-service</artifactId>
 				<version>${project.version}</version>
 				<type>jar</type>
 				<scope>compile</scope>

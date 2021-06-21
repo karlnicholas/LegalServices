@@ -7,7 +7,6 @@
         <sourceRoots>
           <root url="file://$MODULE_DIR$/src/main/java" />
           <root url="file://$MODULE_DIR$/src/main/resources" />
-          <root url="file://$MODULE_DIR$/target/generated-sources/annotations" />
         </sourceRoots>
       </configuration>
     </facet>
@@ -23,7 +22,6 @@
       <sourceFolder url="file://$MODULE_DIR$/src/main/resources" type="java-resource" />
       <sourceFolder url="file://$MODULE_DIR$/src/test/java" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/src/test/resources" type="java-test-resource" />
-      <sourceFolder url="file://$MODULE_DIR$/target/generated-sources/annotations" isTestSource="false" generated="true" />
       <excludeFolder url="file://$MODULE_DIR$/target" />
     </content>
     <orderEntry type="inheritedJdk" />
@@ -35,7 +33,6 @@
     <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot-starter-logging:2.4.4" level="project" />
     <orderEntry type="library" name="Maven: ch.qos.logback:logback-classic:1.2.3" level="project" />
     <orderEntry type="library" name="Maven: ch.qos.logback:logback-core:1.2.3" level="project" />
-    <orderEntry type="library" name="Maven: org.slf4j:slf4j-api:1.7.30" level="project" />
     <orderEntry type="library" name="Maven: org.apache.logging.log4j:log4j-to-slf4j:2.13.3" level="project" />
     <orderEntry type="library" name="Maven: org.apache.logging.log4j:log4j-api:2.13.3" level="project" />
     <orderEntry type="library" name="Maven: org.slf4j:jul-to-slf4j:1.7.30" level="project" />
@@ -60,11 +57,17 @@
     <orderEntry type="library" name="Maven: org.springframework.security:spring-security-core:5.4.5" level="project" />
     <orderEntry type="library" name="Maven: org.springframework.security:spring-security-web:5.4.5" level="project" />
     <orderEntry type="library" name="Maven: org.springframework:spring-expression:5.3.5" level="project" />
-    <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot-starter-webflux:2.4.4" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot-starter-web:2.4.4" level="project" />
     <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot-starter-json:2.4.4" level="project" />
     <orderEntry type="library" name="Maven: com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.11.4" level="project" />
     <orderEntry type="library" name="Maven: com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.11.4" level="project" />
     <orderEntry type="library" name="Maven: com.fasterxml.jackson.module:jackson-module-parameter-names:2.11.4" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot-starter-tomcat:2.4.4" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.tomcat.embed:tomcat-embed-core:9.0.44" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.tomcat.embed:tomcat-embed-websocket:9.0.44" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework:spring-web:5.3.5" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework:spring-webmvc:5.3.5" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot-starter-webflux:2.4.4" level="project" />
     <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot-starter-reactor-netty:2.4.4" level="project" />
     <orderEntry type="library" name="Maven: io.projectreactor.netty:reactor-netty-http:1.0.5" level="project" />
     <orderEntry type="library" name="Maven: io.netty:netty-codec-http:4.1.60.Final" level="project" />
@@ -83,7 +86,6 @@
     <orderEntry type="library" name="Maven: io.projectreactor.netty:reactor-netty-core:1.0.5" level="project" />
     <orderEntry type="library" name="Maven: io.netty:netty-handler-proxy:4.1.60.Final" level="project" />
     <orderEntry type="library" name="Maven: io.netty:netty-codec-socks:4.1.60.Final" level="project" />
-    <orderEntry type="library" name="Maven: org.springframework:spring-web:5.3.5" level="project" />
     <orderEntry type="library" name="Maven: org.springframework:spring-webflux:5.3.5" level="project" />
     <orderEntry type="library" name="Maven: io.projectreactor:reactor-core:3.4.4" level="project" />
     <orderEntry type="library" name="Maven: org.reactivestreams:reactive-streams:1.0.3" level="project" />
@@ -96,7 +98,6 @@
     <orderEntry type="library" name="Maven: io.jsonwebtoken:jjwt-impl:0.11.2" level="project" />
     <orderEntry type="library" name="Maven: javax.xml.bind:jaxb-api:2.3.1" level="project" />
     <orderEntry type="library" name="Maven: javax.activation:javax.activation-api:1.2.0" level="project" />
-    <orderEntry type="library" name="Maven: org.mapstruct:mapstruct:1.4.2.Final" level="project" />
     <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot-configuration-processor:2.4.4" level="project" />
     <orderEntry type="library" name="Maven: org.apache.poi:poi-scratchpad:4.1.2" level="project" />
     <orderEntry type="library" name="Maven: org.apache.poi:poi:4.1.2" level="project" />
@@ -106,28 +107,28 @@
     <orderEntry type="library" name="Maven: org.apache.httpcomponents:httpclient:4.5.13" level="project" />
     <orderEntry type="library" name="Maven: org.apache.httpcomponents:httpcore:4.4.14" level="project" />
     <orderEntry type="library" name="Maven: commons-codec:commons-codec:1.15" level="project" />
+    <orderEntry type="module" module-name="opinion-view-model" />
+    <orderEntry type="module" module-name="opinion-parser" />
+    <orderEntry type="module" module-name="opinion-model" />
     <orderEntry type="library" name="Maven: org.apache.poi:poi-ooxml:4.1.2" level="project" />
     <orderEntry type="library" name="Maven: org.apache.poi:poi-ooxml-schemas:4.1.2" level="project" />
     <orderEntry type="library" name="Maven: org.apache.xmlbeans:xmlbeans:3.1.0" level="project" />
     <orderEntry type="library" name="Maven: org.apache.commons:commons-compress:1.19" level="project" />
     <orderEntry type="library" name="Maven: com.github.virtuald:curvesapi:1.06" level="project" />
-    <orderEntry type="module" module-name="slipopinionmodel" />
-    <orderEntry type="module" module-name="opinionmodel" />
-    <orderEntry type="module" module-name="opinionviewmodel" />
-    <orderEntry type="module" module-name="opinionparser" />
     <orderEntry type="library" name="Maven: org.jsoup:jsoup:1.13.1" level="project" />
-    <orderEntry type="module" module-name="slipopinionparser" />
-    <orderEntry type="module" module-name="caselistmodel" />
-    <orderEntry type="module" module-name="statuteservice" />
-    <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot-starter-web:2.4.4" level="project" />
-    <orderEntry type="library" name="Maven: org.springframework:spring-webmvc:5.3.5" level="project" />
+    <orderEntry type="module" module-name="slipopinion-parser" />
+    <orderEntry type="module" module-name="slipopinion-model" />
+    <orderEntry type="module" module-name="caselist-model" />
+    <orderEntry type="module" module-name="statute-service" />
     <orderEntry type="module" module-name="statute" />
-    <orderEntry type="module" module-name="slipopiniondao" />
+    <orderEntry type="module" module-name="slipopinion-dao" />
     <orderEntry type="library" scope="RUNTIME" name="Maven: mysql:mysql-connector-java:8.0.23" level="project" />
     <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot-starter-jdbc:2.4.4" level="project" />
-    <orderEntry type="library" name="Maven: com.zaxxer:HikariCP:3.4.5" level="project" />
     <orderEntry type="library" name="Maven: org.springframework:spring-jdbc:5.3.5" level="project" />
     <orderEntry type="library" name="Maven: org.springframework:spring-tx:5.3.5" level="project" />
-    <orderEntry type="module" module-name="opinioncrud" />
+    <orderEntry type="module" module-name="opinion-crud" />
+    <orderEntry type="module" module-name="sql-util" />
+    <orderEntry type="library" name="Maven: com.zaxxer:HikariCP:3.4.5" level="project" />
+    <orderEntry type="library" name="Maven: org.slf4j:slf4j-api:1.7.30" level="project" />
   </component>
 </module>
