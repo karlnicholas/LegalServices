@@ -55,7 +55,6 @@ public class ApplicationUser extends User {
 	public ApplicationUser(String email, String password, Set<GrantedAuthority> authorities) {
 		this(email, password, Locale.US, authorities);
 	}
-
 	/**
 	 * Create account constructor
 	 * 

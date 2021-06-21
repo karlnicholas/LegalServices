@@ -64,8 +64,8 @@ public class CaseListEntryProcessorComponent implements Runnable {
 		this.producer = producer; 
 		slipOpininScraperDao = new SlipOpininScraperDao(dataSource);
 	    opinionService = OpinionServiceFactory.getOpinionServiceClient(objectMapper);
-		caseScraper = new CACaseScraper(false);
-//		caseScraper = new TestCAParseSlipDetails(false);
+//		caseScraper = new CACaseScraper(false);
+		caseScraper = new TestCAParseSlipDetails(false);
 	    StatuteService statutesService = StatutesServiceFactory.getStatutesServiceClient();
 		opinionDocumentParser = new SlipOpinionDocumentParser(statutesService.getStatutesTitles().getBody());
 		opinionViewBuilder = new OpinionViewBuilder(statutesService);

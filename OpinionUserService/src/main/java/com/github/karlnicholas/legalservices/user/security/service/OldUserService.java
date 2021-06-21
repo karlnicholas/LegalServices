@@ -18,13 +18,13 @@ import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
 
 //@Stateless
-@Service
-public class UserService {
+//@Service
+public class OldUserService {
 //    private final RoleSingletonBean roleBean;
     private final UserDao userDao;
     private final RoleDao roleDao;
 //
-	public UserService(UserDao userDao, RoleDao roleDao) {
+	public OldUserService(UserDao userDao, RoleDao roleDao) {
 		super();
 		this.userDao = userDao;
 		this.roleDao = roleDao;

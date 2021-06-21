@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 
 //@TransactionManagement(TransactionManagementType.BEAN)
 //@Singleton
-@Service
+//@Service
 public class UserScheduledService {
     private Logger logger = LoggerFactory.getLogger(UserScheduledService.class);
     private final SystemService systemService;

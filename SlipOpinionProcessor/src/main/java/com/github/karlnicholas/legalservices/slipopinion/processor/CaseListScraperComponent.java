@@ -34,8 +34,8 @@ public class CaseListScraperComponent {
 	    this.producer = producer;
 	    this.kafkaProperties = kafkaProperties;
 
-//		caseScraper = new TestCAParseSlipDetails(false);
-		caseScraper = new CACaseScraper(false);
+		caseScraper = new TestCAParseSlipDetails(false);
+//		caseScraper = new CACaseScraper(false);
 		slipOpininScraperDao = new SlipOpininScraperDao(dataSource);
 	}
 

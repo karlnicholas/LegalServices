@@ -51,10 +51,6 @@
 			<artifactId>opinion-view-model</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>com.github.karlnicholas.legalservices</groupId>
-			<artifactId>opinion-user-service</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
 			<optional>true</optional>
@@ -71,6 +67,10 @@
 		<dependency>
 			<groupId>com.github.karlnicholas.legalservices</groupId>
 			<artifactId>caselist-model</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.github.karlnicholas.legalservices</groupId>
+			<artifactId>opinion-user-service</artifactId>
 		</dependency>
 	</dependencies>
 	<build>

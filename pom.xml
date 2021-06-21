@@ -12,8 +12,8 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	    <!-- maven-compiler-plugin -->
 	    <version.compiler.plugin>3.8.1</version.compiler.plugin>
-	    <maven.compiler.target>1.8</maven.compiler.target>
-	    <maven.compiler.source>1.8</maven.compiler.source>
+	    <maven.compiler.target>11</maven.compiler.target>
+	    <maven.compiler.source>11</maven.compiler.source>
 	    <maven.deploy.skip>true</maven.deploy.skip> 
 	</properties>
 	<licenses>
@@ -127,6 +127,13 @@
 			<dependency>
 				<groupId>com.github.karlnicholas.legalservices</groupId>
 				<artifactId>statute-ca</artifactId>
+				<version>${project.version}</version>
+				<type>jar</type>
+				<scope>compile</scope>
+			</dependency>
+			<dependency>
+				<groupId>com.github.karlnicholas.legalservices</groupId>
+				<artifactId>statute-rest-ca</artifactId>
 				<version>${project.version}</version>
 				<type>jar</type>
 				<scope>compile</scope>

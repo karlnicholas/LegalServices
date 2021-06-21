@@ -13,12 +13,12 @@ import com.github.karlnicholas.legalservices.user.mailer.SendGridMailer;
 import com.github.karlnicholas.legalservices.user.model.ApplicationUser;
 
 //@Stateless
-@Service
+//@Service
 public class SystemService {
-	private final UserService userService;
+	private final OldUserService userService;
 	private final SendGridMailer sendGridMailer;
     private Logger logger = LoggerFactory.getLogger(SystemService.class);
-    public SystemService(UserService userService, SendGridMailer sendGridMailer) {
+    public SystemService(OldUserService userService, SendGridMailer sendGridMailer) {
 		super();
 		this.userService = userService;
 		this.sendGridMailer = sendGridMailer;
