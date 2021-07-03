@@ -40,9 +40,5 @@
 			<groupId>com.github.karlnicholas.legalservices</groupId>
 			<artifactId>opinion-model</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>com.github.karlnicholas.legalservices</groupId>
-			<artifactId>caselist-model</artifactId>
-		</dependency>
 	</dependencies>
 </project>

@@ -9,10 +9,6 @@
 	<artifactId>loadopinions</artifactId>
 	<name>LoadOpinions</name>
 	<description>Demo project for Spring Boot</description>
-	<properties>
-	    <maven.compiler.target>11</maven.compiler.target>
-	    <maven.compiler.source>11</maven.compiler.source>
-	</properties>
 	<dependencies>
 		<dependency>
 			<groupId>mysql</groupId>

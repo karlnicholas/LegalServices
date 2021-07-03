@@ -1,4 +1,4 @@
-package com.github.karlnicholas.legalservices.opinionrestca;
+package com.github.karlnicholas.legalservices.sqlutil;
 
 import java.util.function.Function;
 

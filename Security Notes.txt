@@ -1,0 +1,53 @@
+
+Sroing Security Framework
+
+implements UserDetails
+	@Override
+	public Collection<? extends GrantedAuthority> getAuthorities() {
+	@Override
+	public String getPassword() {
+	@Override
+	public String getUsername() {
+	@Override
+	public boolean isAccountNonExpired() {
+	@Override
+	public boolean isAccountNonLocked() {
+	@Override
+	public boolean isCredentialsNonExpired() {
+	@Override
+	@Override
+	public boolean equals(Object o) {
+
+implements UserDetailsService
+	@Override
+	@Transactional
+	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+
+
+@Configuration
+@EnableWebSecurity
+@EnableGlobalMethodSecurity(prePostEnabled = true)
+public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+	@Bean
+	public AuthTokenFilter authenticationJwtTokenFilter() {
+	@Bean
+	@Override
+	public AuthenticationManager authenticationManagerBean() throws Exception {
+	@Bean
+	public PasswordEncoder passwordEncoder() {
+
+	@Override
+	public void configure(AuthenticationManagerBuilder authenticationManagerBuilder) throws Exception {
+	@Override
+	protected void configure(HttpSecurity http) throws Exception {
+
+
+extends OncePerRequestFilter
+	@Override
+	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+
+implements AuthenticationEntryPoint {
+
+	@Override
+	public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
+

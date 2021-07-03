@@ -1,4 +1,4 @@
-package com.github.karlnicholas.legalservices.opinionrestca;
+package com.github.karlnicholas.legalservices.sqlutil;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;

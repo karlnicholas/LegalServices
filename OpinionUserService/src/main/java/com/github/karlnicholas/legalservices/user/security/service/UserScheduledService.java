@@ -1,4 +1,4 @@
-package com.github.karlnicholas.legalservices.user.service;
+package com.github.karlnicholas.legalservices.user.security.service;
 
 import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryMXBean;
@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 
 //@TransactionManagement(TransactionManagementType.BEAN)
 //@Singleton
-@Service
+//@Service
 public class UserScheduledService {
     private Logger logger = LoggerFactory.getLogger(UserScheduledService.class);
     private final SystemService systemService;

@@ -17,14 +17,6 @@ public class OpinionsServiceRouter {
 		return RouterFunctions
 			.route(RequestPredicates.POST(OpinionService.OPINIONCITATIONS)
 				.and(RequestPredicates.contentType(MediaType.APPLICATION_JSON)).and(RequestPredicates.accept(MediaType.APPLICATION_JSON)), opinionsServiceHandler::getOpinionsWithStatuteCitations)
-			.andRoute(RequestPredicates.GET(OpinionService.SLIPOPINIONUPDATENEEDED)
-					.and(RequestPredicates.accept(MediaType.TEXT_PLAIN)), opinionsServiceHandler::getSlipOpinionUpdateNeeded)
-			.andRoute(RequestPredicates.GET(OpinionService.CASELISTENTRIES)
-					.and(RequestPredicates.accept(MediaType.APPLICATION_JSON)), opinionsServiceHandler::caseListEntries)
-			.andRoute(RequestPredicates.POST(OpinionService.CASELISTENTRYUPDATES)
-					.and(RequestPredicates.contentType(MediaType.APPLICATION_JSON)), opinionsServiceHandler::caseListEntryUpdates)
-			.andRoute(RequestPredicates.POST(OpinionService.CASELISTENTRYUPDATE)
-					.and(RequestPredicates.contentType(MediaType.APPLICATION_JSON)), opinionsServiceHandler::caseListEntryUpdate)
 			;
 	}
 

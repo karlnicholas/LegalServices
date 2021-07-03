@@ -11,7 +11,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import com.github.karlnicholas.legalservices.opinionview.model.OpinionView;
-import com.github.karlnicholas.legalservices.user.security.model.User;
+import com.github.karlnicholas.legalservices.user.model.ApplicationUser;
 
 @SuppressWarnings("serial")
 @XmlRootElement
@@ -28,7 +28,7 @@ public class EmailInformation implements Serializable {
 	private List<OpinionView> opinionCases;
 	private String titles;
 	private Map<String, Long> memoryMap;
-	public EmailInformation(User user) {
+	public EmailInformation(ApplicationUser user) {
 		this();
 		this.firstName = user.getFirstName();
 		this.lastName = user.getLastName();
@@ -43,7 +43,7 @@ public class EmailInformation implements Serializable {
 		this.comment = comment;
 		this.locale = locale;
 	}
-	public EmailInformation(User user, List<OpinionView> opinionCases) {
+	public EmailInformation(ApplicationUser user, List<OpinionView> opinionCases) {
 		this();
 		this.email = user.getEmail();
 		this.titles = user.getTitles() != null && user.getTitles().length > 0 ? Arrays.toString(user.getTitles()) : "[All]";
@@ -58,7 +58,7 @@ public class EmailInformation implements Serializable {
 			
 		}
 	}
-	public EmailInformation(User user, Map<String, Long> memoryMap) {
+	public EmailInformation(ApplicationUser user, Map<String, Long> memoryMap) {
 		this();
 		this.titles = user.getTitles() != null && user.getTitles().length > 0 ? Arrays.toString(user.getTitles()) : "[All]";
 		this.email = user.getEmail();

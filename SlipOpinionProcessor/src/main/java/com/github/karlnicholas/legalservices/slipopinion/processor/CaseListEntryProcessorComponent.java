@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Properties;
 import java.util.stream.Collectors;
 
+import javax.sql.DataSource;
+
 import org.apache.kafka.clients.CommonClientConfigs;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
@@ -44,6 +46,7 @@ public class CaseListEntryProcessorComponent implements Runnable {
 	private final Logger log = LoggerFactory.getLogger(CaseListEntryProcessorComponent.class);
 	private final Consumer<Integer, JsonNode> newCaseListconsumer;
 	private final Producer<Integer, OpinionViewMessage> producer;
+	private final SlipOpininScraperDao slipOpininScraperDao;
 	private final ObjectMapper objectMapper;
 	private final OpinionService opinionService;
 	private final KakfaProperties kafkaProperties;
@@ -53,14 +56,16 @@ public class CaseListEntryProcessorComponent implements Runnable {
 	
 	protected CaseListEntryProcessorComponent(ObjectMapper objectMapper, 
 			KakfaProperties kafkaProperties,
-			Producer<Integer, OpinionViewMessage> producer
+			Producer<Integer, OpinionViewMessage> producer, 
+			DataSource dataSource
 	) {
 		this.objectMapper = objectMapper;
 		this.kafkaProperties = kafkaProperties; 
 		this.producer = producer; 
+		slipOpininScraperDao = new SlipOpininScraperDao(dataSource);
 	    opinionService = OpinionServiceFactory.getOpinionServiceClient(objectMapper);
-		caseScraper = new CACaseScraper(false);
-//		caseScraper = new TestCAParseSlipDetails(false);
+//		caseScraper = new CACaseScraper(false);
+		caseScraper = new TestCAParseSlipDetails(false);
 	    StatuteService statutesService = StatutesServiceFactory.getStatutesServiceClient();
 		opinionDocumentParser = new SlipOpinionDocumentParser(statutesService.getStatutesTitles().getBody());
 		opinionViewBuilder = new OpinionViewBuilder(statutesService);
@@ -138,7 +143,7 @@ public class CaseListEntryProcessorComponent implements Runnable {
 			caseListEntry.setStatus(CASELISTSTATUS.ERROR);
 			log.error("SlipOpinion error: {} {} {}", caseListEntry.getId(), caseListEntry.getFileName(), ex.toString());
 		} finally {
-			opinionService.caseListEntryUpdate(caseListEntry);
+			slipOpininScraperDao.caseListEntryUpdate(caseListEntry);
 		}
 	}
 }

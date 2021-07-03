@@ -1,4 +1,4 @@
-package com.github.karlnicholas.legalservices.user.security.model;
+package com.github.karlnicholas.legalservices.user.model;
 
 import java.io.Serializable;
 
@@ -7,7 +7,7 @@ import java.io.Serializable;
 //@NamedQueries({
 //    @NamedQuery(name = Role.LIST_AVAILABLE, query = "select r from Role r"), 
 //})
-public class Role implements Serializable {
+public class RoleSave implements Serializable {
     public static final String LIST_AVAILABLE = "Role.listAvailable";
 
 //    @Id
