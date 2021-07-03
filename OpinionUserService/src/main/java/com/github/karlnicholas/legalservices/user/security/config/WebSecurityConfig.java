@@ -18,9 +18,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.ReactiveAuthenticationManager;
 import org.springframework.security.config.annotation.method.configuration.EnableReactiveMethodSecurity;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
+import org.springframework.security.config.web.server.SecurityWebFiltersOrder;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -55,42 +58,42 @@ public class WebSecurityConfig {
     
     @Bean
     public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http, ReactiveAuthenticationManager authManager) {
-        http.csrf()
-                .disable().authorizeExchange()
-                .anyExchange().permitAll();
-        return http.build();
-//        return http
-//                .authorizeExchange()
-//                    .pathMatchers(HttpMethod.OPTIONS)
-//                        .permitAll()
-//                    .pathMatchers(publicRoutes)
-//                        .permitAll()
-//                    .pathMatchers( "/favicon.ico")
-//                        .permitAll()
-//                    .anyExchange()
-//                        .authenticated()
-//                    .and()
-//                .csrf()
-//                    .disable()
-//                .httpBasic()
-//                    .disable()
-//                .formLogin()
-//                    .disable()
-//                .exceptionHandling()
-//                    .authenticationEntryPoint((swe, e) -> {
-//                        logger.info("[1] Authentication error: Unauthorized[401]: " + e.getMessage());
-//
-//                        return Mono.fromRunnable(() -> swe.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED));
-//                    })
-//                    .accessDeniedHandler((swe, e) -> {
-//                        logger.info("[2] Authentication error: Access Denied[401]: " + e.getMessage());
-//
-//                        return Mono.fromRunnable(() -> swe.getResponse().setStatusCode(HttpStatus.FORBIDDEN));
-//                    })
-//                .and()
-//                .addFilterAt(createAuthenticationFilter(authManager, AppServerAuthenticationConverter::getBearerToken), SecurityWebFiltersOrder.AUTHENTICATION)
-//                .addFilterAt(createAuthenticationFilter(authManager, AppServerAuthenticationConverter::getCookieToken), SecurityWebFiltersOrder.AUTHENTICATION)
-//                .build();
+//        http.csrf()
+//                .disable().authorizeExchange()
+//                .anyExchange().permitAll();
+//        return http.build();
+        return http
+                .authorizeExchange()
+                    .pathMatchers(HttpMethod.OPTIONS)
+                        .permitAll()
+                    .pathMatchers(publicRoutes)
+                        .permitAll()
+                    .pathMatchers( "/favicon.ico")
+                        .permitAll()
+                    .anyExchange()
+                        .authenticated()
+                    .and()
+                .csrf()
+                    .disable()
+                .httpBasic()
+                    .disable()
+                .formLogin()
+                    .disable()
+                .exceptionHandling()
+                    .authenticationEntryPoint((swe, e) -> {
+                        logger.info("[1] Authentication error: Unauthorized[401]: " + e.getMessage());
+
+                        return Mono.fromRunnable(() -> swe.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED));
+                    })
+                    .accessDeniedHandler((swe, e) -> {
+                        logger.info("[2] Authentication error: Access Denied[401]: " + e.getMessage());
+
+                        return Mono.fromRunnable(() -> swe.getResponse().setStatusCode(HttpStatus.FORBIDDEN));
+                    })
+                .and()
+                .addFilterAt(createAuthenticationFilter(authManager, AppServerAuthenticationConverter::getBearerToken), SecurityWebFiltersOrder.AUTHENTICATION)
+                .addFilterAt(createAuthenticationFilter(authManager, AppServerAuthenticationConverter::getCookieToken), SecurityWebFiltersOrder.AUTHENTICATION)
+                .build();
     }
 
     AuthenticationWebFilter createAuthenticationFilter(ReactiveAuthenticationManager authManager, Function<ServerWebExchange, Optional<String>> extractTokenFunction) {

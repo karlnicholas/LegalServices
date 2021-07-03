@@ -7,14 +7,14 @@ spec:
   - http:
       paths:
       - path: /*
-        pathType: Prefix
+        pathType: ImplementationSpecific
         backend:
           service:
             name: slipopinionprocessor-service
             port: 
               number: 8080
       - path: /api/statutes
-        pathType: Prefix
+        pathType: ImplementationSpecific
         backend:
           service:
             name: guidedsearch-web-service
