@@ -21,6 +21,7 @@ import org.apache.kafka.common.config.SaslConfigs;
 import org.apache.kafka.common.errors.WakeupException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -53,7 +54,9 @@ public class CaseListEntryProcessorComponent implements Runnable {
 	private final OpinionScraperInterface caseScraper;
 	private final SlipOpinionDocumentParser opinionDocumentParser;
 	private final OpinionViewBuilder opinionViewBuilder;
-	
+	@Value("${slipopinionprocessor:test}")
+    private String slipopinionprocessor;
+
 	protected CaseListEntryProcessorComponent(ObjectMapper objectMapper, 
 			KakfaProperties kafkaProperties,
 			Producer<Integer, OpinionViewMessage> producer, 
@@ -64,8 +67,11 @@ public class CaseListEntryProcessorComponent implements Runnable {
 		this.producer = producer; 
 		slipOpininScraperDao = new SlipOpininScraperDao(dataSource);
 	    opinionService = OpinionServiceFactory.getOpinionServiceClient(objectMapper);
-//		caseScraper = new CACaseScraper(false);
-		caseScraper = new TestCAParseSlipDetails(false);
+	    if ( slipopinionprocessor != null && slipopinionprocessor.equalsIgnoreCase("production")) {
+			caseScraper = new CACaseScraper(false);
+	    } else {
+			caseScraper = new TestCAParseSlipDetails(false);
+	    }
 	    StatuteService statutesService = StatutesServiceFactory.getStatutesServiceClient();
 		opinionDocumentParser = new SlipOpinionDocumentParser(statutesService.getStatutesTitles().getBody());
 		opinionViewBuilder = new OpinionViewBuilder(statutesService);

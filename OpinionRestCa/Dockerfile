@@ -2,7 +2,7 @@
 # It's important to use OpenJDK 8u191 or above that has container support enabled.
 # https://hub.docker.com/r/adoptopenjdk/openjdk8
 # https://docs.docker.com/develop/develop-images/multistage-build/#use-multi-stage-builds
-FROM adoptopenjdk/openjdk8:jdk8u282-b08-alpine-slim
+FROM adoptopenjdk/openjdk11:jdk-11.0.11_9-alpine-slim
 
 VOLUME /CaliforniaStatutes
 # Copy the jar to the production image from the builder stage.

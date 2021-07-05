@@ -8,6 +8,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Data
 @Builder
@@ -24,6 +25,7 @@ public class CaseListEntry implements Serializable {
 	private LocalDate opinionDate;
 	private LocalDate postedDate;
 	private String court;
+	@ToString.Exclude
 	private String searchUrl;
 	private CASELISTSTATUS status;
 }

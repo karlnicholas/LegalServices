@@ -7,6 +7,7 @@ import javax.sql.DataSource;
 
 import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerRecord;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -24,6 +25,8 @@ public class CaseListScraperComponent {
 	private final SlipOpininScraperDao slipOpininScraperDao;
 	private final Producer<Integer, JsonNode> producer;
 	private final KakfaProperties kafkaProperties;
+	@Value("${slipopinionprocessor:test}")
+    private String slipopinionprocessor;
 
 	public CaseListScraperComponent(ObjectMapper objectMapper, 
 			Producer<Integer, JsonNode> producer, 
@@ -33,9 +36,11 @@ public class CaseListScraperComponent {
 	    this.objectMapper = objectMapper;
 	    this.producer = producer;
 	    this.kafkaProperties = kafkaProperties;
-
-		caseScraper = new TestCAParseSlipDetails(false);
-//		caseScraper = new CACaseScraper(false);
+	    if ( slipopinionprocessor != null && slipopinionprocessor.equalsIgnoreCase("production")) {
+			caseScraper = new CACaseScraper(false);
+	    } else {
+			caseScraper = new TestCAParseSlipDetails(false);
+	    }
 		slipOpininScraperDao = new SlipOpininScraperDao(dataSource);
 	}
 

@@ -26,6 +26,8 @@ spec:
             value: "http://opinion-rest-ca-service:8091/"
           - name: kafka.ip-address
             value: "kafka-opca-vm"
+          - name: slipinionscraper
+            value: "production"
           - name: kafka.port
             value: "9092"
           - name: kafka.user
@@ -38,6 +40,23 @@ spec:
               secretKeyRef:
                 name: kafka-config
                 key: kafka.password
+          - name: database-url
+            value: "mysql://mysql-opca-vm:3306/"
+          - name: database-user
+            valueFrom:
+              secretKeyRef:
+                name: mysqldb
+                key: database-user
+          - name: database-name
+            valueFrom:
+              secretKeyRef:
+                name: mysqldb
+                key: database-name
+          - name: database-password
+            valueFrom:
+              secretKeyRef:
+                name: mysqldb
+                key: database-password
         # This app listens on port 8080 for web traffic by default.
         ports:
         - containerPort: 8080

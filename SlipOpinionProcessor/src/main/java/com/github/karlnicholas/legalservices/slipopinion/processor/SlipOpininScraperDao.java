@@ -12,8 +12,6 @@ import java.util.stream.Collectors;
 
 import javax.sql.DataSource;
 
-import org.springframework.http.ResponseEntity;
-
 import com.github.karlnicholas.legalservices.caselist.model.CASELISTSTATUS;
 import com.github.karlnicholas.legalservices.caselist.model.CaseListEntries;
 import com.github.karlnicholas.legalservices.caselist.model.CaseListEntry;
