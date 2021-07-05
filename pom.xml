@@ -7,8 +7,8 @@
 	<name>Legal Services</name>
 	<description>Legal Services</description>
 	<properties>
-		<spring.boot.version>2.4.4</spring.boot.version>
-		<version.lucene>8.6.0</version.lucene>
+		<spring.boot.version>2.5.2</spring.boot.version>
+		<version.lucene>8.9.0</version.lucene>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	    <!-- maven-compiler-plugin -->
 	    <version.compiler.plugin>3.8.1</version.compiler.plugin>
