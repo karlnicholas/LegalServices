@@ -46,22 +46,19 @@ public class ApplicationUser extends User {
 
 	/**
 	 * Create account constructor
-	 * 
-	 * @param email        of user
-	 * @param emailUpdates when notifications sent?
-	 * @param password     of user
-	 * @param locale       of user
+	 * @param email email
+	 * @param password password
+	 * @param authorities authorities
 	 */
 	public ApplicationUser(String email, String password, Set<GrantedAuthority> authorities) {
 		this(email, password, Locale.US, authorities);
 	}
 	/**
 	 * Create account constructor
-	 * 
-	 * @param email        of user
-	 * @param emailUpdates when notifications sent?
-	 * @param password     of user
-	 * @param locale       of user
+	 * @param email email
+	 * @param password password
+	 * @param locale locale
+	 * @param authorities authorities
 	 */
 	public ApplicationUser(String email, String password, Locale locale, Set<GrantedAuthority> authorities) {
 		super(email, password, authorities);
