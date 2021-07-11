@@ -5,26 +5,42 @@ import java.util.Locale;
 import java.util.Set;
 import java.util.UUID;
 
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.User;
+/*
+create table user (id bigint not null auto_increment
+, createdate datetime
+, email varchar(255)
+, emailupdates bit not null
+, firstname varchar(255)
+, lastname varchar(255)
+, locale varchar(255)
+, optout bit not null
+, optoutkey varchar(255)
+, password varchar(255)
+, startverify bit not null
+, titles tinyblob
+, updatedate datetime
+, verified bit not null
+, verifycount integer not null
+, verifyerrors integer not null
+, verifykey varchar(255)
+, welcomeerrors integer not null
+, welcomed bit not null
+, primary key (id)) engine=InnoDB;
 
-public class ApplicationUser extends User {
+ */
+public class ApplicationUser {
 	private static final long serialVersionUID = 1L;
 
-//  @Id
-//  @GeneratedValue(strategy=GenerationType.IDENTITY)
-//	private Long id;
+	private Long id;
 
-	//	@NotNull(message = "{email.required}")
-//	@Pattern(regexp = "[A-Za-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\." + "[A-Za-z0-9!#$%&'*+/=?^_`{|}~-]+)*@"
-//			+ "(?:[A-Za-z0-9](?:[A-Za-z0-9-]*[A-Za-z0-9])?\\.)+[A-Za-z0-9]"
-//			+ "(?:[A-Za-z0-9-]*[A-Za-z0-9])?", message = "{invalid.email}")
-//	private String email;
-//
-//	private String password;
-//
+	private String email;
+
+	private String password;
+
 	private String firstName;
 	private String lastName;
+
+	// user preferences
 	private boolean emailUpdates;
 	private boolean verified;
 	private boolean startVerify;
@@ -44,62 +60,51 @@ public class ApplicationUser extends User {
 
 	private Set<Role> roles;
 
-	/**
-	 * Create account constructor
-	 * @param email email
-	 * @param password password
-	 * @param authorities authorities
-	 */
-	public ApplicationUser(String email, String password, Set<GrantedAuthority> authorities) {
-		this(email, password, Locale.US, authorities);
-	}
-	/**
-	 * Create account constructor
-	 * @param email email
-	 * @param password password
-	 * @param locale locale
-	 * @param authorities authorities
-	 */
-	public ApplicationUser(String email, String password, Locale locale, Set<GrantedAuthority> authorities) {
-		super(email, password, authorities);
+	public ApplicationUser(String email, String password, Locale locale, Set<Role> roles) {
+		this.email = email;
+		this.password = password;
+		this.roles = roles;
 		init();
 		this.locale = locale;
 	}
 
 	private void init() {
+		this.createDate = LocalDate.now();
+		this.updateDate = LocalDate.now().minusDays(4);
 		this.verified = false;
 		this.verifyKey = UUID.randomUUID().toString();
-		this.createDate = LocalDate.now();
-
-//        Calendar firstDay = Calendar.getInstance();
-//        int year = firstDay.get(Calendar.YEAR);
-//        int dayOfYear = firstDay.get(Calendar.DAY_OF_YEAR);
-//        dayOfYear = dayOfYear - 4;
-//        if ( dayOfYear < 1 ) {
-//            year = year - 1;
-//            dayOfYear = 365 + dayOfYear;
-//        }
-//        firstDay.set(Calendar.YEAR, year);
-//        firstDay.set(Calendar.DAY_OF_YEAR, dayOfYear);
-
-		this.updateDate = LocalDate.now().minusDays(4);
-
 		this.verifyErrors = 0;
 	}
 
-    /**
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	/**
      * Get User's Password
      * @return User's Password
      */
     public String getPassword() {
-        return getPassword();
+        return password;
     }
     /**
      * Set User's Password
      * @param password to set.
      */
     public void setPassword(String password) {
-        setPassword(password);
+        this.password = password;
     }
     /**
      * Get Users's First Name
@@ -154,10 +159,11 @@ public class ApplicationUser extends User {
      */
     public boolean isAdmin() {
         for ( Role role: roles ) {
-            if ( role.geteRole() == ERole.ROLE_ADMIN ) return true;
+            if ( role.geteRole() == ERole.ADMIN ) return true;
         }
         return false;
     }
+
 	public boolean isEmailUpdates() {
 		return emailUpdates;
 	}
@@ -241,9 +247,5 @@ public class ApplicationUser extends User {
 	}
 	public void setStartVerify(boolean startVerify) {
 		this.startVerify = startVerify;
-	}
-
-	public String getEmail() {
-		return getUsername();
 	}
 }

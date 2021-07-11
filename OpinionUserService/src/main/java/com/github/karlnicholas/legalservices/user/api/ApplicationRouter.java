@@ -7,19 +7,19 @@ import org.springframework.web.reactive.function.server.RouterFunction;
 import org.springframework.web.reactive.function.server.RouterFunctions;
 import org.springframework.web.reactive.function.server.ServerResponse;
 
-import static org.springframework.web.reactive.function.server.RequestPredicates.POST;
-import static org.springframework.web.reactive.function.server.RequestPredicates.GET;
-import static org.springframework.web.reactive.function.server.RequestPredicates.accept;
+import static org.springframework.web.reactive.function.server.RequestPredicates.*;
 
 @Configuration
 public class ApplicationRouter {
 
     @Bean
-    public RouterFunction<ServerResponse> routes(PublicHandler publicHandler, AuthHandler authHandler, ApplicationUserHandler userHandler) {
-        return RouterFunctions.route(POST("/login").and(accept(MediaType.APPLICATION_JSON)), authHandler::handleLogin)
-    		.andRoute(POST("/public/demo-user").and(accept(MediaType.APPLICATION_JSON)), publicHandler::handleDemoUser)
-			.andRoute(GET("/public/version").and(accept(MediaType.APPLICATION_JSON)), publicHandler::handleVersion)
-			.andRoute(GET("/user").and(accept(MediaType.APPLICATION_JSON)), userHandler::handleUser)
+    public RouterFunction<ServerResponse> routes(
+            AuthHandler authHandler,
+            ApplicationUserHandler userHandler
+    ) {
+        return RouterFunctions.route(POST("/api/auth/login").and(accept(MediaType.APPLICATION_JSON)), authHandler::handleLogin)
+    		.andRoute(POST("/api/auth/user").and(accept(MediaType.APPLICATION_JSON)),  authHandler::handleNewUser)
+			.andRoute(GET("/api/user").and(accept(MediaType.APPLICATION_JSON)), userHandler::handleUser)
 		;
     }
 }

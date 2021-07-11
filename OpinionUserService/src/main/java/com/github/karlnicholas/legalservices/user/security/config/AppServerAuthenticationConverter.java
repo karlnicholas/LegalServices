@@ -2,7 +2,6 @@ package com.github.karlnicholas.legalservices.user.security.config;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtParser;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpCookie;
@@ -12,7 +11,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.web.server.authentication.ServerAuthenticationConverter;
 import org.springframework.web.server.ServerWebExchange;
-
 import reactor.core.publisher.Mono;
 
 import java.util.List;
@@ -24,7 +22,6 @@ import java.util.stream.Collectors;
  * ServerHttpBearerAuthenticationConverter class
  * This is a Converter that validates TOKEN against requests coming from AuthenticationFilter ServerWebExchange.
  *
- * @author Erik Amaru Ortiz
  * @author Karl Nicholas
  */
 public class AppServerAuthenticationConverter implements ServerAuthenticationConverter {

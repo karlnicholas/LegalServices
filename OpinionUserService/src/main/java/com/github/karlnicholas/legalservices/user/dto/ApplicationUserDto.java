@@ -1,29 +1,35 @@
 package com.github.karlnicholas.legalservices.user.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.PropertyNamingStrategy;
-import com.fasterxml.jackson.databind.annotation.JsonNaming;
+
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+import java.util.Locale;
 
 /**
  * UserDto class
  *
  * @author Karl Nicholas
  */
-@JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
-public class ApplicationUserDto {
-    private String username;
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    private String password;
-    private String firstName;
-    private String lastName;
-    private boolean enabled;
 
-    public String getUsername() {
-        return username;
+public class ApplicationUserDto {
+    @NotNull(message = "Email required")
+    @Pattern(regexp = "[A-Za-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\." + "[A-Za-z0-9!#$%&'*+/=?^_`{|}~-]+)*@"
+            + "(?:[A-Za-z0-9](?:[A-Za-z0-9-]*[A-Za-z0-9])?\\.)+[A-Za-z0-9]"
+            + "(?:[A-Za-z0-9-]*[A-Za-z0-9])?", message = "Email invalid")
+    private String email;
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @NotNull(message = "Password Required")
+    private String password;
+    @NotNull(message = "Locale Required")
+    private Locale locale;
+
+    public String getEmail() {
+        return email;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public String getPassword() {
@@ -34,27 +40,11 @@ public class ApplicationUserDto {
         this.password = password;
     }
 
-    public String getFirstName() {
-        return firstName;
+    public Locale getLocale() {
+        return locale;
     }
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
+    public void setLocale(Locale locale) {
+        this.locale = locale;
     }
 }

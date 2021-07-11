@@ -1,16 +1,14 @@
 package com.github.karlnicholas.legalservices.user.security.service;
 
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
+import com.github.karlnicholas.legalservices.user.mailer.SendGridMailer;
+import com.github.karlnicholas.legalservices.user.model.ApplicationUser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Async;
-import org.springframework.stereotype.Service;
 
-import com.github.karlnicholas.legalservices.user.mailer.SendGridMailer;
-import com.github.karlnicholas.legalservices.user.model.ApplicationUser;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 //@Stateless
 //@Service

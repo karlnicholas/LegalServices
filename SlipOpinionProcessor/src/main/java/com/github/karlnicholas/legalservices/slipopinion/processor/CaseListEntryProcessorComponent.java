@@ -1,5 +1,6 @@
 package com.github.karlnicholas.legalservices.slipopinion.processor;
 
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.time.Duration;
 import java.util.Collections;
@@ -54,6 +55,7 @@ public class CaseListEntryProcessorComponent implements Runnable {
 	private final OpinionScraperInterface caseScraper;
 	private final SlipOpinionDocumentParser opinionDocumentParser;
 	private final OpinionViewBuilder opinionViewBuilder;
+	private final DataSource dataSource;
 	@Value("${slipopinionprocessor:test}")
     private String slipopinionprocessor;
 
@@ -64,8 +66,9 @@ public class CaseListEntryProcessorComponent implements Runnable {
 	) {
 		this.objectMapper = objectMapper;
 		this.kafkaProperties = kafkaProperties; 
-		this.producer = producer; 
-		slipOpininScraperDao = new SlipOpininScraperDao(dataSource);
+		this.producer = producer;
+		this.dataSource = dataSource;
+		slipOpininScraperDao = new SlipOpininScraperDao();
 	    opinionService = OpinionServiceFactory.getOpinionServiceClient(objectMapper);
 	    if ( slipopinionprocessor != null && slipopinionprocessor.equalsIgnoreCase("production")) {
 			caseScraper = new CACaseScraper(false);
@@ -149,7 +152,9 @@ public class CaseListEntryProcessorComponent implements Runnable {
 			caseListEntry.setStatus(CASELISTSTATUS.ERROR);
 			log.error("SlipOpinion error: {} {} {}", caseListEntry.getId(), caseListEntry.getFileName(), ex.toString());
 		} finally {
-			slipOpininScraperDao.caseListEntryUpdate(caseListEntry);
+			try (Connection con =  dataSource.getConnection()) {
+				slipOpininScraperDao.caseListEntryUpdate(con, caseListEntry);
+			}
 		}
 	}
 }

@@ -1,5 +1,6 @@
 package com.github.karlnicholas.legalservices.slipopinion.processor;
 
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.time.Duration;
 import java.util.ArrayList;
@@ -37,6 +38,7 @@ public class CaseListProcessorComponent implements Runnable {
 	private final SlipOpininScraperDao slipOpininScraperDao;
 	private final ObjectMapper objectMapper;
 	private final KakfaProperties kafkaProperties;
+	private final DataSource dataSource;
 	private static final int MAX_ENTRIES_PROCESS = 30;
 
 	public CaseListProcessorComponent(ObjectMapper objectMapper, 
@@ -47,9 +49,10 @@ public class CaseListProcessorComponent implements Runnable {
 	) {
 		this.objectMapper = objectMapper;
 		this.kafkaProperties = kafkaProperties;
+		this.dataSource = dataSource;
 		this.producer = producer;
 		this.cacheProducer = cacheProducer;
-		slipOpininScraperDao = new SlipOpininScraperDao(dataSource);
+		slipOpininScraperDao = new SlipOpininScraperDao();
         //Configure the Consumer
 		Properties consumerProperties = new Properties();
 		consumerProperties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG,kafkaProperties.getIpAddress()+':'+kafkaProperties.getPort());
@@ -96,57 +99,58 @@ public class CaseListProcessorComponent implements Runnable {
 		}
 	}
 	private void processCaseListEntries(CaseListEntries caseListEntries) throws SQLException {
-		CaseListEntries currentCaseListEntries = slipOpininScraperDao.caseListEntries();
-		CaseListEntries newCaseListEntries = new CaseListEntries(new ArrayList<>());
-		CaseListEntries existingCaseListEntries = new CaseListEntries(new ArrayList<>());
+		try (Connection con = dataSource.getConnection()) {
+			CaseListEntries currentCaseListEntries = slipOpininScraperDao.caseListEntries(con);
+			CaseListEntries newCaseListEntries = new CaseListEntries(new ArrayList<>());
+			CaseListEntries existingCaseListEntries = new CaseListEntries(new ArrayList<>());
 
-		for ( CaseListEntry caseListEntry: caseListEntries ) {
-			int index = currentCaseListEntries.indexOf(caseListEntry);
-			if ( index >= 0 ) {
-				existingCaseListEntries.add(currentCaseListEntries.get(index));
-			} else {
-				newCaseListEntries.add(caseListEntry);
+			for ( CaseListEntry caseListEntry: caseListEntries ) {
+				int index = currentCaseListEntries.indexOf(caseListEntry);
+				if ( index >= 0 ) {
+					existingCaseListEntries.add(currentCaseListEntries.get(index));
+				} else {
+					newCaseListEntries.add(caseListEntry);
+				}
 			}
-		}
-		// currentCaseListEntries will have only deleted items
-		newCaseListEntries.forEach(cle->cle.setStatus(CASELISTSTATUS.PENDING));
-		List<CaseListEntry> failedCaseListEntries = existingCaseListEntries.stream().filter(cle->cle.getStatus() != CASELISTSTATUS.PROCESSED).collect(Collectors.toList());
-		failedCaseListEntries.removeIf(cle->cle.getStatus() == CASELISTSTATUS.FAILED);		
-		failedCaseListEntries.forEach(cle->{
-			cle.setStatus(CASELISTSTATUS.FAILED);
-			currentCaseListEntries.get(currentCaseListEntries.indexOf(cle)).setStatus(CASELISTSTATUS.FAILED);
-		});
-		List<CaseListEntry> deletedCaseListEntries = new ArrayList<>(currentCaseListEntries);
-		deletedCaseListEntries.removeAll(existingCaseListEntries);
-		deletedCaseListEntries.forEach(cle->cle.setStatus(CASELISTSTATUS.DELETED));
-		// construct database update
-		List<CaseListEntry> max10newList = newCaseListEntries.subList(0, newCaseListEntries.size() > MAX_ENTRIES_PROCESS ? MAX_ENTRIES_PROCESS : newCaseListEntries.size());
-		currentCaseListEntries.addAll(max10newList);
-		slipOpininScraperDao.caseListEntryUpdates(currentCaseListEntries);
-		// send new cases
-		max10newList.forEach(cle->{
-		    JsonNode  jsonNode = objectMapper.valueToTree(cle);
-		    ProducerRecord<Integer, JsonNode> rec = new ProducerRecord<>(kafkaProperties.getNewCaseListTopic(), jsonNode);
-		    producer.send(rec);
-		    log.info("New Case: {}", cle);
-		});
+			// currentCaseListEntries will have only deleted items
+			newCaseListEntries.forEach(cle->cle.setStatus(CASELISTSTATUS.PENDING));
+			List<CaseListEntry> failedCaseListEntries = existingCaseListEntries.stream().filter(cle->cle.getStatus() != CASELISTSTATUS.PROCESSED).collect(Collectors.toList());
+			failedCaseListEntries.removeIf(cle->cle.getStatus() == CASELISTSTATUS.FAILED);
+			failedCaseListEntries.forEach(cle->{
+				cle.setStatus(CASELISTSTATUS.FAILED);
+				currentCaseListEntries.get(currentCaseListEntries.indexOf(cle)).setStatus(CASELISTSTATUS.FAILED);
+			});
+			List<CaseListEntry> deletedCaseListEntries = new ArrayList<>(currentCaseListEntries);
+			deletedCaseListEntries.removeAll(existingCaseListEntries);
+			deletedCaseListEntries.forEach(cle->cle.setStatus(CASELISTSTATUS.DELETED));
+			// construct database update
+			List<CaseListEntry> max10newList = newCaseListEntries.subList(0, newCaseListEntries.size() > MAX_ENTRIES_PROCESS ? MAX_ENTRIES_PROCESS : newCaseListEntries.size());
+			currentCaseListEntries.addAll(max10newList);
+			slipOpininScraperDao.caseListEntryUpdates(con, currentCaseListEntries);
+			// send new cases
+			max10newList.forEach(cle->{
+				JsonNode  jsonNode = objectMapper.valueToTree(cle);
+				ProducerRecord<Integer, JsonNode> rec = new ProducerRecord<>(kafkaProperties.getNewCaseListTopic(), jsonNode);
+				producer.send(rec);
+				log.info("New Case: {}", cle);
+			});
 
-		// send delete cases
-		deletedCaseListEntries.forEach(cle->{
-			ProducerRecord<Integer, OpinionViewMessage> rec = new ProducerRecord<>(kafkaProperties.getOpinionViewCacheTopic(), 
-					OpinionViewMessage.builder().caseListEntry(cle).build());
-		    cacheProducer.send(rec);
-		    log.info("Deleted Case: {}", cle);
-		});
-		
-		// send failed cases
-		failedCaseListEntries.forEach(cle->{
-		    JsonNode  jsonNode = objectMapper.valueToTree(cle);
-		    ProducerRecord<Integer, JsonNode> rec = new ProducerRecord<>(kafkaProperties.getFailCaseListTopic(), jsonNode);
-		    producer.send(rec);
-		    log.warn("Failed Case: {}", cle);
-		});
-	
+			// send delete cases
+			deletedCaseListEntries.forEach(cle->{
+				ProducerRecord<Integer, OpinionViewMessage> rec = new ProducerRecord<>(kafkaProperties.getOpinionViewCacheTopic(),
+						OpinionViewMessage.builder().caseListEntry(cle).build());
+				cacheProducer.send(rec);
+				log.info("Deleted Case: {}", cle);
+			});
+
+			// send failed cases
+			failedCaseListEntries.forEach(cle->{
+				JsonNode  jsonNode = objectMapper.valueToTree(cle);
+				ProducerRecord<Integer, JsonNode> rec = new ProducerRecord<>(kafkaProperties.getFailCaseListTopic(), jsonNode);
+				producer.send(rec);
+				log.warn("Failed Case: {}", cle);
+			});
+		}
 	}
 
 }

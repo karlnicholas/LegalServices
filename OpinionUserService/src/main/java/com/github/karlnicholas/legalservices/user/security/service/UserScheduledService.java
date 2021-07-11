@@ -1,17 +1,12 @@
 package com.github.karlnicholas.legalservices.user.security.service;
 
-import java.lang.management.ManagementFactory;
-import java.lang.management.MemoryMXBean;
-import java.lang.management.MemoryUsage;
-import java.lang.management.OperatingSystemMXBean;
-import java.lang.management.ThreadMXBean;
-import java.util.Map;
-import java.util.TreeMap;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Service;
+
+import java.lang.management.*;
+import java.util.Map;
+import java.util.TreeMap;
 
 //@TransactionManagement(TransactionManagementType.BEAN)
 //@Singleton

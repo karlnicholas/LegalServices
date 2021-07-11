@@ -18,34 +18,28 @@ import com.github.karlnicholas.legalservices.caselist.model.CaseListEntry;
 import com.github.karlnicholas.legalservices.sqlutil.ResultSetIterable;
 
 public class SlipOpininScraperDao {
-	private final DataSource dataSource;
-	public SlipOpininScraperDao(DataSource dataSource) {
-		this.dataSource = dataSource;
-	}
+//	private final DataSource dataSource;
+//	public SlipOpininScraperDao(DataSource dataSource) {
+//		this.dataSource = dataSource;
+//	}
 
-	public String callSlipOpinionUpdateNeeded() throws SQLException {
-		try (Connection con = dataSource.getConnection();
-			PreparedStatement ps = con.prepareCall("{call checkSlipOpinionUpdate()}");
-		) {
+	public String callSlipOpinionUpdateNeeded(Connection con) throws SQLException {
+		try (PreparedStatement ps = con.prepareCall("{call checkSlipOpinionUpdate()}")) {
 			try (ResultSet rs = ps.executeQuery()) {
 				rs.next();
 				return rs.getString(1);
 			}
 		}
 	}
-	public void updateSlipOpinionList(String string) throws SQLException {
-		try (Connection con = dataSource.getConnection();
-			 PreparedStatement ps = con.prepareStatement("update slipopinionlist set slipopinionlist=? where id = 1" );
-		) {
+	public void updateSlipOpinionList(Connection con, String string) throws SQLException {
+		try (PreparedStatement ps = con.prepareStatement("update slipopinionlist set slipopinionlist=? where id = 1" )) {
 			ps.setString(1, string);
 			ps.executeUpdate();
 		}
 	}
 
-	public CaseListEntries caseListEntries() throws SQLException {
-		try (Connection con = dataSource.getConnection();
-			 PreparedStatement ps = con.prepareStatement("select * from caselistentry", ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
-		) {
+	public CaseListEntries caseListEntries(Connection con) throws SQLException {
+		try (PreparedStatement ps = con.prepareStatement("select * from caselistentry", ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY)) {
 			try (ResultSet rs = ps.executeQuery()) {
 				return new CaseListEntries(new ResultSetIterable<CaseListEntry>(rs, rs2 -> mapCaseListEntry(rs2)).stream().collect(Collectors.toList()));
 			}
@@ -65,8 +59,8 @@ public class SlipOpininScraperDao {
 				.build();
 	}
 
-	public void caseListEntryUpdates(CaseListEntries caseListEntries) throws SQLException {
-		try (Connection con = dataSource.getConnection(); 
+	public void caseListEntryUpdates(Connection con, CaseListEntries caseListEntries) throws SQLException {
+		try (
 			PreparedStatement pss = con.prepareStatement("select * from caselistentry", ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 			PreparedStatement psi = con.prepareStatement("insert into caselistentry(id, filename, fileextension, title, opiniondate, posteddate, court, searchurl, status) values(?,?,?,?,?,?,?,?,?)");
 			PreparedStatement psu = con.prepareStatement("update caselistentry set status = ? where id = ?");
@@ -121,10 +115,8 @@ public class SlipOpininScraperDao {
 	}
 		
 //	id varchar(32), filename varchar(31), fileextension varchar(7), title varchar(137), opiniondate datetime, posteddate datetime, court varchar(15), searchurl varchar(128), status varchar(15) not null, retrycount integer
-	public void caseListEntryUpdate(CaseListEntry caseListEntry) throws SQLException {
-		try (Connection con = dataSource.getConnection();
-			PreparedStatement ps = con.prepareStatement("update caselistentry set status = ? where id = ?");
-		) {
+	public void caseListEntryUpdate(Connection con, CaseListEntry caseListEntry) throws SQLException {
+		try (PreparedStatement ps = con.prepareStatement("update caselistentry set status = ? where id = ?")) {
 			ps.setString(1, caseListEntry.getStatus().name());
 			ps.setString(2, caseListEntry.getId());
 			ps.executeUpdate();

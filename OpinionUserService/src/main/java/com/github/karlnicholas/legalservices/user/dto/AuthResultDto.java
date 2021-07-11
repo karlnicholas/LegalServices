@@ -5,21 +5,20 @@ import java.util.Date;
 /**
  * AuthResultDto class
  *
- * @author Erik Amaru Ortiz
  * @author Karl Nicholas
  */
 public class AuthResultDto {
-    private String username;
+    private String email;
     private String token;
     private Date issuedAt;
     private Date expiresAt;
 
-    public String getUsername() {
-        return username;
+    public String getEmail() {
+        return email;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public String getToken() {

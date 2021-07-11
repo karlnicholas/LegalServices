@@ -9,7 +9,6 @@ create table user (id bigint not null auto_increment, createdate datetime, email
 create table user_roles (user_id bigint not null, roles_id bigint not null) engine=InnoDB;
 create table caselistentry(id varchar(64), filename varchar(31), fileextension varchar(7), title varchar(137), opiniondate date, posteddate date, court varchar(255), searchurl varchar(128), status varchar(15) not null, primary key (id)) engine=InnoDB;
 create table slipopinionlist(id bigint not null, updatetime timestamp, primary key (id)) engine=InnoDB;
-insert into slipopinionlist(id, updatetime) values( 1, current_timestamp());
 create table opinionview(id bigint not null auto_increment, opiniondate date, opinionview BLOB, primary key (id)) engine=InnoDB;
 create index IDXd587qslmmirn7juop20is6gwt on opinionbase (vset, volume, page);
 alter table role add constraint UK_bjxn5ii7v7ygwx39et0wawu0q unique (role);
@@ -23,6 +22,9 @@ alter table partyattorneypair add constraint FK8la3eiphk0wnmel0ail3winl4 foreign
 alter table slipproperties add constraint FK97edwcyxhia5mmhb1qqgury8o foreign key (slipopinion_id) references opinionbase (id);
 alter table user_roles add constraint FKj9553ass9uctjrmh0gkqsmv0d foreign key (roles_id) references role (id);
 alter table user_roles add constraint FK55itppkw3i07do3h7qoclqd4k foreign key (user_id) references user (id);
+insert into slipopinionlist(id, updatetime) values( 1, current_timestamp());
+insert into role (id, role) values(1, 'USER');
+insert into role (id, role) values(2, 'ADMIN');
 DELIMITER $$
 CREATE PROCEDURE `checkSlipOpinionUpdate` ()
 BEGIN

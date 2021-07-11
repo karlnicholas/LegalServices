@@ -1,13 +1,12 @@
 package com.github.karlnicholas.legalservices.user.model;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
-
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
 
 @SuppressWarnings("serial")
 //@Table(uniqueConstraints = @UniqueConstraint(columnNames = "email"))
@@ -32,12 +31,12 @@ public class UserSave implements Serializable {
 //    @GeneratedValue(strategy=GenerationType.IDENTITY)
     private Long id;
 
-    @NotNull(message="{email.required}")
+    @NotNull(message="Email Required")
     @Pattern(regexp = "[A-Za-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\."
             + "[A-Za-z0-9!#$%&'*+/=?^_`{|}~-]+)*@"
             + "(?:[A-Za-z0-9](?:[A-Za-z0-9-]*[A-Za-z0-9])?\\.)+[A-Za-z0-9]"
             + "(?:[A-Za-z0-9-]*[A-Za-z0-9])?",
-            message = "{invalid.email}")
+            message = "Invalid Email")
     private String email;
 
     private String password;

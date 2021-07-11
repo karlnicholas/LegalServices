@@ -1,6 +1,7 @@
 package com.github.karlnicholas.legalservices.slipopinion.processor;
 
 import java.io.IOException;
+import java.sql.Connection;
 import java.sql.SQLException;
 
 import javax.sql.DataSource;
@@ -25,6 +26,7 @@ public class CaseListScraperComponent {
 	private final SlipOpininScraperDao slipOpininScraperDao;
 	private final Producer<Integer, JsonNode> producer;
 	private final KakfaProperties kafkaProperties;
+	private final DataSource dataSource;
 	@Value("${slipopinionprocessor:test}")
     private String slipopinionprocessor;
 
@@ -35,28 +37,31 @@ public class CaseListScraperComponent {
 	) {
 	    this.objectMapper = objectMapper;
 	    this.producer = producer;
+	    this.dataSource = dataSource;
 	    this.kafkaProperties = kafkaProperties;
 	    if ( slipopinionprocessor != null && slipopinionprocessor.equalsIgnoreCase("production")) {
 			caseScraper = new CACaseScraper(false);
 	    } else {
 			caseScraper = new TestCAParseSlipDetails(false);
 	    }
-		slipOpininScraperDao = new SlipOpininScraperDao(dataSource);
+		slipOpininScraperDao = new SlipOpininScraperDao();
 	}
 
 
 	@Scheduled(fixedRate = 3600000, initialDelay = 60000)
 	public String reportCurrentTime() throws SQLException, IOException {
  		// use the transaction manager in the database for a cheap job manager
-		String slipOpinionUpdateNeeded = slipOpininScraperDao.callSlipOpinionUpdateNeeded();
-		if ( slipOpinionUpdateNeeded != null && slipOpinionUpdateNeeded.equalsIgnoreCase("NOUPDATE")) {
-			return "NOUPDATE";
+		try ( Connection con = dataSource.getConnection()) {
+			String slipOpinionUpdateNeeded = slipOpininScraperDao.callSlipOpinionUpdateNeeded(con);
+			if ( slipOpinionUpdateNeeded != null && slipOpinionUpdateNeeded.equalsIgnoreCase("NOUPDATE")) {
+				return "NOUPDATE";
+			}
 		}
 		// OK to proceed with pushing caseListEntries to kafka
 		CaseListEntries caseListEntries = caseScraper.getCaseList();
-	    JsonNode  jsonNode = objectMapper.valueToTree(caseListEntries);
-	    ProducerRecord<Integer, JsonNode> rec = new ProducerRecord<>(kafkaProperties.getCaseListEntriesTopic(), jsonNode);
-	    producer.send(rec);
+		JsonNode  jsonNode = objectMapper.valueToTree(caseListEntries);
+		ProducerRecord<Integer, JsonNode> rec = new ProducerRecord<>(kafkaProperties.getCaseListEntriesTopic(), jsonNode);
+		producer.send(rec);
 		return "POLLED";
 	}
 }

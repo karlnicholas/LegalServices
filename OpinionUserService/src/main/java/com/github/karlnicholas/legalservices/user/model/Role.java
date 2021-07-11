@@ -1,37 +1,36 @@
 package com.github.karlnicholas.legalservices.user.model;
 
-import org.springframework.security.core.GrantedAuthority;
-
 /**
  * Role entity
  * @author karln
  *
  */
-public class Role implements GrantedAuthority {
-	private static final long serialVersionUID = 1L;
-	private Integer id;
-	private ERole eRole;
+public class Role {
+	private Long id;
+	private ERole role;
+
+	public Role(Long id, String role ) {
+		this.id = id;
+		this.role = ERole.valueOf(role);
+	}
 	public Role(ERole eRole) {
-		this.eRole = eRole;
+		this.role = eRole;
 	}
 
-	public Integer getId() {
+	public Long getId() {
 		return id;
 	}
-	public void setId(Integer id) {
+
+	public void setId(Long id) {
 		this.id = id;
 	}
+
 	public ERole geteRole() {
-		return eRole;
-	}
-	public void seteRole(ERole eRole) {
-		this.eRole = eRole;
+		return role;
 	}
 
-	@Override
-	public String getAuthority() {
-		// TODO Auto-generated method stub
-		return eRole.name();
+	public void seteRole(ERole eRole) {
+		this.role = eRole;
 	}
 
 }

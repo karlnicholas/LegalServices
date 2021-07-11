@@ -1,27 +1,27 @@
 package com.github.karlnicholas.legalservices.user.security.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import com.github.karlnicholas.legalservices.user.dao.UserDao;
 import org.springframework.security.core.userdetails.ReactiveUserDetailsService;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-
-import com.github.karlnicholas.legalservices.user.model.ApplicationUser;
-import com.github.karlnicholas.legalservices.user.security.dao.UserDao;
-
 import reactor.core.publisher.Mono;
 
-//@Service
+@Service
 public class UserDetailsServiceImpl implements ReactiveUserDetailsService {
-	@Autowired
-	UserDao userDao;
+	private final UserDao userDao;
+
+	public UserDetailsServiceImpl(UserDao userDao) {
+		this.userDao = userDao;
+	}
+
 
 	@Override
-	public Mono<UserDetails> findByUsername(String username) throws UsernameNotFoundException {
-		ApplicationUser user = userDao.findByEmail(username)
-				.orElseThrow(() -> new UsernameNotFoundException("ApplicationUser Not Found with username: " + username));
-
-		return Mono.just(ApplicationUser.withUserDetails(user).build());
+	public Mono<UserDetails> findByUsername(String username) {
+		return Mono.justOrEmpty(
+				userDao.findByEmail(username))
+					.map(applicationUser -> User.withUsername(applicationUser.getEmail()).build()
+				);
 	}
 
 }

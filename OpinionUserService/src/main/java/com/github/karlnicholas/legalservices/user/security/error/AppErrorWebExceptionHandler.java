@@ -1,10 +1,7 @@
 package com.github.karlnicholas.legalservices.user.security.error;
 
-import static org.springframework.web.reactive.function.server.RequestPredicates.POST;
-
-import javax.security.auth.login.AccountLockedException;
-import javax.security.auth.login.FailedLoginException;
-
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.MalformedJwtException;
 import org.springframework.boot.autoconfigure.web.WebProperties;
 import org.springframework.boot.autoconfigure.web.reactive.error.AbstractErrorWebExceptionHandler;
 import org.springframework.boot.web.reactive.error.ErrorAttributes;
@@ -14,15 +11,18 @@ import org.springframework.http.MediaType;
 import org.springframework.http.codec.ServerCodecConfigurer;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.BodyInserters;
-import org.springframework.web.reactive.function.server.*;
+import org.springframework.web.reactive.function.server.RouterFunction;
+import org.springframework.web.reactive.function.server.RouterFunctions;
+import org.springframework.web.reactive.function.server.ServerResponse;
 
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.MalformedJwtException;
+import javax.security.auth.login.AccountLockedException;
+import javax.security.auth.login.FailedLoginException;
+
+import static org.springframework.web.reactive.function.server.RequestPredicates.POST;
 
 /**
  * AppErrorWebExceptionHandler class
  *
- * @author Erik Amaru Ortiz
  * @author Karl Nicholas
  */
 @Component

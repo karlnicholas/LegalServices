@@ -1,11 +1,11 @@
 package com.github.karlnicholas.legalservices.user.mailer;
 
-import java.io.InputStream;
-import java.io.StringWriter;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import com.github.karlnicholas.legalservices.opinionview.model.OpinionView;
+import com.github.karlnicholas.legalservices.user.model.ApplicationUser;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.stereotype.Service;
 
 import javax.mail.Message;
 import javax.mail.Multipart;
@@ -21,14 +21,12 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.stereotype.Service;
-
-import com.github.karlnicholas.legalservices.opinionview.model.OpinionView;
-import com.github.karlnicholas.legalservices.user.model.ApplicationUser;
+import java.io.InputStream;
+import java.io.StringWriter;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 @Service
 public class SendGridMailer {

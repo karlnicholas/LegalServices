@@ -1,21 +1,11 @@
 package com.github.karlnicholas.legalservices.user.security.service;
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.Iterator;
-import java.util.List;
-
-import javax.xml.bind.DatatypeConverter;
-
-import org.springframework.stereotype.Service;
-
-import com.github.karlnicholas.legalservices.user.model.RoleSave;
+import com.github.karlnicholas.legalservices.user.dao.RoleDao;
+import com.github.karlnicholas.legalservices.user.dao.UserDao;
 import com.github.karlnicholas.legalservices.user.model.ApplicationUser;
-import com.github.karlnicholas.legalservices.user.security.dao.RoleDao;
-import com.github.karlnicholas.legalservices.user.security.dao.UserDao;
 
 import javax.annotation.security.PermitAll;
-import javax.annotation.security.RolesAllowed;
+import java.util.List;
 
 //@Stateless
 //@Service
@@ -166,9 +156,10 @@ public class OldUserService {
      */
     // @RolesAllowed({"ADMIN"})
     @PermitAll // because court Report service uses it. 
-    public List<ApplicationUser> findAll() {
-        return userDao.findAll();
-    }
+    public List<ApplicationUser> findAll() { return null; }
+//    public List<ApplicationUser> findAll() {
+//        return userDao.findAll();
+//    }
     
 //    /**
 //     * Promote User by Database Id by adding "ADMIN" role to user.
