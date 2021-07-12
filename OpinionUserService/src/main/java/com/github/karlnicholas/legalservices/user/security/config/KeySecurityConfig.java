@@ -1,5 +1,6 @@
 package com.github.karlnicholas.legalservices.user.security.config;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -30,39 +31,37 @@ public class KeySecurityConfig {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
+
+    private byte[] sharedSecret = null;
+
+    @Value("${jwt.shared_secret_hex}")
+    private String sharedSecretHex;
+
     @Bean
-    public PublicKey getPublicKey() throws NoSuchAlgorithmException, InvalidKeySpecException {
-        String rsaPublicKey = loadResourceFile("security/rsa_public.pem");
-        rsaPublicKey = rsaPublicKey.replace("-----BEGIN PUBLIC KEY-----", "");
-        rsaPublicKey = rsaPublicKey.replace("-----END PUBLIC KEY-----", "");
-        X509EncodedKeySpec keySpec = new X509EncodedKeySpec(Base64.getDecoder().decode(rsaPublicKey));
-        KeyFactory kf = KeyFactory.getInstance("RSA");
-        PublicKey publicKey = kf.generatePublic(keySpec);
-        return publicKey;
-    }
-    @Bean
-    public PrivateKey getPrivateKey() throws NoSuchAlgorithmException, InvalidKeySpecException {
-        String rsaPrivateKey = loadResourceFile("security/rsa_private.pem");
-        rsaPrivateKey = rsaPrivateKey.replace("-----BEGIN PRIVATE KEY-----", "");
-        rsaPrivateKey = rsaPrivateKey.replace("-----END PRIVATE KEY-----", "");
-        PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(Base64.getDecoder().decode(rsaPrivateKey));
-        KeyFactory kf = KeyFactory.getInstance("RSA");
-        PrivateKey privKey = kf.generatePrivate(keySpec);
-        return privKey;
-    }
-    private String loadResourceFile(String fileName) {
-        ClassLoader classLoader = getClass().getClassLoader();
-        StringBuilder sb = new StringBuilder();
-        try (InputStream inputStream = classLoader.getResourceAsStream(fileName);
-            InputStreamReader streamReader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
-            BufferedReader reader = new BufferedReader(streamReader)) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                sb.append(line);
+    public byte[] getSecret() {
+        if ( sharedSecret == null ) {
+            sharedSecret = new byte[32];
+            int l = sharedSecretHex.length()/2;
+            for (int i = 0; i < l; i++) {
+                int j = Integer.parseInt(sharedSecretHex.substring(i*2, i*2+2), 16);
+                sharedSecret[i] = (byte) j;
             }
-        } catch ( IOException e) {
-            throw new RuntimeException(e);
         }
-        return sb.toString();
+        return sharedSecret;
     }
+//    private String loadResourceFile(String fileName) {
+//        ClassLoader classLoader = getClass().getClassLoader();
+//        StringBuilder sb = new StringBuilder();
+//        try (InputStream inputStream = classLoader.getResourceAsStream(fileName);
+//            InputStreamReader streamReader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
+//            BufferedReader reader = new BufferedReader(streamReader)) {
+//            String line;
+//            while ((line = reader.readLine()) != null) {
+//                sb.append(line);
+//            }
+//        } catch ( IOException e) {
+//            throw new RuntimeException(e);
+//        }
+//        return sb.toString();
+//    }
 }

@@ -2,8 +2,7 @@ package com.github.karlnicholas.legalservices.user.security.config;
 
 import com.github.karlnicholas.legalservices.user.model.ERole;
 import com.github.karlnicholas.legalservices.user.security.service.ApplicationUserService;
-import io.jsonwebtoken.JwtParser;
-import io.jsonwebtoken.Jwts;
+import com.nimbusds.jose.JOSEException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
@@ -20,7 +19,6 @@ import org.springframework.security.web.server.util.matcher.ServerWebExchangeMat
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
-import java.security.PublicKey;
 import java.util.Optional;
 import java.util.function.Function;
 
@@ -34,16 +32,15 @@ import java.util.function.Function;
 public class WebSecurityConfig {
     private final Logger logger = LoggerFactory.getLogger(WebSecurityConfig.class);
     private final ApplicationUserService applicationUserService;
+    private final byte[] sharedSecret;
 
-    private final JwtParser jwtParser;
-
-    public WebSecurityConfig(PublicKey publicKey, ApplicationUserService applicationUserService) {
-        this.jwtParser = Jwts.parserBuilder().setSigningKey(publicKey).build();
+    public WebSecurityConfig(byte[] sharedSecret, ApplicationUserService applicationUserService) {
+        this.sharedSecret = sharedSecret;
         this.applicationUserService = applicationUserService;
     }
 
     @Bean
-    public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http, ReactiveAuthenticationManager authManager) {
+    public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http, ReactiveAuthenticationManager authManager) throws JOSEException {
 //        http.csrf()
 //                .disable().authorizeExchange()
 //                .anyExchange().permitAll();
@@ -80,9 +77,9 @@ public class WebSecurityConfig {
 
     }
 
-    AuthenticationWebFilter createAuthenticationFilter(ReactiveAuthenticationManager authManager, Function<ServerWebExchange, Optional<String>> extractTokenFunction) {
+    AuthenticationWebFilter createAuthenticationFilter(ReactiveAuthenticationManager authManager, Function<ServerWebExchange, Optional<String>> extractTokenFunction) throws JOSEException {
         AuthenticationWebFilter authenticationFilter = new AuthenticationWebFilter(authManager);
-        authenticationFilter.setServerAuthenticationConverter(new AppServerAuthenticationConverter(jwtParser, extractTokenFunction));
+        authenticationFilter.setServerAuthenticationConverter(new AppServerAuthenticationConverter(sharedSecret, extractTokenFunction));
         authenticationFilter.setRequiresAuthenticationMatcher(ServerWebExchangeMatchers.pathMatchers("/**"));
         return authenticationFilter;
     }

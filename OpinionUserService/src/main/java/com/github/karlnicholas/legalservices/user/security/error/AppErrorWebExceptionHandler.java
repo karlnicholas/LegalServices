@@ -1,7 +1,6 @@
 package com.github.karlnicholas.legalservices.user.security.error;
 
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.MalformedJwtException;
+import com.nimbusds.jose.JOSEException;
 import org.springframework.boot.autoconfigure.web.WebProperties;
 import org.springframework.boot.autoconfigure.web.reactive.error.AbstractErrorWebExceptionHandler;
 import org.springframework.boot.web.reactive.error.ErrorAttributes;
@@ -37,9 +36,8 @@ public class AppErrorWebExceptionHandler extends AbstractErrorWebExceptionHandle
     protected RouterFunction<ServerResponse> getRoutingFunction(final ErrorAttributes errorAttributes) {
         return RouterFunctions.route(POST("/login"), request -> {
             var error = getError(request);
-            if (error instanceof ExpiredJwtException 
+            if (error instanceof JOSEException
             		|| error instanceof SecurityException 
-            		|| error instanceof MalformedJwtException
             		|| error instanceof AccountLockedException
             		|| error instanceof FailedLoginException
     		) {
