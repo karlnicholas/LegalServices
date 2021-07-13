@@ -17,8 +17,8 @@ public class ApplicationRouter {
             AuthHandler authHandler,
             ApplicationUserHandler userHandler
     ) {
-        return RouterFunctions.route(POST("/api/auth/login").and(accept(MediaType.APPLICATION_JSON)), authHandler::handleLogin)
-    		.andRoute(POST("/api/auth/user").and(accept(MediaType.APPLICATION_JSON)),  authHandler::handleNewUser)
+        return RouterFunctions.route(POST("/api/auth/signin").and(accept(MediaType.APPLICATION_JSON)), authHandler::handleLogin)
+    		.andRoute(POST("/api/auth/signup").and(accept(MediaType.APPLICATION_JSON)),  authHandler::handleNewUser)
 			.andRoute(GET("/api/user").and(accept(MediaType.APPLICATION_JSON)), userHandler::handleUser)
 		;
     }
