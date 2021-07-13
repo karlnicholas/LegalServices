@@ -18,6 +18,7 @@ import reactor.core.publisher.Mono;
 
 import javax.security.auth.login.FailedLoginException;
 import java.util.Date;
+import java.util.stream.Collectors;
 
 /**
  * SecurityService class
@@ -48,7 +49,7 @@ public class AuthService {
             JWSSigner signer = new MACSigner(sharedSecret);
             // Prepare JWT with claims set
             JWTClaimsSet claimsSet = new JWTClaimsSet.Builder()
-                    .claim("role", applicationUser.getRoles())
+                    .claim("roles", applicationUser.getRoles().stream().map(role->role.geteRole().name()).collect(Collectors.toList()))
                     .subject(applicationUser.getEmail())
                     .issueTime(createdDate)
                     .expirationTime(expirationDate)

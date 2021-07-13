@@ -27,6 +27,7 @@ public class ApplicationUserHandler {
                     return Mono.justOrEmpty(applicationUserService.getUser(authentication.getName()).map(applicationUser->{
                         ApplicationUserDto applicationUserDto = new ApplicationUserDto();
                         applicationUserDto.setEmail(applicationUser.getEmail());
+                        applicationUserDto.setLocale(applicationUser.getLocale());
                         return applicationUserDto;
                     }));
                 })
