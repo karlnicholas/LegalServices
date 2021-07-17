@@ -1,10 +1,11 @@
 package com.github.karlnicholas.legalservices.user.api;
 
 import com.github.karlnicholas.legalservices.user.dto.ApplicationUserDto;
-import com.github.karlnicholas.legalservices.user.dto.UserLoginDto;
 import com.github.karlnicholas.legalservices.user.model.ApplicationUser;
 import com.github.karlnicholas.legalservices.user.model.ERole;
 import com.github.karlnicholas.legalservices.user.model.Role;
+import com.github.karlnicholas.legalservices.user.security.payload.request.SigninRequest;
+import com.github.karlnicholas.legalservices.user.security.payload.request.SignupRequest;
 import com.github.karlnicholas.legalservices.user.security.service.ApplicationUserService;
 import com.github.karlnicholas.legalservices.user.security.service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,14 +18,17 @@ import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Mono;
 
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
+import java.util.Locale;
 
 @Component
 public class AuthHandler {
     private final AuthService authService;
     private final ApplicationUserService applicationUserService;
     private final Validator validator;
-
+    private final List<Locale> locales;
     public AuthHandler(
             @Autowired AuthService authService,
             @Autowired ApplicationUserService applicationUserService,
@@ -33,27 +37,31 @@ public class AuthHandler {
         this.authService = authService;
         this.applicationUserService = applicationUserService;
         this.validator = validator;
+        this.locales = Arrays.asList(new Locale("en"));
     }
 
     public Mono<ServerResponse> handleLogin(ServerRequest serverRequest) {
-        return authService.authenticate(serverRequest.bodyToMono(UserLoginDto.class))
-                .flatMap(authResultDto->ServerResponse.ok().bodyValue(authResultDto))
+        return authService.authenticate(serverRequest.bodyToMono(SigninRequest.class))
+                .flatMap(signinReqest->ServerResponse.ok().bodyValue(signinReqest))
                 .onErrorResume(throwable -> ServerResponse.badRequest().bodyValue(throwable.getMessage()));
     }
 
     public Mono<ServerResponse> handleNewUser(ServerRequest serverRequest) {
         return applicationUserService.createUser(
-                serverRequest.bodyToMono(ApplicationUserDto.class)
-                        .map(applicationUserDto -> {
-                            Errors errors = new BeanPropertyBindingResult(applicationUserDto, applicationUserDto.getClass().getName());
-                            ValidationUtils.invokeValidator(validator, applicationUserDto, errors);
+                serverRequest.bodyToMono(SignupRequest.class)
+                        .map(signupRequest -> {
+                            Errors errors = new BeanPropertyBindingResult(signupRequest, signupRequest.getClass().getName());
+                            ValidationUtils.invokeValidator(validator, signupRequest, errors);
                             if (errors.hasErrors() ) {
                                 throw new IllegalArgumentException(errors.getAllErrors().toString());
                             }
+                            Locale locale = Locale.lookup(serverRequest.headers().acceptLanguage(), locales);
+                            if ( locale == null )
+                                locale = Locale.getDefault();
                             ApplicationUser applicationUser = new ApplicationUser(
-                                applicationUserDto.getEmail(),
-                                applicationUserDto.getPassword(),
-                                applicationUserDto.getLocale(),
+                                    signupRequest.getUsername(),
+                                    signupRequest.getPassword(),
+                                    locale,
                                 Collections.singleton(new Role(ERole.USER))
                             );
                             return applicationUser;

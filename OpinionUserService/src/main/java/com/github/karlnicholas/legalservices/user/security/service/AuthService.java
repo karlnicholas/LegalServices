@@ -1,9 +1,10 @@
 package com.github.karlnicholas.legalservices.user.security.service;
 
 import com.github.karlnicholas.legalservices.user.dao.UserDao;
-import com.github.karlnicholas.legalservices.user.dto.AuthResultDto;
-import com.github.karlnicholas.legalservices.user.dto.UserLoginDto;
 import com.github.karlnicholas.legalservices.user.model.ApplicationUser;
+import com.github.karlnicholas.legalservices.user.model.Role;
+import com.github.karlnicholas.legalservices.user.security.payload.request.SigninRequest;
+import com.github.karlnicholas.legalservices.user.security.payload.response.JwtResponse;
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.JWSHeader;
@@ -40,7 +41,7 @@ public class AuthService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    private AuthResultDto generateAccessToken(ApplicationUser applicationUser) {
+    private JwtResponse generateAccessToken(ApplicationUser applicationUser) {
         var expirationTimeInMilliseconds = Long.parseLong(defaultExpirationTimeInSecondsConf) * 1000;
         var expirationDate = new Date(new Date().getTime() + expirationTimeInMilliseconds);
         var createdDate = new Date();
@@ -61,23 +62,21 @@ public class AuthService {
             // eyJhbGciOiJIUzI1NiJ9.SGVsbG8sIHdvcmxkIQ.onO9Ihudz3WkiauDO2Uhyuz0Y18UASXlSc1eS0NkWyA
             String token = signedJWT.serialize();
 
-            AuthResultDto authResultDto = new AuthResultDto();
-            authResultDto.setToken(token);
-            authResultDto.setEmail(applicationUser.getEmail());
-            authResultDto.setIssuedAt(createdDate);
-            authResultDto.setExpiresAt(expirationDate);
-            return authResultDto;
+            JwtResponse jwtResponse = new JwtResponse(token, applicationUser.getEmail(),
+                    applicationUser.getRoles().stream().map(role->role.geteRole().name()).collect(Collectors.toList())
+            );
+            return jwtResponse;
         } catch (JOSEException e) {
             e.printStackTrace();
             throw new RuntimeException(e.getCause());
         }
     }
 
-    public Mono<AuthResultDto> authenticate(Mono<UserLoginDto> applicationUserLoginMono) {
-        return applicationUserLoginMono.flatMap(applicationUserLogin -> {
-            return Mono.justOrEmpty(userDao.findByEmail(applicationUserLogin.getEmail()))
+    public Mono<JwtResponse> authenticate(Mono<SigninRequest> signinRequestMono) {
+        return signinRequestMono.flatMap(signinRequest -> {
+            return Mono.justOrEmpty(userDao.findByEmail(signinRequest.getUsername()))
                     .flatMap(applicationUser -> {
-                        if (!passwordEncoder.matches(applicationUserLogin.getPassword(), applicationUser.getPassword()))
+                        if (!passwordEncoder.matches(signinRequest.getPassword(), applicationUser.getPassword()))
                             return Mono.error(new FailedLoginException("Failed Login!"));
                         return Mono.just(generateAccessToken(applicationUser));
                     });

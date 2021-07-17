@@ -32,7 +32,7 @@ public class WebConfig implements WebFluxConfigurer {
     public void addCorsMappings(CorsRegistry corsRegistry) {
         corsRegistry.addMapping("/**")
                 .allowedOrigins("http://localhost:8081")
-                .allowedMethods("GET")
+                .allowedMethods("GET", "POST")
                 .maxAge(3600);
     }
 }

@@ -2,7 +2,7 @@ package com.github.karlnicholas.legalservices.user.security.payload.request;
 
 import javax.validation.constraints.NotBlank;
 
-public class LoginRequest {
+public class SigninRequest {
 	@NotBlank
 	private String username;
 

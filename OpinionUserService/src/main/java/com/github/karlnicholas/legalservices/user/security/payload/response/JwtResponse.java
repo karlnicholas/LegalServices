@@ -3,39 +3,27 @@ package com.github.karlnicholas.legalservices.user.security.payload.response;
 import java.util.List;
 
 public class JwtResponse {
-	private String token;
+	private String accessToken;
 	private String type = "Bearer";
-	private String email;
+	private String username;
 	private List<String> roles;
 
-	public JwtResponse(String accessToken, String email, List<String> roles) {
-		this.token = accessToken;
-		this.email = email;
+	public JwtResponse(String accessToken, String username, List<String> roles) {
+		this.accessToken = accessToken;
+		this.username = username;
 		this.roles = roles;
 	}
 
 	public String getAccessToken() {
-		return token;
-	}
-
-	public void setAccessToken(String accessToken) {
-		this.token = accessToken;
+		return accessToken;
 	}
 
 	public String getTokenType() {
 		return type;
 	}
 
-	public void setTokenType(String tokenType) {
-		this.type = tokenType;
-	}
-
-	public String getEmail() {
-		return email;
-	}
-
-	public void setEmail(String email) {
-		this.email = email;
+	public String getUsername() {
+		return username;
 	}
 
 	public List<String> getRoles() {
