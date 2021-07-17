@@ -24,7 +24,7 @@ public class WebConfig implements WebFluxConfigurer {
     ) {
         return RouterFunctions.route(POST("/api/auth/signin").and(accept(MediaType.APPLICATION_JSON)), authHandler::handleLogin)
     		.andRoute(POST("/api/auth/signup").and(accept(MediaType.APPLICATION_JSON)),  authHandler::handleNewUser)
-			.andRoute(GET("/api/user").and(accept(MediaType.APPLICATION_JSON)), userHandler::handleUser)
+			.andRoute(GET("/api/test/user").and(accept(MediaType.APPLICATION_JSON)), userHandler::handleUser)
             .andRoute(GET("/api/test/all").and(accept(MediaType.APPLICATION_JSON)), testHandler::handleAll)
 		;
     }

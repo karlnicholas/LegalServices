@@ -77,12 +77,8 @@ public class AppServerAuthenticationConverter implements ServerAuthenticationCon
 	}
 
 	public static Optional<String> getCookieToken(ServerWebExchange serverWebExchange) {
-		HttpCookie cookie = serverWebExchange
-				.getRequest()
-				.getCookies()
-				.getFirst("X-Session-Id");
-		if ( cookie == null )
-			return Optional.empty();
-		return Optional.of(cookie.getValue());
+		return Optional.ofNullable(serverWebExchange.getRequest()
+				.getHeaders()
+				.getFirst("x-access-token"));
 	}
 }
