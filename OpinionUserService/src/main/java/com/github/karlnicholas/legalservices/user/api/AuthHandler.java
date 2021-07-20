@@ -18,10 +18,7 @@ import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Mono;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 
 @Component
 public class AuthHandler {
@@ -64,6 +61,7 @@ public class AuthHandler {
                                     locale,
                                 Collections.singleton(new Role(ERole.USER))
                             );
+                            applicationUser.setTitles(new String[0]);
                             return applicationUser;
                         }))
                 .map(applicationUser -> {
