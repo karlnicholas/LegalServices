@@ -1,5 +1,4 @@
 import React from "react";
-import './OpinionView.css'
 import { BsStarFill } from "react-icons/bs";
 
 export default function OpinionView(props) {

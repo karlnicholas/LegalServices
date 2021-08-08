@@ -24,7 +24,7 @@ export default function StatuteNode(props) {
   }
   if ( !props.entry.pathPart && !props.entry.sectionText ) {
     return (
-        <div className="row" onClick={() => props.navFacet(props.entry.fullFacet)} style={{ cursor: 'pointer' }}>
+        <div className="row rowhover" onClick={() => props.navFacet(props.entry.fullFacet)} style={{ cursor: 'pointer' }}>
           <div className='col-sm-1' style={{ cursor: 'pointer' }}>
           {getCollapse(props.entry.entries.length, props.hiddenFrag)}
           </div>

@@ -95,6 +95,7 @@ public class UserDao {
                     (rs, rowNum) -> {
                         Role role = new Role(ERole.valueOf(rs.getString(2)));
                         role.setId(rs.getLong(1));
+                        role.seteRole(ERole.valueOf(rs.getString(2)));
                         return role;
                     }));
         }

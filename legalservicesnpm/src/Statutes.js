@@ -6,7 +6,6 @@ import StatutesRecurse from "./StatutesRecurse";
 import AppBreadcrumb from "./AppBreadcrumb";
 import AppNavDropdown from "./AppNavDropdown";
 import LogoNav from "./LogoNav";
-import "./Statutes.css";
 
 function useQuery() {
   return new URLSearchParams(useLocation().search);
@@ -165,7 +164,7 @@ export default function Statutes(props) {
      </nav>
      <nav aria-label="breadcrumb">
        <ol className="breadcrumb" id="breadcrumbs">
-         <li className='breadcrumb-item' onClick={() => navFacet('')} style={{ cursor: 'pointer' }}>Home</li>
+         <li className='breadcrumb-item libreadcrumitemhover' onClick={() => navFacet('')} style={{ cursor: 'pointer' }}>Home</li>
          {getBreadcrumb()}
        </ol>
      </nav>
