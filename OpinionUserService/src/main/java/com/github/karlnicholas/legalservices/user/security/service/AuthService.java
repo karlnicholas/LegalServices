@@ -43,7 +43,7 @@ public class AuthService {
 
 		try {
 
-			List<String> roles = user.getRoles() == null ? Collections.EMPTY_LIST : user.getRoles().stream().map(Role::geteRole).map(ERole::name).collect(Collectors.toList());
+			List<String> roles = user.getRoles() == null ? Collections.EMPTY_LIST : user.getRoles().stream().map(Role::getRole).collect(Collectors.toList());
 			// Prepare JWT with claims set
 			JWTClaimsSet claimsSet = new JWTClaimsSet.Builder()
 					.claim("role", roles)

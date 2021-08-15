@@ -39,23 +39,20 @@ public class ApplicationUserHandler {
                 .flatMap(securityContext->{
                     Authentication authentication = securityContext.getAuthentication();
                     return Mono.justOrEmpty(applicationUserService.getUser(authentication.getName()).map(applicationUser->{
-                        ApplicationUserDto applicationUserDto = new ApplicationUserDto();
-                        applicationUserDto.setEmail(applicationUser.getEmail());
-                        applicationUserDto.setFirstName(applicationUser.getFirstName());
-                        applicationUserDto.setLastName(applicationUser.getLastName());
-                        applicationUserDto.setCreateDate(applicationUser.getCreateDate());
-                        applicationUserDto.setAllTitles(statutesRoots.getStatuteRoots().stream().map(StatutesRoot::getShortTitle).collect(Collectors.toList()));
-                        applicationUserDto.setUserTitles(Arrays.stream(applicationUser.getTitles()).collect(Collectors.toList()));
-                        applicationUserDto.setOptout(applicationUser.isOptout());
-                        applicationUserDto.setVerified(applicationUser.isVerified());
-                        applicationUserDto.setWelcomed(applicationUser.isWelcomed());
-                        applicationUserDto.setRoles(new ArrayList<>(applicationUser.getRoles()));
-                        applicationUserDto.setLocale(applicationUser.getLocale());
-                        return applicationUserDto;
+                        return ApplicationUserDto.fromApplicationUser(applicationUser, statutesRoots);
                     }));
                 })
                 .flatMap(applicationUserDto -> ServerResponse.ok().bodyValue(applicationUserDto))
                 .onErrorResume(throwable -> ServerResponse.badRequest().bodyValue(throwable.getMessage()));
     }
 
+    @PreAuthorize("hasRole('USER')")
+    public Mono<ServerResponse> updateUser(ServerRequest serverRequest) {
+        return serverRequest.bodyToMono(ApplicationUserDto.class)
+                .map(applicationUserDto->ApplicationUserDto.toApplicationUser(applicationUserDto))
+                .flatMap(applicationUser -> applicationUserService.updateUser(applicationUser))
+                .map(applicationUser->ApplicationUserDto.fromApplicationUser(applicationUser, statutesRoots))
+                .flatMap(applicationUserDto -> ServerResponse.ok().bodyValue(applicationUserDto))
+                .onErrorResume(throwable -> ServerResponse.badRequest().bodyValue(throwable.getMessage()));
+    }
 }

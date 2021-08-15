@@ -1,12 +1,14 @@
 package com.github.karlnicholas.legalservices.user.dto;
 
+import com.github.karlnicholas.legalservices.statute.StatutesRoot;
 import com.github.karlnicholas.legalservices.statute.StatutesTitles;
+import com.github.karlnicholas.legalservices.user.model.ApplicationUser;
 import com.github.karlnicholas.legalservices.user.model.Role;
+import com.gitub.karlnicholas.legalservices.statute.service.dto.StatutesRoots;
 
 import java.time.LocalDate;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * UserDto class
@@ -15,6 +17,7 @@ import java.util.Map;
  */
 
 public class ApplicationUserDto {
+    private Long id;
     private String email;
     private String firstName;
     private String lastName;
@@ -26,6 +29,41 @@ public class ApplicationUserDto {
     private List<String> allTitles;
     private List<String> userTitles;
     private List<Role> roles;
+
+    public static ApplicationUserDto fromApplicationUser(ApplicationUser applicationUser, StatutesRoots statutesRoots) {
+        ApplicationUserDto applicationUserDto = new ApplicationUserDto();
+        applicationUserDto.setId(applicationUser.getId());
+        applicationUserDto.setEmail(applicationUser.getEmail());
+        applicationUserDto.setFirstName(applicationUser.getFirstName());
+        applicationUserDto.setLastName(applicationUser.getLastName());
+        applicationUserDto.setCreateDate(applicationUser.getCreateDate());
+        applicationUserDto.setAllTitles(statutesRoots.getStatuteRoots().stream().map(StatutesRoot::getShortTitle).collect(Collectors.toList()));
+        applicationUserDto.setUserTitles(Arrays.stream(applicationUser.getTitles()).collect(Collectors.toList()));
+        applicationUserDto.setOptout(applicationUser.isOptout());
+        applicationUserDto.setVerified(applicationUser.isVerified());
+        applicationUserDto.setWelcomed(applicationUser.isWelcomed());
+        applicationUserDto.setRoles(new ArrayList<>(applicationUser.getRoles()));
+        applicationUserDto.setLocale(applicationUser.getLocale());
+        return applicationUserDto;
+    }
+
+    public static ApplicationUser toApplicationUser(ApplicationUserDto applicationUserDto) {
+        Set<Role> roles = new HashSet<>(applicationUserDto.getRoles());
+        ApplicationUser applicationUser = new ApplicationUser(applicationUserDto.getEmail(), null, applicationUserDto.getLocale(), roles);
+        applicationUser.setId(applicationUserDto.getId());
+        applicationUser.setFirstName(applicationUserDto.getFirstName());
+        applicationUser.setLastName(applicationUserDto.getLastName());
+        applicationUser.setCreateDate(applicationUserDto.getCreateDate());
+        applicationUser.setTitles(applicationUserDto.getUserTitles().toArray(new String[0]));
+        applicationUser.setOptout(applicationUserDto.isOptout());
+        applicationUser.setVerified(applicationUserDto.isVerified());
+        applicationUser.setWelcomed(applicationUserDto.isWelcomed());
+        return applicationUser;
+    }
+
+    public Long getId() { return id; }
+
+    public void setId(Long id) { this.id = id; }
 
     public String getEmail() {
         return email;

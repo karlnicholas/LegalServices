@@ -1,5 +1,5 @@
 
-import React, {useState, useEffect} from 'react';
+import React, {useState} from 'react';
 import { setUserSession } from './Utils/Common';
 import httplogin from "./httplogin";
 import AppNavDropdown from "./AppNavDropdown";
@@ -12,7 +12,8 @@ export default function Login(props) {
     const [error, setError] = useState(null);
 
     // handle button click of login form
-    const handleLogin = () => {
+    const handleLogin = (e) => {
+        e.preventDefault();
         setError(null);
         setLoading(true);
         httplogin.post('/signin', { username: username.value, password: password.value }).then(response => {
@@ -25,6 +26,16 @@ export default function Login(props) {
         });
     }
 
+    function showError() {
+        if ( error ) {
+            return (
+                <div className="form-group row">
+                    {error}
+                </div>
+            )
+        }
+    }
+
   return (
       <div className="container">
       <nav className="navbar navbar-expand-lg navbar-light bg-light">
@@ -33,33 +44,30 @@ export default function Login(props) {
         {AppNavDropdown()}
         </div>
       </nav>
-      <div className="row justify-content-center">
-          <div className="col-md-8">
-              <div className="card">
-                  <div className="card-header">Login</div>
-                  <div className="card-body">
+          <div className="row justify-content-center">
+              <div className="col-md-8">
+                  <form onSubmit={handleLogin}>
+                      {showError()}
                       <div className="form-group row">
-                          <label for="username" className="col-md-4 col-form-label text-md-right">E-Mail Address</label>
-                          <div className="col-md-6">
-                              <input type="text" id="username" className="form-control" name="username" required autoFocus {...username} />
+                          <label htmlFor="inputEmail" className="col-sm-2 col-form-label">Email</label>
+                          <div className="col-sm-10">
+                              <input type="email" id="username" className="form-control" name="username" required autoFocus {...username} />
                           </div>
                       </div>
                       <div className="form-group row">
-                          <label for="password" className="col-md-4 col-form-label text-md-right">Password</label>
-                          <div className="col-md-6">
+                          <label htmlFor="inputPassword" className="col-sm-2 col-form-label">Password</label>
+                          <div className="col-sm-10">
                               <input type="password" id="password" className="form-control" name="password" required {...password} />
                           </div>
                       </div>
-                      <div className="col-md-6 offset-md-4">
-                          <input type="button" className="btn btn-primary" value={loading ? 'Loading...' : 'Login'} onClick={handleLogin} disabled={loading} />
-                          <a href="#" className="btn btn-link">
-                              Forgot Your Password?
-                          </a>
+                      <div className="form-group row">
+                          <div className="col-sm-10">
+                              <button type="submit" className="btn btn-primary">{loading ? 'Loading ...':'Signin'}</button>
+                          </div>
                       </div>
-                  </div>
+                  </form>
               </div>
           </div>
-      </div>
     </div>
   );
 };

@@ -93,10 +93,7 @@ public class UserDao {
                         ps.setLong(1, optionalApplicationUser.get().getId());
                     },
                     (rs, rowNum) -> {
-                        Role role = new Role(ERole.valueOf(rs.getString(2)));
-                        role.setId(rs.getLong(1));
-                        role.seteRole(ERole.valueOf(rs.getString(2)));
-                        return role;
+                        return new Role(rs.getLong(1), rs.getString(2));
                     }));
         }
         return optionalApplicationUser;
@@ -165,7 +162,7 @@ public class UserDao {
             ps.setInt(17, user.getWelcomeErrors());
             ps.setBoolean(18, user.isWelcomed());
             return ps;
-        }, keyHolder);
+        });
         user.setId(keyHolder.getKey().longValue());
         List<Role> roles = jdbcTemplate.queryForStream("select * from role", (rs, i) -> new Role(rs.getLong(1), rs.getString(2))).collect(Collectors.toList());
         List<Role> userRoles = user.getRoles().stream()
@@ -184,6 +181,38 @@ public class UserDao {
             public int getBatchSize() {
                 return userRoles.size();
             }
+        });
+    }
+
+    @Transactional
+    public void update(ApplicationUser user) {
+        jdbcTemplate.update((conn) -> {
+            PreparedStatement ps = conn.prepareStatement(
+                    "update user set emailupdates=?, firstname=?, lastname=?, locale=?, optout=?, startverify=?, titles=?, updatedate=?, verified=?, verifycount=?, verifyerrors=?, welcomeerrors=?, welcomed=? where id=?");
+            ps.setBoolean(1, user.isEmailUpdates());
+            ps.setString(2, user.getFirstName());
+            ps.setString(3, user.getLastName());
+            ps.setString(4, user.getLocale().toString());
+            ps.setBoolean(5, user.isOptout());
+            ps.setBoolean(6, user.isStartVerify());
+            // serialize array
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            try (ObjectOutputStream out = new ObjectOutputStream(bos)) {
+                out.writeObject(user.getTitles());
+                out.flush();
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+            ps.setBytes(7, bos.toByteArray());
+            //
+            ps.setObject(8, user.getUpdateDate());
+            ps.setBoolean(9, user.isVerified());
+            ps.setInt(10, user.getVerifyCount());
+            ps.setInt(11, user.getVerifyErrors());
+            ps.setInt(12, user.getWelcomeErrors());
+            ps.setBoolean(13, user.isWelcomed());
+            ps.setLong(14, user.getId());
+            return ps;
         });
     }
 

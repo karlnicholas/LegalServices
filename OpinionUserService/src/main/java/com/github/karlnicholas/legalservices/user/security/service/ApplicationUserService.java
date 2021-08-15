@@ -24,8 +24,8 @@ public class ApplicationUserService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public Mono<ApplicationUser> createUser(Mono<ApplicationUser> applicationUserMono) {
-        return applicationUserMono.map(applicationUser -> {
+    public Mono<ApplicationUser> createUser(ApplicationUser applicationUser) {
+        return Mono.just(applicationUser).map(au->{
             applicationUser.setPassword(passwordEncoder.encode(applicationUser.getPassword()));
             userDao.insert(applicationUser);
             return applicationUser;
@@ -34,5 +34,12 @@ public class ApplicationUserService {
 
     public Optional<ApplicationUser> getUser(String email) {
         return userDao.findByEmail(email);
+    }
+
+    public Mono<ApplicationUser> updateUser(ApplicationUser applicationUser) {
+        return Mono.just(applicationUser).map(au->{
+            userDao.update(au);
+            return au;
+        });
     }
 }

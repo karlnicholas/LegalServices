@@ -159,7 +159,7 @@ public class ApplicationUser {
      */
     public boolean isAdmin() {
         for ( Role role: roles ) {
-            if ( role.geteRole() == ERole.ADMIN ) return true;
+            if ( ERole.ADMIN == ERole.valueOf(role.getRole()) ) return true;
         }
         return false;
     }

@@ -9,14 +9,17 @@ import java.util.Objects;
  */
 public class Role {
 	private Long id;
-	private ERole role;
+	private String role;
+
+	public Role() {}
 
 	public Role(Long id, String role ) {
 		this.id = id;
-		this.role = ERole.valueOf(role);
+		this.role = ERole.valueOf(role).name();
 	}
-	public Role(ERole eRole) {
-		this.role = eRole;
+
+	public Role(String name) {
+		this.role = ERole.valueOf(role).name();
 	}
 
 	public Long getId() {
@@ -27,20 +30,15 @@ public class Role {
 		this.id = id;
 	}
 
-	public ERole geteRole() {
-		return role;
-	}
+	public String getRole() { return role;	}
 
-	public void seteRole(ERole eRole) {
-		this.role = eRole;
-	}
+	public void setRole(String role) { this.role = role; }
 
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) return true;
 		if (o == null || getClass() != o.getClass()) return false;
-		Role role1 = (Role) o;
-		return role == role1.role;
+		return role.equalsIgnoreCase(((Role) o).role);
 	}
 
 	@Override

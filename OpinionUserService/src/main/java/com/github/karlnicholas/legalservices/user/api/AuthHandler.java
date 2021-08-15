@@ -44,32 +44,34 @@ public class AuthHandler {
     }
 
     public Mono<ServerResponse> handleNewUser(ServerRequest serverRequest) {
-        return applicationUserService.createUser(
-                serverRequest.bodyToMono(SignupRequest.class)
-                        .map(signupRequest -> {
-                            Errors errors = new BeanPropertyBindingResult(signupRequest, signupRequest.getClass().getName());
-                            ValidationUtils.invokeValidator(validator, signupRequest, errors);
-                            if (errors.hasErrors() ) {
-                                throw new IllegalArgumentException(errors.getAllErrors().toString());
-                            }
-                            Locale locale = Locale.lookup(serverRequest.headers().acceptLanguage(), locales);
-                            if ( locale == null )
-                                locale = Locale.getDefault();
-                            ApplicationUser applicationUser = new ApplicationUser(
-                                    signupRequest.getUsername(),
-                                    signupRequest.getPassword(),
-                                    locale,
-                                Collections.singleton(new Role(ERole.USER))
-                            );
-                            applicationUser.setTitles(new String[0]);
-                            return applicationUser;
-                        }))
-                .map(applicationUser -> {
-                    ApplicationUserDto applicationUserDto = new ApplicationUserDto();
-                    applicationUserDto.setEmail(applicationUser.getEmail());
-                    applicationUserDto.setLocale(applicationUser.getLocale());
-                    return applicationUserDto;
-                }).flatMap(applicationUserDto -> ServerResponse.ok().bodyValue(applicationUserDto))
+        return serverRequest.bodyToMono(SignupRequest.class)
+                .map(signupRequest -> {
+                    Errors errors = new BeanPropertyBindingResult(signupRequest, signupRequest.getClass().getName());
+                    ValidationUtils.invokeValidator(validator, signupRequest, errors);
+                    if (errors.hasErrors() ) {
+                        throw new IllegalArgumentException(errors.getAllErrors().toString());
+                    }
+                    Locale locale = Locale.lookup(serverRequest.headers().acceptLanguage(), locales);
+                    if ( locale == null )
+                        locale = Locale.getDefault();
+                    ApplicationUser applicationUser = new ApplicationUser(
+                            signupRequest.getUsername(),
+                            signupRequest.getPassword(),
+                            locale,
+                            Collections.singleton(new Role(ERole.USER.name()))
+                    );
+                    applicationUser.setTitles(new String[0]);
+                    return applicationUser;
+                }).flatMap(applicationUser -> {
+                    return applicationUserService.createUser(applicationUser)
+                        .map(applicationUserRet -> {
+                            ApplicationUserDto applicationUserDto = new ApplicationUserDto();
+                            applicationUserDto.setEmail(applicationUserRet.getEmail());
+                            applicationUserDto.setLocale(applicationUserRet.getLocale());
+                            return applicationUserDto;
+                        });
+                })
+                .flatMap(applicationUserDto -> ServerResponse.ok().bodyValue(applicationUserDto))
                 .onErrorResume(throwable -> ServerResponse.badRequest().bodyValue(throwable.getMessage()));
     }
 }

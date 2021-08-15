@@ -12,9 +12,9 @@ export default function App(props) {
     <BrowserRouter>
       <Switch>
         <Route exact path="/statutes" component={Statutes} />
-        <Route exact path="/user" component={User} />
-        <Route exact path="/login" component={Login} />
-        <Route exact path="/:startDate?" render={({ match }) => <Home match={match}/>}/>
+            <Route exact path="/user" component={User} />
+            <Route exact path="/login" component={Login} />
+            <Route exact path="/:startDate?" render={({ match }) => <Home match={match}/>}/>
       </Switch>
     </BrowserRouter>
   );
