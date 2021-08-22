@@ -10,6 +10,7 @@ export default function User(props) {
     const history = useHistory();
     const [tabstate, setTabstate] = useState('profile');
     const [profile, setProfile] = useState(null);
+    const [button, setButton] = useState('logout');
 
     useEffect(() => {
         if (user == null) {
@@ -42,7 +43,7 @@ export default function User(props) {
         }
     }
 
-    // handle click event of logout button
+    // handle click title change
     function handleChangeTitle(e, title) {
         e.preventDefault();
         updateProfileTitles(title);
@@ -53,16 +54,52 @@ export default function User(props) {
             }
         )
     }
+    function changeValue(e) {
+        e.persist();
+        setProfile(prevProfile => ({ ...prevProfile, [ e.target.name]: e.target.value}));
+    }
+    // handle submit update
+    function handleFormSubmit(e) {
+        e.preventDefault();
+        if ( button === 'logout') {
+            removeUserSession();
+            props.history.push('/');
+        } else {
+            httpUser.post('/profile', profile, {headers: {'Authorization': 'Bearer ' + getToken()}}).then(response => {
+                setProfile(response.data);
+            }).catch((error) => {
+                    console.log(error);
+                }
+            )
+        }
+    }
 
     function showProfile() {
         if (profile != null) {
             return (
-                <div>
-                    <p>Email: {profile.email}</p>
-                    <p>First: {profile.firstName}</p>
-                    <p>Last: {profile.lastName}</p>
-                    <button type="button" className="btn btn-primary" onClick={handleLogout}>Logout</button>
-                </div>
+                <form onSubmit={handleFormSubmit}>
+                    <div className="form-group row">
+                        <label htmlFor="staticEmail" className="col-sm-2 col-form-label">Email</label>
+                        <div className="col-sm-10">
+                            <input type="text" readOnly className="form-control-plaintext" id="staticEmail"
+                                   defaultValue={profile.email}/>
+                        </div>
+                    </div>
+                    <div className="form-group row">
+                        <label htmlFor="inputFirstname" className="col-sm-2 col-form-label">First</label>
+                        <div className="col-sm-10">
+                            <input type="text" className="form-control" id="inputFirstname" name="firstName" value={profile.firstName} onChange={changeValue}/>
+                        </div>
+                    </div>
+                    <div className="form-group row">
+                        <label htmlFor="inputLastname" className="col-sm-2 col-form-label">Last</label>
+                        <div className="col-sm-10">
+                            <input type="text" className="form-control" id="inputLastname" name="lastName" value={profile.lastName}  onChange={changeValue}/>
+                        </div>
+                    </div>
+                    <button type="submit" className="btn btn-primary" onClick={(e) => {e.target.blur(); setButton('logout');}}>Logout</button>
+                    <button type="submit" className="btn btn-primary" onClick={(e) => {e.target.blur(); setButton('update');}}>Update</button>
+                </form>
             );
         }
     }
