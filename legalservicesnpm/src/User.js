@@ -97,26 +97,46 @@ export default function User(props) {
                             <input type="text" className="form-control" id="inputLastname" name="lastName" value={profile.lastName}  onChange={changeValue}/>
                         </div>
                     </div>
-                    <button type="submit" className="btn btn-primary" onClick={(e) => {e.target.blur(); setButton('logout');}}>Logout</button>
-                    <button type="submit" className="btn btn-primary" onClick={(e) => {e.target.blur(); setButton('update');}}>Update</button>
+                    <button type="submit" className="btn btn-primary" onClick={e => {e.target.blur(); setButton('logout');}}>Logout</button>
+                    <button type="submit" className="btn btn-primary" onClick={e => {e.target.blur(); setButton('update');}}>Update</button>
                 </form>
             );
         }
     }
 
+    function tableCell(title, index) {
+        if ( title ) {
+            return (<td>
+                <input className="form-check-input" type="checkbox" id={'inlineFormCheck' + index} onChange={e => handleChangeTitle(e, title)} checked={profile.userTitles.includes(title)}/>
+                <label className="form-check-label" htmlFor={'inlineFormCheck'+index}>{title}</label>
+            </td>);
+        }
+    }
+
+    function tableRows()  {
+        let trs = [];
+        for (let i = 0; i < profile.allTitles.length; i = i + 3) {
+            trs.push(profile.allTitles.slice(i, i + 3));
+        }
+        return trs.map((tr, index) => {
+            return (<tr>
+                {tableCell(tr[0], index*3)}
+                {tableCell(tr[1], index*3+1)}
+                {tableCell(tr[2], index*3+2)}
+            </tr>);
+        })
+    }
+
     function showTitles() {
         if (profile != null) {
             return (
-                <ul className="list-group">
-                    {profile.allTitles.map(( title, index ) => {
-                        return (<li key={'titlekey'+index} className="list-group-item">
-                            <input className="form-check-input" type="checkbox" id={'inlineFormCheck'+index} onChange={e => handleChangeTitle(e, title)} checked={profile.userTitles.includes(title)}/>
-                            <label className="form-check-label" htmlFor={'inlineFormCheck'+index}>
-                                {title}
-                            </label>
-                        </li>);
-                    })}
-                </ul>
+                <div className="table-responsive">
+                <table className="table table-borderless">
+                    <tbody>
+                    {tableRows()}
+                    </tbody>
+                </table>
+                </div>
             );
         }
     }
