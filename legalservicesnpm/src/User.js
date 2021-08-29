@@ -74,6 +74,11 @@ export default function User(props) {
         }
     }
 
+    function changeOptout(e) {
+        e.persist();
+        setProfile(prevProfile => ({ ...prevProfile, optout: !prevProfile.optout}));
+    }
+
     function showProfile() {
         if (profile != null) {
             return (
@@ -93,8 +98,12 @@ export default function User(props) {
                     <div className="form-group row">
                         <label htmlFor="inputLastname" className="col-sm-2 col-form-label">Last</label>
                         <div className="col-sm-10">
-                            <input type="text" className="form-control" id="inputLastname" name="lastName" value={profile.lastName}  onChange={changeValue}/>
+                            <input type="text" className="form-control" id="inputLastname" name="lastName" value={profile.lastName} onChange={changeValue}/>
                         </div>
+                    </div>
+                    <div className="form-group form-check">
+                        <input className="form-check-input" type="checkbox" id={'inlineFormCheckOptout'} onChange={changeOptout} checked={profile.optout}/>
+                        <label className="form-check-label" htmlFor={'inlineFormCheckOptout'}>Notification Optout</label>
                     </div>
                     <div className="row justify-content-start">
                         <span className="col-2"><button type="submit" className="btn btn-primary" onClick={e => {e.target.blur(); setButton('update');}}>Update</button></span>
@@ -142,9 +151,6 @@ export default function User(props) {
         }
     }
 
-    function showSettings() {
-    }
-
     function setTabProfile() {
         setTabstate('profile');
     }
@@ -153,11 +159,7 @@ export default function User(props) {
         setTabstate('titles');
     }
 
-    function setTabSettings() {
-        setTabstate('settings');
-    }
-
-    function localNav(active, bodyFunction) {
+    function showContent(active, bodyFunction) {
         return (
             <div>
             <ul className="nav nav-tabs">
@@ -166,9 +168,6 @@ export default function User(props) {
                 </li>
                 <li className="nav-item" style={{cursor: 'pointer'}}>
                     <span className={active === 'titles' ? "active nav-link": "nav-link"} onClick={setTabTitles}>Titles</span>
-                </li>
-                <li className="nav-item" style={{cursor: 'pointer'}}>
-                    <span className={active === 'settings' ? "active nav-link": "nav-link"} onClick={setTabSettings}>Settings</span>
                 </li>
             </ul>
             {bodyFunction()}
@@ -184,7 +183,7 @@ export default function User(props) {
                     {AppNavDropdown()}
                 </div>
             </nav>
-            {localNav(tabstate, tabstate === 'settings' ? showSettings: tabstate === 'titles' ? showTitles : showProfile)}
+            {showContent(tabstate, tabstate === 'titles' ? showTitles : showProfile)}
         </div>
     );
 };
