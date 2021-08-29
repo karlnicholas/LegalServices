@@ -81,8 +81,7 @@ export default function User(props) {
                     <div className="form-group row">
                         <label htmlFor="staticEmail" className="col-sm-2 col-form-label">Email</label>
                         <div className="col-sm-10">
-                            <input type="text" readOnly className="form-control-plaintext" id="staticEmail"
-                                   defaultValue={profile.email}/>
+                            <input type="text" readOnly className="form-control-plaintext" id="staticEmail" defaultValue={profile.email}/>
                         </div>
                     </div>
                     <div className="form-group row">
@@ -97,8 +96,10 @@ export default function User(props) {
                             <input type="text" className="form-control" id="inputLastname" name="lastName" value={profile.lastName}  onChange={changeValue}/>
                         </div>
                     </div>
-                    <button type="submit" className="btn btn-primary" onClick={e => {e.target.blur(); setButton('logout');}}>Logout</button>
-                    <button type="submit" className="btn btn-primary" onClick={e => {e.target.blur(); setButton('update');}}>Update</button>
+                    <div className="row justify-content-start">
+                        <span className="col-2"><button type="submit" className="btn btn-primary" onClick={e => {e.target.blur(); setButton('update');}}>Update</button></span>
+                        <span className="col-2"><button type="submit" className="btn btn-primary" onClick={e => {e.target.blur(); setButton('logout');}}>Logout</button></span>
+                    </div>
                 </form>
             );
         }
@@ -130,7 +131,7 @@ export default function User(props) {
     function showTitles() {
         if (profile != null) {
             return (
-                <div className="table-responsive">
+                <div className="table-responsive container">
                 <table className="table table-borderless">
                     <tbody>
                     {tableRows()}
@@ -139,6 +140,9 @@ export default function User(props) {
                 </div>
             );
         }
+    }
+
+    function showSettings() {
     }
 
     function setTabProfile() {
@@ -153,56 +157,23 @@ export default function User(props) {
         setTabstate('settings');
     }
 
-    function showTabs() {
-        if (tabstate === 'settings') {
-            return (
-                <ul className="nav nav-tabs">
-                    <li className="nav-item" style={{cursor: 'pointer'}}>
-                        <span className="nav-link" onClick={setTabProfile}>Profile</span>
-                    </li>
-                    <li className="nav-item" style={{cursor: 'pointer'}}>
-                        <span className="nav-link" onClick={setTabTitles}>Titles</span>
-                    </li>
-                    <li className="nav-item" style={{cursor: 'pointer'}}>
-                        <span className="nav-link active" onClick={setTabSettings}>Settings</span>
-                    </li>
-                </ul>
-            );
-        } else if (tabstate === 'titles') {
-            return (
-                <div>
-                <ul className="nav nav-tabs">
-                    <li className="nav-item" style={{cursor: 'pointer'}}>
-                        <span className="nav-link" onClick={setTabProfile}>Profile</span>
-                    </li>
-                    <li className="nav-item" style={{cursor: 'pointer'}}>
-                        <span className="nav-link active" onClick={setTabTitles}>Titles</span>
-                    </li>
-                    <li className="nav-item" style={{cursor: 'pointer'}}>
-                        <span className="nav-link" onClick={setTabSettings}>Settings</span>
-                    </li>
-                </ul>
-                {showTitles()}
-                </div>
-            );
-        } else {
-            return (
-                <div>
-                    <ul className="nav nav-tabs">
-                        <li className="nav-item" style={{cursor: 'pointer'}}>
-                            <span className="nav-link active" onClick={setTabProfile}>Profile</span>
-                        </li>
-                        <li className="nav-item" style={{cursor: 'pointer'}}>
-                            <span className="nav-link" onClick={setTabTitles}>Titles</span>
-                        </li>
-                        <li className="nav-item" style={{cursor: 'pointer'}}>
-                            <span className="nav-link" onClick={setTabSettings}>Settings</span>
-                        </li>
-                    </ul>
-                    {showProfile()}
-                </div>
-            );
-        }
+    function localNav(active, bodyFunction) {
+        return (
+            <div>
+            <ul className="nav nav-tabs">
+                <li className="nav-item" style={{cursor: 'pointer'}}>
+                    <span className={active === 'profile' ? "active nav-link": "nav-link"} onClick={setTabProfile}>Profile</span>
+                </li>
+                <li className="nav-item" style={{cursor: 'pointer'}}>
+                    <span className={active === 'titles' ? "active nav-link": "nav-link"} onClick={setTabTitles}>Titles</span>
+                </li>
+                <li className="nav-item" style={{cursor: 'pointer'}}>
+                    <span className={active === 'settings' ? "active nav-link": "nav-link"} onClick={setTabSettings}>Settings</span>
+                </li>
+            </ul>
+            {bodyFunction()}
+            </div>
+        );
     }
 
     return (
@@ -213,7 +184,7 @@ export default function User(props) {
                     {AppNavDropdown()}
                 </div>
             </nav>
-            {showTabs()}
+            {localNav(tabstate, tabstate === 'settings' ? showSettings: tabstate === 'titles' ? showTitles : showProfile)}
         </div>
     );
 };
