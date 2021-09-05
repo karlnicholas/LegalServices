@@ -11,15 +11,15 @@ export default function Login(props) {
     const password = useFormInput('');
     const [error, setError] = useState(null);
 
-    // handle submit update
-    function handleFormSubmit(e) {
+    // handle button click of login form
+    function handleRegister(e) {
         e.preventDefault();
         setError(null);
-        httplogin.post('/signin', { username: username.value, password: password.value }).then(response => {
+        httplogin.post('/signup', { username: username.value, password: password.value }).then(response => {
             setUserSession(response.data.token, response.data.username);
             props.history.push('/user');
         }).catch(error => {
-            setError("Login attempt failed.");
+            setError("Register attempt failed.");
         });
     }
 
@@ -37,17 +37,17 @@ export default function Login(props) {
       <div className="container">
       <nav className="navbar navbar-expand-lg navbar-light bg-light">
         {LogoNav()}
-        <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
-              aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-          <span className="navbar-toggler-icon"></span>
-        </button>
+          <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+                  aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+              <span className="navbar-toggler-icon"></span>
+          </button>
         <div className="collapse navbar-collapse" id="navbarSupportedContent">
         {AppNavDropdown()}
         </div>
       </nav>
           <div className="row justify-content-center">
               <div className="col-md-8">
-                  <form onSubmit={handleFormSubmit}>
+                  <form onSubmit={handleRegister}>
                       {showError()}
                       <div className="form-group row">
                           <label htmlFor="inputEmail" className="col-sm-2 col-form-label">Email</label>
@@ -63,10 +63,10 @@ export default function Login(props) {
                       </div>
                       <div className="form-group row">
                           <div className="col-sm-2">
-                              <button type="submit" className="btn btn-primary">Signin</button>
+                              <button type="submit" className="btn btn-primary">Register</button>
                           </div>
                           <div className="col-sm-2">
-                              <button type="button" className="btn btn-primary"  onClick={(e) => {e.preventDefault(); window.location.href='/register';}}>Register</button>
+                              <button type="button" className="btn btn-primary"  onClick={(e) => {e.preventDefault(); window.location.href='/';}}>Cancel</button>
                           </div>
                       </div>
                   </form>

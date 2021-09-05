@@ -25,12 +25,6 @@ export default function User(props) {
         }
     }, [user, history]);
 
-    // handle click event of logout button
-    const handleLogout = () => {
-        removeUserSession();
-        props.history.push('/');
-    }
-
     function updateProfileTitles(title) {
         if ( profile.userTitles.includes(title)) {
             for (var i = profile.userTitles.length - 1; i >= 0; i--) {
@@ -179,6 +173,10 @@ export default function User(props) {
         <div className="container">
             <nav className="navbar navbar-expand-lg navbar-light bg-light">
                 {LogoNav()}
+                <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+                        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <span className="navbar-toggler-icon"></span>
+                </button>
                 <div className="collapse navbar-collapse" id="navbarSupportedContent">
                     {AppNavDropdown()}
                 </div>
