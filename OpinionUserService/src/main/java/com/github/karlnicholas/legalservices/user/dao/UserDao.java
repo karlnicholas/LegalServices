@@ -131,7 +131,7 @@ public class UserDao {
     public void insert(ApplicationUser user) {
 
         KeyHolder keyHolder = new GeneratedKeyHolder();
-        jdbcTemplate.update((conn) -> {
+        int updates = jdbcTemplate.update((conn) -> {
             PreparedStatement ps = conn.prepareStatement(
                     "insert into user(createdate, email, emailupdates, firstname, lastname, locale, optout, optoutkey, password, startverify, titles, updatedate, verified, verifycount, verifyerrors, verifykey, welcomeerrors, welcomed) values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
             ps.setObject(1, user.getCreateDate());
@@ -162,7 +162,7 @@ public class UserDao {
             ps.setInt(17, user.getWelcomeErrors());
             ps.setBoolean(18, user.isWelcomed());
             return ps;
-        });
+        }, keyHolder);
         user.setId(keyHolder.getKey().longValue());
         List<Role> roles = jdbcTemplate.queryForStream("select * from role", (rs, i) -> new Role(rs.getLong(1), rs.getString(2))).collect(Collectors.toList());
         List<Role> userRoles = user.getRoles().stream()

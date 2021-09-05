@@ -36,7 +36,7 @@ public class AuthService {
 		this.passwordEncoder = passwordEncoder;
 	}
 
-	private JwtResponse generateAccessToken(ApplicationUser user) {
+	public JwtResponse generateAccessToken(ApplicationUser user) {
 		long expirationTimeInMilliseconds = jwtProperties.getExpiration() * 1000;
 		Date expirationDate = new Date(new Date().getTime() + expirationTimeInMilliseconds);
 		Date createdDate = new Date();
@@ -78,4 +78,5 @@ public class AuthService {
 					.map(this::generateAccessToken));
 		}).switchIfEmpty(Mono.error(new FailedLoginException("Failed Login!")));
 	}
+
 }

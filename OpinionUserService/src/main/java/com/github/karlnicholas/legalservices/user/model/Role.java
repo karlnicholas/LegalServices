@@ -18,7 +18,7 @@ public class Role {
 		this.role = ERole.valueOf(role).name();
 	}
 
-	public Role(String name) {
+	public Role(String role) {
 		this.role = ERole.valueOf(role).name();
 	}
 

@@ -62,16 +62,9 @@ public class AuthHandler {
                     );
                     applicationUser.setTitles(new String[0]);
                     return applicationUser;
-                }).flatMap(applicationUser -> {
-                    return applicationUserService.createUser(applicationUser)
-                        .map(applicationUserRet -> {
-                            ApplicationUserDto applicationUserDto = new ApplicationUserDto();
-                            applicationUserDto.setEmail(applicationUserRet.getEmail());
-                            applicationUserDto.setLocale(applicationUserRet.getLocale());
-                            return applicationUserDto;
-                        });
-                })
-                .flatMap(applicationUserDto -> ServerResponse.ok().bodyValue(applicationUserDto))
+                }).flatMap(applicationUser -> applicationUserService.createUser(applicationUser)
+                    .map(authService::generateAccessToken))
+                .flatMap(jwtResponse -> ServerResponse.ok().bodyValue(jwtResponse))
                 .onErrorResume(throwable -> ServerResponse.badRequest().bodyValue(throwable.getMessage()));
     }
 }

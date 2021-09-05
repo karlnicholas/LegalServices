@@ -26,9 +26,9 @@ public class ApplicationUserService {
 
     public Mono<ApplicationUser> createUser(ApplicationUser applicationUser) {
         return Mono.just(applicationUser).map(au->{
-            applicationUser.setPassword(passwordEncoder.encode(applicationUser.getPassword()));
-            userDao.insert(applicationUser);
-            return applicationUser;
+            au.setPassword(passwordEncoder.encode(au.getPassword()));
+            userDao.insert(au);
+            return au;
         });
     }
 
