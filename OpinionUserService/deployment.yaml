@@ -1,0 +1,67 @@
+# This file configures the hello-world app which serves public web traffic.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: opinionuserservice
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: opinionuserservice
+  template:
+    metadata:
+      labels:
+        app: opinionuserservice
+    spec:
+      containers:
+      - name: opinionuserservice-app
+        # Replace $GCLOUD_PROJECT with your project ID
+        image: gcr.io/legalservices/opinionuserservice
+        env:
+          - name: PORT
+            value: "8080"
+          - name: statutesrestca
+            value: "http://statutes-rest-ca-service:8090/"
+          - name: kafka.ip-address
+            value: "kafka-opca-vm"
+          - name: kafka.port
+            value: "9092"
+          - name: kafka.user
+            valueFrom:
+              secretKeyRef:
+                name: kafka-config
+                key: kafka.user
+          - name: kafka.password
+            valueFrom:
+              secretKeyRef:
+                name: kafka-config
+                key: kafka.password
+          - name: database-url
+            value: "mysql://mysql-opca-vm:3306/"
+          - name: database-user
+            valueFrom:
+              secretKeyRef:
+                name: mysqldb
+                key: database-user
+          - name: database-name
+            valueFrom:
+              secretKeyRef:
+                name: mysqldb
+                key: database-name
+          - name: database-password
+            valueFrom:
+              secretKeyRef:
+                name: mysqldb
+                key: database-password
+        # This app listens on port 8080 for web traffic by default.
+        ports:
+        - containerPort: 8080
+          name: actuator
+        livenessProbe:
+          httpGet:
+            path: /actuator/health/liveness
+            port: actuator
+        readinessProbe:
+          httpGet:
+            path: /actuator/health/readiness
+            port: actuator

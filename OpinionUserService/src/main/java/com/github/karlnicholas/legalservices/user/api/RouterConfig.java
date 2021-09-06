@@ -26,11 +26,5 @@ public class RouterConfig {
 			.andRoute(GET("/profile"), userHandler::handleUser)
             .andRoute(POST("/profile").and(contentType(MediaType.APPLICATION_JSON)), userHandler::updateUser))
 		;
-
-//        return RouterFunctions.route(POST("/signin").and(accept(MediaType.APPLICATION_JSON)), authHandler::handleLogin)
-//    		.andRoute(POST("/signup").and(accept(MediaType.APPLICATION_JSON)),  authHandler::handleNewUser)
-//			.andRoute(GET("/profile").and(accept(MediaType.APPLICATION_JSON)), userHandler::handleUser)
-//            .andRoute(POST("/profile").and(accept(MediaType.APPLICATION_JSON)), userHandler::updateUser)
-//		;
     }
 }

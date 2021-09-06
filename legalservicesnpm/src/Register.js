@@ -1,7 +1,6 @@
 
 import React, {useState} from 'react';
-import {getToken, removeUserSession, setUserSession} from './Utils/Common';
-import httplogin from "./httplogin";
+import {setUserSession} from './Utils/Common';
 import AppNavDropdown from "./AppNavDropdown";
 import LogoNav from "./LogoNav";
 import httpUser from "./httpUser";
@@ -15,7 +14,7 @@ export default function Login(props) {
     function handleRegister(e) {
         e.preventDefault();
         setError(null);
-        httplogin.post('/signup', { username: username.value, password: password.value }).then(response => {
+        httpUser.post('/signup', { username: username.value, password: password.value }).then(response => {
             setUserSession(response.data.token, response.data.username);
             props.history.push('/user');
         }).catch(error => {
