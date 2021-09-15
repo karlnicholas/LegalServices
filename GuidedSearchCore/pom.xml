@@ -10,9 +10,6 @@
 	<packaging>jar</packaging>
 	<name>Guided Search Core</name>
 	<description>Guided Search Core</description>
-	<properties>
-		<version.lucene>8.6.0</version.lucene>
-	</properties>
 	<dependencies>
 		<dependency>
 			<groupId>org.apache.lucene</groupId>

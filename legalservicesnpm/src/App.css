@@ -4,10 +4,10 @@ body {
   font-family: sans-serif;
 }
 
-.rowhover {
+.rowhover:hover {
     background: lightblue;
 }
-.libreadcrumitemhover {
+.libreadcrumitemhover:hover {
 	background: lightblue;
 }
 

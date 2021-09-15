@@ -7,14 +7,20 @@ Bitnami Kafka - G2-small
 Bitnami Mysql - F2-micro instance
 
 GCE - Create Disk.
-Use GKE instance to 
+Use GKE instance to
+
+To Update: Create new instance "instance-1"
+Edit and Attach existing disk
 	mount disk 
 	format disk
 		https://cloud.google.com/compute/docs/disks/add-persistent-disk
 		https://cloud.google.com/compute/docs/disks/add-persistent-disk
 	gcloud scp --recurse to copy files
+        gcloud compute scp ./* --recurse instance-1:/mnt/disks/opcastorage --project=legalservices --zone=us-central1-c
 		https://cloud.google.com/filestore/docs/copying-data
 		gcloud beta compute scp --recurse --zone "us-central1-c" . gke-cluster-opca-pool-1-69669795-0qr8:/mnt/disks/opcastorage  --project "legalservices"
+
+		gcloud beta compute scp --recurse --zone "us-central1-c" . instance-1:/mnt/disks/opcastorage  --project "legalservices"
 
 create pv with pv.yaml
 create pvc with pvc.yaml

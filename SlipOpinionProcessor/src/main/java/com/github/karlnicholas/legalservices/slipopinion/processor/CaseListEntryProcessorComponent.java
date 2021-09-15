@@ -56,8 +56,6 @@ public class CaseListEntryProcessorComponent implements Runnable {
 	private final SlipOpinionDocumentParser opinionDocumentParser;
 	private final OpinionViewBuilder opinionViewBuilder;
 	private final DataSource dataSource;
-	@Value("${slipopinionprocessor:test}")
-    private String slipopinionprocessor;
 
 	protected CaseListEntryProcessorComponent(ObjectMapper objectMapper, 
 			KakfaProperties kafkaProperties,
@@ -70,6 +68,7 @@ public class CaseListEntryProcessorComponent implements Runnable {
 		this.dataSource = dataSource;
 		slipOpininScraperDao = new SlipOpininScraperDao();
 	    opinionService = OpinionServiceFactory.getOpinionServiceClient(objectMapper);
+		String slipopinionprocessor = System.getenv("slipopinionprocessor");
 	    if ( slipopinionprocessor != null && slipopinionprocessor.equalsIgnoreCase("production")) {
 			caseScraper = new CACaseScraper(false);
 	    } else {

@@ -27,8 +27,6 @@ public class CaseListScraperComponent {
 	private final Producer<Integer, JsonNode> producer;
 	private final KakfaProperties kafkaProperties;
 	private final DataSource dataSource;
-	@Value("${slipopinionprocessor:test}")
-    private String slipopinionprocessor;
 
 	public CaseListScraperComponent(ObjectMapper objectMapper, 
 			Producer<Integer, JsonNode> producer, 
@@ -39,6 +37,7 @@ public class CaseListScraperComponent {
 	    this.producer = producer;
 	    this.dataSource = dataSource;
 	    this.kafkaProperties = kafkaProperties;
+	    String slipopinionprocessor = System.getenv("slipopinionprocessor");
 	    if ( slipopinionprocessor != null && slipopinionprocessor.equalsIgnoreCase("production")) {
 			caseScraper = new CACaseScraper(false);
 	    } else {

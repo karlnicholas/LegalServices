@@ -5,7 +5,7 @@
 FROM adoptopenjdk/openjdk11:jdk-11.0.11_9-alpine-slim
 
 # Copy the jar to the production image from the builder stage.
-COPY target/opinionuserservice-*.jar /opinionuserservice.jar
+COPY target/opinion-user-service-*.jar /opinionuserservice.jar
 EXPOSE 8080
 
 # Run the web service on container startup.

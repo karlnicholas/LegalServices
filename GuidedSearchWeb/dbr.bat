@@ -1,2 +1,2 @@
-docker build . -t knicholas/gsw
-docker run --name guidesearchweb --network app-tier -m 160m -e statutesrestca=http://statutesrestca:8090/ -v "//c/users/karln/opcastorage:/opcastorage" -e PORT=8092 -d knicholas/gsw
+docker build . -f Dockerfile-Openshift -t knicholas/gsw
+docker run -p 8092:8092 --name guidesearchweb --network app-tier -m 160m -e statutesrestca=http://statutesrestca:8090/ -v "//c/users/karln/opcastorage:/opcastorage" -e PORT=8092 -d knicholas/gsw
