@@ -19,7 +19,7 @@ spec:
         image: gcr.io/legalservices/opinionuserservice
         env:
           - name: PORT
-            value: "8080"
+            value: "8093"
           - name: statutesrestca
             value: "http://statutes-rest-ca-service:8090/"
           - name: kafka.ip-address
@@ -55,7 +55,7 @@ spec:
                 key: database-password
         # This app listens on port 8080 for web traffic by default.
         ports:
-        - containerPort: 8080
+        - containerPort: 8093
           name: actuator
         livenessProbe:
           httpGet:

@@ -20,3 +20,10 @@ spec:
             name: guidedsearch-web-service
             port:
               number: 8092
+      - path: /api/user/*
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: opinionuserservice
+            port:
+              number: 8093

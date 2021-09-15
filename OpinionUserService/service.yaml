@@ -1,11 +1,11 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: opinionuserservice-service
+  name: opinionuserservice
 spec:
   selector:
     app: opinionuserservice
   ports:
-  - port: 8080
+  - port: 8093
     protocol: TCP
-    targetPort: 8080
+    targetPort: 8093

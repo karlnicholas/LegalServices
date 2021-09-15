@@ -1,0 +1,2 @@
+docker build . -t knicholas/ous
+docker run -p 8093:8093 --name opinionuserservice --network app-tier -m 160m -e database-url=mysql://host.docker.internal:3306/ -e kafka.ip-address=kafka  -e kafka.ip-address=kafka -e kafka.port=9092 -e statutesrestca=http://statutesrestca:8090/ -e PORT=8093 -d knicholas/ous

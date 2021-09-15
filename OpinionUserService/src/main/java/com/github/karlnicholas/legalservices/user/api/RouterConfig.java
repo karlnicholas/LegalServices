@@ -20,7 +20,7 @@ public class RouterConfig {
             AuthHandler authHandler,
             ApplicationUserHandler userHandler
     ) {
-        return RouterFunctions.nest(accept(MediaType.APPLICATION_JSON),
+        return RouterFunctions.nest(path("/api/user").and(accept(MediaType.APPLICATION_JSON)),
              RouterFunctions.route(POST("/signin"), authHandler::handleLogin)
     		.andRoute(POST("/signup"),  authHandler::handleNewUser)
 			.andRoute(GET("/profile"), userHandler::handleUser)
