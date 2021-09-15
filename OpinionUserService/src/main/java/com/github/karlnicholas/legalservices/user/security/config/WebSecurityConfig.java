@@ -69,8 +69,6 @@ public class WebSecurityConfig {
 //			.logout(logout -> logout.requiresLogout(new PathPatternParserServerWebExchangeMatcher("/logout")))
 			.exceptionHandling().authenticationEntryPoint((swe, e) -> {
 				logger.info("[1] Authentication error: Unauthorized[401]: {}", e.getMessage());
-				logger.info("[1] Authentication error: Unauthorized[401]: {}, ", e.getCause().getMessage());
-				e.printStackTrace();
 				return Mono.fromRunnable(() -> swe.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED));
 			}).accessDeniedHandler((swe, e) -> {
 				logger.info("[2] Authentication error: Access Denied[401]: " + e.getMessage());
@@ -116,14 +114,14 @@ public class WebSecurityConfig {
 			return Optional.empty();
 		return Optional.of(token.substring(BEARER.length()));
 	}
-//	@Bean
-//	public CorsConfigurationSource corsConfiguration() {
-//		CorsConfiguration corsConfig = new CorsConfiguration();
-//		corsConfig.applyPermitDefaultValues();
-//		corsConfig.addAllowedOrigin("http://localhost:3000");
-//		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-//		source.registerCorsConfiguration("/**", corsConfig);
-//		return source;
-//	}
+	@Bean
+	public CorsConfigurationSource corsConfiguration() {
+		CorsConfiguration corsConfig = new CorsConfiguration();
+		corsConfig.applyPermitDefaultValues();
+		corsConfig.addAllowedOrigin("http://localhost:3000");
+		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+		source.registerCorsConfiguration("/**", corsConfig);
+		return source;
+	}
 
 }
