@@ -1,9 +1,8 @@
-package com.github.karlnicholas.legalservices.slipopinion.processor;
-
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
+package com.github.karlnicholas.legalservices.user.kafka;
 
 import lombok.Data;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 @Data
 @Component
@@ -28,6 +27,6 @@ public class KakfaProperties {
     private String integerDeserializer = "org.apache.kafka.common.serialization.IntegerDeserializer";
     private String jsonValueSerializer = "org.apache.kafka.connect.json.JsonSerializer";
     private String jsonValueDeserializer = "org.apache.kafka.connect.json.JsonDeserializer";
-    private String opinionViewMessageSerializer = "com.github.karlnicholas.legalservices.slipopinion.processor.OpinionViewMessageSerializer";
-    private String opinionViewMessageDeserializer = "com.github.karlnicholas.legalservices.slipopinion.processor.OpinionViewMessageDeserializer";
+    private String opinionViewMessageSerializer = "com.github.karlnicholas.legalservices.opinionview.model.OpinionViewMessageSerializer";
+    private String opinionViewMessageDeserializer = "com.github.karlnicholas.legalservices.opinionview.model.OpinionViewMessageDeserializer";
 }

@@ -1,4 +1,4 @@
-package com.github.karlnicholas.legalservices.slipopinion.processor;
+package com.github.karlnicholas.legalservices.opinionview.model;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -16,7 +16,8 @@ public class OpinionViewMessageDeserializer implements Deserializer<OpinionViewM
 			objIn.close();
 		    return obj;
 		} catch (IOException | ClassNotFoundException e) {
-			throw new RuntimeException(e);
+//			throw new RuntimeException(e);
+			return null;
 		}
 	}
 }

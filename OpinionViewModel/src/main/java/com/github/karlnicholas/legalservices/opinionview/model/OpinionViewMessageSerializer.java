@@ -1,4 +1,4 @@
-package com.github.karlnicholas.legalservices.slipopinion.processor;
+package com.github.karlnicholas.legalservices.opinionview.model;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;

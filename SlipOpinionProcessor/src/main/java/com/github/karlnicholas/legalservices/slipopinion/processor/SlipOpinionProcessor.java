@@ -5,6 +5,8 @@ import java.util.Properties;
 
 import javax.sql.DataSource;
 
+import com.github.karlnicholas.legalservices.opinionview.model.KakfaProperties;
+import com.github.karlnicholas.legalservices.opinionview.model.OpinionViewMessage;
 import org.apache.kafka.clients.CommonClientConfigs;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.Producer;
@@ -43,13 +45,14 @@ public class SlipOpinionProcessor {
 
 	@Autowired TaskExecutor taskExecutor;
 	@Autowired ObjectMapper objectMapper;
-	@Autowired KakfaProperties kafkaProperties;
+	@Autowired
+	KakfaProperties kafkaProperties;
 	@Autowired OpinionViewData opinionViewData;
 	@Autowired DataSource dataSource;
 
 	@EventListener(ApplicationReadyEvent.class)
 	public void doSomethingAfterStartup() throws SQLException {
-		new Thread(new OpinionViewCacheComponent(objectMapper, kafkaProperties, opinionViewData)).start();
+		new Thread(new OpinionViewCacheComponent(kafkaProperties, opinionViewData)).start();
 
 		new Thread(new CaseListEntryProcessorComponent(objectMapper, kafkaProperties, integerOpinionViewMessageProducer(), dataSource)).start();
 		new Thread(new CaseListEntryProcessorComponent(objectMapper, kafkaProperties, integerOpinionViewMessageProducer(), dataSource)).start();

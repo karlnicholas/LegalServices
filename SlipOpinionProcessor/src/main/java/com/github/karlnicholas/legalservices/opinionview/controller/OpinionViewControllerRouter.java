@@ -12,19 +12,14 @@ import org.springframework.web.reactive.function.server.ServerResponse;
 
 @Configuration
 public class OpinionViewControllerRouter {
-	@Bean
-	public RouterFunction<ServerResponse> route(OpinionViewControllerHandler opinionViewControllerHandler, 
-			@Value("classpath:/static/index.html") final Resource indexHtml
-		) {
-		return RouterFunctions
-			.route(RequestPredicates.GET("/api/opinionviews/cases/{startDate}")
-				.and(RequestPredicates.accept(MediaType.APPLICATION_JSON)), opinionViewControllerHandler::getOpinionViews)
-			.andRoute(RequestPredicates.GET("/api/opinionviews/cases")
-					.and(RequestPredicates.accept(MediaType.APPLICATION_JSON)), opinionViewControllerHandler::getRecentOpinionViews)
-			.andRoute(RequestPredicates.GET("/api/opinionviews/dates")
-					.and(RequestPredicates.accept(MediaType.APPLICATION_JSON)), opinionViewControllerHandler::getOpinionViewDates)
-			.andRoute(RequestPredicates.GET("/api/poll"), opinionViewControllerHandler::handlePolling)
-			;
-	}
-
+    @Bean
+    public RouterFunction<ServerResponse> route(OpinionViewControllerHandler opinionViewControllerHandler,
+                                                @Value("classpath:/static/index.html") final Resource indexHtml
+    ) {
+        return RouterFunctions.nest(RequestPredicates.accept(MediaType.APPLICATION_JSON),
+                RouterFunctions.route(RequestPredicates.GET("/api/opinionviews/cases/{startDate}"), opinionViewControllerHandler::getOpinionViews)
+                        .andRoute(RequestPredicates.GET("/api/opinionviews/cases"), opinionViewControllerHandler::getRecentOpinionViews)
+                        .andRoute(RequestPredicates.GET("/api/opinionviews/dates"), opinionViewControllerHandler::getOpinionViewDates)
+        ).andRoute(RequestPredicates.GET("/api/poll"), opinionViewControllerHandler::handlePolling);
+    }
 }

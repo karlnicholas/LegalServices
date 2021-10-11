@@ -10,6 +10,8 @@ import java.util.stream.Collectors;
 
 import javax.sql.DataSource;
 
+import com.github.karlnicholas.legalservices.opinionview.model.KakfaProperties;
+import com.github.karlnicholas.legalservices.opinionview.model.OpinionViewMessage;
 import org.apache.kafka.clients.CommonClientConfigs;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
@@ -22,7 +24,6 @@ import org.apache.kafka.common.config.SaslConfigs;
 import org.apache.kafka.common.errors.WakeupException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -59,7 +60,7 @@ public class CaseListEntryProcessorComponent implements Runnable {
 
 	protected CaseListEntryProcessorComponent(ObjectMapper objectMapper, 
 			KakfaProperties kafkaProperties,
-			Producer<Integer, OpinionViewMessage> producer, 
+			Producer<Integer, OpinionViewMessage> producer,
 			DataSource dataSource
 	) {
 		this.objectMapper = objectMapper;

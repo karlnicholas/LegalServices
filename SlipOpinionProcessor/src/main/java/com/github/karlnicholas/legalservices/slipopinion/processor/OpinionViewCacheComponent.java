@@ -5,6 +5,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
+import com.github.karlnicholas.legalservices.opinionview.model.KakfaProperties;
+import com.github.karlnicholas.legalservices.opinionview.model.OpinionViewMessage;
 import org.apache.kafka.clients.CommonClientConfigs;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
@@ -17,18 +19,9 @@ import org.apache.kafka.common.errors.WakeupException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.karlnicholas.legalservices.caselist.model.CaseListEntry;
 import com.github.karlnicholas.legalservices.slipopinion.model.SlipOpinion;
-/*
- * 
- TopicPartition topicPartition = new TopicPartition(topic, 0);
- List<TopicPartition> partitions = Arrays.asList(topicPartition); 
- consumer.assign(partitions); consumer.seekToBeginning(partitions);
- *
 
- * 
- */
 public class OpinionViewCacheComponent implements Runnable {
 	private final Logger log = LoggerFactory.getLogger(OpinionViewCacheComponent.class);
 	private final Consumer<Integer, OpinionViewMessage> opinionViewCacheConsumer;
@@ -36,8 +29,7 @@ public class OpinionViewCacheComponent implements Runnable {
 	private final OpinionViewData opinionViewData;
 
 	public OpinionViewCacheComponent(
-			ObjectMapper objectMapper, 
-			KakfaProperties kafkaProperties, 
+			KakfaProperties kafkaProperties,
 			OpinionViewData opinionViewData
 	) {
 		this.kafkaProperties = kafkaProperties;
