@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>opinion-user-service</artifactId>
+	<artifactId>opinionuserservice</artifactId>
 	<parent>
 		<groupId>com.github.karlnicholas.legalservices</groupId>
 		<artifactId>legalservices</artifactId>
@@ -58,11 +58,11 @@
 		</dependency>
 		<dependency>
 			<groupId>com.github.karlnicholas.legalservices</groupId>
-			<artifactId>opinion-view-model</artifactId>
+			<artifactId>opinionviewmodel</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.github.karlnicholas.legalservices</groupId>
-			<artifactId>sql-util</artifactId>
+			<artifactId>sqlutil</artifactId>
 		</dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -70,7 +70,7 @@
         </dependency>
 		<dependency>
 			<groupId>com.github.karlnicholas.legalservices</groupId>
-			<artifactId>caselist-model</artifactId>
+			<artifactId>caselistmodel</artifactId>
 		</dependency>
     </dependencies>
 	<build>

@@ -45,8 +45,7 @@ public class SlipOpinionProcessor {
 
 	@Autowired TaskExecutor taskExecutor;
 	@Autowired ObjectMapper objectMapper;
-	@Autowired
-	KakfaProperties kafkaProperties;
+	@Autowired KakfaProperties kafkaProperties;
 	@Autowired OpinionViewData opinionViewData;
 	@Autowired DataSource dataSource;
 
@@ -77,7 +76,6 @@ public class SlipOpinionProcessor {
     		kafkaProperties.getUser() + "\" password=\"" + 
     		kafkaProperties.getPassword() + "\";");
         }
-        
         return new KafkaProducer<>(configProperties);
 	}
 

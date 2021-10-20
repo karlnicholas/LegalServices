@@ -6,7 +6,7 @@ FROM adoptopenjdk/openjdk11:alpine-slim
 
 VOLUME /CaliforniaStatutes
 # Copy the jar to the production image from the builder stage.
-COPY target/guidedsearch-web-*.jar /guidedsearch-web.jar
+COPY target/guidedsearchweb-*.jar /guidedsearchweb.jar
 ENV gsindexloc=/opcastorage/index
 ENV gsindextaxoloc=/opcastorage/indextaxo
 EXPOSE 8092

@@ -2,21 +2,21 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: opinion-rest-ca
+  name: opinionrestca
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: opinion-rest-ca
+      app: opinionrestca
   template:
     metadata:
       labels:
-        app: opinion-rest-ca
+        app: opinionrestca
     spec:
       containers:
-      - name: opinion-rest-ca-app
+      - name: opinionrestca-app
         # Replace $GCLOUD_PROJECT with your project ID
-        image: gcr.io/legalservices/opinion-rest-ca
+        image: gcr.io/legalservices/opinionrestca
         env:
           - name: PORT
             value: "8091"

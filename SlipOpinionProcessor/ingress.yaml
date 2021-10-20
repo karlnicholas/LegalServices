@@ -17,7 +17,7 @@ spec:
         pathType: ImplementationSpecific
         backend:
           service:
-            name: guidedsearch-web-service
+            name: guidedsearchweb-service
             port:
               number: 8092
       - path: /api/user/*

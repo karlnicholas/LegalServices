@@ -6,21 +6,21 @@
 		<artifactId>legalservices</artifactId>
 		<version>2.0.5-SNAPSHOT</version>
 	</parent>
-	<artifactId>opinion-rest-ca</artifactId>
+	<artifactId>opinionrestca</artifactId>
 	<name>Opinion Rest Ca</name>
 	<description>Opinion CA Rest Services for Legal Services</description>
 	<dependencies>
 		<dependency>
 			<groupId>com.github.karlnicholas.legalservices</groupId>
-			<artifactId>sql-util</artifactId>
+			<artifactId>sqlutil</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.github.karlnicholas.legalservices</groupId>
-			<artifactId>opinion-model</artifactId>
+			<artifactId>opinionmodel</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.github.karlnicholas.legalservices</groupId>
-			<artifactId>opinion-service</artifactId>
+			<artifactId>opinionservice</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>

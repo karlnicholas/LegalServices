@@ -6,7 +6,7 @@
 		<artifactId>legalservices</artifactId>
 		<version>2.0.5-SNAPSHOT</version>
 	</parent>
-	<artifactId>statute-server</artifactId>
+	<artifactId>statuteserver</artifactId>
 	<name>Statute Server</name>
 	<description>Statute framework for Legal Services</description>
 	<dependencies>
@@ -37,7 +37,7 @@
 		</dependency>
 		<dependency>
 			<groupId>com.github.karlnicholas.legalservices</groupId>
-			<artifactId>statute-service</artifactId>
+			<artifactId>statuteservice</artifactId>
 		</dependency>
 	</dependencies>
 </project>

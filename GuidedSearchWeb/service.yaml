@@ -1,10 +1,10 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: guidedsearch-web-service
+  name: guidedsearchweb-service
 spec:
   selector:
-    app: guidedsearch-web
+    app: guidedsearchweb
   ports:
   - port: 8092
     protocol: TCP

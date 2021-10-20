@@ -6,8 +6,8 @@ FROM adoptopenjdk/openjdk11:alpine-slim
 
 VOLUME /CaliforniaStatutes
 # Copy the jar to the production image from the builder stage.
-COPY target/opinion-rest-ca-*.jar /opinion-rest-ca.jar
+COPY target/opinionrestca-*.jar /opinionrestca.jar
 EXPOSE 8091
 
 # Run the web service on container startup.
-CMD ["java","-Djava.security.egd=file:/dev/./urandom","-Dserver.port=${PORT}","-jar","/opinion-rest-ca.jar"]
+CMD ["java","-Djava.security.egd=file:/dev/./urandom","-Dserver.port=${PORT}","-jar","/opinionrestca.jar"]

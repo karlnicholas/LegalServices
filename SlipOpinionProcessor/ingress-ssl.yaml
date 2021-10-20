@@ -21,6 +21,6 @@ spec:
         pathType: Prefix
         backend:
           service:
-            name: guidedsearch-web-service
+            name: guidedsearchweb-service
             port:
               number: 8092

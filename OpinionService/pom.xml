@@ -6,7 +6,7 @@
 		<artifactId>legalservices</artifactId>
 		<version>2.0.5-SNAPSHOT</version>
 	</parent>
-	<artifactId>opinion-service</artifactId>
+	<artifactId>opinionservice</artifactId>
 	<name>Opinion Service</name>
 	<description>Opinion Service for Legal Services</description>
 	<dependencies>
@@ -38,7 +38,7 @@
 		</dependency>
 		<dependency>
 			<groupId>com.github.karlnicholas.legalservices</groupId>
-			<artifactId>opinion-model</artifactId>
+			<artifactId>opinionmodel</artifactId>
 		</dependency>
 	</dependencies>
 </project>

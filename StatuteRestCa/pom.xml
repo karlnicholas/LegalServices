@@ -6,7 +6,7 @@
 		<artifactId>legalservices</artifactId>
 		<version>2.0.5-SNAPSHOT</version>
 	</parent>
-	<artifactId>statute-rest-ca</artifactId>
+	<artifactId>statuterestca</artifactId>
 	<name>Statute Rest Ca</name>
 	<description>Statute CA Rest Services for Legal Services</description>
 	<dependencies>
@@ -24,11 +24,11 @@
 		</dependency>
 		<dependency>
 			<groupId>com.github.karlnicholas.legalservices</groupId>
-			<artifactId>statute-ca</artifactId>
+			<artifactId>statuteca</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.github.karlnicholas.legalservices</groupId>
-			<artifactId>statute-server</artifactId>
+			<artifactId>statuteserver</artifactId>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>

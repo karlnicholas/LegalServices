@@ -84,119 +84,119 @@
 			</dependency>
 			<dependency>
 				<groupId>com.github.karlnicholas.legalservices</groupId>
-				<artifactId>statute-service</artifactId>
+				<artifactId>statuteservice</artifactId>
 				<version>${project.version}</version>
 				<type>jar</type>
 				<scope>compile</scope>
 			</dependency>
 			<dependency>
 				<groupId>com.github.karlnicholas.legalservices</groupId>
-				<artifactId>statute-service-reactive</artifactId>
+				<artifactId>statuteservicereactive</artifactId>
 				<version>${project.version}</version>
 				<type>jar</type>
 				<scope>compile</scope>
 			</dependency>
 			<dependency>
 				<groupId>com.github.karlnicholas.legalservices</groupId>
-				<artifactId>caselist-model</artifactId>
+				<artifactId>caselistmodel</artifactId>
 				<version>${project.version}</version>
 				<type>jar</type>
 				<scope>compile</scope>
 			</dependency>
 			<dependency>
 				<groupId>com.github.karlnicholas.legalservices</groupId>
-				<artifactId>sql-util</artifactId>
+				<artifactId>sqlutil</artifactId>
 				<version>${project.version}</version>
 				<type>jar</type>
 				<scope>compile</scope>
 			</dependency>
 			<dependency>
 				<groupId>com.github.karlnicholas.legalservices</groupId>
-				<artifactId>opinion-service</artifactId>
+				<artifactId>opinionservice</artifactId>
 				<version>${project.version}</version>
 				<type>jar</type>
 				<scope>compile</scope>
 			</dependency>
 			<dependency>
 				<groupId>com.github.karlnicholas.legalservices</groupId>
-				<artifactId>opinion-service-reactive</artifactId>
+				<artifactId>opinionservicereactive</artifactId>
 				<version>${project.version}</version>
 				<type>jar</type>
 				<scope>compile</scope>
 			</dependency>
 			<dependency>
 				<groupId>com.github.karlnicholas.legalservices</groupId>
-				<artifactId>statute-server</artifactId>
+				<artifactId>statuteserver</artifactId>
 				<version>${project.version}</version>
 				<type>jar</type>
 				<scope>compile</scope>
 			</dependency>
 			<dependency>
 				<groupId>com.github.karlnicholas.legalservices</groupId>
-				<artifactId>statute-ca</artifactId>
+				<artifactId>statuteca</artifactId>
 				<version>${project.version}</version>
 				<type>jar</type>
 				<scope>compile</scope>
 			</dependency>
 			<dependency>
 				<groupId>com.github.karlnicholas.legalservices</groupId>
-				<artifactId>guided-search-core</artifactId>
+				<artifactId>guidedsearchcore</artifactId>
 				<version>${project.version}</version>
 				<type>jar</type>
 				<scope>compile</scope>
 			</dependency>
 			<dependency>
 				<groupId>com.github.karlnicholas.legalservices</groupId>
-				<artifactId>opinion-model</artifactId>
+				<artifactId>opinionmodel</artifactId>
 				<version>${project.version}</version>
 				<type>jar</type>
 				<scope>compile</scope>
 			</dependency>
 			<dependency>
 				<groupId>com.github.karlnicholas.legalservices</groupId>
-				<artifactId>opinion-parser</artifactId>
+				<artifactId>opinionparser</artifactId>
 				<version>${project.version}</version>
 				<type>jar</type>
 				<scope>compile</scope>
 			</dependency>
 			<dependency>
 				<groupId>com.github.karlnicholas.legalservices</groupId>
-				<artifactId>opinion-crud</artifactId>
+				<artifactId>opinioncrud</artifactId>
 				<version>${project.version}</version>
 				<type>jar</type>
 				<scope>compile</scope>
 			</dependency>
 			<dependency>
 				<groupId>com.github.karlnicholas.legalservices</groupId>
-				<artifactId>slipopinion-model</artifactId>
+				<artifactId>slipopinionmodel</artifactId>
 				<version>${project.version}</version>
 				<type>jar</type>
 				<scope>compile</scope>
 			</dependency>
 			<dependency>
 				<groupId>com.github.karlnicholas.legalservices</groupId>
-				<artifactId>slipopinion-parser</artifactId>
+				<artifactId>slipopinionparser</artifactId>
 				<version>${project.version}</version>
 				<type>jar</type>
 				<scope>compile</scope>
 			</dependency>
 			<dependency>
 				<groupId>com.github.karlnicholas.legalservices</groupId>
-				<artifactId>slipopinion-dao</artifactId>
+				<artifactId>slipopiniondao</artifactId>
 				<version>${project.version}</version>
 				<type>jar</type>
 				<scope>compile</scope>
 			</dependency>
 			<dependency>
 				<groupId>com.github.karlnicholas.legalservices</groupId>
-				<artifactId>opinion-view-model</artifactId>
+				<artifactId>opinionviewmodel</artifactId>
 				<version>${project.version}</version>
 				<type>jar</type>
 				<scope>compile</scope>
 			</dependency>
 			<dependency>
 				<groupId>com.github.karlnicholas.legalservices</groupId>
-				<artifactId>opinion-view-dao</artifactId>
+				<artifactId>opinionviewdao</artifactId>
 				<version>${project.version}</version>
 				<type>jar</type>
 				<scope>compile</scope>

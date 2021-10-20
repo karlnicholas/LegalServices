@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>slipopinion-dao</artifactId>
+	<artifactId>slipopiniondao</artifactId>
 	<parent>
 		<groupId>com.github.karlnicholas.legalservices</groupId>
 		<artifactId>legalservices</artifactId>
@@ -22,11 +22,11 @@
 		</dependency>
 		<dependency>
 			<groupId>com.github.karlnicholas.legalservices</groupId>
-			<artifactId>slipopinion-parser</artifactId>
+			<artifactId>slipopinionparser</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.github.karlnicholas.legalservices</groupId>
-			<artifactId>opinion-crud</artifactId>
+			<artifactId>opinioncrud</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>

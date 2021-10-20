@@ -6,9 +6,9 @@ FROM adoptopenjdk/openjdk11:alpine-slim
 
 VOLUME /CaliforniaStatutes
 # Copy the jar to the production image from the builder stage.
-COPY target/statute-rest-ca-*.jar /statute-rest-ca.jar
+COPY target/statuterestca-*.jar /statuterestca.jar
 ENV californiastatutesloc=/opcastorage/CaliforniaStatutes
 EXPOSE 8090
 
 # Run the web service on container startup.
-CMD ["java","-Djava.security.egd=file:/dev/./urandom","-Dserver.port=${PORT}","-jar","/statute-rest-ca.jar"]
+CMD ["java","-Djava.security.egd=file:/dev/./urandom","-Dserver.port=${PORT}","-jar","/statuterestca.jar"]

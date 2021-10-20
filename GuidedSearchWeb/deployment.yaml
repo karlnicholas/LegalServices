@@ -2,21 +2,21 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: guidedsearch-web
+  name: guidedsearchweb
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: guidedsearch-web
+      app: guidedsearchweb
   template:
     metadata:
       labels:
-        app: guidedsearch-web
+        app: guidedsearchweb
     spec:
       containers:
-      - name: guidedsearch-web-app
+      - name: guidedsearchweb-app
         # Replace $GCLOUD_PROJECT with your project ID
-        image: gcr.io/legalservices/guidedsearch-web
+        image: gcr.io/legalservices/guidedsearchweb
         env:
           - name: PORT
             value: "8092"

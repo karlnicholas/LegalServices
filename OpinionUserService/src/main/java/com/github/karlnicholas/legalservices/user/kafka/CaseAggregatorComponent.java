@@ -4,6 +4,7 @@ import java.time.Duration;
 import java.util.Collections;
 import java.util.Properties;
 
+import com.github.karlnicholas.legalservices.opinionview.model.KakfaProperties;
 import com.github.karlnicholas.legalservices.opinionview.model.OpinionViewMessage;
 import org.apache.kafka.clients.CommonClientConfigs;
 import org.apache.kafka.clients.consumer.*;

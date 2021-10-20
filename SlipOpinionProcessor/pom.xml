@@ -24,27 +24,27 @@
 		</dependency>
 		<dependency>
 			<groupId>com.github.karlnicholas.legalservices</groupId>
-			<artifactId>statute-ca</artifactId>
+			<artifactId>statuteca</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.github.karlnicholas.legalservices</groupId>
-			<artifactId>sql-util</artifactId>
+			<artifactId>sqlutil</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.github.karlnicholas.legalservices</groupId>
-			<artifactId>statute-service</artifactId>
+			<artifactId>statuteservice</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.github.karlnicholas.legalservices</groupId>
-			<artifactId>opinion-service</artifactId>
+			<artifactId>opinionservice</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.github.karlnicholas.legalservices</groupId>
-			<artifactId>slipopinion-parser</artifactId>
+			<artifactId>slipopinionparser</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.github.karlnicholas.legalservices</groupId>
-			<artifactId>opinion-view-model</artifactId>
+			<artifactId>opinionviewmodel</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.projectlombok</groupId>
@@ -62,7 +62,7 @@
 		</dependency>
 		<dependency>
 			<groupId>com.github.karlnicholas.legalservices</groupId>
-			<artifactId>caselist-model</artifactId>
+			<artifactId>caselistmodel</artifactId>
 		</dependency>
 	</dependencies>
 	<build>

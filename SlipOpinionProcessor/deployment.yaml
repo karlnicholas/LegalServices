@@ -21,9 +21,9 @@ spec:
           - name: PORT
             value: "8080"
           - name: statutesrestca
-            value: "http://statutes-rest-ca-service:8090/"
+            value: "http://statutesrestca-service:8090/"
           - name: opinionrestca
-            value: "http://opinion-rest-ca-service:8091/"
+            value: "http://opinionrestca-service:8091/"
           - name: kafka.ip-address
             value: "kafka-opca-vm"
           - name: slipopinionprocessor

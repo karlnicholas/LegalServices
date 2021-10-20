@@ -17,11 +17,11 @@
 		</dependency>
 		<dependency>
 			<groupId>com.github.karlnicholas.legalservices</groupId>
-			<artifactId>statute-ca</artifactId>
+			<artifactId>statuteca</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.github.karlnicholas.legalservices</groupId>
-			<artifactId>opinion-crud</artifactId>
+			<artifactId>opinioncrud</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.projectlombok</groupId>
