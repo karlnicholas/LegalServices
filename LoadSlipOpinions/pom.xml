@@ -55,10 +55,6 @@
 		</dependency>
 		<dependency>
 			<groupId>com.github.karlnicholas.legalservices</groupId>
-			<artifactId>opinionviewmodel</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.github.karlnicholas.legalservices</groupId>
 			<artifactId>slipopinionparser</artifactId>
 		</dependency>
 	</dependencies>

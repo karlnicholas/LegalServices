@@ -35,6 +35,10 @@
 		</dependency>
 		<dependency>
 			<groupId>com.github.karlnicholas.legalservices</groupId>
+			<artifactId>sqlutil</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.github.karlnicholas.legalservices</groupId>
 			<artifactId>opinionviewmodel</artifactId>
 		</dependency>
 	</dependencies>

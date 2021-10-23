@@ -5,8 +5,8 @@ import java.util.Properties;
 
 import javax.sql.DataSource;
 
-import com.github.karlnicholas.legalservices.opinionview.model.KakfaProperties;
-import com.github.karlnicholas.legalservices.opinionview.model.OpinionViewMessage;
+import com.github.karlnicholas.legalservices.opinionview.kafka.KakfaProperties;
+import com.github.karlnicholas.legalservices.opinionview.kafka.OpinionViewMessage;
 import org.apache.kafka.clients.CommonClientConfigs;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.Producer;

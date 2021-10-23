@@ -6,10 +6,10 @@ import java.sql.SQLException;
 
 import javax.sql.DataSource;
 
-import com.github.karlnicholas.legalservices.opinionview.model.KakfaProperties;
+import com.github.karlnicholas.legalservices.opinionview.dao.SlipOpininScraperDao;
+import com.github.karlnicholas.legalservices.opinionview.kafka.KakfaProperties;
 import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerRecord;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 

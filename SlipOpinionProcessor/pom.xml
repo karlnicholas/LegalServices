@@ -28,10 +28,6 @@
 		</dependency>
 		<dependency>
 			<groupId>com.github.karlnicholas.legalservices</groupId>
-			<artifactId>sqlutil</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.github.karlnicholas.legalservices</groupId>
 			<artifactId>statuteservice</artifactId>
 		</dependency>
 		<dependency>
@@ -44,7 +40,7 @@
 		</dependency>
 		<dependency>
 			<groupId>com.github.karlnicholas.legalservices</groupId>
-			<artifactId>opinionviewmodel</artifactId>
+			<artifactId>opinionviewdao</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.projectlombok</groupId>
@@ -63,6 +59,10 @@
 		<dependency>
 			<groupId>com.github.karlnicholas.legalservices</groupId>
 			<artifactId>caselistmodel</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.github.karlnicholas.legalservices</groupId>
+			<artifactId>opinionviewdao</artifactId>
 		</dependency>
 	</dependencies>
 	<build>

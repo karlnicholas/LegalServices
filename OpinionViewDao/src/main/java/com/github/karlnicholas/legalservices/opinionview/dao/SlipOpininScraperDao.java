@@ -1,4 +1,4 @@
-package com.github.karlnicholas.legalservices.slipopinion.processor;
+package com.github.karlnicholas.legalservices.opinionview.dao;
 
 import java.sql.Connection;
 import java.sql.Date;
@@ -25,6 +25,14 @@ public class SlipOpininScraperDao {
 
 	public String callSlipOpinionUpdateNeeded(Connection con) throws SQLException {
 		try (PreparedStatement ps = con.prepareCall("{call checkSlipOpinionUpdate()}")) {
+			try (ResultSet rs = ps.executeQuery()) {
+				rs.next();
+				return rs.getString(1);
+			}
+		}
+	}
+	public String callEmailUserNeeded(Connection con) throws SQLException {
+		try (PreparedStatement ps = con.prepareCall("{call checkEmailUser()}")) {
 			try (ResultSet rs = ps.executeQuery()) {
 				rs.next();
 				return rs.getString(1);

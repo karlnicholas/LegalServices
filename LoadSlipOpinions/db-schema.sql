@@ -22,7 +22,8 @@ alter table partyattorneypair add constraint FK8la3eiphk0wnmel0ail3winl4 foreign
 alter table slipproperties add constraint FK97edwcyxhia5mmhb1qqgury8o foreign key (slipopinion_id) references opinionbase (id);
 alter table user_roles add constraint FKj9553ass9uctjrmh0gkqsmv0d foreign key (roles_id) references role (id);
 alter table user_roles add constraint FK55itppkw3i07do3h7qoclqd4k foreign key (user_id) references user (id);
-insert into slipopinionlist(id, updatetime) values( 1, current_timestamp());
+insert into slipopinionupdate(id, updatetime) values( 1, current_timestamp());
+insert into slipopinionupdate(id, updatetime) values( 2, TIMESTAMP(DATE_SUB(DATE(DATE_ADD(NOW(),INTERVAL IF(WEEKDAY(NOW())=6,6,(5-WEEKDAY(NOW()))) DAY)), INTERVAL 7 DAY)));
 insert into role (id, role) values(1, 'USER');
 insert into role (id, role) values(2, 'ADMIN');
 DELIMITER $$
@@ -36,6 +37,20 @@ BEGIN
 	IF updateNeeded >= 3 THEN
 	    SELECT 'UPDATE' into result;
         update slipopinionlist set updatetime = current_timestamp() where id = 1;
+    END IF;
+    COMMIT;
+    SELECT RESULT;
+END$$
+CREATE PROCEDURE `checkEmailUser` ()
+BEGIN
+    DECLARE result TEXT;
+    DECLARE updateNeeded INT;
+    SELECT 'NOEMAIL' into result;
+    START TRANSACTION;
+    select TIMESTAMPDIFF(DAY, (select updatetime from slipopinionupdate where id=2), TIMESTAMP(DATE(DATE_ADD(NOW(),INTERVAL IF(WEEKDAY(NOW())=6,6,(5-WEEKDAY(NOW()))) DAY)))) into updateNeeded;
+    IF updateNeeded >= 7 THEN
+        SELECT 'EMAIL' into result;
+        update slipopinionupdate set updatetime = TIMESTAMP(DATE(DATE_ADD(NOW(),INTERVAL IF(WEEKDAY(NOW())=6,6,(5-WEEKDAY(NOW()))) DAY))) where id = 2;
     END IF;
     COMMIT;
     SELECT RESULT;

@@ -1,4 +1,4 @@
-package com.github.karlnicholas.legalservices.opinionview.model;
+package com.github.karlnicholas.legalservices.opinionview.kafka;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
