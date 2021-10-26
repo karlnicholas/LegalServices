@@ -6,6 +6,7 @@ import java.util.Properties;
 import javax.sql.DataSource;
 
 import com.github.karlnicholas.legalservices.opinionview.kafka.KakfaProperties;
+import com.github.karlnicholas.legalservices.opinionview.kafka.OpinionViewData;
 import com.github.karlnicholas.legalservices.opinionview.kafka.OpinionViewMessage;
 import org.apache.kafka.clients.CommonClientConfigs;
 import org.apache.kafka.clients.producer.KafkaProducer;
@@ -36,7 +37,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 @SpringBootApplication(scanBasePackages = {"com.github.karlnicholas.legalservices"}) 
 @EnableScheduling
-@EnableAsync
 public class SlipOpinionProcessor {
 	Logger logger = LoggerFactory.getLogger(SlipOpinionProcessor.class);
 	public static void main(String... args) {
@@ -46,7 +46,8 @@ public class SlipOpinionProcessor {
 	@Autowired TaskExecutor taskExecutor;
 	@Autowired ObjectMapper objectMapper;
 	@Autowired KakfaProperties kafkaProperties;
-	@Autowired OpinionViewData opinionViewData;
+	@Autowired
+    OpinionViewData opinionViewData;
 	@Autowired DataSource dataSource;
 
 	@EventListener(ApplicationReadyEvent.class)

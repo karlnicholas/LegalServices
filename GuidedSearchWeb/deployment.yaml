@@ -21,7 +21,7 @@ spec:
           - name: PORT
             value: "8092"
           - name: statutesrestca
-            value: "http://statutes-rest-ca-service:8090/"
+            value: "http://statutesrestca-service:8090/"
         # This app listens on port 8092 for web traffic by default.
         ports:
         - containerPort: 8092

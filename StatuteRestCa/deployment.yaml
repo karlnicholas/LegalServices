@@ -2,21 +2,21 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: statutes-rest-ca
+  name: statutesrestca
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: statutes-rest-ca
+      app: statutesrestca
   template:
     metadata:
       labels:
-        app: statutes-rest-ca
+        app: statutesrestca
     spec:
       containers:
-      - name: statutes-rest-ca-app
+      - name: statutesrestca-app
         # Replace $GCLOUD_PROJECT with your project ID
-        image: gcr.io/legalservices/statutes-rest-ca
+        image: gcr.io/legalservices/statutesrestca
         env:
           - name: PORT
             value: "8090"

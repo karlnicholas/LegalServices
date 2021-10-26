@@ -1,4 +1,4 @@
-package com.github.karlnicholas.legalservices.slipopinion.processor;
+package com.github.karlnicholas.legalservices.opinionview.kafka;
 
 import java.time.LocalDate;
 import java.time.temporal.WeekFields;

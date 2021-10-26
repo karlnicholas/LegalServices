@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Properties;
 
 import com.github.karlnicholas.legalservices.opinionview.kafka.KakfaProperties;
+import com.github.karlnicholas.legalservices.opinionview.kafka.OpinionViewData;
 import com.github.karlnicholas.legalservices.opinionview.kafka.OpinionViewMessage;
 import org.apache.kafka.clients.CommonClientConfigs;
 import org.apache.kafka.clients.consumer.Consumer;
