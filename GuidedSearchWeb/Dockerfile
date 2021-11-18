@@ -12,4 +12,4 @@ ENV gsindextaxoloc=/opcastorage/indextaxo
 EXPOSE 8092
 
 # Run the web service on container startup.
-CMD ["java","-Djava.security.egd=file:/dev/./urandom","-Dserver.port=${PORT}","-jar","/guidedsearch-web.jar"]
+CMD ["java","-Djava.security.egd=file:/dev/./urandom","-Dserver.port=${PORT}","-jar","/guidedsearchweb.jar"]

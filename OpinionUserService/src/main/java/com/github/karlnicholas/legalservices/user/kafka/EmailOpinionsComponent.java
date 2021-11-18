@@ -88,7 +88,10 @@ public class EmailOpinionsComponent implements Runnable {
                 for (ConsumerRecord<Integer, OpinionViewMessage> opinionViewMessageRecord : opinionViewMessageRecords) {
 //		        	log.info("topic = {}, partition = {}, offset = {}, record key = {}, record value length = {}",
 //		        			opinionViewMessageRecord.topic(), opinionViewMessageRecord.partition(), opinionViewMessageRecord.offset());
+                    log.info("opinionViewMessageRecord: {}", opinionViewMessageRecord);
                     OpinionViewMessage opinionViewMessage = opinionViewMessageRecord.value();
+                    log.info("opinionViewMessage: {}", opinionViewMessage);
+                    if ( opinionViewMessage == null ) continue;
                     if ( opinionViewMessage.getOpinionView().isPresent() ) {
                         opinionViewData.addOpinionView(opinionViewMessage.getOpinionView().get());
                     }
@@ -119,9 +122,10 @@ public class EmailOpinionsComponent implements Runnable {
 //        int dayOfWeek = LocalDate.now().getDayOfWeek().getValue();
 //        int minusDays = 7 + dayOfWeek % 7;
 //        LocalDate pastDate = LocalDate.now().minusDays(minusDays);
-        LocalDate pastDate = LocalDate.of(2021, 05, 02);
+        LocalDate pastDate = LocalDate.of(2021, 02, 14);
+        log.info("pastDate: {}", pastDate);
         for ( OpinionView opinionView: opinionViewData.getOpinionViews(pastDate) ) {
-            System.out.println("OpinionView: " + opinionView);
+            log.info("OpinionView: {}", opinionView);
         }
         return "EMAIL";
     }
