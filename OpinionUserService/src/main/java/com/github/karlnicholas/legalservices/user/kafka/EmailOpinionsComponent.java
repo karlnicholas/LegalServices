@@ -1,10 +1,10 @@
 package com.github.karlnicholas.legalservices.user.kafka;
 
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import com.github.karlnicholas.legalservices.caselist.model.CaseListEntry;
 import com.github.karlnicholas.legalservices.opinionview.dao.SlipOpininScraperDao;
@@ -53,7 +53,7 @@ public class EmailOpinionsComponent implements Runnable {
         consumerProperties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG,kafkaProperties.getIpAddress()+':'+kafkaProperties.getPort());
         consumerProperties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, kafkaProperties.getIntegerDeserializer());
         consumerProperties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, kafkaProperties.getOpinionViewMessageDeserializer());
-//		consumerProperties.put(ConsumerConfig.GROUP_ID_CONFIG, kafkaProperties.getOpinionViewCacheConsumerGroup());
+//		consumerProperties.put(ConsumerConfig.GROUP_ID_CONFIG, kafkaProperties.getOpinionUserServiceConsumerGroup());
 //		consumerProperties.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
 
         if ( !kafkaProperties.getUser().equalsIgnoreCase("notFound") ) {
@@ -87,11 +87,9 @@ public class EmailOpinionsComponent implements Runnable {
                 ConsumerRecords<Integer, OpinionViewMessage> opinionViewMessageRecords = opinionViewCacheConsumer.poll(Duration.ofSeconds(1));
                 for (ConsumerRecord<Integer, OpinionViewMessage> opinionViewMessageRecord : opinionViewMessageRecords) {
 //		        	log.info("topic = {}, partition = {}, offset = {}, record key = {}, record value length = {}",
-//		        			opinionViewMessageRecord.topic(), opinionViewMessageRecord.partition(), opinionViewMessageRecord.offset());
-                    log.info("opinionViewMessageRecord: {}", opinionViewMessageRecord);
+//		        			opinionViewMessageRecord.topic(), opinionViewMessageRecord.partition(), opinionViewMessageRecord.offset(),
+//                            opinionViewMessageRecord.key(), opinionViewMessageRecord.serializedValueSize());
                     OpinionViewMessage opinionViewMessage = opinionViewMessageRecord.value();
-                    log.info("opinionViewMessage: {}", opinionViewMessage);
-                    if ( opinionViewMessage == null ) continue;
                     if ( opinionViewMessage.getOpinionView().isPresent() ) {
                         opinionViewData.addOpinionView(opinionViewMessage.getOpinionView().get());
                     }
@@ -111,7 +109,7 @@ public class EmailOpinionsComponent implements Runnable {
         }
     }
 
-    @Scheduled(fixedRate = 86400000, initialDelay = 10000)
+    @Scheduled(fixedRate = 86400000, initialDelay = 60000)
     public String processEmails() throws SQLException {
 //        try ( Connection con = dataSource.getConnection()) {
 //            String emailUserNeeded = slipOpininScraperDao.callEmailUserNeeded(con);
@@ -119,13 +117,13 @@ public class EmailOpinionsComponent implements Runnable {
 //                return "NOEMAIL";
 //            }
 //        }
-//        int dayOfWeek = LocalDate.now().getDayOfWeek().getValue();
-//        int minusDays = 7 + dayOfWeek % 7;
-//        LocalDate pastDate = LocalDate.now().minusDays(minusDays);
-        LocalDate pastDate = LocalDate.of(2021, 02, 14);
+        int dayOfWeek = LocalDate.now().getDayOfWeek().getValue();
+        int minusDays = (7 + dayOfWeek) % 7;
+        LocalDate pastDate = LocalDate.now().minusDays(minusDays);
+//        LocalDate pastDate = LocalDate.of(2021, 02, 14);
         log.info("pastDate: {}", pastDate);
         for ( OpinionView opinionView: opinionViewData.getOpinionViews(pastDate) ) {
-            log.info("OpinionView: {}", opinionView);
+            log.info("OpinionView: {} {}", opinionView, opinionView.getOpinionDate().toString());
         }
         return "EMAIL";
     }

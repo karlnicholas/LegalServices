@@ -23,6 +23,7 @@ public class KakfaProperties {
     private String failCaseListConsumerGroup = "failCaseListConsumerGroup";
     private String opinionViewCacheTopic = "opinionviewcache";
     private String opinionViewCacheConsumerGroup = "opinionViewCacheConsumerGroup";
+    private String opinionUserServiceConsumerGroup = "opinionUserServiceConsumerGroup";
     private String integerSerializer = "org.apache.kafka.common.serialization.IntegerSerializer";
     private String integerDeserializer = "org.apache.kafka.common.serialization.IntegerDeserializer";
     private String jsonValueSerializer = "org.apache.kafka.connect.json.JsonSerializer";

@@ -83,19 +83,22 @@ public class OpinionViewData {
 					
 	}
 	public List<OpinionView> getOpinionViews() {
+		return opinionViews;
+	}
+	public List<OpinionView> getOpinionViews(LocalDate startDate) {
+		return findDateBracket(startDate).map(dates->{
+			return opinionViews.stream()
+					.filter(ov->ov.getOpinionDate().compareTo(dates[0]) >= 0 && ov.getOpinionDate().compareTo(dates[1]) <= 0)
+					.sorted((ov1, ov2)->ov2.getOpinionDate().compareTo(ov1.getOpinionDate()))
+					.collect(Collectors.toList());
+		}).orElseGet(()->Collections.emptyList());
+	}
+	public List<OpinionView> getRecentOpinionViews() {
 		if ( dateBrackets.size() > 0 ) {
 			return getOpinionViews(dateBrackets.get(0)[0]);
 		} else {
 			return Collections.emptyList();
 		}
-	}
-	public List<OpinionView> getOpinionViews(LocalDate startDate) {
-		return findDateBracket(startDate).map(dates->{
-			return opinionViews.stream()
-			.filter(ov->ov.getOpinionDate().compareTo(dates[0]) >= 0 && ov.getOpinionDate().compareTo(dates[1]) <= 0)
-			.sorted((ov1, ov2)->ov2.getOpinionDate().compareTo(ov1.getOpinionDate()))
-			.collect(Collectors.toList());			
-		}).orElseGet(()->Collections.emptyList());
 	}
 	public void deleteOpinionView(OpinionKey opinionKey) {
 		opinionViews.stream().filter(opinionView->opinionView.getOpinionKey().compareTo(opinionKey) == 0).findAny().ifPresent(opinionView->{

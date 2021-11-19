@@ -41,7 +41,7 @@ public class OpinionViewControllerHandler {
 	}
 	public Mono<ServerResponse> getRecentOpinionViews(ServerRequest request) {
 		return ServerResponse.ok().contentType(MediaType.APPLICATION_JSON)
-				.bodyValue(opinionViewData.getOpinionViews());
+				.bodyValue(opinionViewData.getRecentOpinionViews());
 	}
 	public Mono<ServerResponse> getOpinionViewDates(ServerRequest request) {
 		return ServerResponse.ok().contentType(MediaType.APPLICATION_JSON)

@@ -4,7 +4,7 @@ metadata:
   name: opinionuserservice-service
 spec:
   selector:
-    app: opinionuserservice-service
+    app: opinionuserservice
   ports:
   - port: 8093
     protocol: TCP
