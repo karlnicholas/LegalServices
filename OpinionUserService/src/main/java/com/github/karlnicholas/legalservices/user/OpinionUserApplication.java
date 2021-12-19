@@ -3,6 +3,7 @@ package com.github.karlnicholas.legalservices.user;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.karlnicholas.legalservices.opinionview.kafka.KakfaProperties;
 import com.github.karlnicholas.legalservices.opinionview.kafka.OpinionViewData;
+import com.github.karlnicholas.legalservices.user.dao.UserDao;
 import com.github.karlnicholas.legalservices.user.kafka.EmailOpinionsComponent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,11 +42,11 @@ public class OpinionUserApplication {
 	@Autowired
 	private ObjectMapper objectMapper;
 	@Autowired
-	private DataSource dataSource;
+	private UserDao userDao;
 
 	@EventListener(ApplicationReadyEvent.class)
 	public void doSomethingAfterStartup() throws SQLException {
-		new Thread(new EmailOpinionsComponent(kafkaProperties, opinionViewData, objectMapper, dataSource)).start();
+		new Thread(new EmailOpinionsComponent(kafkaProperties, opinionViewData, objectMapper, userDao)).start();
 	}
 
 	@Bean

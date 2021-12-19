@@ -1,7 +1,6 @@
 package com.github.karlnicholas.legalservices.user.dao;
 
 import com.github.karlnicholas.legalservices.user.model.ApplicationUser;
-import com.github.karlnicholas.legalservices.user.model.ERole;
 import com.github.karlnicholas.legalservices.user.model.Role;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -15,10 +14,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 /*
 create table user (id bigint not null auto_increment
@@ -54,38 +50,38 @@ public class UserDao {
 
     public Optional<ApplicationUser> findByEmail(String email) {
         Optional<ApplicationUser> optionalApplicationUser = Optional.ofNullable(
-			jdbcTemplate.query("select id, createdate, email, emailupdates, firstname, lastname, locale, optout, optoutkey, password, startverify, titles, updatedate, verified, verifycount, verifyerrors, verifykey, welcomeerrors, welcomed from user where email = ?",
-				ps -> ps.setString(1, email),
-				rs -> {
-				rs.next();
-				String password = rs.getString(10);
-				Locale locale = new Locale(rs.getString(7));
-				ApplicationUser user = new ApplicationUser(email, password, locale, new HashSet<>());
-				user.setId(rs.getLong(1));
-				user.setCreateDate(((LocalDateTime) rs.getObject(2)).toLocalDate());
-				user.setEmailUpdates(rs.getBoolean(4));
-				user.setFirstName(rs.getString(5));
-				user.setLastName(rs.getString(6));
-				user.setOptout(rs.getBoolean(8));
-				user.setOptoutKey(rs.getString(9));
-				user.setStartVerify(rs.getBoolean(11));
-				// handle titles.
-				ByteArrayInputStream bis = new ByteArrayInputStream(rs.getBytes(12));
-				try (ObjectInput in = new ObjectInputStream(bis)) {
-					user.setTitles((String[]) in.readObject());
-				} catch (IOException | ClassNotFoundException ex) {
-					ex.printStackTrace();
-				}
-				//
-				user.setUpdateDate(((LocalDateTime) rs.getObject(13)).toLocalDate());
-				user.setVerified(rs.getBoolean(14));
-				user.setVerifyCount(rs.getInt(15));
-				user.setVerifyErrors(rs.getInt(16));
-				user.setVerifyKey(rs.getString(17));
-				user.setWelcomeErrors(rs.getInt(18));
-				user.setWelcomed(rs.getBoolean(19));
-				return user;
-			})
+                jdbcTemplate.query("select id, createdate, email, emailupdates, firstname, lastname, locale, optout, optoutkey, password, startverify, titles, updatedate, verified, verifycount, verifyerrors, verifykey, welcomeerrors, welcomed from user where email = ?",
+                        ps -> ps.setString(1, email),
+                        rs -> {
+                            rs.next();
+                            String password = rs.getString(10);
+                            Locale locale = new Locale(rs.getString(7));
+                            ApplicationUser user = new ApplicationUser(email, password, locale, new HashSet<>());
+                            user.setId(rs.getLong(1));
+                            user.setCreateDate(((LocalDateTime) rs.getObject(2)).toLocalDate());
+                            user.setEmailUpdates(rs.getBoolean(4));
+                            user.setFirstName(rs.getString(5));
+                            user.setLastName(rs.getString(6));
+                            user.setOptout(rs.getBoolean(8));
+                            user.setOptoutKey(rs.getString(9));
+                            user.setStartVerify(rs.getBoolean(11));
+                            // handle titles.
+                            ByteArrayInputStream bis = new ByteArrayInputStream(rs.getBytes(12));
+                            try (ObjectInput in = new ObjectInputStream(bis)) {
+                                user.setTitles((String[]) in.readObject());
+                            } catch (IOException | ClassNotFoundException ex) {
+                                ex.printStackTrace();
+                            }
+                            //
+                            user.setUpdateDate(((LocalDateTime) rs.getObject(13)).toLocalDate());
+                            user.setVerified(rs.getBoolean(14));
+                            user.setVerifyCount(rs.getInt(15));
+                            user.setVerifyErrors(rs.getInt(16));
+                            user.setVerifyKey(rs.getString(17));
+                            user.setWelcomeErrors(rs.getInt(18));
+                            user.setWelcomed(rs.getBoolean(19));
+                            return user;
+                        })
         );
         if (optionalApplicationUser.isPresent()) {
             optionalApplicationUser.get().getRoles().addAll(jdbcTemplate.query("select r.* from user_roles ur join role r on ur.roles_id = r.id where ur.user_id = ?",
@@ -227,8 +223,43 @@ public class UserDao {
     }
 
     public List<ApplicationUser> findAll() {
-        // TODO Auto-generated method stub
-        return null;
+        return jdbcTemplate.query("select id, createdate, email, emailupdates, firstname, lastname, locale, optout, optoutkey, password, startverify, titles, updatedate, verified, verifycount, verifyerrors, verifykey, welcomeerrors, welcomed from user",
+                rs -> {
+                    List<ApplicationUser> users = new ArrayList<>();
+                    while (rs.next()) {
+                        ApplicationUser user = new ApplicationUser(
+                                rs.getString("email"),
+                                rs.getString("password"),
+                                new Locale(rs.getString("locale")),
+                                new HashSet<>()
+                        );
+                        user.setId(rs.getLong("id"));
+                        user.setCreateDate(((LocalDateTime) rs.getObject("createdate")).toLocalDate());
+                        user.setEmailUpdates(rs.getBoolean("emailupdates"));
+                        user.setFirstName(rs.getString("firstname"));
+                        user.setLastName(rs.getString("lastname"));
+                        user.setOptout(rs.getBoolean("optout"));
+                        user.setOptoutKey(rs.getString("optoutkey"));
+                        user.setStartVerify(rs.getBoolean("startverify"));
+                        // handle titles.
+                        ByteArrayInputStream bis = new ByteArrayInputStream(rs.getBytes("titles"));
+                        try (ObjectInput in = new ObjectInputStream(bis)) {
+                            user.setTitles((String[]) in.readObject());
+                        } catch (IOException | ClassNotFoundException ex) {
+                            ex.printStackTrace();
+                        }
+                        //
+                        user.setUpdateDate(((LocalDateTime) rs.getObject("updatedate")).toLocalDate());
+                        user.setVerified(rs.getBoolean("verified"));
+                        user.setVerifyCount(rs.getInt("verifycount"));
+                        user.setVerifyErrors(rs.getInt("verifyerrors"));
+                        user.setVerifyKey(rs.getString("verifykey"));
+                        user.setWelcomeErrors(rs.getInt("welcomeerrors"));
+                        user.setWelcomed(rs.getBoolean("welcomed"));
+                        users.add(user);
+                    }
+                    return users;
+                });
     }
 
 }

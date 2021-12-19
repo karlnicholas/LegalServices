@@ -12,7 +12,10 @@ import com.github.karlnicholas.legalservices.opinionview.kafka.KakfaProperties;
 import com.github.karlnicholas.legalservices.opinionview.kafka.OpinionViewData;
 import com.github.karlnicholas.legalservices.opinionview.kafka.OpinionViewMessage;
 import com.github.karlnicholas.legalservices.opinionview.model.OpinionView;
+import com.github.karlnicholas.legalservices.opinionview.model.StatuteView;
 import com.github.karlnicholas.legalservices.slipopinion.model.SlipOpinion;
+import com.github.karlnicholas.legalservices.user.dao.UserDao;
+import com.github.karlnicholas.legalservices.user.model.ApplicationUser;
 import org.apache.kafka.clients.CommonClientConfigs;
 import org.apache.kafka.clients.consumer.*;
 import org.apache.kafka.common.TopicPartition;
@@ -30,8 +33,9 @@ import javax.sql.DataSource;
 @Component
 public class EmailOpinionsComponent implements Runnable {
     private final Logger log = LoggerFactory.getLogger(EmailOpinionsComponent.class);
-    private final DataSource dataSource;
+//    private final DataSource dataSource;
     private final SlipOpininScraperDao slipOpininScraperDao;
+    private final UserDao userDao;
     private final Consumer<Integer, OpinionViewMessage> opinionViewCacheConsumer;
     private final KakfaProperties kafkaProperties;
     private final OpinionViewData opinionViewData;
@@ -40,10 +44,12 @@ public class EmailOpinionsComponent implements Runnable {
             KakfaProperties kafkaProperties,
             OpinionViewData opinionViewData,
             ObjectMapper objectMapper,
-            DataSource dataSource
+            UserDao userDao
+//            DataSource dataSource
     ) {
-        this.dataSource = dataSource;
+//        this.dataSource = dataSource;
         slipOpininScraperDao = new SlipOpininScraperDao();
+        this.userDao = userDao;
 
         this.kafkaProperties = kafkaProperties;
         this.opinionViewData = opinionViewData;
@@ -117,14 +123,31 @@ public class EmailOpinionsComponent implements Runnable {
 //                return "NOEMAIL";
 //            }
 //        }
-        int dayOfWeek = LocalDate.now().getDayOfWeek().getValue();
-        int minusDays = (7 + dayOfWeek) % 7;
-        LocalDate pastDate = LocalDate.now().minusDays(minusDays);
-//        LocalDate pastDate = LocalDate.of(2021, 02, 14);
+        List<OpinionView> opinionViews = new ArrayList<>();
+//        int dayOfWeek = LocalDate.now().getDayOfWeek().getValue();
+//        int minusDays = (7 + dayOfWeek) % 7;
+//        LocalDate pastDate = LocalDate.now().minusDays(minusDays);
+        LocalDate pastDate = LocalDate.of(2021, 02, 7);
         log.info("pastDate: {}", pastDate);
         for ( OpinionView opinionView: opinionViewData.getOpinionViews(pastDate) ) {
-            log.info("OpinionView: {} {}", opinionView, opinionView.getOpinionDate().toString());
+            opinionViews.add(opinionView);
         }
+        Map<ApplicationUser, List<OpinionView>> userViews = new HashMap<>();
+        userDao.findAll().stream().forEach(u->{
+            List<OpinionView> userOpinionViews = new ArrayList<>();
+            opinionViews.forEach(ov->{
+                ov.getStatutes().forEach(sv->{
+                    for ( String title: u.getTitles()) {
+                        if (sv.getShortTitle().equalsIgnoreCase(title)) {
+                            userOpinionViews.add(ov);
+                            break;
+                        }
+                    }
+                });
+            });
+            userViews.put(u, userOpinionViews);
+        });
+        userViews.forEach((k, v)->log.info("userViews: {} {}", k.getEmail(), v.stream().map(OpinionView::getTitle).collect(Collectors.toList())));
         return "EMAIL";
     }
 }
