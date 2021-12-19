@@ -53,6 +53,11 @@ spec:
               secretKeyRef:
                 name: mysqldb
                 key: database-password
+          - name: SendgridPassword
+            valueFrom:
+              secretKeyRef:
+                name: sendgrid
+                key: SendgridPassword
         # This app listens on port 8080 for web traffic by default.
         ports:
         - containerPort: 8093

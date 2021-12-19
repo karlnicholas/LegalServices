@@ -78,7 +78,7 @@ public class SendGridMailer {
 	}
 
 	public boolean sendOpinionReport(ApplicationUser ApplicationUser, List<OpinionView> opinionCases) {
-		return sendGridPrint(new EmailInformation(ApplicationUser, opinionCases), "/xsl/opinionreport.xsl");
+		return sendGridEmail(new EmailInformation(ApplicationUser, opinionCases), "/xsl/opinionreport.xsl");
 	}
 
 	public boolean sendSystemReport(ApplicationUser ApplicationUser, Map<String, Long> memoryMap) {
