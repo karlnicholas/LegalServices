@@ -5,6 +5,7 @@ import com.github.karlnicholas.legalservices.opinionview.kafka.KakfaProperties;
 import com.github.karlnicholas.legalservices.opinionview.kafka.OpinionViewData;
 import com.github.karlnicholas.legalservices.user.dao.UserDao;
 import com.github.karlnicholas.legalservices.user.kafka.EmailOpinionsComponent;
+import com.github.karlnicholas.legalservices.user.mailer.SendGridMailer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,10 +44,12 @@ public class OpinionUserApplication {
 	private ObjectMapper objectMapper;
 	@Autowired
 	private UserDao userDao;
+	@Autowired
+	private SendGridMailer sendGridMailer;
 
 	@EventListener(ApplicationReadyEvent.class)
 	public void doSomethingAfterStartup() throws SQLException {
-		new Thread(new EmailOpinionsComponent(kafkaProperties, opinionViewData, objectMapper, userDao)).start();
+		new Thread(new EmailOpinionsComponent(kafkaProperties, opinionViewData, userDao, sendGridMailer)).start();
 	}
 
 	@Bean

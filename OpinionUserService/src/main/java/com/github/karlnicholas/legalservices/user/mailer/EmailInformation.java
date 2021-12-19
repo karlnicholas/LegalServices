@@ -2,10 +2,10 @@ package com.github.karlnicholas.legalservices.user.mailer;
 
 import com.github.karlnicholas.legalservices.opinionview.model.OpinionView;
 import com.github.karlnicholas.legalservices.user.model.ApplicationUser;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlRootElement;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;

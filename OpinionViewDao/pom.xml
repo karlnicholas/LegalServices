@@ -7,8 +7,8 @@
 		<version>2.0.5-SNAPSHOT</version>
 	</parent>
 	<artifactId>opinionviewdao</artifactId>
-	<name>Slip Opinion Dao</name>
-	<description>Slip Opinion Dao</description>
+	<name>Opinion View Dao</name>
+	<description>Opinion View Dao</description>
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -23,10 +23,6 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>javax.xml.bind</groupId>
-			<artifactId>jaxb-api</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>

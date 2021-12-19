@@ -4,7 +4,6 @@ import java.sql.SQLException;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import com.github.karlnicholas.legalservices.caselist.model.CaseListEntry;
 import com.github.karlnicholas.legalservices.opinionview.dao.SlipOpininScraperDao;
@@ -12,9 +11,10 @@ import com.github.karlnicholas.legalservices.opinionview.kafka.KakfaProperties;
 import com.github.karlnicholas.legalservices.opinionview.kafka.OpinionViewData;
 import com.github.karlnicholas.legalservices.opinionview.kafka.OpinionViewMessage;
 import com.github.karlnicholas.legalservices.opinionview.model.OpinionView;
-import com.github.karlnicholas.legalservices.opinionview.model.StatuteView;
 import com.github.karlnicholas.legalservices.slipopinion.model.SlipOpinion;
 import com.github.karlnicholas.legalservices.user.dao.UserDao;
+import com.github.karlnicholas.legalservices.user.mailer.EmailInformation;
+import com.github.karlnicholas.legalservices.user.mailer.SendGridMailer;
 import com.github.karlnicholas.legalservices.user.model.ApplicationUser;
 import org.apache.kafka.clients.CommonClientConfigs;
 import org.apache.kafka.clients.consumer.*;
@@ -24,11 +24,8 @@ import org.apache.kafka.common.errors.WakeupException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-
-import javax.sql.DataSource;
 
 @Component
 public class EmailOpinionsComponent implements Runnable {
@@ -39,14 +36,15 @@ public class EmailOpinionsComponent implements Runnable {
     private final Consumer<Integer, OpinionViewMessage> opinionViewCacheConsumer;
     private final KakfaProperties kafkaProperties;
     private final OpinionViewData opinionViewData;
+    private final SendGridMailer sendGridMailer;
 
     public EmailOpinionsComponent(
             KakfaProperties kafkaProperties,
             OpinionViewData opinionViewData,
-            ObjectMapper objectMapper,
-            UserDao userDao
+            UserDao userDao,
 //            DataSource dataSource
-    ) {
+            SendGridMailer sendGridMailer) {
+        this.sendGridMailer = sendGridMailer;
 //        this.dataSource = dataSource;
         slipOpininScraperDao = new SlipOpininScraperDao();
         this.userDao = userDao;
@@ -115,7 +113,7 @@ public class EmailOpinionsComponent implements Runnable {
         }
     }
 
-    @Scheduled(fixedRate = 86400000, initialDelay = 60000)
+    @Scheduled(fixedRate = 86400000, initialDelay = 20000)
     public String processEmails() throws SQLException {
 //        try ( Connection con = dataSource.getConnection()) {
 //            String emailUserNeeded = slipOpininScraperDao.callEmailUserNeeded(con);
@@ -147,7 +145,9 @@ public class EmailOpinionsComponent implements Runnable {
             });
             userViews.put(u, userOpinionViews);
         });
-        userViews.forEach((k, v)->log.info("userViews: {} {}", k.getEmail(), v.stream().map(OpinionView::getTitle).collect(Collectors.toList())));
+        userViews.forEach((user, opinionViewList)->{
+            sendGridMailer.sendOpinionReport(user, opinionViewList);
+        });
         return "EMAIL";
     }
 }

@@ -2,6 +2,8 @@ package com.github.karlnicholas.legalservices.user.mailer;
 
 import com.github.karlnicholas.legalservices.opinionview.model.OpinionView;
 import com.github.karlnicholas.legalservices.user.model.ApplicationUser;
+import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.bind.util.JAXBSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -14,8 +16,7 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.util.JAXBSource;
+import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
@@ -78,7 +79,7 @@ public class SendGridMailer {
 	}
 
 	public boolean sendOpinionReport(ApplicationUser ApplicationUser, List<OpinionView> opinionCases) {
-		return sendGridEmail(new EmailInformation(ApplicationUser, opinionCases), "/xsl/opinionreport.xsl");
+		return sendGridPrint(new EmailInformation(ApplicationUser, opinionCases), "/xsl/opinionreport.xsl");
 	}
 
 	public boolean sendSystemReport(ApplicationUser ApplicationUser, Map<String, Long> memoryMap) {
@@ -87,12 +88,12 @@ public class SendGridMailer {
 	public boolean sendGridEmail(EmailInformation emailInformation, String emailResource) {
 		
 		try {
-			TransformerFactory tf = TransformerFactory.newInstance();
 			JAXBContext jc = JAXBContext.newInstance(EmailInformation.class);
 			JAXBSource source = new JAXBSource(jc, emailInformation);
 			// set up XSLT transformation
+			TransformerFactory tf = TransformerFactory.newInstance();
 			InputStream is = getClass().getResourceAsStream(emailResource);
-			StreamSource streamSource = new StreamSource(is);
+			Source streamSource = new StreamSource(is);
 			StringWriter htmlContent = null;
 			try {
 				htmlContent = new StringWriter();
