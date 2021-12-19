@@ -41,7 +41,7 @@ public class OpinionUserApplication {
 	@Autowired
 	private OpinionViewData opinionViewData;
 	@Autowired
-	private ObjectMapper objectMapper;
+	private DataSource dataSource;
 	@Autowired
 	private UserDao userDao;
 	@Autowired
@@ -49,7 +49,7 @@ public class OpinionUserApplication {
 
 	@EventListener(ApplicationReadyEvent.class)
 	public void doSomethingAfterStartup() throws SQLException {
-		new Thread(new EmailOpinionsComponent(kafkaProperties, opinionViewData, userDao, sendGridMailer)).start();
+		new Thread(new EmailOpinionsComponent(kafkaProperties, opinionViewData, userDao, dataSource, sendGridMailer)).start();
 	}
 
 	@Bean

@@ -1,5 +1,6 @@
 package com.github.karlnicholas.legalservices.user.kafka;
 
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.time.Duration;
 import java.time.LocalDate;
@@ -13,7 +14,6 @@ import com.github.karlnicholas.legalservices.opinionview.kafka.OpinionViewMessag
 import com.github.karlnicholas.legalservices.opinionview.model.OpinionView;
 import com.github.karlnicholas.legalservices.slipopinion.model.SlipOpinion;
 import com.github.karlnicholas.legalservices.user.dao.UserDao;
-import com.github.karlnicholas.legalservices.user.mailer.EmailInformation;
 import com.github.karlnicholas.legalservices.user.mailer.SendGridMailer;
 import com.github.karlnicholas.legalservices.user.model.ApplicationUser;
 import org.apache.kafka.clients.CommonClientConfigs;
@@ -27,12 +27,15 @@ import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import javax.sql.DataSource;
+
 @Component
 public class EmailOpinionsComponent implements Runnable {
     private final Logger log = LoggerFactory.getLogger(EmailOpinionsComponent.class);
 //    private final DataSource dataSource;
     private final SlipOpininScraperDao slipOpininScraperDao;
     private final UserDao userDao;
+    private final DataSource dataSource;
     private final Consumer<Integer, OpinionViewMessage> opinionViewCacheConsumer;
     private final KakfaProperties kafkaProperties;
     private final OpinionViewData opinionViewData;
@@ -43,7 +46,8 @@ public class EmailOpinionsComponent implements Runnable {
             OpinionViewData opinionViewData,
             UserDao userDao,
 //            DataSource dataSource
-            SendGridMailer sendGridMailer) {
+            DataSource dataSource, SendGridMailer sendGridMailer) {
+        this.dataSource = dataSource;
         this.sendGridMailer = sendGridMailer;
 //        this.dataSource = dataSource;
         slipOpininScraperDao = new SlipOpininScraperDao();
@@ -115,12 +119,12 @@ public class EmailOpinionsComponent implements Runnable {
 
     @Scheduled(fixedRate = 86400000, initialDelay = 20000)
     public String processEmails() throws SQLException {
-//        try ( Connection con = dataSource.getConnection()) {
-//            String emailUserNeeded = slipOpininScraperDao.callEmailUserNeeded(con);
-//            if ( emailUserNeeded != null && emailUserNeeded.equalsIgnoreCase("NOEMAIL")) {
-//                return "NOEMAIL";
-//            }
-//        }
+        try ( Connection con = dataSource.getConnection()) {
+            String emailUserNeeded = slipOpininScraperDao.callEmailUserNeeded(con);
+            if ( emailUserNeeded != null && emailUserNeeded.equalsIgnoreCase("NOEMAIL")) {
+                return "NOEMAIL";
+            }
+        }
         List<OpinionView> opinionViews = new ArrayList<>();
 //        int dayOfWeek = LocalDate.now().getDayOfWeek().getValue();
 //        int minusDays = (7 + dayOfWeek) % 7;

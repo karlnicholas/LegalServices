@@ -2,20 +2,22 @@ package com.github.karlnicholas.legalservices.user.mailer;
 
 import com.github.karlnicholas.legalservices.opinionview.model.OpinionView;
 import com.github.karlnicholas.legalservices.user.model.ApplicationUser;
-import jakarta.xml.bind.JAXBContext;
-import jakarta.xml.bind.util.JAXBSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.stereotype.Service;
 
 import javax.mail.Message;
 import javax.mail.Multipart;
+import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.util.JAXBSource;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
@@ -24,10 +26,7 @@ import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 import java.io.InputStream;
 import java.io.StringWriter;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class SendGridMailer {
@@ -124,7 +123,7 @@ public class SendGridMailer {
 			multiPart.addBodyPart(htmlPart); // <-- second
 
 			message.setContent(multiPart);
-			message.setFrom(new InternetAddress("no-reply@op-opca.b9ad.pro-us-east-1.openshiftapps.com"));
+			message.setFrom(new InternetAddress("rogamore@gmail.com"));
 			message.setSubject("Welcome to Court Opinions");
 			message.addRecipient(Message.RecipientType.TO, new InternetAddress(emailInformation.getEmail()));
 			// This is not mandatory, however, it is a good
@@ -134,9 +133,11 @@ public class SendGridMailer {
 
 			// Adjust the date of sending the message
 			message.setSentDate(new Date());
+			emailSender.send(message);
+			logger.info("Email sent {} ", emailInformation.getEmail());
 
 			// Sends the email
-			Transport.send(message);
+//			Transport.send(message);
 			
 		} catch (Exception e) {
 			logger.error(e.getMessage());
@@ -171,7 +172,7 @@ public class SendGridMailer {
 				htmlContent.close();
 			}
 
-			System.out.println(  htmlContent );
+			logger.info( "email message {}", htmlContent );
 			
 		} catch (Exception e) {
 			logger.error(e.getMessage());
