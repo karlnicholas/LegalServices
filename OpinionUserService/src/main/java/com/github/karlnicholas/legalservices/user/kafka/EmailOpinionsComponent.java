@@ -61,8 +61,6 @@ public class EmailOpinionsComponent implements Runnable {
         consumerProperties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG,kafkaProperties.getIpAddress()+':'+kafkaProperties.getPort());
         consumerProperties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, kafkaProperties.getIntegerDeserializer());
         consumerProperties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, kafkaProperties.getOpinionViewMessageDeserializer());
-//		consumerProperties.put(ConsumerConfig.GROUP_ID_CONFIG, kafkaProperties.getOpinionUserServiceConsumerGroup());
-//		consumerProperties.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
 
         if ( !kafkaProperties.getUser().equalsIgnoreCase("notFound") ) {
             consumerProperties.put(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, "SASL_PLAINTEXT");
@@ -80,23 +78,14 @@ public class EmailOpinionsComponent implements Runnable {
     @Override
     public void run(){
         try {
-            // Subscribe to the topics.
-//			opinionViewCacheConsumer.subscribe(Collections.singletonList(kafkaProperties.getOpinionViewCacheTopic()));
-//			opinionViewCacheConsumer.poll(Duration.ZERO);  // without this, the assignment will be empty.
-//			opinionViewCacheConsumer.assignment().forEach(t -> {
-//		        System.out.printf("Set %s to offset 0%n", t.toString());
-//		        opinionViewCacheConsumer.seek(t, 0);
-//		    });
             TopicPartition topicPartition = new TopicPartition(kafkaProperties.getOpinionViewCacheTopic(), 0);
-            List<TopicPartition> partitions = Arrays.asList(topicPartition);
+            List<TopicPartition> partitions = List.of(topicPartition);
             opinionViewCacheConsumer.assign(partitions);
             opinionViewCacheConsumer.seekToBeginning(partitions);
+            //noinspection InfiniteLoopStatement
             while (true) {
                 ConsumerRecords<Integer, OpinionViewMessage> opinionViewMessageRecords = opinionViewCacheConsumer.poll(Duration.ofSeconds(1));
                 for (ConsumerRecord<Integer, OpinionViewMessage> opinionViewMessageRecord : opinionViewMessageRecords) {
-//		        	log.info("topic = {}, partition = {}, offset = {}, record key = {}, record value length = {}",
-//		        			opinionViewMessageRecord.topic(), opinionViewMessageRecord.partition(), opinionViewMessageRecord.offset(),
-//                            opinionViewMessageRecord.key(), opinionViewMessageRecord.serializedValueSize());
                     OpinionViewMessage opinionViewMessage = opinionViewMessageRecord.value();
                     if ( opinionViewMessage.getOpinionView().isPresent() ) {
                         opinionViewData.addOpinionView(opinionViewMessage.getOpinionView().get());
@@ -109,49 +98,41 @@ public class EmailOpinionsComponent implements Runnable {
                 }
             }
         } catch (WakeupException e) {
-            log.error("WakeupException: {}", e);
+            log.error("WakeupException", e);
         } catch (Exception e) {
-            log.error("Unexpected error: {}", e);
+            log.error("Unexpected error", e);
         } finally {
             opinionViewCacheConsumer.close();
         }
     }
 
     @Scheduled(fixedRate = 86400000, initialDelay = 20000)
-    public String processEmails() throws SQLException {
+    public void processEmails() throws SQLException {
         try ( Connection con = dataSource.getConnection()) {
             String emailUserNeeded = slipOpininScraperDao.callEmailUserNeeded(con);
             if ( emailUserNeeded != null && emailUserNeeded.equalsIgnoreCase("NOEMAIL")) {
-                return "NOEMAIL";
+                return;
             }
         }
-        List<OpinionView> opinionViews = new ArrayList<>();
-//        int dayOfWeek = LocalDate.now().getDayOfWeek().getValue();
-//        int minusDays = (7 + dayOfWeek) % 7;
-//        LocalDate pastDate = LocalDate.now().minusDays(minusDays);
-        LocalDate pastDate = LocalDate.of(2021, 02, 7);
+        int dayOfWeek = LocalDate.now().getDayOfWeek().getValue();
+        int minusDays = (7 + dayOfWeek) % 7;
+        LocalDate pastDate = LocalDate.now().minusDays(minusDays);
+//        LocalDate pastDate = LocalDate.of(2021, 2 7);
         log.info("pastDate: {}", pastDate);
-        for ( OpinionView opinionView: opinionViewData.getOpinionViews(pastDate) ) {
-            opinionViews.add(opinionView);
-        }
+        List<OpinionView> opinionViews = new ArrayList<>(opinionViewData.getOpinionViews(pastDate));
         Map<ApplicationUser, List<OpinionView>> userViews = new HashMap<>();
-        userDao.findAll().stream().forEach(u->{
+        userDao.findAll().forEach(u->{
             List<OpinionView> userOpinionViews = new ArrayList<>();
-            opinionViews.forEach(ov->{
-                ov.getStatutes().forEach(sv->{
-                    for ( String title: u.getTitles()) {
-                        if (sv.getShortTitle().equalsIgnoreCase(title)) {
-                            userOpinionViews.add(ov);
-                            break;
-                        }
+            opinionViews.forEach(ov-> ov.getStatutes().forEach(sv->{
+                for ( String title: u.getTitles()) {
+                    if (sv.getShortTitle().equalsIgnoreCase(title)) {
+                        userOpinionViews.add(ov);
+                        break;
                     }
-                });
-            });
+                }
+            }));
             userViews.put(u, userOpinionViews);
         });
-        userViews.forEach((user, opinionViewList)->{
-            sendGridMailer.sendOpinionReport(user, opinionViewList);
-        });
-        return "EMAIL";
+        userViews.forEach(sendGridMailer::sendOpinionReport);
     }
 }
