@@ -42,7 +42,7 @@ public class CaseListProcessorComponent implements Runnable {
 	private final ObjectMapper objectMapper;
 	private final KakfaProperties kafkaProperties;
 	private final DataSource dataSource;
-	private static final int MAX_ENTRIES_PROCESS = 30;
+	private static final int MAX_ENTRIES_PROCESS = 1000;
 
 	public CaseListProcessorComponent(ObjectMapper objectMapper, 
 			KakfaProperties kafkaProperties, 
