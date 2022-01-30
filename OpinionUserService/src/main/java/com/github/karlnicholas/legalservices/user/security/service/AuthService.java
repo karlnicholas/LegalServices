@@ -2,7 +2,6 @@ package com.github.karlnicholas.legalservices.user.security.service;
 
 import com.github.karlnicholas.legalservices.user.dao.UserDao;
 import com.github.karlnicholas.legalservices.user.model.ApplicationUser;
-import com.github.karlnicholas.legalservices.user.model.ERole;
 import com.github.karlnicholas.legalservices.user.model.Role;
 import com.github.karlnicholas.legalservices.user.security.config.JwtProperties;
 import com.github.karlnicholas.legalservices.user.security.payload.request.SigninRequest;
@@ -43,7 +42,7 @@ public class AuthService {
 
 		try {
 
-			List<String> roles = user.getRoles() == null ? Collections.EMPTY_LIST : user.getRoles().stream().map(Role::getRole).collect(Collectors.toList());
+			List<String> roles = user.getRoles() == null ? Collections.emptyList() : user.getRoles().stream().map(Role::getRole).collect(Collectors.toList());
 			// Prepare JWT with claims set
 			JWTClaimsSet claimsSet = new JWTClaimsSet.Builder()
 					.claim("role", roles)
@@ -72,11 +71,9 @@ public class AuthService {
 	}
 	
 	public Mono<JwtResponse> authenticate(Mono<SigninRequest> signinRequestMono) {
-		return signinRequestMono.flatMap(signingRequest -> {
-			return Mono.justOrEmpty(userDao.findByEmail(signingRequest.getUsername())
-					.filter(user -> passwordEncoder.matches(signingRequest.getPassword(), user.getPassword()))
-					.map(this::generateAccessToken));
-		}).switchIfEmpty(Mono.error(new FailedLoginException("Failed Login!")));
+		return signinRequestMono.flatMap(signingRequest -> Mono.justOrEmpty(userDao.findByEmail(signingRequest.getUsername())
+				.filter(user -> passwordEncoder.matches(signingRequest.getPassword(), user.getPassword()))
+				.map(this::generateAccessToken))).switchIfEmpty(Mono.error(new FailedLoginException("Failed Login!")));
 	}
 
 }

@@ -117,7 +117,7 @@ public class EmailOpinionsComponent implements Runnable {
         int dayOfWeek = LocalDate.now().getDayOfWeek().getValue();
         int minusDays = (7 + dayOfWeek) % 7;
         LocalDate pastDate = LocalDate.now().minusDays(minusDays);
-//        LocalDate pastDate = LocalDate.of(2021, 2 7);
+//        LocalDate pastDate = LocalDate.of(2021, 1, 10);
         log.info("pastDate: {}", pastDate);
         List<OpinionView> opinionViews = new ArrayList<>(opinionViewData.getOpinionViews(pastDate));
         Map<ApplicationUser, List<OpinionView>> userViews = new HashMap<>();

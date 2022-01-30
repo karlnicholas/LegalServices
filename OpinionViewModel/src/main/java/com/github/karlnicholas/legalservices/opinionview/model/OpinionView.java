@@ -11,6 +11,8 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.github.karlnicholas.legalservices.opinion.model.OpinionKey;
 import com.github.karlnicholas.legalservices.slipopinion.model.SlipOpinion;
 
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+
 @JsonTypeName("opinionView")
 public class OpinionView implements Serializable {
 	private static final long serialVersionUID = 1L;
@@ -136,6 +138,8 @@ public class OpinionView implements Serializable {
     	return name + " " + this.getTitle();
     }
     @JsonInclude
+//	@XmlElement
+	@XmlJavaTypeAdapter(LocalDateAdapter.class)
 	public LocalDate getOpinionDate() {
 		return opinionDate;
 	}

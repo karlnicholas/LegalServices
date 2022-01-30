@@ -10,8 +10,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import javax.sql.DataSource;
-
 import com.github.karlnicholas.legalservices.caselist.model.CASELISTSTATUS;
 import com.github.karlnicholas.legalservices.caselist.model.CaseListEntries;
 import com.github.karlnicholas.legalservices.caselist.model.CaseListEntry;
@@ -49,7 +47,7 @@ public class SlipOpininScraperDao {
 	public CaseListEntries caseListEntries(Connection con) throws SQLException {
 		try (PreparedStatement ps = con.prepareStatement("select * from caselistentry", ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY)) {
 			try (ResultSet rs = ps.executeQuery()) {
-				return new CaseListEntries(new ResultSetIterable<CaseListEntry>(rs, rs2 -> mapCaseListEntry(rs2)).stream().collect(Collectors.toList()));
+				return new CaseListEntries(new ResultSetIterable<>(rs, rs2 -> mapCaseListEntry(rs2)).stream().collect(Collectors.toList()));
 			}
 		}
 	}
@@ -76,7 +74,7 @@ public class SlipOpininScraperDao {
 		) {
 			con.setAutoCommit(false);
 			try (ResultSet rs = pss.executeQuery()) {
-				List<CaseListEntry> existingEntries = new ResultSetIterable<CaseListEntry>(rs, rs2 -> mapCaseListEntry(rs2)).stream().collect(Collectors.toList());
+				List<CaseListEntry> existingEntries = new ResultSetIterable<>(rs, rs2 -> mapCaseListEntry(rs2)).stream().collect(Collectors.toList());
 				List<CaseListEntry> deleteEntries = new ArrayList<>();
 				Iterator<CaseListEntry> cleIt = caseListEntries.iterator();
 				while ( cleIt.hasNext()) {

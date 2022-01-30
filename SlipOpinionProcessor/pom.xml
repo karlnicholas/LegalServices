@@ -60,10 +60,6 @@
 			<groupId>com.github.karlnicholas.legalservices</groupId>
 			<artifactId>caselistmodel</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>com.github.karlnicholas.legalservices</groupId>
-			<artifactId>opinionviewdao</artifactId>
-		</dependency>
 	</dependencies>
 	<build>
 		<resources>

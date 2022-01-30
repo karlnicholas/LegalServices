@@ -10,6 +10,20 @@
 	<packaging>jar</packaging>
 	<name>Opinion View Model</name>
 	<description>Opinion View Model</description>
+	<dependencyManagement>
+		<dependencies>
+			<!-- ... -->
+			<!-- Gone from jvm in java11 -->
+			<dependency>
+				<groupId>com.sun.xml.bind</groupId>
+				<artifactId>jaxb-ri</artifactId>
+				<version>2.3.1</version>
+				<scope>import</scope>
+				<type>pom</type>
+			</dependency>
+			<!-- ... -->
+		</dependencies>
+	</dependencyManagement>
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -45,6 +59,21 @@
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
 			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>javax.xml.bind</groupId>
+			<artifactId>jaxb-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.sun.xml.bind</groupId>
+			<artifactId>jaxb-core</artifactId>
+			<version>2.3.0.1</version>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.sun.xml.bind</groupId>
+			<artifactId>jaxb-impl</artifactId>
+			<scope>runtime</scope>
 		</dependency>
 	</dependencies>
 </project>
